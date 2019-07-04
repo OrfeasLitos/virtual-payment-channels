@@ -135,11 +135,7 @@
 \newcommand{\anote}[1]{\stepcounter{notecount}\todo[inline,bordercolor=bordercolor4,linecolor=bordercolor4,color=lightcolor4]{\footnotesize{\sc \bf Aggelos:} #1}{}}
 
 \newcommand{\TODO}[1]{
-  \if\relax\detokenize{#1}\relax
-    \textcolor{red}{TODO} 
-  \else
-    \textcolor{red}{ {#1}} 
-  \fi
+  \textcolor{red}{TODO {#1}}
 }
 
 \newcommand{\footTODO}[1]{\footnote{\TODO{#1}}}
