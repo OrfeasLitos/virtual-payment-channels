@@ -1,0 +1,52 @@
+\section{Notation}
+  We introduce the following notation to formally express Bitcoin transactions.
+
+  \paragraph{Basic building blocks}
+    \begin{itemize}
+      \item signature (needed to spend): $\mathrm{player}_{\mathrm{sigName}}$,
+      e.g. $\alice_{\mathrm{rev}}$
+      \item value (in bitcoin): $x\bitcoin$
+    \end{itemize}
+
+  \paragraph{Spending method -- in transaction output (possibly named)}
+    \begin{itemize}
+      \item $n$ out of $n$ multisig: \\
+      $\mathtt{AND}(\mathrm{sig}_1, \dots, \mathrm{sig}_n)$, alternatively
+      $\mathrm{sig}_1 \wedge \dots \wedge \mathrm{sig}_n$
+      \item relative delay -- minimum blocks between current and spending
+      transaction: \\
+      $\rdel(\msig, \mathit{blocks})$, e.g. $\rdel(\alice_{F} \wedge \bob_{F},
+      3)$
+      \item absolute delay -- minimum block where current transaction can be
+      spent: \\
+      $\adel(\msig, \mathit{block})$, e.g. $\mathtt{delayed} =
+      \adel(\alice_{\mathrm{htlc}}, 1005)$
+      \item hashlock -- a hash is provided here, its preimage must be provided
+      by the spending transaction: \\
+      $\hlock(\msig, h)$, e.g. $\hlock(\alice_{\mathrm{htlc}} \wedge
+      \charlie_{\mathrm{htlc}}, \mathtt{0x9b4f})$
+    \end{itemize}
+
+  \paragraph{Spending methods set -- each output contains one such set} \ \\
+    $\mathtt{OR}(\mathit{method}_1, \dots, \mathit{method}_m)$,
+    alternatively $\mathit{method}_1 \vee \dots \vee \mathit{method}_m$, \\
+    e.g. $(\mathtt{fulfill} = \hlock(\alice, \mathtt{0x1bc6})) \vee
+    (\mathtt{refund} = \adel(\bob, 1007))$
+
+  \paragraph{Output -- each transaction contains one or more (possibly named)} \
+  \\
+    $\txout(\text{\it set of methods}, \mathit{value})$, \\
+    e.g. $\mathtt{coins}_{\alice} = \txout(\mathtt{normal} = \rdel(\alice, 10)
+    \vee \mathtt{revocation} = \bob_{\mathrm{rev}})$
+
+  \paragraph{Input -- each transaction contains one or more, unambiguous
+  arguments can be omitted. Signatures/preimages are implied} \ \\
+    $\txin(\text{\it previous tx name}, \text{\it previous output name},
+    \text{\it previous method name})$, \\
+    e.g. $\txin(\mathtt{comm}_{\alice}, \mathtt{coins}_{\alice},
+    \mathtt{revocation})$
+
+  \paragraph{Transaction} \ \\
+    $\tx((\txin_1, \dots, \txin_n), (\txout_1, \dots, \txout_m))$, \\
+    e.g. $\mathtt{rev}_{\bob} = \tx((\txin(\mathtt{comm}_{\alice},
+    \mathtt{coins}_{\alice}, \mathtt{revocation})), (\txout(\bob)))$
