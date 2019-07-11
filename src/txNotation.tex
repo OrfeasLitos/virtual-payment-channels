@@ -41,9 +41,9 @@
     \vee \mathtt{revocation} = \bob_{\mathrm{rev}})$
 
   \paragraph{Input -- each transaction contains one or more, unambiguous
-  arguments can be omitted. Signatures/preimages are implied} \ \\
-    $\txin(\text{\it previous tx name}, \text{\it previous output name},
-    \text{\it previous method name})$, \\
+  arguments can be omitted} \ \\
+    $\txin(\text{\it method name}, \text{\it list of signatures}, \text{\it
+    preimage})$ \TODO{or list of preimages if needed} \\
     e.g. $\txin(\mathtt{comm}_{\alice}, \mathtt{coins}_{\alice},
     \mathtt{revocation})$
 
