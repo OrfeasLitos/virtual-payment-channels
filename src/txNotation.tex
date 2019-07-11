@@ -22,7 +22,8 @@
       $\adel(\msig, \mathit{block})$, e.g. $\mathtt{delayed} =
       \adel(\alice_{\mathrm{htlc}}, 1005)$
       \item hashlock -- a hash is provided here, its preimage must be provided
-      by the spending transaction: \\
+      by the spending transaction. Can be nested: \TODO{remove nesting if
+      unneeded} \\
       $\hlock(\msig, h)$, e.g. $\hlock(\alice_{\mathrm{htlc}} \wedge
       \charlie_{\mathrm{htlc}}, \mathtt{0x9b4f})$
     \end{itemize}
