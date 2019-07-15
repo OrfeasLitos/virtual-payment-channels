@@ -23,7 +23,8 @@
       \State Upon receiving (\textsc{pay}, coins) from $\charlie \in \{\alice,
       \bob\}$:
       \Indent
-        \If{$\mathtt{coins}(\charlie) \geq \mathrm{coins}$}
+        \If{$\mathtt{coins}(\charlie) \geq \mathrm{coins} \wedge
+        \mathtt{checkOpen}(\mathtt{channelData}) = 1$}
           \State $\mathtt{coins}(\charlie) \gets \mathtt{coins}(\charlie) -
           \mathrm{coins}$
           \State $\mathtt{coins}(\mathrm{counterparty}) \gets
