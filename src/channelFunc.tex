@@ -1,0 +1,69 @@
+\begin{figure}[H]
+  \begin{systembox}{$\chanfunc$}
+    \begin{algorithmic}[1]
+      \If{$\mathtt{open} = \mathtt{false}$}
+        \State ignore any message $\in \{\textsc{getBalance}, \textsc{pay},
+        \textsc{close}\}$
+      \Else
+        \State ignore any message $\in \{\textsc{open},
+        \textsc{getSpendingKeys}\}$
+      \EndIf
+      \Statex
+
+      \State Upon receiving (\textsc{open}, keys, coins) from \alice:
+      \Indent
+        \State $\mathtt{coins}(\alice) \gets \mathrm{coins}$
+        \State $\mathtt{coins}(\bob) \gets 0$
+        \State $\mathtt{open} \gets \mathtt{true}$
+        \State $\mathtt{channelData} \gets \mathtt{openChannel}(\alice, \bob,
+        keys, coins)$ \Comment{May run a protocol and/or interact with \ledger}
+      \EndIndent
+      \Statex
+
+      \State Upon receiving (\textsc{pay}, coins) from $\charlie \in \{\alice,
+      \bob\}$:
+      \Indent
+        \If{$\mathtt{coins}(\charlie) \geq \mathrm{coins}$}
+          \State $\mathtt{coins}(\charlie) \gets \mathtt{coins}(\charlie) -
+          \mathrm{coins}$
+          \State $\mathtt{coins}(\mathrm{counterparty}) \gets
+          \mathtt{coins}(\mathrm{counterparty}) + \mathrm{coins}$
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State Upon receiving (\textsc{close}) from $\charlie \in \{\alice,
+      \bob\}$:
+      \Indent
+        \State $(sk_{\alice}, sk_{\bob}) \gets \mathtt{closeChannel}(\alice,
+        \bob, \mathtt{channelData})$ \Comment{May run a protocol and/or interact
+        with \ledger}
+        \State $\mathtt{coins}(\alice), \mathtt{coins}(\alice) \gets 0$
+        \State $\mathtt{open} \gets \mathtt{false}$
+        \State Send (\textsc{clock-read}, $\chanfunc$) to
+        $\mathcal{G}_{\mathrm{clock}}$ and assign reply to
+        $\tau_{\mathrm{close}}$
+      \EndIndent
+      \Statex
+
+      \State Upon receiving (\textsc{getBalance}) from $\charlie \in \{\alice,
+      \bob\}$:
+      \Indent
+        \State \Return (\texttt{coins}(\charlie), \texttt{coins}(counterparty))
+      \EndIndent
+      \Statex
+
+      \State Upon receiving (\textsc{getSpendingKeys}) from $\charlie \in \{\alice,
+      \bob\}$:
+      \Indent
+        \State Send (\textsc{clock-read}, $\chanfunc$) to
+        $\mathcal{G}_{\mathrm{clock}}$ and assign reply to $\tau$
+        \If{$\tau \geq \tau_{\mathrm{close}} + \mathtt{delay}$}
+          \State \Return $sk_{\charlie}$
+        \EndIf
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{alg:chanfunc}
+\end{figure}
