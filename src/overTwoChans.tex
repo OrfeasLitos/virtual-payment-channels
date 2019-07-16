@@ -27,7 +27,8 @@
       \item $\mathtt{baseCommitment}_{\alice} = \tx($ \\
         $(\txin(\mathtt{funding}_{\mathrm{AB}})),$ \\
         $(\mathtt{base} = \txout(\alice_{F', 1} \wedge \bob_{F', 1}, ab - ac),$ \\
-        $\mathtt{virt} = \txout(\alice_{F', 2} \wedge \charlie_{F', 2}, ac),$ \\
+        $\mathtt{virt} = \txout(\rdel(\alice_{F', 2} \wedge \charlie_{F', 2},
+        \mathtt{bobDelay}) \vee \bob_{\mathrm{rev}, 1}, ac),$ \\
         $\mathtt{mark} = \txout(\alice_{M, 1} \wedge \bob_{M, 1} \wedge
         \charlie_{M, 1}, 0)))$
       \item $\mathtt{ABcommitment}_{\alice} = \tx($ \\
@@ -38,9 +39,9 @@
         $(\txout(\bob_{\mathrm{com}, 1}, b))))$
       \item $\mathtt{ACcommitment}_{\alice} = \tx($ \\
         $(\txin(\mathtt{baseCommitment}_{\alice}, \mathtt{virt})),$ \\
-        $(\txout(\rdel(\alice_{\mathrm{dcom}, 1}, \mathtt{bobDelay}) \vee
-        \bob_{\mathrm{rev}, 1}, a - ac),$ \\
-        $(\txout(\bob_{\mathrm{com}, 1}, b))))$
+        $(\txout(\rdel(\alice_{\mathrm{dcom}, 2}, \mathtt{charlieDelay}) \vee
+        \charlie_{\mathrm{rev}, 1}, a - ac),$ \\
+        $(\txout(\charlie_{\mathrm{com}, 1}, b))))$
     \end{itemize}
     \item Txs held by \bob:
     \begin{itemize}
