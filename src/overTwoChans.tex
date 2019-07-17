@@ -17,27 +17,28 @@
   \begin{itemize}
     \item On-chain outputs:
     \begin{itemize}
-      \item $\mathtt{funding}_{\mathrm{AB}} = \txout(\alice_{F, 1} \wedge
-      \bob_{F, 1}, a + a' + c' + b_1)$
-      \item $\mathtt{funding}_{\mathrm{BC}} = \txout(\bob_{F, 2} \wedge
-      \charlie_{F, 2}, b_2 + c)$
+      \item $\mathtt{funding}_{\mathrm{AB}} = \txout(\alice_{F} \wedge
+      \bob_{F, \mathrm{source}}, a + a' + c' + b_{\mathrm{w/src}})$
+      \item $\mathtt{funding}_{\mathrm{BC}} = \txout(\bob_{F, \mathrm{dest}}
+      \wedge \charlie_{F}, b_{\mathrm{w/dest}} + c)$
     \end{itemize}
     \item Txs held by \alice:
     \begin{itemize}
       \item $\mathtt{baseCommitment}_{\alice} = \tx($ \\
         $(\txin(\mathtt{funding}_{\mathrm{AB}})),$ \\
-        $(\mathtt{base} = \txout(\alice_{F', 1} \wedge \bob_{F', 1}, a + b_1),$
-        \\
-        $\mathtt{virt} = \txout(\rdel(\alice_{F', 2} \wedge \charlie_{F', 2},
-        \mathtt{bobDelay}) \vee \bob_{\mathrm{rev}, 1}, a' + c'),$ \\
-        $\mathtt{mark}_{\alice} = \txout(\alice_{M, 1} \wedge \bob_{M, 1} \wedge
-        \charlie_{M, 1}, 0)))$
+        $(\mathtt{base} = \txout(\alice_{F, \mathrm{base}} \wedge \bob_{F, AB,
+        \mathrm{base}}, a + b_{\mathrm{w/src}}),$ \\
+        $\mathtt{virt} = \txout(\rdel(\alice_{F, \mathrm{virt}} \wedge
+        \charlie_{F, \mathrm{virt}}, \mathtt{bobDelay}) \vee \\
+        \bob_{\mathrm{rev}, \mathrm{virt}}, a' + c'),$ \\
+        $\mathtt{mark}_{\alice} = \txout(\alice_{M, \mathrm{source}} \wedge
+        \bob_{M, \mathrm{source}} \wedge \charlie_{M, \mathrm{source}}, 0)))$
       \item $\mathtt{ABcommitment}_{\alice} = \tx($ \\
         $(\txin(\mathtt{baseCommitment}_{\alice}, \mathtt{base})),$ \TODO{common
         keys make this incomplete - fix all inputs} \\
-        $(\txout(\rdel(\alice_{\mathrm{dcom}, 1}, \mathtt{bobDelay}) \vee
-        \bob_{\mathrm{rev}, 2}, a),$ \\
-        $(\txout(\bob_{\mathrm{com}, 1}, b_1))))$
+        $(\txout(\rdel(\alice_{\mathrm{dcom}, \mathrm{base}}, \mathtt{bobDelay})
+        \vee \bob_{\mathrm{rev}, \mathrm{base}}, a),$ \\
+        $(\txout(\bob_{\mathrm{com}, \mathrm{base}}, b_{\mathrm{w/src}}))))$
       \item $\mathtt{ACcommitment}_{\alice} = \tx($ \\
         $(\txin(\mathtt{baseCommitment}_{\alice}, \mathtt{virt})),$ \\
         $(\txout(\rdel(\alice_{\mathrm{dcom}, 2}, \mathtt{charlieDelay}) \vee
