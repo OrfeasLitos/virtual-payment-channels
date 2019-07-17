@@ -1,0 +1,59 @@
+\begin{figure}[H]
+  \begin{protocolbox}{$\mathtt{openChannel}_{\text{1-hop}}(\alice, \bob,
+  pk_{\alice, F, 1}, \mathrm{coins})$}
+    \begin{algorithmic}[1]
+    \begin{itemize}
+      \item Key circulation
+      \begin{itemize}
+        \item \alice:
+        \begin{itemize}
+          \item Generate the 4 $\alice_{F', \mathrm{base}/\mathrm{virt}}, \alice_{M,
+          \mathrm{source}/\mathrm{dest}}$ keypairs
+          \item Send our public keys to \bob in (\textsc{openVirtChan},
+          \texttt{intermediary}, \charlie) message
+        \end{itemize}
+        \item \bob:
+        \begin{itemize}
+          \item Generate \TODO{} keypairs
+          \item Send \TODO{} public keys to \charlie
+        \end{itemize}
+        \item \charlie:
+        \begin{itemize}
+          \item Receive \TODO{} keys from \bob
+          \item Generate \TODO{} keypairs
+          \item Send \TODO{} public keys to \bob
+        \end{itemize}
+        \item \bob:
+        \begin{itemize}
+          \item Receive \TODO{} keys from \charlie
+          \item Send \TODO{} public keys to \alice
+        \end{itemize}
+        \item \alice:
+        \begin{itemize}
+          \item Receive (\textsc{virtChanKeys}, \texttt{intermediary}, \charlie,
+          $pk_{\bob, F, AB, \mathrm{base}}, pk_{\bob, \mathrm{rev}, \mathrm{virt}},
+          pk_{\bob, M, \mathrm{source}}, pk_{\bob, \mathrm{rev}, \mathrm{base}},
+          pk_{\bob, \mathrm{dcom}, \mathrm{base}}$) from \bob
+          \item Send our public keys to \charlie in (\textsc{openVirtChan},
+          \texttt{counterparty}, \bob) message
+        \end{itemize}
+        \item \charlie:
+        \begin{itemize}
+          \item Receive \TODO{} keys from \alice
+          \item Send \TODO{} public keys to \alice
+        \end{itemize}
+      \end{itemize}
+      \item Signatures circulation:
+      \begin{itemize}
+        \item a
+      \end{itemize}
+      \item Revocations:
+      \begin{itemize}
+        \item a
+      \end{itemize}
+    \end{itemize}
+    \end{algorithmic}
+  \end{protocolbox}
+  \caption{}
+  \label{alg:protocol:overtwochan}
+\end{figure}
