@@ -1,16 +1,43 @@
 \begin{figure}[H]
-  \begin{systembox}{\chanfunc}
-    \begin{algorithmic}[1]
-      \If{$\mathtt{open} = \mathtt{false}$}
-        \State ignore any message $\in \{\textsc{getBalance}, \textsc{pay},
-        \textsc{close}\}$
-      \Else
-        \State ignore any message $\in \{\textsc{open},
-        \textsc{getSpendingKeys}\}$
-      \EndIf
-      \Statex
+  \begin{systembox}{\fch}
+    Message (\textsc{register}, \texttt{otherPlayer}, $pk$, \texttt{myDelay},
+    \texttt{remoteDelay}):
+      \begin{itemize}
+        \item Until exactly two players are registered (call them \alice{} and
+        \bob, in order of registration), ignore all other messages. After that,
+        ignore all \textsc{register} messages.
+        \item Store $pk$ as $pk_{\alice}$ or $pk_{\bob}$ respectively.
+        \item After receiving one \textsc{register} message from a player,
+        ignore all further \textsc{register} messages from the same player.
+        \item \alice{} must input \bob{} as \texttt{otherPlayer} and vice versa.
+        \item \alice's \texttt{myDelay} must match \bob's \texttt{remoteDelay}
+        and vice versa.
+      \end{itemize}
 
-      \State Upon receiving (\textsc{open}, keys, coins) from \alice:
+    Message (\textsc{open}, $(sk_{\mathrm{in}}, pk_{\mathrm{in}})$, $c$) from
+    \alice:
+    \begin{itemize}
+      \item If channel already open, ignore
+      \item Send (\textsc{open}, $pk_{\mathrm{in}}$, $c$, $pk_{\alice},
+      pk_{\bob}$) to \simulator{} and parse reply as $(T, sk_{A, \mathrm{rev},
+      1}, sk_{B, \mathrm{rev}, 1})$, where $T$ is a tree with transactions as
+      nodes, where all transactions except for the root are signed.
+      \item Assume that there exists a UTxO spendable by $sk_{\mathrm{in}}$ that
+      contains exactly $c$ coins. Ensure that the root of $T$ is a transaction
+      with a single input that spends the $c$ coins of $pk_{\mathrm{in}}$.
+      \item Ensure the tree has exactly three leaves, with outputs:
+      \begin{itemize}
+        \item $\txout(\rdel(pk_{\bob}, \mathtt{AliceDelay}) \vee pk_{A,
+        \mathrm{rev}, 1}, 0), \txout(pk_{\alice}, c)$
+        \item $\txout(\rdel(pk_{\alice}, \mathtt{BobDelay}) \vee pk_{B,
+        \mathrm{rev}, 1}, c), \txout(pk_{\bob}, 0)$
+        \item $\txout(pk_{\alice}, c), \txout(pk_{\bob}, 0)$
+      \end{itemize},
+      that all three paths from root to leaves are valid transaction chains and
+      that the two given secret keys correspond to the expected public ones.
+    \end{itemize}
+    \TODO{decide if F_ch will output this stuff}
+    \begin{algorithmic}[1]
       \Indent
         \State $\mathtt{coins}(\alice) \gets \mathrm{coins}$
         \State $\mathtt{coins}(\bob) \gets 0$
