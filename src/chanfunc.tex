@@ -45,7 +45,7 @@
         with \ledger}
         \State $\mathtt{coins}(\alice), \mathtt{coins}(\alice) \gets 0$
         \State $\mathtt{open} \gets \mathtt{false}$
-        \State Send (\textsc{clock-read}, \chanfunc) to
+        \State Send (\textsc{clock-read}, \fch) to
         $\mathcal{G}_{\mathrm{clock}}$ and assign reply to
         $\tau_{\mathrm{close}}$
       \EndIndent
@@ -61,7 +61,7 @@
       \State Upon receiving (\textsc{getSpendingKeys}) from $\charlie \in \{\alice,
       \bob\}$:
       \Indent
-        \State Send (\textsc{clock-read}, \chanfunc) to
+        \State Send (\textsc{clock-read}, \fch) to
         $\mathcal{G}_{\mathrm{clock}}$ and assign reply to $\tau$
         \If{$\tau \geq \tau_{\mathrm{close}} + \mathtt{delay}$}
           \State \Return $sk_{\charlie}$

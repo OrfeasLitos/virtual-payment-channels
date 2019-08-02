@@ -1,11 +1,11 @@
-\begin{definition}[\chanfunc{} Funds retrievability] \ \\
+\begin{definition}[\fch{} Funds retrievability] \ \\
   \label{def:retrievability}
-  Let \alice{} honest, \bob{} corrupted, \chanfunc{} parametrized by three
-  protocols \texttt{openChannel}, \texttt{closeChannel}, and \texttt{checkOpen},
+  Let \alice{} honest, \bob{} corrupted, \fch{} parametrized by three protocols
+  \texttt{openChannel}, \texttt{closeChannel}, and \texttt{checkOpen},
   interacting with \ledger{} which in turn is parametrized by the
-  \texttt{validate} predicate of Definition~\TODO{}. We say that this
-  \chanfunc{} provides {\em funds retrievability} if for any PPT \adversary,
-  after \chanfunc{} serves a sequence of
+  \texttt{validate} predicate of Definition~\TODO{}. We say that this \fch{}
+  provides {\em funds retrievability} if for any PPT \adversary, after \fch{}
+  serves a sequence of
   \begin{gather*}
     ((\textsc{open}, \mathrm{keys}, \mathrm{coins}_0, \alice), \mathtt{paid}
     \gets (\textsc{pay}, \mathrm{coins}_1^{\alice}, \alice), \\
