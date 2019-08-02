@@ -1,101 +1,76 @@
-\begin{figure}[H]
-  \begin{systembox}{\fch}
-    Message (\textsc{register}, \texttt{otherPlayer}, $pk$, \texttt{myDelay},
-    \texttt{remoteDelay}):
-      \begin{itemize}
-        \item Until exactly two players are registered (call them \alice{} and
-        \bob, in order of registration), ignore all other messages. After that,
-        ignore all \textsc{register} messages.
-        \item Store $pk$ as $pk_{\alice}$ or $pk_{\bob}$ respectively.
-        \item After receiving one \textsc{register} message from a player,
-        ignore all further \textsc{register} messages from the same player.
-        \item \alice{} must input \bob{} as \texttt{otherPlayer} and vice versa.
-        \item \alice's \texttt{myDelay} must match \bob's \texttt{remoteDelay}
-        and vice versa.
-      \end{itemize}
+\begin{systembox}{\fch}
+  Initially \texttt{isOpen} is set to \texttt{false}.
 
-    Message (\textsc{open}, $(sk_{\mathrm{in}}, pk_{\mathrm{in}})$, $c$) from
-    \alice:
+  Message (\textsc{register}, \texttt{otherPlayer}, $pk$, \texttt{myDelay},
+  \texttt{remoteDelay}):
     \begin{itemize}
-      \item If channel already open, ignore
-      \item Send (\textsc{open}, $pk_{\mathrm{in}}$, $c$, $pk_{\alice},
-      pk_{\bob}$) to \simulator{} and parse reply as $(T, sk_{A, \mathrm{rev},
-      1}, sk_{B, \mathrm{rev}, 1})$, where $T$ is a tree with transactions as
-      nodes, where all transactions except for the root are signed.
-      \item Assume that there exists a UTxO spendable by $sk_{\mathrm{in}}$ that
-      contains exactly $c$ coins. Ensure that the root of $T$ is a transaction
-      with a single input that spends the $c$ coins of $pk_{\mathrm{in}}$.
-      \item Ensure the tree has exactly three leaves, with outputs:
-      \begin{itemize}
-        \item $\txout(\rdel(pk_{\bob}, \mathtt{AliceDelay}) \vee pk_{A,
-        \mathrm{rev}, 1}, 0), \txout(pk_{\alice}, c)$
-        \item $\txout(\rdel(pk_{\alice}, \mathtt{BobDelay}) \vee pk_{B,
-        \mathrm{rev}, 1}, c), \txout(pk_{\bob}, 0)$
-        \item $\txout(pk_{\alice}, c), \txout(pk_{\bob}, 0)$
-      \end{itemize},
-      that all three paths from root to leaves are valid transaction chains and
-      that the two given secret keys correspond to the expected public ones.
+      \item Until exactly two players are registered (call them \alice{} and
+      \bob, in order of registration), ignore all other messages. After that,
+      ignore all \textsc{register} messages.
+      \item Store $pk$ as $pk_{\alice}$ or $pk_{\bob}$ respectively.
+      \item After receiving one \textsc{register} message from a player,
+      ignore all further \textsc{register} messages from the same player.
+      \item \alice{} must input \bob{} as \texttt{otherPlayer} and vice versa.
+      \item \alice's \texttt{myDelay} must match \bob's \texttt{remoteDelay}
+      and vice versa.
     \end{itemize}
-    \TODO{decide if F_ch will output this stuff}
-    \begin{algorithmic}[1]
-      \Indent
-        \State $\mathtt{coins}(\alice) \gets \mathrm{coins}$
-        \State $\mathtt{coins}(\bob) \gets 0$
-        \State $\mathtt{open} \gets \mathtt{true}$
-        \State $\mathtt{channelData} \gets \mathtt{openChannel}(\alice, \bob,
-        \mathrm{keys}, \mathrm{coins})$ \Comment{May run a protocol and/or
-        interact with \ledger}
-      \EndIndent
-      \Statex
 
-      \State Upon receiving (\textsc{pay}, coins) from $\charlie \in \{\alice,
-      \bob\}$:
-      \Indent
-        \If{$\mathtt{coins}(\charlie) \geq \mathrm{coins} \wedge
-        \mathtt{checkOpen}(\mathtt{channelData}) = 1$}
-          \State $\mathtt{coins}(\charlie) \gets \mathtt{coins}(\charlie) -
-          \mathrm{coins}$
-          \State $\mathtt{coins}(\mathrm{counterparty}) \gets
-          \mathtt{coins}(\mathrm{counterparty}) + \mathrm{coins}$
-          \State \Return \texttt{paid}
-        \Else
-          \State \Return \texttt{notPaid}
-        \EndIf
-      \EndIndent
-      \Statex
+  In all subsequent messages, denote $P$ the sender (which must be either
+  \alice{} or \bob) and $P'$ the counterparty.
 
-      \State Upon receiving (\textsc{close}) from $\charlie \in \{\alice,
-      \bob\}$:
-      \Indent
-        \State $(sk_{\alice}, sk_{\bob}) \gets \mathtt{closeChannel}(\alice,
-        \bob, \mathtt{channelData})$ \Comment{May run a protocol and/or interact
-        with \ledger}
-        \State $\mathtt{coins}(\alice), \mathtt{coins}(\alice) \gets 0$
-        \State $\mathtt{open} \gets \mathtt{false}$
-        \State Send (\textsc{clock-read}, \fch) to
-        $\mathcal{G}_{\mathrm{clock}}$ and assign reply to
-        $\tau_{\mathrm{close}}$
-      \EndIndent
-      \Statex
+  Upon receiving (\textsc{open}, $(sk_{\mathrm{in}}, pk_{\mathrm{in}})$, $c$):
+  \begin{itemize}
+    \item $c_P \gets c, c_{P'} \gets 0$
+    \item $(sk_{P, F}, pk_{P, F}) \gets \mathtt{KeyGen}(), (sk_{P', F},
+    pk_{P', F}) \gets \mathtt{KeyGen}()$
+    \item $\mathtt{openTX} \gets \tx((\txin(pk_{\mathrm{in}}, \text{selfsig
+    with } sk_{\mathrm{in}})), (\txout(\mathtt{msig} = pk_{P, F} \wedge pk_{P',
+    F}, c)))$
+    \item send (\textsc{submit}, \texttt{openTX}) to \ledger as $P$
+  \end{itemize}
 
-      \State Upon receiving (\textsc{getBalance}) from $\charlie \in \{\alice,
-      \bob\}$:
-      \Indent
-        \State \Return (\texttt{coins}(\charlie), \texttt{coins}(counterparty))
-      \EndIndent
-      \Statex
+  Upon receiving (\textsc{isOpen}):
+  \begin{itemize}
+    \item send (\textsc{read}) to \ledger{} as $P$ and assign reply to
+    $\Sigma_P$
+    \item if $\mathtt{openTX} \in \Sigma_P$, set \texttt{isOpen} to
+    \texttt{true} and return (\textsc{isOpen}, \texttt{true}), else return
+    (\textsc{isOpen}, \texttt{false})
+  \end{itemize}
 
-      \State Upon receiving (\textsc{getSpendingKeys}) from $\charlie \in \{\alice,
-      \bob\}$:
-      \Indent
-        \State Send (\textsc{clock-read}, \fch) to
-        $\mathcal{G}_{\mathrm{clock}}$ and assign reply to $\tau$
-        \If{$\tau \geq \tau_{\mathrm{close}} + \mathtt{delay}$}
-          \State \Return $sk_{\charlie}$
-        \EndIf
-      \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{alg:chanfunc}
-\end{figure}
+  Upon receiving (\textsc{pay}, $c$):
+  \begin{itemize}
+    \item if $\mathtt{isOpen} = \mathtt{true}$ and $c_P \geq c$, decrease
+    $c_P$ by $c$, increase $c_P'$ by $c$ and return (\textsc{paid}) to $P$
+    \item else return (\textsc{notPaid}) to $P$
+  \end{itemize}
+
+  Upon receiving (\textsc{getBalance}):
+  \begin{itemize}
+    \item if $\mathtt{isOpen} = \mathtt{true}$, return (\textsc{balance},
+    $c_P, c_{P'}$) to $P$
+    \item else return (\textsc{notOpen}) to $P$
+  \end{itemize}
+
+  Upon receiving (\textsc{corrupt}, $P$) from \adversary, mark $P$ as corrupted
+  and send $sk_P$ to \adversary
+
+  Upon receiving (\textsc{close}):
+  \begin{itemize}
+    \item $\mathtt{txInput} \gets \txin(\mathtt{msig}, \text{selfsig with }
+    sk_{P, F} \wedge sk_{P', F})$
+    \item if $P'$ is corrupted, send (\textsc{cooperate}, $P'$) to \adversary
+    \item if reply is (\textsc{cooperate}) or if $P'$ is not corrupted, set
+    \texttt{closeTX} to $\tx((\mathtt{txInput}), (\txout(pk_P, c_P),
+    \txout(pk_{P'}, c_{P'})))$ (with signature)
+    \item else if reply is (\textsc{notCooperate}),
+    \begin{itemize}
+      \item $(sk_{\mathrm{rev}}, pk_{\mathrm{rev}}) \gets \mathtt{KeyGen}()$
+      \item $\mathtt{closeTX} \gets \tx((\mathtt{txInput}), (\txout(\rdel(pk_P,
+      \mathtt{delay}_{P'}) \vee pk_{\mathrm{rev}}, c_P), \txout(pk_{P'},
+      c_{P'})))$ (with signature)
+    \end{itemize}
+    \item set $c_P, c_{P'}$ to 0 and \texttt{isOpen} to \texttt{false}
+    \item send (\textsc{submit}, \texttt{closeTX}) to \ledger{} as $P$
+  \end{itemize}
+\end{systembox}
