@@ -1,0 +1,74 @@
+\begin{figure}
+\begin{minipage}{0.5\textwidth}
+\scalebox{.67}{\begin{pspicture}
+  \btc(0,0,0)(n_btc)(edge)(
+    {$\mathtt{funding}_{\mathrm{AB}}$,$a + a' + c' + b_1$}%
+  )(
+    {$\mathtt{mark}_{\alice}$,0},
+    {$\text{del } \mathtt{funding}_{\mathrm{AC}}$,$a' + c'$},
+    {$\mathtt{funding}_{\mathrm{AB}}'$,$a + b_1$}%
+  )
+\end{pspicture}}
+\label{fig:overtwo:alice}
+\caption{\alice's virtual channel tx}
+\end{minipage}
+\hfill
+\begin{minipage}{0.5\textwidth}
+\scalebox{.67}{\begin{pspicture}
+  \btc(0,0,0)(m_btc)(edge)(
+    {$\mathtt{funding}_{\mathrm{BC}}$,$b_2 + c$}%
+  )(
+    {$\mathtt{mark}_{\charlie}$,0},
+    {$\text{del } \mathtt{funding}_{\mathrm{AC}}$,$a' + c'$},
+    {$\mathtt{funding}_{\mathrm{BC}}'$,$b_2 + c$}%
+  )
+\end{pspicture}}
+\label{fig:overtwo:charlie}
+\caption{\charlie's virtual channel tx}
+\end{minipage}
+\end{figure}
+
+\begin{figure}
+\begin{minipage}{0.5\textwidth}
+\scalebox{.67}{\begin{pspicture}
+  \btc(0,0,0)(n_btc)(bridge)(
+    {$\mathtt{funding}_{\mathrm{AB}}$,$a + a' + c' + b_1$},
+    {$\mathtt{funding}_{\mathrm{BC}}$,$b_2 + c$}%
+  )(
+    {$\mathtt{funding}_{\mathrm{BC}}'$,$b_2 + c$},
+    {$\text{del } \mathtt{funding}_{\mathrm{AC}}$,$a' + c'$},
+    {$\mathtt{funding}_{\mathrm{AB}}'$,$a + b_1$}%
+  )
+\end{pspicture}}
+\label{fig:overtwo:bob:noneactive}
+\caption{\bob's tx when others idle}
+\end{minipage}
+\hfill
+\begin{minipage}{0.5\textwidth}
+\scalebox{.67}{\begin{pspicture}
+  \btc(0,0,0)(m_btc)(bridge)(
+    {$\mathtt{funding}_{\mathrm{AB}}$,$a + a' + c' + b_1$},
+    {$\mathtt{mark}_{\charlie}$,0}%
+  )(
+    {$\mathtt{funding}_{\mathrm{AB}}'$,$a + b_1$},
+    {$\bob_{\mathrm{reclaim}}$,$a' + c'$}%
+  )
+\end{pspicture}}
+\label{fig:overtwo:bob:charlieactive}
+\caption{\bob's tx when only \charlie{} active}
+\end{minipage}
+\end{figure}
+
+\begin{figure}
+\scalebox{.67}{\begin{pspicture}
+  \btc(0,0,0)(n_btc)(reclaim)(
+    {$\mathtt{mark}_{\charlie}$,0},
+    {$\mathtt{mark}_{\alice}$,0},
+    {$\text{del } \mathtt{funding}_{\mathrm{AC}}$,$a' + c'$}%
+  )(
+    {$\bob_{\mathrm{reclaim}}$,$a' + c'$}%
+  )
+\end{pspicture}}
+\label{fig:overtwo:bob:noneactive}
+\caption{\bob's tx when others active}
+\end{figure}

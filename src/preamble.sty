@@ -45,8 +45,10 @@
 \usepackage[nomessages]{fp}
 \usepackage{etoolbox}
 \usepackage{xifthen}
-
 \usepackage{xspace}
+\usepackage{notation}
+\usepackage{macros}
+\usepackage{txfig}
 
 % redefine environment proof to IEEEproof if using IEEE class
 \ifelseieee
@@ -66,7 +68,6 @@
 \algtext*{EndIndent}
 
 % Command for comments by Aggelos and Orfeas
-\long\def\red#1\par{\par\bigskip{\color{red}#1}\par}
 \def\showauthnotes{1}
 \ifthenelse{\showauthnotes=1}
 {
