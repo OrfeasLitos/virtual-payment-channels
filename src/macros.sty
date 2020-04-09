@@ -5,17 +5,40 @@
 %  use notation.tex instead
 %-------------------------------
 
+%--- Macro \ifelseieee to automate switching between documentclasses --------
+
+\makeatletter%
+\newif\ifclassisieee
+\@ifclassloaded{IEEEtran}%
+  {\classisieeetrue}%
+  {\classisieeefalse}%
+\makeatother%
+
+\newcommand{\ifelseieee}[2]{%
+  \ifclassisieee%
+    #1%
+  \else%
+    #2%
+  \fi%
+}
+
 %----- Theorems ----------------------------------------------------------------
-%\newtheorem{theorem}{Theorem}
-%\newtheorem{lemma}{Lemma}
-%\newtheorem{corollary}{Corollary}
-%\newtheorem{definition}{Definition}
+\ifelseieee{\newtheorem{theorem}{Theorem}}{}
+\ifelseieee{\newtheorem{lemma}{Lemma}}{}
+\ifelseieee{\newtheorem{proposition}{Proposition}}{}
+\ifelseieee{\newtheorem{corollary}{Corollary}}{}
+\ifelseieee{\newtheorem{definition}{Definition}}{}
 %\newtheorem{example}{Example}
 %\spnewtheorem*{definition*}{Definition}{\bfseries}{\itshape}
 
-\spnewtheorem*{theorem*}{Theorem}{\bfseries}{\itshape}
-\spnewtheorem*{theoremnn}{Theorem}{\bfseries}{\itshape}
-\spnewtheorem*{lemma*}{Lemma}{\bfseries}{\itshape}
+\ifelseieee{
+\newenvironment{theorem*}{\medskip \noindent {\bfseries Theorem.} \itshape}{\medskip}
+\newenvironment{lemma*}{\medskip \noindent {\bfseries Lemma.} \itshape}{\medskip}
+}{
+  \spnewtheorem*{theorem*}{Theorem}{\bfseries}{\itshape}
+  \spnewtheorem*{theoremnn}{Theorem}{\bfseries}{\itshape}
+  \spnewtheorem*{lemma*}{Lemma}{\bfseries}{\itshape}
+}
 \newenvironment{claimproof}[1]{\par\noindent\underline{Proof}:\space#1}{\hfill $\blacksquare$}
 
 \newcommand{\ignore}[1]{\relax} 
@@ -134,9 +157,14 @@
 \newcommand{\myvnote}[1]{{\color{red}{\sc \bf Vassilis:} #1}\ \newline}
 \newcommand{\anote}[1]{\stepcounter{notecount}\todo[inline,bordercolor=bordercolor4,linecolor=bordercolor4,color=lightcolor4]{\footnotesize{\sc \bf Aggelos:} #1}{}}
 
-\newcommand{\TODO}[1]{
-  \textcolor{red}{TODO {#1}}
-}
+%\newcommand{\TODO}[1]{
+%  \if\relax\detokenize{#1}\relax
+%    \textcolor{red}{TODO}
+%  \else
+%    \textcolor{red}{ {#1}}
+%  \fi
+%}
+\newcommand{\TODO}[1]{\textcolor{red}{TODO: #1}}
 
 \newcommand{\footTODO}[1]{\footnote{\TODO{#1}}}
 

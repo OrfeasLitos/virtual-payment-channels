@@ -1,6 +1,7 @@
 \ProvidesPackage{preamble}
 
 \usepackage{enumitem}
+\usepackage{graphicx}
 \usepackage{algpseudocode}
 \algrenewcommand\textproc{\texttt}
 \usepackage[english]{babel}
@@ -11,13 +12,13 @@
 \usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{lmodern}
-\usepackage{graphicx}
 \usepackage[T1]{fontenc}
 \usepackage{listings}
 \usepackage{graphviz}
 \usepackage{dot2texi}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.14}
 \usetikzlibrary{shapes,arrows}
 \usepackage{color}
 \usepackage{hyperref}
@@ -28,9 +29,11 @@
 %  asymptotics, keys]{cryptocode}
 \usepackage[framemethod=TikZ]{mdframed}
 \usepackage{macros}
-\usepackage{notation}
 \usepackage{float}
-\usepackage{appendix}
+\ifelseieee{}{\usepackage{appendix}}
+
+% For a better amsmath, as per the IEEE instructions
+\ifelseieee{\interdisplaylinepenalty=2500}{}
 
 \usepackage{pstricks,pst-node}
 \usepackage{auto-pst-pdf}
@@ -39,9 +42,16 @@
 \usepackage{pgffor}
 \usepackage{xparse}
 \usepackage{expl3}
-\usepackage{txfig}
+\usepackage[nomessages]{fp}
+\usepackage{etoolbox}
+\usepackage{xifthen}
 
 \usepackage{xspace}
+
+% redefine environment proof to IEEEproof if using IEEE class
+\ifelseieee
+  {\renewenvironment{proof}[1][Proof]{\begin{IEEEproof}[#1]}{\end{IEEEproof}}}
+  {}
 
 % PG: Margin comments were placed oddly for me, and this saved the day (taken from
 % http://mirror.hmc.edu/ctan/macros/latex/contrib/todonotes/todonotes.pdf)
@@ -122,7 +132,9 @@
 \newenvironment{sepproof}[1]{\noindent \textbf{#1}}{\qed \smallskip \ \\}
 
 % environment for proof sketch
-\newenvironment{proofsketch}{\noindent \textit{Proof Sketch.}}{\qed \smallskip \ \\}
+\ifelseieee
+  {\newenvironment{proofsketch}[1][Proof Sketch]{\begin{IEEEproof}[#1]}{\end{IEEEproof}}}
+  {\newenvironment{proofsketch}{\noindent \textit{Proof Sketch.}}{\qed \smallskip \ \\}}
 
 % page style set to plain
 \pagestyle{plain}
@@ -140,24 +152,30 @@
 \newcounter{figcount}
 \newcommand{\figlabel}[1]{\refstepcounter{figcount}\arabic{figcount}\label{#1}}
 
+% redden contents if \toredden is true
+\newcommand{\redden}[1]{%
+  \ifthenelse{\equal{\toredden}{true}}{%
+    \textcolor{red}{#1}%
+  }{#1}%
+}
+
 % argmin and argmax commands
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
 
 % macros for symbols
-\newcommand{\alice}{\ensuremath{\mathit{Alice}}}
-\newcommand{\bob}{\ensuremath{\mathit{Bob}}}
-\newcommand{\charlie}{\ensuremath{\mathit{Charlie}}}
-\newcommand{\dave}{\ensuremath{\mathit{Dave}}}
-\newcommand{\ledger}{\ensuremath{\mathcal{G}_{\mathrm{Ledger}}}}
-\newcommand{\fch}{\ensuremath{\mathcal{F}_{\mathrm{ch}}}}
-\newcommand{\pch}{\ensuremath{\Pi_{\mathrm{ch}}}}
-\NewDocumentCommand{\pvch}{m}{\ensuremath{\Pi_{\mathrm{Vch}, #1}}}
-\NewDocumentCommand{\wrapch}{m}{\ensuremath{\mathcal{W}_{#1}}}
-\newcommand{\fvnet}{\ensuremath{\mathcal{F}_{\mathrm{Vnet}}}}
-\newcommand{\pvnet}{\ensuremath{\Pi_{\mathrm{Vnet}}}}
-\newcommand{\clock}{\ensuremath{\mathcal{G}_{\mathrm{Clock}}}}
-\newcommand{\simulator}{\ensuremath{\mathcal{S}}}
-\newcommand{\adversary}{\ensuremath{\mathcal{A}}}
-\newcommand{\environment}{\ensuremath{\mathcal{E}}}
-\newcommand{\tochain}{\ensuremath{\left(2 + r\right)\windowSize}}
+\newcommand{\alice}{\ensuremath{\mathit{Alice}}\xspace}
+\newcommand{\bob}{\ensuremath{\mathit{Bob}}\xspace}
+\newcommand{\charlie}{\ensuremath{\mathit{Charlie}}\xspace}
+\newcommand{\dave}{\ensuremath{\mathit{Dave}}\xspace}
+\newcommand{\frank}{\ensuremath{\mathit{Frank}}\xspace}
+\newcommand{\george}{\ensuremath{\mathit{George}}\xspace}
+\newcommand{\ledger}{\ensuremath{\mathcal{G}_{\mathrm{Ledger}}}\xspace}
+\newcommand{\perfectledger}{\ensuremath{\mathcal{F}_{\mathrm{PerfectL}}}\xspace}
+\newcommand{\perfectprot}{\ensuremath{\Pi_{\mathrm{PerfectL}}}\xspace}
+\newcommand{\clock}{\ensuremath{\mathcal{G}_{\mathrm{Clock}}}\xspace}
+\newcommand{\fpaynet}{\ensuremath{\mathcal{F}_{\mathrm{PayNet}}}\xspace}
+\newcommand{\fchan}{\ensuremath{\mathcal{F}_{\mathrm{Chan}}}\xspace}
+\newcommand{\simulator}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\adversary}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\environment}{\ensuremath{\mathcal{E}}\xspace}

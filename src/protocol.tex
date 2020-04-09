@@ -1,805 +1,88 @@
-\section{VLN Protocol}
-  \label{protocol}
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{VLN}}$ (self is \alice{} always)}
-      \begin{algorithmic}[1]
-        \State Initialisation:
-        \Indent
-          \State \TODO{}
-        \EndIndent
-        \Statex
+\begin{figure}[H]
+  \begin{protocolbox}{$\Pi_{\mathrm{Chan}}$}
+    \begin{algorithmic}[1]
+      \State Initialisation:
+      \Indent
+        \State $\mathit{State} \gets \textsc{init}$
+      \EndIndent
+      \Statex
 
-        \Function{GetKeys}{} \TODO{Remove if unneeded}
-          \State $\left(p_F, s_F\right) \gets \textsc{KeyGen}\left(\right)$
-          \Comment{For $F$ output}
-          \label{alg:protocol:support:gen:fund}
-          \State $\left(p_{\mathrm{pay}}, s_{\mathrm{pay}}\right) \gets
-          \textsc{Setup}\left(\right)$ \Comment{For com output to remote}
-          \State $\left(p_{\mathrm{dpay}}, s_{\mathrm{dpay}}\right) \gets
-          \textsc{Setup}\left(\right)$ \Comment{For com output to self}
-          \State $\left(p_{\mathrm{htlc}}, s_{\mathrm{htlc}}\right) \gets
-          \textsc{Setup}\left(\right)$ \Comment{For htlc output to self}
-          \State $\texttt{seed} \overset{\$}{\gets} U(k)$ \Comment{For per com
-          point}
-          \State $\left(p_{\mathrm{rev}}, s_{\mathrm{rev}}\right) \gets
-          \textsc{MasterKeyGen}\left(\right)$ \Comment{For revocation in com}
-          \label{alg:protocol:support:gen:rev}
-          \State \Return $\left(\left(p_F, s_F\right), \left(p_{\mathrm{pay}},
-          s_{\mathrm{pay}}\right), \left(p_{\mathrm{dpay}},
-          s_{\mathrm{dpay}}\right),\right.$
-          \Indent
-            \State $\left.\left(p_{\mathrm{htlc}}, s_{\mathrm{htlc}}\right),
-            \mathtt{seed}, \left(p_{\mathrm{rev}},
-            s_{\mathrm{rev}}\right)\right)$
-          \EndIndent
-        \EndFunction
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:support}
-  \end{figure}
+      \State On (\textsc{open}, $c$, \texttt{tx\_out}, $sk_A$, $pk_B$) by
+      \environment:
+      \Indent
+        \State ensure $\mathit{State} = \textsc{init}$
+        \State $\mathit{State} \gets \textsc{opening base channel}$
+        \State do LN (other box) % TODO
+      \EndIndent
+      \Statex
 
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{openChannel} from
-    \environment}
-      \begin{algorithmic}[1]
-        \State Upon receiving $\left(\textsc{openVirtualChannel}, \alice, \bob,
-        \charlie, x, \mathit{tid}\right)$ from \environment:
-        \Indent
-          \State ensure \textit{tid} hasn't been used for opening another
-          channel before
-          \label{alg:protocol:open:env:valid}
-          \State $\left(\left(ph_F, sh_F\right), \left(phb_{\mathrm{pay}},
-          shb_{\mathrm{pay}}\right), \left(phb_{\mathrm{dpay}},
-          shb_{\mathrm{dpay}}\right),\right.$ $\left.\left(phb_{\mathrm{htlc}},
-          shb_{\mathrm{htlc}}\right), \mathtt{seed}, \left(phb_{\mathrm{rev}},
-          shb_{\mathrm{rev}}\right)\right) \gets \texttt{GetKeys}\left(\right)$
-          \State $\mathrm{prand}_1 \gets \textsc{PRF}\left(\mathtt{seed},
-          1\right)$
-          \label{alg:protocol:open:env:prf}
-          \State $\left(ph_{\mathrm{com}, 1}, sh_{\mathrm{com}, 1}\right) \gets
-          \textsc{KeyShareGen}\left(1^k; \mathrm{prand}_1\right)$
-          \State associate keys with \textit{tid}
-          \State add $\left(\alice, \bob, x, \mathtt{tid}, \left(ph_F,
-          sh_F\right), \left(phb_{\mathrm{pay}}, shb_{\mathrm{pay}}\right),
-          \left(phb_{\mathrm{dpay}}, shb_{\mathrm{dpay}}\right)\right.$
-          $\left.\left(phb_{\mathrm{htlc}}, shb_{\mathrm{htlc}}\right),
-          \left(phb_{\mathrm{com}, 1}, shb_{\mathrm{com}, 1}\right),\right.$
-          $\left.\left(phb_{\mathrm{rev}}, shb_{\mathrm{rev}}\right),
-          \mathit{tid}\right)$ to \texttt{pendingOpen}
-          \label{alg:protocol:open:env:pendingOpen}
-          \State send (\textsc{openChannel}, $x, \mathtt{delay} + \tochain,
-          ph_F, phb_{\mathrm{pay}}, phb_{\mathrm{dpay}}, phb_{\mathrm{htlc}},$
-          $ph_{\mathrm{com}, 1}, phb_{\mathrm{rev}}$, \textit{tid}) to \bob{}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:open:env}
-  \end{figure}
+      \State On (\textsc{check}) by \environment:
+      \Indent
+        \State ensure $\mathit{State} = \textsc{waiting for ledger}$
+        \State send (\textsc{read}) to \ledger and assign reply to $\Sigma$
+        \State ensure $F \in \Sigma$
+        \State $c_A \gets c$; $c_B \gets 0$ \Comment{$c$ received in
+        \textsc{open}}
+        \State $\mathit{State} \gets \textsc{open base}$
+        \State output (\textsc{open success}) to \environment
+      \EndIndent
+      \Statex
 
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{openChannel} from \bob}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{openChannel}, $x, \mathtt{remoteDelay},
-        pt_F, ptb_{\mathrm{pay}}, ptb_{\mathrm{dpay}}, ptb_{\mathrm{htlc}},
-        pt_{\mathrm{com}, 1}, ptb_{\mathrm{rev}}$, \textit{tid}) from \bob:
-        \Indent
-          \State ensure \textit{tid} has not been used yet with \bob
-          \State $\left(\left(ph_F, sh_F\right), \left(phb_{\mathrm{pay}},
-          shb_{\mathrm{pay}}\right), \left(phb_{\mathrm{dpay}},
-          shb_{\mathrm{dpay}}\right), \left(phb_{\mathrm{htlc}},
-          shb_{\mathrm{htlc}}\right), \mathtt{seed},\right.$
-          $\left.\left(phb_{\mathrm{rev}}, shb_{\mathrm{rev}}\right)\right)
-          \gets \texttt{GetKeys}\left(\right)$
-          \State $\mathrm{prand}_1 \gets \textsc{PRF}\left(\mathtt{seed},
-          1\right)$
-          \label{alg:protocol:open:peer:prf}
-          \State $\left(ph_{\mathrm{com}, 1}, sh_{\mathrm{com}, 1}\right) \gets
-          \textsc{KeyShareGen}\left(1^k; \mathrm{prand}_1\right)$
-          \State associate keys with \textit{tid} and store in
-          \texttt{pendingOpen}
-          \label{alg:protocol:open:openChannel:pendingOpen}
-          \State send (\textsc{acceptChannel}, $\mathtt{delay}  + \tochain,
-          ph_F, phb_{\mathrm{pay}}, phb_{\mathrm{dpay}}, phb_{\mathrm{htlc}},$
-          $ph_{\mathrm{com}, 1}, phb_{\mathrm{rev}}$, \textit{tid}) to \bob{}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:open:openChannel}
-  \end{figure}
+      \State On (\textsc{pay}, x) by \environment:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $c_A \geq x$
+        \State do LN payment (these channels won't be async) (balance change
+        here) % TODO
+        \State output (\textsc{pay success}) to \environment
+      \EndIndent
+      \Statex
 
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{acceptChannel}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{acceptChannel}, $\mathtt{remoteDelay},
-        pt_F, ptb_{\mathrm{pay}}, ptb_{\mathrm{dpay}},$ $ptb_{\mathrm{htlc}},$
-        $pt_{\mathrm{com}, 1}, ptb_{\mathrm{rev}}$, \textit{tid}) from \bob:
-        \Indent
-          \State ensure there is a temporary ID \textit{tid} with \bob{} in
-          \texttt{pendingOpen} on which \textsc{acceptChannel} hasn't been
-          received
-          \State associate received keys with \textit{tid}
-          \State send (\textsc{read}) to \ledger{} and assign reply to
-          $\Sigma_{\alice}$
-          \State assign to \texttt{prevout} a transaction output found in
-          $\Sigma_{\alice}$ that is currently exclusively spendable by \alice{}
-          and has value $y \geq x$
-          \State $F \gets$ TX \{input spends \texttt{prevout} with a
-          \textsc{SignDS}(TX, $sk_{\alice}$), output 0 pays $y - x$ to
-          $pk_{\alice}$, output 1 pays $x$ to $\mathit{tid}.ph_F \wedge pt_F$\}
-          \State $\mathit{pchid} \gets \mathcal{H}\left(F\right)$
-          \State add \textit{pchid} to \texttt{pendingOpen} entry with id
-          \textit{tid}
-          \State $pt_{\mathrm{rev}, 1} \gets
-          \textsc{CombinePubKey}\left(ptb_{\mathrm{rev}}, ph_{\mathrm{com},
-          1}\right)$
-          \State $(ph_{\mathrm{dpay}, 1}, sh_{\mathrm{dpay}, 1}) \gets
-          \textsc{KeyDer}\left(phb_{\mathrm{dpay}}, shb_{\mathrm{dpay}},
-          ph_{\mathrm{com}, 1}\right)$
-          \State $(ph_{\mathrm{pay}, 1}, sh_{\mathrm{pay}, 1}) \gets
-          \textsc{KeyDer}\left(phb_{\mathrm{pay}}, shb_{\mathrm{pay}},
-          ph_{\mathrm{com}, 1}\right)$
-          \State $(ph_{\mathrm{htlc}, 1}, sh_{\mathrm{htlc}, 1}) \gets
-          \textsc{KeyDer}\left(phb_{\mathrm{htlc}}, shb_{\mathrm{htlc}},
-          ph_{\mathrm{com}, 1}\right)$
-          \State $\mathtt{remoteCom} \gets \mathtt{remoteCom}_1 \gets$ TX
-          \{input: output 1 of $F$, outputs: $\left(x, ph_{\mathrm{pay},
-          1}\right), \left(0, ph_{\mathrm{rev}, 1} \vee \left(pt_{\mathrm{dpay},
-          1}, \mathtt{delay} + \tochain{} \text{ relative}\right)\right)$\}
-          \State $\mathtt{localCom} \gets$ TX \{input: output 1 of $F$, outputs:
-          $\left(x, pt_{\mathrm{rev}, 1} \vee \left(ph_{\mathrm{dpay}, 1},
-          \mathtt{remoteDelay} \text{ relative}\right)\right), \left(0,
-          pt_{\mathrm{pay}, 1}\right)$\}
-          \State add $\mathtt{remoteCom}$ and $\mathtt{localCom}$ to channel
-          entry in \texttt{pendingOpen}
-          \State $\mathrm{sig} \gets \textsc{SignDS}\left(\mathtt{remoteCom}_1,
-          sh_F\right)$
-          \State $\mathtt{lastRemoteSigned} \gets 0$
-          \State send (\textsc{fundingCreated}, \textit{tid},
-          \textit{pchid}, sig) to \bob{}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:open:acceptChannel}
-  \end{figure}
+      \State On (\textsc{close}) by \environment:
+      \Indent
+        \If{$\mathit{State} = \textsc{open base}$}
+          \State prepare $C$ TODO
+          \State send (\textsc{submit}, $C$) to \ledger
+        \ElsIf{$\mathit{State} = \textsc{open virtual}$}
+          \State TODO
+        \EndIf
+      \EndIndent
+      \Statex
 
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{fundingCreated}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{fundingCreated}, \textit{tid},
-        \textit{pchid}, $\mathtt{BobSig}_1$) from \bob:
-        \Indent
-          \State ensure there is a temporary ID \textit{tid} with \bob{} in
-          \texttt{pendingOpen} on which we have sent up to
-          \textsc{acceptChannel}
-          \State $ph_{\mathrm{rev}, 1} \gets
-          \textsc{CombinePubKey}\left(phb_{\mathrm{rev}} pt_{\mathrm{com},
-          1}\right)$
-          \State $pt_{\mathrm{dpay}, 1} \gets
-          \textsc{PubKeyDer}\left(ptb_{\mathrm{dpay}}, pt_{\mathrm{com},
-          1}\right)$
-          \State $pt_{\mathrm{pay}, 1} \gets
-          \textsc{PubKeyDer}\left(ptb_{\mathrm{pay}}, pt_{\mathrm{com},
-          1}\right)$
-          \State $pt_{\mathrm{htlc}, 1} \gets
-          \textsc{PubKeyDer}\left(ptb_{\mathrm{htlc}}, pt_{\mathrm{com},
-          1}\right)$
-          \State $\mathtt{localCom} \gets \mathtt{localCom}_1 \gets$ TX \{input:
-          output 1 of $F$, outputs: $\left(x, pt_{\mathrm{pay}, 1}\right),
-          \left(0, pt_{\mathrm{rev}, 1} \vee \left(ph_{\mathrm{dpay}, 1},
-          \mathtt{remoteDelay} \text{ relative}\right)\right)$\}
-          \State ensure $\textsc{VerifyDS}\left(\mathtt{BobSig}_1,
-          \mathtt{localCom}_1, pt_F\right) = \mathtt{True}$
-          \State $\mathtt{remoteCom} \gets \mathtt{remoteCom}_1 \gets$ TX
-          \{input: output 1 of $F$, outputs: $\left(x, ph_{\mathrm{rev}, 1} \vee
-          \left(pt_{\mathrm{dpay}, 1}, \mathtt{delay} + \tochain{} \text{
-          relative}\right)\right), \left(0, ph_{\mathrm{pay}, 1}\right)\}$
-          \State add $\mathtt{BobSig}_1, \mathtt{remoteCom}_1$ and
-          $\mathtt{localCom}_1$ to channel entry in \texttt{pendingOpen}
-          \State $\mathrm{sig} \gets \textsc{SignDS}\left(\mathrm{remoteCom}_1,
-          sh_F\right)$
-          \State mark channel as ``broadcast, no \textsc{fundingLocked}''
-          \label{alg:protocol:open:fundingCreated:mark}
-          \State $\mathtt{lastRemoteSigned}, \mathtt{lastLocalSigned} \gets 0$
-          \State send (\textsc{fundingSigned}, \textit{pchid}, sig) to \bob{}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:open:fundingCreated}
-  \end{figure}
+      \State \Comment{notification to funder}
+      \State \Comment{trust that \alice has $c$ in her channel}
+      \State On (\textsc{fund virtual}, $c$, \bob) by \alice:
+      \Indent
+        \State ensure $\mathit{State} = \textsc{init}$
+        \State $\mathit{State} \gets \textsc{opening virtual channel}$
+        \State do LN with \bob if he received (\textsc{allow virtual}, $c$,
+        \bob) (other box, hopefully same as the above) % TODO
+      \EndIndent
+      \Statex
 
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{fundingSigned}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{fundingSigned}, \textit{pchid},
-        $\mathtt{BobSig}_1$) from \bob:
-        \Indent
-          \State ensure there is a channel ID \textit{pchid} with \bob{} in
-          \texttt{pendingOpen} on which we have sent up to
-          \textsc{fundingCreated}
-          \State ensure $\textsc{VerifyDS}\left(\mathtt{BobSig}_1,
-          \mathtt{localCom}, pb_F\right) = \mathtt{True}$
-          \State $\mathtt{localCom}_1 \gets \mathtt{localCom}$
-          \State $\mathtt{lastLocalSigned} \gets 0$
-          \State add $\mathtt{BobSig}_1$ to channel entry in
-          \texttt{pendingOpen}
-          \State $\mathrm{sig} \gets \textsc{SignDS}\left(F,
-          sk_{\mathit{Alice}}\right)$
-          \State mark \textit{pchid} in \texttt{pendingOpen} as ``broadcast, no
-          \textsc{fundingLocked}''
-          \label{alg:protocol:open:fundingSigned:mark}
-          \State send (\textsc{submit}, $\left(\mathrm{sig}, F\right)$) to
-          \ledger
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:open:fundingSigned}
-  \end{figure}
+      \State \Comment{notification to fundee}
+      \State On (\textsc{allow virtual}, $c$, \bob) by \alice:
+      \Indent
+        \State ensure $\mathit{State} = \textsc{init}$
+        \State $\mathit{State} \gets \textsc{ready for virtual channel}$
+        \State $\mathtt{funder} \gets \bob$
+        \State $\mathtt{coins} \gets c$
+      \EndIndent
+      \Statex
 
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{checkForNew}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{checkForNew}, \alice, \bob, \textit{tid})
-        from \environment: \Comment{lnd polling daemon}
-        \Indent
-          \State ensure there is a matching \texttt{channel} in
-          \texttt{pendingOpen} with id \textit{pchid}, with a ``broadcast''
-          and a ``no \textsc{fundingLocked}'' mark, funded with $x$ coins
-          \label{alg:protocol:checkForNew:valid}
-          \State send (\textsc{read}) to \ledger{} and assign reply to
-          $\Sigma_{\alice}$
-          \label{alg:protocol:checkForNew:read}
-          \State ensure $\exists$ unspent TX in $\Sigma_{\alice}$ with ID
-          \textit{pchid} and a $\left(x, ph_F \wedge pt_F\right)$ output
-          \label{alg:protocol:checkForNew:included}
-          \State $\mathrm{prand}_2 \gets \textsc{PRF}\left(\mathtt{seed},
-          2\right)$
-          \label{alg:protocol:checkForNew:prand}
-          \State $\left(ph_{\mathrm{com}, 2}, sh_{\mathrm{com}, 2}\right) \gets
-          \textsc{KeyShareGen}\left(1^k; \mathrm{prand}_2\right)$
-          \State add TX to \texttt{channel} data
-          \State replace ``broadcast'' mark in \texttt{channel} with
-          ``\textsc{fundingLocked} sent''
-          \State send (\textsc{fundingLocked}, \textit{pchid},
-          $ph_{\mathrm{com}, 2}$) to \bob{}
-          \label{alg:protocol:checkForNew:send}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:checkForNew}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{fundingLocked}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{fundingLocked}, \textit{pchid},
-        $pt_{\mathrm{com}, 2}$) from \bob:
-        \Indent
-          \State ensure there is a \texttt{channel} with ID \textit{pchid} with
-          \bob{} in \texttt{pendingOpen} with a ``no \textsc{fundingLocked}''
-          mark
-          \If{\texttt{channel} is not marked with ``\textsc{fundingLocked}
-          sent''} \Comment{i.e. marked with ``broadcast''}
-            \State send (\textsc{read}) to \ledger{} and assign reply to
-            $\Sigma_{\alice}$
-            \State ensure $\exists$ unspent TX in $\Sigma_{\alice}$ with ID
-            \textit{pchid} and a $\left(x, ph_F \wedge pt_F\right)$ output
-            \State add TX to \texttt{channel} data
-            \State $\mathrm{prand}_2 \gets \textsc{PRF}\left(\mathtt{seed},
-            2\right)$
-            \label{alg:protocol:fundingLocked:prand}
-            \State $\left(ph_{\mathrm{com}, 2}, sh_{\mathrm{com}, 2}\right) \gets
-            \textsc{KeyShareGen}\left(1^k; \mathrm{prand}_2\right)$
-            \State generate 2nd remote delayed payment, htlc, payment keys
-          \EndIf
-          \State replace ``no \textsc{fundingLocked}'' mark in \texttt{channel}
-          with ``\textsc{fundingLocked} received''
-          \State move channel data from \texttt{pendingOpen} to
-          \texttt{channels}
-          \State add receipt of channel to \texttt{newChannels}
-          \label{alg:protocol:fundingLocked:report}
-          \If{\texttt{channel} is not marked with ``\textsc{fundingLocked}
-          sent''}
-            \State replace ``broadcast'' mark in \texttt{channel} with
-            ``\textsc{fundingLocked} sent''
-            \State send (\textsc{fundingLocked}, \textit{pchid},
-            $ph_{\mathrm{com}, 2}$) to \bob{}
-          \EndIf
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:fundingLocked}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - poll}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{poll}) from \environment:
-        \Indent
-          \State send (\textsc{read}) to \ledger{} and assign reply to
-          $\Sigma_{\alice}$
-          \label{alg:protocol:poll:read}
-          \State assign largest block number in $\Sigma_{\alice}$ to
-          \texttt{lastPoll}
-          \label{alg:protocol:poll:afterread}
-        \State $\mathtt{toSubmit} \gets \emptyset$
-          \ForAll{$\tau \in \mathtt{unclaimedOfferedHTLCs}$}
-            \If{input of $\tau$ has been spent} \Comment{by
-            \texttt{remote HTLC-success}}
-              \State remove $\tau$ from \texttt{unclaimedOfferedHTLCs}
-              \If{we are intermediary}
-                \State retrieve preimage $R$, $\mathit{pchid}'$ of previous
-                channel on the path of the HTLC, and $\mathtt{HTLCNo}'$ of the
-                corresponding $\mathrm{HTLC}'$ in $\mathit{pchid}'$
-                \State add $\left(\mathtt{HTLCNo}', R\right)$ to
-                $\mathtt{pendingFulfills}_{\mathit{pchid}'}$
-              \EndIf
-            \ElsIf{input of $\tau$ has not been spent and timelock is over}
-              \State remove $\tau$ from \texttt{unclaimedOfferedHTLCs}
-              \State add $\tau$ to \texttt{toSubmit}
-            \EndIf
-          \EndFor
-          \State run loop of Fig.~\ref{alg:protocol:poll:closedch}
-          \ForAll{honestly closed $\mathtt{remoteCom}_n$ that were processed
-          above, with channel id \textit{pchid}}
-            \ForAll{received HTLC outputs $i$ of $\mathtt{remoteCom}_n$}
-              \If{there is an entry in
-              $\mathtt{pendingFulfills}_{\mathit{pchid}}$ with the same
-              \texttt{HTLCNo} and $R$}
-                \State $\mathrm{TX} \gets$ \{input: $i$ HTLC output of
-                $\mathtt{remoteCom}_n$ with $\left(ph_{\mathrm{htlc}, n},
-                R\right)$ as method, output: $pk_{\alice}$\}
-                \State $\mathrm{sig} \gets \textsc{SignIBS}\left(TX,
-                sh_{\mathrm{htlc}, n}\right)$
-                \State add (sig, TX) to \texttt{toSubmit}
-                \State remove entry from
-                $\mathtt{pendingFulfills}_{\mathit{pchid}}$
-              \EndIf
-            \EndFor
-          \EndFor
-          \label{alg:protocol:poll:beforesubmit}
-          \State send (\textsc{submit}, \texttt{toSubmit}) to \ledger
-          \label{alg:protocol:poll:submit}
-        \EndIndent
-        \Statex
-
-        \State Upon receiving (\textsc{getNews}) from \alice:
-        \label{alg:protocol:getnews}
-        \Indent
-          \State clear \texttt{newChannels}, \texttt{closedChannels},
-          \texttt{updatesToReport} and send them to \alice{} with message name
-          \textsc{news}
-          \label{alg:protocol:getnews:send}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:poll}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{titlebox}{\normalfont Loop over closed channels for
-    poll}{commonbox}{normal}
-      \begin{algorithmic}[1]
-        \ForAll{$\mathtt{remoteCom}_n \in \Sigma_{\alice}$ that spend $F$ of a
-        $\mathtt{channel} \in \mathtt{channels}$}
-        \label{alg:protocol:poll:closedch:loop}
-          \If{we do not have $sh_{\mathrm{rev}, n}$} \Comment{Honest closure}
-            \ForAll{unspent offered HTLC outputs $i$ of
-            $\mathtt{remoteCom}_n$}
-              \State $\mathrm{TX} \gets$ \{input: $i$ HTLC output of
-              $\mathtt{remoteCom}_n$ with $ph_{\mathrm{htlc}, n}$ as method,
-              output: $pk_{\alice}$\}
-              \State $\mathrm{sig} \gets \textsc{SignIBS}\left(TX,
-              sh_{\mathrm{htlc}, n}\right)$
-              \If{timelock has not expired}
-                \State add (sig, TX) to \texttt{unclaimedOfferedHTLCs}
-              \ElsIf{timelock has expired}
-                \State add (sig, TX) to \texttt{toSubmit}
-                \label{alg:protocol:poll:htlc:submit}
-              \EndIf
-            \EndFor
-            \ForAll{spent offered HTLC output $i$ of $\mathtt{remoteCom}_n$}
-              \If{we are intermediary}
-                \State retrieve preimage $R$, $\mathit{pchid}'$ of previous
-                channel on the path of the HTLC, and $\mathtt{HTLCNo}'$ of the
-                corresponding $\mathrm{HTLC}'$ in $\mathit{pchid}'$
-                \State add $\left(\mathtt{HTLCNo}', R\right)$ to
-                $\mathtt{pendingFulfills}_{\mathit{pchid}'}$
-              \EndIf
-            \EndFor
-          \Else \ \Comment{malicious closure}
-          \label{alg:protocol:poll:mal}
-            \State $\mathrm{rev} \gets$ TX \{inputs: all
-            $\mathtt{remoteCom}_n$ outputs, choosing $ph_{\mathrm{rev}, n}$
-            method, output: $pk_{\mathit{Alice}}$\}
-            \label{alg:protocol:poll:mal:tx}
-            \State $\mathrm{sig} \gets \textsc{SignCS}\left(\mathrm{rev},
-            sh_{\mathrm{rev}, n}\right)$
-            \State add $\left(\mathrm{sig}, \mathrm{rev}\right)$ to
-            \texttt{toSubmit}
-            \label{alg:protocol:poll:mal:submit}
-          \EndIf
-          \State add \texttt{receipt}(\texttt{channel}) to
-          \texttt{closedChannels}
-          \label{alg:protocol:poll:report}
-          \State remove \texttt{channel} from \texttt{channels}
-          \label{alg:protocol:poll:remove}
-        \EndFor
-      \end{algorithmic}
-    \end{titlebox}
-    \caption{}
-    \label{alg:protocol:poll:closedch}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - invoice}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{pay}, \textit{Bob}, $x$,
-        $\overrightarrow{\mathtt{path}}$) from \environment:
-        \Indent
-          \State ensure that $\overrightarrow{\mathtt{path}}$ consists of
-          syntactically valid (\textit{pchid}, \texttt{CltvExpiryDelta}) pair
-          \Comment{Payment completes only if $\forall \text{ honest } i \in
-          \overrightarrow{\mathtt{path}}, \mathtt{CltvExpiryDelta}_i \geq 3k +
-          \mathtt{RelayDelay}_i$}
-          \label{alg:protocol:pay:validpath}
-          \State ensure that the first $\mathit{pchid} \in
-          \overrightarrow{\mathtt{path}}$ corresponds to an open
-          $\mathtt{channel} \in \mathtt{channels}$ in which we own at least $x$
-          in the irrevocably committed state.
-          \label{alg:protocol:pay:validchannel}
-          \State choose unique payment ID \textit{payid} \Comment{unique for
-          \alice{} and \bob}
-          \State add (\bob, $x$, $\overrightarrow{\mathtt{path}}$,
-          \textit{payid}, ``waiting for invoice'') to \texttt{pendingPay}
-          \State send (\textsc{sendInvoice}, \textit{payid}) to \bob{}
-          \label{alg:protocol:pay:sendinvoice}
-        \EndIndent
-        \Statex
-
-        \State Upon receiving (\textsc{sendInvoice}, \textit{payid}) from \bob:
-        \Indent
-          \State ensure there is no (\bob, \textit{payid}) entry in
-          \texttt{pendingGetPaid}
-          \State choose random, unique preimage $R$
-          \State add (\bob, $R$, \textit{payid}) to \texttt{pendingGetPaid}
-          \State send $\left(\textsc{invoice}, \mathcal{H}\left(R\right),
-          \mathtt{relayDelay} + \tochain{}, \mathit{payid}\right)$ to
-          \bob{}
-        \EndIndent
-        \Statex
-
-        \State Upon receiving (\textsc{invoice}, $h$,
-        \texttt{minFinalCltvExpiry}, \textit{payid}) from \bob:
-        \Indent
-          \State ensure there is a (\bob, $x$, $\overrightarrow{\mathtt{path}}$,
-          \textit{payid}, ``waiting for invoice'') entry in \texttt{pendingPay}
-          \State ensure $h$ is valid (in the range of $\mathcal{H}$)
-          \State retrieve \texttt{CltvExpiryDelta}s from
-          $\overrightarrow{\mathtt{path}}$ and remove entry from
-          \texttt{pendingPay}
-          \State send (\textsc{read}) to \ledger{} and assign largest block
-          number to $t$
-          \State $l \gets |\left(\overrightarrow{\mathtt{path}}\right)|$
-          \State $\mathtt{CltvExpiry}_l \gets t + \mathtt{minFinalCltvExpiry}$
-          \State $\forall i \in \{1, \dots, l - 1\}, \mathtt{CltvExpiry}_{l - i}
-          \gets \mathtt{CltvExpiry}_{l - i + 1} + \mathtt{CltvExpiryDelta}_{l -
-          i + 1}$
-          \label{alg:protocol:pay:invoice:cltv}
-          \State ensure $\mathtt{CltvExpiry}_1 \geq \mathtt{CltvExpiry}_2 +
-          \mathtt{relayDelay} + \tochain$
-          \State $m \gets$ the concatenation of $l \left(x,
-          \mathtt{CltvExpiry}\right)$
-          \State $\left(\mu_0, \delta_0\right) \gets
-          \mathtt{SphinxCreate}\left(m, \text{ public keys of }
-          \overrightarrow{\mathtt{path}} \text{ parties}\right)$
-          \State let $\mathtt{remoteCom}_n$ the latest signed remote commitment
-          tx
-          \State reduce simple payment output in \texttt{remoteCom} by $x$
-          \State add an additional $\left(x, ph_{\mathrm{rev}, n+1} \vee
-          \left(ph_{\mathrm{htlc}, n+1} \wedge pt_{\mathrm{htlc}, n+1}, \text{
-          on preimage}\right.\right.$ $\left.\left.\text{of } h\right) \vee
-          ph_{\mathrm{htlc}, n+1}, \mathtt{CltvExpiry}_1 \text{
-          absolute}\right)$
-          output (all with $n+1$ keys) to \texttt{remoteCom}, marked with
-          \texttt{HTLCNo}
-          \State reduce delayed payment output in \texttt{localCom} by $x$
-          \State add an additional $\left(x, pt_{\mathrm{rev}, n+1} \vee
-          \left(pt_{\mathrm{htlc}, n+1}, \text{ on preimage}\right.\right.$
-          $\left.\left.\text{of } h\right) \vee \left(ph_{\mathrm{htlc}, n+1}
-          \wedge pt_{\mathrm{htlc}, n+1}, \mathtt{CltvExpiry}_1 \text{
-          absolute}\right)\right)$ output (all with $n+1$ keys) to
-          \texttt{localCom}, marked with \texttt{HTLCNo}
-          \State increment $\mathtt{HTLCNo}_{\mathit{pchid}}$ by one and
-          associate $x, h, \mathit{pchid}$ with it
-          \State mark \texttt{HTLCNo} as ``sender''
-          \State send (\textsc{updateAddHtlc}, first \textit{pchid} of
-          $\overrightarrow{\mathtt{path}}, \mathtt{HTLCNo}_{\mathit{pchid}}, x,
-          h, \mathtt{CltvExpiry}_1, \left(\mu_0, \delta_0\right)$) to
-          \textit{pchid} channel counterparty
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:pay:invoice}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{commit}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{commit}, \textit{pchid}) from
-        \environment:
-        \Indent
-          \State ensure that there is a $\mathtt{channel} \in \mathtt{channels}$
-          with ID \textit{pchid}
-          \State retrieve latest remote commitment tx $\mathtt{remoteCom}_n$ in
-          \texttt{channel}
-          \State ensure $\mathtt{remoteCom} \neq \mathtt{remoteCom}_n$
-          \Comment{there are uncommitted updates}
-          \State ensure \texttt{channel} is not marked as ``waiting for
-          \textsc{revokeAndAck}''
-          \label{alg:protocol:pay:commit:nomark}
-          \State send (\textsc{read}) to \ledger{} and assign largest block
-          number to $t$
-          \State undo adding all outgoing HTLCs in \texttt{remoteCom} for which
-          we are intermediary and $\mathtt{IncomingCltvExpiry} < t +
-          \mathtt{relayDelay} + \tochain$
-          \State $\mathtt{remoteCom}_{n+1} \gets \mathtt{remoteCom}$
-          \State $\mathrm{ComSig} \gets
-          \textsc{SignDS}\left(\mathtt{remoteCom}_{n+1}, sh_F\right)$
-          \State $\mathrm{HTLCSigs} \gets \emptyset$
-          \For{$i$ from \texttt{lastRemoteSigned} to \texttt{HTLCNo}}
-            \State $\mathtt{remoteHTLC}_{n+1, i} \gets$ TX \{input: HTLC output
-            $i$ of $\mathtt{remoteCom}_{n+1}$, output: $\left(c_{\mathrm{htlc,
-            i}}, ph_{\mathrm{rev}, n+1} \vee \left(pt_{\mathrm{dpay}, n+1},
-            \mathtt{delay} + \tochain{} \text{ relative}\right)\right)$\}
-            \State add $\textsc{SignIBS}\left(\mathtt{remoteHTLC}_{n+1, i},
-            sh_{\mathrm{htlc}, n+1}\right)$ to HTLCSigs
-          \EndFor
-          \State add $\textsc{SignIBS}\left(\mathtt{remoteHTLC}_{n+1, m+1},
-          sh_{\mathrm{htlc}, n+1}\right)$ to HTLCSigs
-          \State $\mathtt{lastRemoteSigned} \gets \mathtt{HTLCNo}$
-          \State mark \texttt{channel} as ``waiting for \textsc{revokeAndAck}''
-          \label{alg:protocol:pay:commit:mark}
-          \State send (\textsc{commitmentSigned}, \textit{pchid}, ComSig,
-          HTLCSigs) to \textit{pchid} counterparty
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:pay:commit}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{commitmentSigned}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{commitmentSigned}, \textit{pchid},
-        $\mathtt{comSig}_{n+1}$, $\mathtt{HTLCSigs}_{n+1}$) from \bob:
-        \Indent
-          \State ensure that there is a $\mathtt{channel} \in \mathtt{channels}$
-          with ID \textit{pchid} with \bob
-          \State retrieve latest local commitment tx $\mathtt{localCom}_n$ in
-          \texttt{channel}
-          \State ensure $\mathtt{localCom} \neq \mathtt{localCom}_n$ and
-          $\mathtt{localCom} \neq \mathtt{pendingLocalCom}$
-          \Comment{there are uncommitted updates}
-          \If{$\textsc{VerifyDS}\left(\mathtt{comSig}_{n+1}, \mathtt{localCom},
-          pt_F\right) = \mathtt{false} \vee |\mathtt{HTLCSigs}_{n+1}| \neq
-          \mathtt{HTLCNo} - \mathtt{lastLocalSigned} + 1$}
-            \State close channel (as in Fig.~\ref{alg:protocol:close})
-            \State \Return
-          \EndIf
-          \For{$i$ from \texttt{lastLocalSigned} to \texttt{HTLCNo}}
-            \State $\mathtt{localHTLC}_{n+1, i} \gets$ TX \{input: HTLC output
-            $i$ of $\mathtt{localCom}$, output: $\left(c_{\mathrm{htlc, i}},
-            ph_{\mathrm{rev}, n+1} \vee \left(pt_{\mathrm{dpay}, n+1},
-            \mathtt{remoteDelay} \text{ relative}\right)\right)$\}
-            \If{$\textsc{VerifyIBS}\left(\mathtt{HTLCSigs}_{n+1, i},
-            \mathtt{localHTLC}_{n+1, i}, pt_{\mathrm{htlc}, n+1}\right) =
-            \mathtt{false}$}
-              \State close channel (as in Fig.~\ref{alg:protocol:close})
-              \State \Return
-            \EndIf
-          \EndFor
-          \State $\mathtt{pendingLocalCom} \gets \mathtt{localCom}$
-          \State mark $\mathtt{pendingLocalCom}$ as ``irrevocably committed''
-          \State $\mathrm{prand}_{n+2} \gets \textsc{PRF}\left(\mathtt{seed},
-          n+2\right)$
-          \label{alg:protocol:pay:commitmentSigned:prf}
-          \State $\left(ph_{\mathrm{com}, n+2}, sh_{\mathrm{com}, n+2}\right)
-          \gets \textsc{KeyShareGen}\left(1^k; \mathrm{prand}_{n+2}\right)$
-          \State send (\textsc{revokeAndAck}, \textit{pchid}, $\mathrm{prand}_n,
-          ph_{\mathrm{com}, n+2}$) to \bob
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:pay:commitmentSigned}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{revokeAndAck}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{revokeAndAck}, \textit{pchid},
-        $st_{\mathrm{com}, n}, pt_{\mathrm{com}, n+2}$) from \bob:
-        \Indent
-          \State ensure there is a $\mathtt{channel} \in \mathtt{channels}$ with
-          \bob{} with ID \textit{pchid} marked as ``waiting for
-          \textsc{revokeAndAck}''
-          \label{alg:protocol:pay:revokeAndAck:ensure}
-          \If{$\textsc{TestKey}\left(st_{\mathrm{com}, n}, pt_{\mathrm{com},
-          n}\right) \neq 1$} \Comment{wrong $st_{\mathrm{com}, n}$ - closing}
-            \State close channel (as in Fig.~\ref{alg:protocol:close})
-            \State \Return
-          \EndIf
-          \State mark $\mathtt{remoteCom}_{n+1}$ as ``irrevocably committed''
-          \State $\mathtt{localCom}_{n+1} \gets \mathtt{pendingLocalCom}$
-          \State unmark \texttt{channel}
-          \State add \texttt{receipt}(\texttt{channel}) to
-          \texttt{updatesToReport}
-          \label{alg:protocol:pay:raa:report}
-          \State $sh_{\mathrm{rev}, n} \gets
-          \textsc{CombineKey}\left(phb_{\mathrm{rev}}, shb_{\mathrm{rev}},
-          pt_{\mathrm{com} n}, st_{\mathrm{com}, n}\right)$
-          \State $ph_{\mathrm{rev}, n+2} \gets
-          \textsc{CombinePubKey}\left(phb_{\mathrm{rev}}, pt_{\mathrm{com},
-          n+2}\right)$
-          \State $pt_{\mathrm{rev}, n+2} \gets
-          \textsc{CombinePubKey}\left(ptb_{\mathrm{rev}}, ph_{\mathrm{com},
-          n+2}\right)$
-          \State $(ph_{\mathrm{dpay}, n+2}, sh_{\mathrm{dpay}, n+2}) \gets
-          \textsc{KeyDer}\left(phb_{\mathrm{dpay}}, shb_{\mathrm{dpay}},
-          ph_{\mathrm{com}, n+2}\right)$
-          \State $pt_{\mathrm{dpay}, n+2} \gets
-          \textsc{PubKeyDer}\left(ptb_{\mathrm{dpay}}, pt_{\mathrm{com},
-          n+2}\right)$
-          \State $(ph_{\mathrm{pay}, n+2}, sh_{\mathrm{pay}, n+2}) \gets
-          \textsc{KeyDer}\left(phb_{\mathrm{pay}}, shb_{\mathrm{pay}},
-          ph_{\mathrm{com}, n+2}\right)$
-          \State $pt_{\mathrm{pay}, n+2} \gets
-          \textsc{PubKeyDer}\left(ptb_{\mathrm{pay}}, pt_{\mathrm{com},
-          n+2}\right)$
-          \State $(ph_{\mathrm{htlc}, n+2}, sh_{\mathrm{htlc}, n+2}) \gets
-          \textsc{KeyDer}\left(phb_{\mathrm{htlc}}, shb_{\mathrm{htlc}},
-          ph_{\mathrm{com}, n+2}\right)$
-          \State $pt_{\mathrm{htlc}, n+2} \gets
-          \textsc{PubKeyDer}\left(ptb_{\mathrm{htlc}}, pt_{\mathrm{com},
-          n+2}\right)$
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:pay:revokeAndAck}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - \textsc{push}}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{pushFulfill}, \textit{pchid}) from
-        \environment:
-        \label{alg:protocol:pushfulfill:start}
-        \Indent
-          \State ensure that there is a $\mathtt{channel} \in \mathtt{channels}$
-          with ID \textit{pchid}
-          \State choose a member (\texttt{HTLCNo}, $R$) of
-          $\mathtt{pendingFulfills}_{\mathit{pchid}}$ that is both in an
-          ``irrevocably committed'' $\mathtt{remoteCom}_n$ and
-          $\mathtt{localCom}_n$
-          \State send (\textsc{read}) to \ledger{} and assign reply to
-          $\Sigma_{\alice}$
-          \State remove (\texttt{HTLCNo}, $R$) from
-          $\mathtt{pendingFulfills}_{\mathit{pchid}}$
-          \If{$\mathtt{remoteCom}_n \notin \Sigma_{\alice}$}
-          \Comment{counterparty cooperative}
-            \State send (\textsc{updateFulfillHtlc}, \textit{pchid},
-            \texttt{HTLCNo}, $R$) to \textit{pchid} counterparty
-          \Else \ \Comment{counterparty gone on-chain}
-            \State $\mathrm{TX} \gets$ \{input: ($\mathtt{remoteCom}_n$ HTLC
-            output with number $\mathtt{HTLCNo}, R$), output:
-            $pk_{\alice}$\}
-            \State $\mathrm{sig} \gets \textsc{SignIBS}\left(\mathrm{TX},
-            sh_{\mathrm{htlc}, n}\right)$
-            \State send (\textsc{submit}, (sig, TX)) to \ledger{}
-            \Comment{shouldn't be already spent by remote \texttt{HTLCTimeout}}
-            \label{alg:protocol:pushfulfill:submit}
-          \EndIf
-          \label{alg:protocol:pushfulfill:end}
-        \EndIndent
-        \Statex
-
-        \State Upon receiving (\textsc{pushAdd}, \textit{pchid}) from
-        \environment:
-        \label{alg:protocol:pushadd:start}
-        \Indent
-          \State ensure that there is a $\mathtt{channel} \in \mathtt{channels}$
-          with ID \textit{pchid}
-          \State choose a member $\left(\mathtt{HTLCNo}, x, h,
-          \mathtt{CltvExpiry}, M\right)$ of
-          $\mathtt{pendingAdds}_{\mathit{pchid}}$ that is both in an
-          ``irrevocably committed'' $\mathtt{remoteCom}_n$ and
-          $\mathtt{localCom}_n$
-          \label{alg:protocol:pay:pushadd:choose}
-          \State remove chosen entry from
-          $\mathtt{pendingAdds}_{\mathit{pchid}}$
-          \State send (\textsc{updateAddHtlc}, \textit{pchid}, \texttt{HTLCNo},
-          $x, h, \mathtt{CltvExpiry}, M$) to \textit{pchid} counterparty
-          \label{alg:protocol:pushadd:end}
-        \EndIndent
-        \Statex
-
-        \State Upon receiving (\textsc{fulfillOnChain}) from \environment:
-        \label{alg:protocol:pay:foc:top}
-        \Indent
-          \State send (\textsc{read}) to \ledger{} and assign largest block
-          number to $t$
-          \label{alg:protocol:pay:foc:read}
-          \State $\mathtt{toSubmit} \gets \emptyset$
-          \label{alg:protocol:pay:foc:tosubmit}
-          \ForAll{channels}
-            \If{there exists an HTLC in latest $\mathtt{localCom}_n$ for which
-            we have sent both \textsc{updateFulfillHtlc} and
-            \textsc{commitmentSigned} to a transaction without that HTLC to
-            counterparty, but have not received the corresponding
-            \textsc{revokeAndAck} AND the HTLC expires within $\left[t, t +
-            \tochain{}\right]$}
-              \State add $\mathtt{localCom}_n$ of the channel and all
-              corresponding valid \texttt{HTLC-success}es and
-              \texttt{HTLC-timeout}s (for both $\mathtt{localCom}_n$ and
-              $\mathtt{remoteCom}_n$\footnote{Ensures funds retrieval if
-              counterparty has gone on-chain}), along with their signatures to
-              \texttt{toSubmit}
-            \EndIf
-          \EndFor
-          \State send (\textsc{submit}, \texttt{toSubmit}) to \ledger
-          \label{alg:protocol:pay:foc:submit}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:pay:push}
-  \end{figure}
-
-  \begin{figure}[H]
-    \begin{protocolbox}{$\Pi_{\mathrm{LN}}$ - close}
-      \begin{algorithmic}[1]
-        \State Upon receiving (\textsc{closeChannel}, \texttt{receipt},
-        \textit{tid}) from \environment:
-        \Indent
-          \State ensure \texttt{receipt} corresponds to an open
-          $\mathtt{channel} \in \mathtt{channels}$ with ID \textit{tid}
-          \label{alg:protocol:close:ensure}
-          \State assign latest \texttt{channel} sequence number to $n$
-          \State $\mathrm{HTLCs} \gets \emptyset$
-          \For{every $\text{HTLC output } \in \mathtt{localCom}_n$ with number
-          $i$}
-            \State $\mathrm{sig} \gets
-            \textsc{SignIBS}\left(\mathtt{localHTLC}_{n, i}, sh_{\mathrm{htlc},
-            n}\right)$
-            \State add $\left(\mathrm{sig}, \mathtt{HTLCSigs}_{n, i},
-            \mathtt{localHTLC}_{n, i}\right)$ to HTLCs
-          \EndFor
-          \State $\mathrm{sig} \gets \textsc{SignDS}\left(\mathtt{localCom}_n,
-          sh_F\right)$
-          \State add \texttt{receipt}(\texttt{channel}) to
-          \texttt{closedChannels}
-          \label{alg:protocol:close:report}
-          \State remove \texttt{channel} from \texttt{channels}
-          \label{alg:protocol:close:remove}
-          \State send (\textsc{submit}, $\left(\mathrm{sig},
-          \mathtt{remoteSig}_n, \mathtt{localCom}_n\right), \mathrm{HTLCs}$) to
-          \ledger
-          \label{alg:protocol:close:submit}
-        \EndIndent
-      \end{algorithmic}
-    \end{protocolbox}
-    \caption{}
-    \label{alg:protocol:close}
-  \end{figure}
+      \State On (\textsc{fund}, $c$, hops, $\mathrm{sid}_{\alice}$,
+      $\mathrm{sid}_{\bob}$) by \environment:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \If{do VChan with hops (other box) successful} % TODO
+          \State send (\textsc{fund}, $c$, $\mathrm{sid}_{\bob}$) to
+          $\mathrm{sid}_{\alice}$
+        \EndIf
+      \EndIndent
+    \end{algorithmic}
+  \end{protocolbox}
+  \caption{}
+  \label{code:protocol:chan:skeleton}
+\end{figure}
