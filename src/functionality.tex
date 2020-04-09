@@ -45,6 +45,15 @@
         \Comment{$\bar{D}$ is \alice if $D$ is \bob and vice-versa}
         \State output (\textsc{pay success}) to \dave
       \EndIndent
+      \Statex
+
+      \State On (\textsc{balance}) by $\dave \in \{\alice, \bob\}$:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State output (\textsc{balance}, $(c_A, c_B, \mathrm{locked}_A,
+        \mathrm{locked}_B)$) to \dave % TODO: maybe remove locked_{A,B}
+      \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}

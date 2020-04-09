@@ -39,6 +39,15 @@
       \EndIndent
       \Statex
 
+      \State On (\textsc{balance}) by \environment:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State output (\textsc{balance}, $(c_A, c_B, \mathrm{locked}_A,
+        \mathrm{locked}_B)$) to \environment % TODO: maybe remove locked_{A,B}
+      \EndIndent
+      \Statex
+
       \State On (\textsc{close}) by \environment:
       \Indent
         \If{$\mathit{State} = \textsc{open base}$}
