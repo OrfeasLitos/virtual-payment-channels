@@ -124,10 +124,11 @@
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
-      \State On (\textsc{fund you}, $c$) by $\charlie$:
-      \Comment{\alice is funded by \charlie}
+      \State On (\textsc{fund you}, $c$, \dave) by $\charlie$ as input to
+      \alice: \Comment{\alice is funded by \charlie}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
+        \State $\bob \gets \dave$
         \State relay message to \adversary and ensure reply is \textsc{(ok)}
         \State $c_A \gets c; c_B \gets 0$
         \State $\mathtt{opener} \gets \charlie$
