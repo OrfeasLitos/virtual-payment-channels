@@ -77,16 +77,6 @@
       \EndIndent
       \Statex
 
-      \State \Comment{notification to fundee}
-      \State On (\textsc{allow virtual}, $c$, \bob) by \alice:
-      \Indent
-        \State ensure $\mathit{State} = \textsc{init}$
-        \State $\mathit{State} \gets \textsc{ready for virtual channel}$
-        \State $\mathtt{funder} \gets \bob$
-        \State $\mathtt{coins} \gets c$
-      \EndIndent
-      \Statex
-
       \State On (\textsc{fund}, $c$, hops, $\mathrm{sid}_{\alice}$,
       $\mathrm{sid}_{\bob}$) by \environment:
       \Indent
@@ -97,6 +87,12 @@
           $\mathrm{sid}_{\alice}$
         \EndIf
       \EndIndent
+      \Statex
+
+      \State \Comment{notification to fundee}
+      \State On (\textsc{allow fund}, \dots) by \charlie, act as \fchan
+      (Fig~\ref{code:functionality:chan:skeleton:virtual},
+      line~\ref{code:functionality:chan:skeleton:virtual:allow_fund}):
     \end{algorithmic}
   \end{protocolbox}
   \caption{}
