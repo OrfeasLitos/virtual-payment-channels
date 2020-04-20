@@ -77,8 +77,9 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund}, $c$, hops, $\mathrm{sid}_{\alice}$,
-      $\mathrm{sid}_{\bob}$) by \environment:
+      \State On (\textsc{fund}, $c$, hops, \texttt{sub\_parties} = (fundee,
+      counterparty), \texttt{outer\_parties} = (\charlie, \dave) by
+      \environment:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
