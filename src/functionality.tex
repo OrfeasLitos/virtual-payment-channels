@@ -144,6 +144,8 @@
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
         \State ensure $c_A - \mathrm{locked}_A \geq c$
+        \State input (\textsc{fund you}, $c$, counterparty) to fundee as \alice,
+        ensure output is (\textsc{ok})
         \State $(L_0, R_0) \gets (\alice, \bob)$
         \State generate random id
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
@@ -157,8 +159,6 @@
         % TODO: decide if need to store \alice or hops here
         \State add (($c$, 0), hops, \texttt{sub\_parties},
         \texttt{outer\_parties}, id) to \texttt{funded} 
-        \State input (\textsc{fund you}, $c$, counterparty) to fundee as \alice
-        and ensure output is (\textsc{ok})
         \State output (\textsc{ok}) to \alice
       \EndIndent
       \Statex
