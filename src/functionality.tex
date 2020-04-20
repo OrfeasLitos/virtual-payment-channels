@@ -140,6 +140,7 @@
       \State On (\textsc{fund}, $c$, hops, \texttt{sub\_parties} = (fundee,
       counterparty), \texttt{outer\_parties} = (\charlie, \dave)) by \alice:
       \Comment{we fund another channel}
+      \label{code:functionality:chan:skeleton:virtual:fund}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
@@ -159,6 +160,7 @@
         % TODO: decide if need to store \alice or hops here
         \State add (($c$, 0), hops, \texttt{sub\_parties},
         \texttt{outer\_parties}, id) to \texttt{funded} 
+        \label{code:functionality:chan:skeleton:virtual:fund:store}
         \State output (\textsc{ok}) to \alice
       \EndIndent
       \Statex

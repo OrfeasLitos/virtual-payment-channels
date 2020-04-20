@@ -83,10 +83,12 @@
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \If{do VChan with hops (other box) successful} % TODO
-          \State send (\textsc{fund}, $c$, $\mathrm{sid}_{\bob}$) to
-          $\mathrm{sid}_{\alice}$
-        \EndIf
+        \State do the same as in \fchan
+        (Fig.~\ref{code:functionality:chan:skeleton:virtual},
+        lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:store})
+        TODO: make sure it makes sense
+        \State do VChan() with hops -- TODO
+        \State output (\textsc{ok}) to \environment
       \EndIndent
       \Statex
 
