@@ -57,8 +57,15 @@
           \State TODO
         \EndIf
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{protocolbox}
+  \caption{}
+  \label{code:protocol:chan:skeleton}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{protocolbox}{$\Pi_{\mathrm{Chan}}$ -- virtual}
+    \begin{algorithmic}[1]
       \State \Comment{notification to funder}
       \State \Comment{trust that \alice has $c$ in her channel}
       \State On (\textsc{fund virtual}, $c$, \bob) by \alice:
@@ -93,5 +100,5 @@
     \end{algorithmic}
   \end{protocolbox}
   \caption{}
-  \label{code:protocol:chan:skeleton}
+  \label{code:protocol:chan:skeleton:virtual}
 \end{figure}
