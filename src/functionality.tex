@@ -129,7 +129,8 @@
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\bob \gets \dave$
-        \State relay message to \adversary and ensure reply is \textsc{(ok)}
+        \State send (\textsc{fund you}, $c$, \bob, \charlie, \alice) to
+        \adversary and ensure reply is \textsc{(ok)}
         \State $c_A \gets c; c_B \gets 0$
         \State $\mathtt{opener} \gets \charlie$
         \State $\mathit{State} \gets \textsc{open virtual}$
