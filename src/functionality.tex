@@ -1,5 +1,5 @@
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init}
     \begin{algorithmic}[1]
       \State Initialisation: \Comment{runs on first activation}
       \Indent
@@ -8,22 +8,56 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $c$, \texttt{tx\_out}, $sk$, $pk_{A,
-      \mathrm{out}}$, $pk_{B, \mathrm{out}}$) by
-      \alice:
+      \State On (\textsc{top up}, $c_{\mathrm{min}}$) by \alice:
+      \label{code:functionality:chan:skeleton:init:top_up:start}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $pk \gets PK(sk)$; $(sk_{A, F}, pk_{A, F}) \gets
-        \textsc{KeyGen}()$; $(sk_{B, F}, pk_{B, F}) \gets \textsc{KeyGen}()$
-        \State $F \gets$ TX \{input: \texttt{tx\_out}, output: $(c, 2/\{pk_{A,
-        F}, pk_{B, F}\})$\}
+        \State $\mathit{State} \gets \textsc{sent key}$
+        \State $(sk, pk) \gets \textsc{KeyGen}()$
+        \State output (\textsc{public key}, $pk$) to \alice
+        \label{code:functionality:chan:skeleton:init:top_up:end}
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{check top up}) by \alice:
+      \label{code:functionality:chan:skeleton:init:check_top_up:start}
+      \Indent
+        \State ensure $\mathit{State} = \textsc{sent key}$
+        \State send (\textsc{read}) to \ledger as \alice and assign reply to
+        $\Sigma$
+        \State ensure $\exists \mathrm{tx} \in \Sigma, c_{\mathrm{on}}:
+        c_{\mathrm{on}} \geq c_{\mathrm{min}} \wedge (c_{\mathrm{on}}, pk) \in
+        \mathrm{tx.outputs}$
+        \State $\mathtt{base\_output} \gets (c_{\mathrm{on}}, pk) \text{ of tx}$
+        \State $\mathit{State} \gets \textsc{topped up}$
+        \State output (\textsc{topped up}) to \alice
+        \label{code:functionality:chan:skeleton:init:check_top_up:end}
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:chan:skeleton:init}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
+    \begin{algorithmic}[1]
+      \State On (\textsc{open}, $c_F$, $pk_{A, \mathrm{out}}$, $pk_{B,
+      \mathrm{out}}$) by \alice:
+      \Indent
+        \State ensure $\mathit{State} = \textsc{topped up}$
+        \State ensure $c_F \geq c_{\mathrm{on}}$
+        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{KeyGen}()$; $(sk_{B, F},
+        pk_{B, F}) \gets \textsc{KeyGen}()$
+        \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
+        2/\{pk_{A, F}, pk_{B, F}\})$\}
         \State $F \gets F\mathrm{.sign(}sk\mathrm{)}$
         \State $\mathit{State} \gets \textsc{waiting for ledger}$
         \State send (\textsc{open}, $F$) to \adversary
       \EndIndent
       \Statex
 
-      \State On (\textsc{check}) by \environment:
+      \State On (\textsc{check funding}) by \environment:
       \Indent
         \State ensure $\mathit{State} = \textsc{waiting for ledger}$
         \State send (\textsc{read}) to \ledger and assign reply to $\Sigma$

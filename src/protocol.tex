@@ -7,16 +7,23 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $c$, \texttt{tx\_out}, $sk$, $pk_{A, out}$,
-      $pk_{B, out}$) by \environment:
+      \State On \textsc{top up}, \textsc{check top up} by \environment, act as
+      \fchan (Fig.~\ref{code:functionality:chan:skeleton:init},
+      lines~\ref{code:functionality:chan:skeleton:init:top_up:start}-\ref{code:functionality:chan:skeleton:init:top_up:end}
+      and~\ref{code:functionality:chan:skeleton:init:check_top_up:start}-\ref{code:functionality:chan:skeleton:init:check_top_up:end}
+      respectively)
+      \Statex
+
+      \State On (\textsc{open}, $c_F$, $pk_{A, out}$, $pk_{B, out}$) by
+      \environment:
       \Indent
-        \State ensure $\mathit{State} = \textsc{init}$
+        \State ensure $\mathit{State} = \textsc{topped up}$
         \State $\mathit{State} \gets \textsc{opening base channel}$
         \State do LN (other box) % TODO
       \EndIndent
       \Statex
 
-      \State On (\textsc{check}) by \environment:
+      \State On (\textsc{check funding}) by \environment:
       \Indent
         \State ensure $\mathit{State} = \textsc{waiting for ledger}$
         \State send (\textsc{read}) to \ledger and assign reply to $\Sigma$
