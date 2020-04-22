@@ -1,9 +1,13 @@
 \begin{figure}[H]
   \begin{simulatorbox}{\simulator}
     \begin{algorithmic}[1]
-      \State On (\textsc{open}, $F$) by \fchan:
+      \State On $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
+      \mathrm{out}}, F, \alice)$ by \fchan:
       \Indent
-        \State TODO: how to trick \environment? We don't have $sk$...
+        \State simulate \alice receiving input $(\textsc{open}, c_F, pk_{A,
+        \mathrm{out}}, pk_{B, \mathrm{out}})$ by \environment
+        \State ensure simulated \alice outputs \textsc{ok}
+        \State send \textsc{ok} to \fchan
       \EndIndent
       \Statex
 
