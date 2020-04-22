@@ -13,7 +13,7 @@
 
       \State On (\textsc{pay}, $x$, \dave) by \fchan:
       \Indent
-        \State simulate receiving (\textsc{pay}, $x$) with \dave
+        \State simulate \dave receiving input (\textsc{pay}, $x$) by \environment
         \State ensure simulated \dave outputs \textsc{ok}
         \State send \textsc{ok} to \fchan
       \EndIndent
