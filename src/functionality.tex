@@ -1,5 +1,5 @@
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init \& top up}
     \begin{algorithmic}[1]
       \State Initialisation: \Comment{runs on first activation}
       \Indent
@@ -194,6 +194,14 @@
           \texttt{local\_funder} = $L_i$, id, $i \overset{?}{=} |\mathrm{hops}|$)
           to $L_i$ as \alice and ensure reply is (\textsc{ok})
         \EndFor
+        \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
+        counterparty), \texttt{outer\_parties} = (\charlie, \dave),
+        \texttt{funder} = \alice) to \adversary and ensure reply is \textsc{ok}
+        \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
+        |\mathrm{hops}|\}$}
+          \State send (\textsc{fund done}, id) to $L_i$ as \alice and ensure
+          reply is (\textsc{ok})
+        \EndFor
         \State $c_A \gets c_A - c$
         % TODO: decide if need to store \alice or hops here
         \State add (($c$, 0), hops, \texttt{sub\_parties},
@@ -213,6 +221,17 @@
         \State ensure $c_D - \mathrm{locked}_D \geq c$
         \State output received message to $D$ and ensure reply is \textsc{(ok)}
         \State $\mathrm{locked}_D \gets \mathrm{locked}_D + c$
+        \State add (id, \texttt{is\_last}) to \texttt{pending}
+        \State send (\textsc{ok}) to \charlie
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{fund done}, id) by \charlie:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $(\mathrm{id}, \mathtt{is\_last}) \in \mathtt{pending}$
+        \State remove (id, \texttt{is\_last}) from \texttt{pending}
         \If{\texttt{is\_last}}
           \State add ((0, $c$), $\bot$, \texttt{sub\_parties}.reverse(),
           (\dave, $\bot$), id) to \texttt{funded}
