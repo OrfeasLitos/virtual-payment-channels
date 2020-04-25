@@ -94,7 +94,15 @@
         (Fig.~\ref{code:functionality:chan:skeleton:virtual},
         lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:store})
         TODO: make sure it makes sense
-        \State do VChan() with hops -- TODO
+        \State do VChan() with hops -- TODO \Comment{$P_{i-1} P_i, P_i P_{i+1}$
+        and all $P_1 P_n$ held by BOTH $R_{i-1}$ and $L_i$. $P_{i-1} P_i$ held
+        only by $R_{i-1}$, $P_i P_{i+1}$ held only by $L_i$. This (probably)
+        ensures that only relevant parties can close their channels (with the
+        exception of honest $R_{i-1}$ wanting to leave channels virtual but
+        corrupted $L_i$ demoting them to base, which however doesn't cost funds
+        to anyone), but that they have minimal impact to the decisions of
+        ajdacent channels. All $P_{i-1} P_i$ inputs must be signed by $R_{i-1}$
+        and all $P_i P_{i+1}$ inputs by $L_i$.}
         \State output (\textsc{ok}) to \environment
       \EndIndent
       \Statex
