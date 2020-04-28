@@ -1,0 +1,8 @@
+\section{Security Proof}
+  When \environment sends (\textsc{fund}, $c$, hops, \texttt{sub\_parties} =
+  (fundee, counterparty), \texttt{outer\_parties} = (\charlie, \dave)) to \alice
+  in the real world, the same thing as in the ideal world happens first, then
+  VChan() takes place, then again the same as in the ideal world. On the other
+  hand, in the ideal world the same thing as in the real world happens first,
+  then VChan() is simulated by \simulator, then again the same as in the real
+  world. TODO: double-check that the above argument makes sense
