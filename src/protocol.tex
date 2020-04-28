@@ -90,9 +90,9 @@
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State do the same as in \fchan
-        (Fig.~\ref{code:functionality:chan:skeleton:virtual},
-        lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:store})
+        \State do the same as in \fchan,
+        Fig.~\ref{code:functionality:chan:skeleton:virtual},
+        lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:simulate}
         TODO: make sure it makes sense
         \State do VChan() with hops -- TODO \Comment{$P_{i-1} P_i, P_i P_{i+1}$
         and all $P_1 P_n$ held by BOTH $R_{i-1}$ and $L_i$. $P_{i-1} P_i$ held
@@ -103,6 +103,10 @@
         to anyone), but that they have minimal impact to the decisions of
         ajdacent channels. All $P_{i-1} P_i$ inputs must be signed by $R_{i-1}$
         and all $P_i P_{i+1}$ inputs by $L_i$.}
+        \label{code:protocol:chan:skeleton:vchan}
+        \State do the same as in \fchan,
+        Fig.~\ref{code:functionality:chan:skeleton:virtual},
+        lines~\ref{code:functionality:chan:skeleton:virtual:fund:confirm}-\ref{code:functionality:chan:skeleton:virtual:fund:store}
         \State output (\textsc{ok}) to \environment
       \EndIndent
       \Statex

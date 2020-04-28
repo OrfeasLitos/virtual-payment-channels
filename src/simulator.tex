@@ -26,6 +26,18 @@
         \State ensure simulated \alice outputs \textsc{ok} to \charlie
         \State send \textsc{ok} to \fchan
       \EndIndent
+      \Statex
+
+      \State On (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
+      counterparty), \texttt{outer\_parties} = (\charlie, \dave),
+      \texttt{funder} = \alice) by \fchan:
+      \Indent
+        \State simulate receiving the message without the last element with
+        \alice, executing only line~\ref{code:protocol:chan:skeleton:vchan} of
+        Fig.~\ref{code:protocol:chan:skeleton:virtual}
+        \State ensure VChan() is successful
+        \State send (\textsc{ok}) to \fchan
+      \EndIndent
     \end{algorithmic}
   \end{simulatorbox}
   \caption{}

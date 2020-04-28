@@ -194,11 +194,13 @@
           \texttt{local\_funder} = $L_i$, id, $i \overset{?}{=} |\mathrm{hops}|$)
           to $L_i$ as \alice and ensure reply is (\textsc{ok})
         \EndFor
+        \label{code:functionality:chan:skeleton:virtual:fund:simulate}
         \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
         counterparty), \texttt{outer\_parties} = (\charlie, \dave),
         \texttt{funder} = \alice) to \adversary and ensure reply is \textsc{ok}
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
         |\mathrm{hops}|\}$}
+        \label{code:functionality:chan:skeleton:virtual:fund:confirm}
           \State send (\textsc{fund done}, id) to $L_i$ as \alice and ensure
           reply is (\textsc{ok})
         \EndFor
