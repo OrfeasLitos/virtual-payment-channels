@@ -211,17 +211,19 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties}, $D$, id,
+      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties}, \dave, id,
       \texttt{is\_last}) by \charlie:
       \label{code:functionality:chan:skeleton:virtual:allow_fund}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $D \in \{\alice, \bob\}$
+        \State ensure $\dave \in \{\alice, \bob\}$
         \State ensure $c_D - \mathrm{locked}_D \geq c$
-        \State output received message to $D$ and ensure reply is \textsc{(ok)}
+        \State output received message to \dave and ensure reply is
+        \textsc{(ok)}
         \State $\mathrm{locked}_D \gets \mathrm{locked}_D + c$
-        \State add (id, \texttt{is\_last}) to \texttt{pending}
+        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$, \dave) to
+        \texttt{pending}
         \State send (\textsc{ok}) to \charlie
       \EndIndent
       \Statex
@@ -230,8 +232,10 @@
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $(\mathrm{id}, \mathtt{is\_last}) \in \mathtt{pending}$
-        \State remove (id, \texttt{is\_last}) from \texttt{pending}
+        \State ensure $(\mathrm{id}, \mathtt{is\_last}, \mathtt{sub\_parties},
+        $c$, \dave) \in \mathtt{pending}$
+        \State remove (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$, \dave)
+        from \texttt{pending}
         \If{\texttt{is\_last}}
           \State add ((0, $c$), $\bot$, \texttt{sub\_parties}.reverse(),
           (\dave, $\bot$), id) to \texttt{funded}
