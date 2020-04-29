@@ -54,8 +54,9 @@
         \State $F \gets F\mathrm{.sign(}sk\mathrm{)}$
         \State $\mathit{State} \gets \textsc{waiting for ledger}$
         \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-        \mathrm{out}}, F, \alice)$ to \adversary and ensure reply is \textsc{ok}
-        \State output \textsc{ok} to \alice
+        \mathrm{out}}, F, \alice)$ to \adversary and ensure reply is
+        (\textsc{ok})
+        \State output (\textsc{ok}) to \alice
       \EndIndent
       \Statex
 
@@ -197,7 +198,8 @@
         \label{code:functionality:chan:skeleton:virtual:fund:simulate}
         \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
         counterparty), \texttt{outer\_parties} = (\charlie, \dave),
-        \texttt{funder} = \alice) to \adversary and ensure reply is \textsc{ok}
+        \texttt{funder} = \alice) to \adversary and ensure reply is
+        (\textsc{ok})
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
         |\mathrm{hops}|\}$}
         \label{code:functionality:chan:skeleton:virtual:fund:confirm}

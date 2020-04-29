@@ -6,16 +6,16 @@
       \Indent
         \State simulate \alice receiving input $(\textsc{open}, c_F, pk_{A,
         \mathrm{out}}, pk_{B, \mathrm{out}})$ by \environment
-        \State ensure simulated \alice outputs \textsc{ok}
-        \State send \textsc{ok} to \fchan
+        \State ensure simulated \alice outputs (\textsc{ok})
+        \State send (\textsc{ok}) to \fchan
       \EndIndent
       \Statex
 
       \State On (\textsc{pay}, $x$, \dave) by \fchan:
       \Indent
         \State simulate \dave receiving input (\textsc{pay}, $x$) by \environment
-        \State ensure simulated \dave outputs \textsc{ok}
-        \State send \textsc{ok} to \fchan
+        \State ensure simulated \dave outputs (\textsc{ok})
+        \State send (\textsc{ok}) to \fchan
       \EndIndent
       \Statex
 
@@ -23,8 +23,8 @@
       \Indent
         \State simulate \alice receiving input (\textsc{fund you}, $c$, \bob) by
         \charlie
-        \State ensure simulated \alice outputs \textsc{ok} to \charlie
-        \State send \textsc{ok} to \fchan
+        \State ensure simulated \alice outputs (\textsc{ok}) to \charlie
+        \State send (\textsc{ok}) to \fchan
       \EndIndent
       \Statex
 
