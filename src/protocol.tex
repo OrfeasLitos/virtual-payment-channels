@@ -80,6 +80,7 @@
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\mathit{State} \gets \textsc{opening virtual channel}$
         \State do LN with \bob{} -- TODO
+        \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}) to \charlie
       \EndIndent
       \Statex
@@ -88,12 +89,11 @@
       counterparty), \texttt{outer\_parties} = (\charlie, \dave) by
       \environment:
       \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
         \State do the same as in \fchan,
         Fig.~\ref{code:functionality:chan:skeleton:virtual},
         lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:simulate}
-        TODO: make sure it makes sense
+        \Comment{``as \alice'' sender labels are applied anyway, since we
+        \emph{are} \alice}
         \State do VChan() with hops -- TODO \Comment{$P_{i-1} P_i, P_i P_{i+1}$
         and all $P_1 P_n$ held by BOTH $R_{i-1}$ and $L_i$. $P_{i-1} P_i$ held
         only by $R_{i-1}$, $P_i P_{i+1}$ held only by $L_i$. This (probably)

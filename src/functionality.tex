@@ -186,20 +186,23 @@
         \State ensure $c_A - \mathrm{locked}_A \geq c$
         \State input (\textsc{fund you}, $c$, counterparty) to fundee as \alice,
         ensure output is (\textsc{ok})
-        \State $(L_0, R_0) \gets (\alice, \bob)$
         \State generate random id
+        \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
+        counterparty), \texttt{outer\_parties} = (\charlie, \dave),
+        \texttt{funder} = \alice, id) to \adversary and ensure reply is
+        (\textsc{ok})
+        \State $(L_0, R_0) \gets (\alice, \bob)$
+        \label{code:functionality:chan:skeleton:virtual:fund:init}
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
         |\mathrm{hops}|\}$}
           \State ensure $R_{i-1} = L_i$
           \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-          \texttt{local\_funder} = $L_i$, id, $i \overset{?}{=} |\mathrm{hops}|$)
-          to $L_i$ as \alice and ensure reply is (\textsc{ok})
+          $\mathtt{local\_funder} \gets L_i$, id, $i \overset{?}{=}
+          |\mathrm{hops}|$) to $L_i$ as \alice and ensure reply is (\textsc{ok})
         \EndFor
         \label{code:functionality:chan:skeleton:virtual:fund:simulate}
-        \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
-        counterparty), \texttt{outer\_parties} = (\charlie, \dave),
-        \texttt{funder} = \alice) to \adversary and ensure reply is
-        (\textsc{ok})
+        \State send (\textsc{is open successful}, id) to \adversary and ensure
+        reply is (\textsc{ok})
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
         |\mathrm{hops}|\}$}
         \label{code:functionality:chan:skeleton:virtual:fund:confirm}
