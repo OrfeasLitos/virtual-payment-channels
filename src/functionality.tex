@@ -164,11 +164,13 @@
     \begin{algorithmic}[1]
       \State On (\textsc{fund you}, $c$, \dave) by $\charlie$ as input to
       \alice: \Comment{\alice is funded by \charlie}
+      \label{code:functionality:chan:skeleton:virtual:fund-you}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\bob \gets \dave$
         \State send (\textsc{fund you}, $c$, \bob, \charlie, \alice) to
         \adversary and ensure reply is \textsc{(ok)}
+        \label{code:functionality:chan:skeleton:virtual:inform}
         \State $c_A \gets c; c_B \gets 0$
         \State $\mathtt{opener} \gets \charlie$
         \State $\mathit{State} \gets \textsc{open virtual}$
@@ -186,6 +188,7 @@
         \State ensure $c_A - \mathrm{locked}_A \geq c$
         \State input (\textsc{fund you}, $c$, counterparty) to fundee as \alice,
         ensure output is (\textsc{ok})
+        \label{code:functionality:chan:skeleton:virtual:subfunc}
         \State generate random id
         \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
         counterparty), \texttt{outer\_parties} = (\charlie, \dave),

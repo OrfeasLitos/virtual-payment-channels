@@ -9,5 +9,22 @@
 
   When \environment sends (\textsc{fund}, $c$, hops, \texttt{sub\_parties} =
   (fundee, counterparty), \texttt{outer\_parties} = (\charlie, \dave)) to \alice
-  in the ideal world, the simulator receives (\textsc{fund you}, $c$, \bob,
-  \charlie, \alice) by fundee TODO: continue
+  in the real world,
+  lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:subfunc}
+  of Fig.~\ref{code:functionality:chan:skeleton:virtual} are executed and then
+  control is handed over to the ``fundee'' ITI, which executes
+  lines~\ref{code:protocol:chan:skeleton:vchan:fund-you}-\ref{code:protocol:chan:skeleton:vchan:fund-you:output}
+  of Fig.~\ref{code:protocol:chan:skeleton:virtual}.
+
+  When \environment sends (\textsc{fund}, $c$, hops, \texttt{sub\_parties} =
+  (fundee, counterparty), \texttt{outer\_parties} = (\charlie, \dave)) to \alice
+  in the ideal world,
+  lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:subfunc}
+  of Fig.~\ref{code:functionality:chan:skeleton:virtual} are executed and then
+  control is handed over to the functionality that controls the ``fundee'', which executes
+  lines~\ref{code:functionality:chan:skeleton:virtual:fund-you}-\ref{code:functionality:chan:skeleton:virtual:inform}
+  of Fig.~\ref{code:functionality:chan:skeleton:virtual} and then hands control
+  over to \simulator. The latter in turn simulates
+  lines~\ref{code:protocol:chan:skeleton:vchan:fund-you}-\ref{code:protocol:chan:skeleton:vchan:fund-you:output}
+  of Fig.~\ref{code:protocol:chan:skeleton:virtual}, thus following the exact
+  same steps as in the real world.

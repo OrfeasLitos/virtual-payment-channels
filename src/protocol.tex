@@ -76,12 +76,15 @@
       \State \Comment{notification to funder}
       \State \Comment{trust that \alice has $c$ in her channel}
       \State On (\textsc{fund you}, $c$, \bob) by \charlie as input:
+      \label{code:protocol:chan:skeleton:vchan:fund-you}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\mathit{State} \gets \textsc{opening virtual channel}$
+        \label{code:protocol:chan:skeleton:vchan:fund-you:state}
         \State do LN with \bob{} -- TODO
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}) to \charlie
+        \label{code:protocol:chan:skeleton:vchan:fund-you:output}
       \EndIndent
       \Statex
 
