@@ -190,22 +190,27 @@
         ensure output is (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:subfunc}
         \State generate random id
+        \label{code:functionality:chan:skeleton:virtual:id}
         \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
         counterparty), \texttt{outer\_parties} = (\charlie, \dave),
         \texttt{funder} = \alice, id) to \adversary and ensure reply is
         (\textsc{ok})
+        \label{code:functionality:chan:skeleton:virtual:fund}
         \State $(L_0, R_0) \gets (\alice, \bob)$
         \label{code:functionality:chan:skeleton:virtual:fund:init}
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
         |\mathrm{hops}|\}$}
+        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:start}
           \State ensure $R_{i-1} = L_i$
           \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
           $\mathtt{local\_funder} \gets L_i$, id, $i \overset{?}{=}
           |\mathrm{hops}|$) to $L_i$ as \alice and ensure reply is (\textsc{ok})
+          \label{code:functionality:chan:skeleton:virtual:fund:for:allow:send}
         \EndFor
-        \label{code:functionality:chan:skeleton:virtual:fund:simulate}
+        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:end}
         \State send (\textsc{is open successful}, id) to \adversary and ensure
         reply is (\textsc{ok})
+        \label{code:functionality:chan:skeleton:virtual:fund:simulate}
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
         |\mathrm{hops}|\}$}
         \label{code:functionality:chan:skeleton:virtual:fund:confirm}
@@ -223,7 +228,7 @@
 
       \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties}, \dave, id,
       \texttt{is\_last}) by \charlie:
-      \label{code:functionality:chan:skeleton:virtual:allow_fund}
+      \label{code:functionality:chan:skeleton:virtual:allow-fund}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$

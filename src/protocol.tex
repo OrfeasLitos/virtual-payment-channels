@@ -82,6 +82,7 @@
         \State $\mathit{State} \gets \textsc{opening virtual channel}$
         \label{code:protocol:chan:skeleton:vchan:fund-you:state}
         \State do LN with \bob{} -- TODO
+        \label{code:protocol:chan:skeleton:vchan:ln}
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}) to \charlie
         \label{code:protocol:chan:skeleton:vchan:fund-you:output}
@@ -94,7 +95,8 @@
       \Indent
         \State do the same as in \fchan,
         Fig.~\ref{code:functionality:chan:skeleton:virtual},
-        lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:simulate}
+        lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:for:allow:end},
+        skipping line~\ref{code:functionality:chan:skeleton:virtual:fund}
         \Comment{``as \alice'' sender labels are applied anyway, since we
         \emph{are} \alice}
         \State do VChan() with hops -- TODO \Comment{$P_{i-1} P_i, P_i P_{i+1}$
@@ -117,7 +119,7 @@
       \State \Comment{notification to fundee}
       \State On (\textsc{allow fund}, \dots) by \charlie, act as \fchan
       (Fig~\ref{code:functionality:chan:skeleton:virtual},
-      line~\ref{code:functionality:chan:skeleton:virtual:allow_fund}):
+      line~\ref{code:functionality:chan:skeleton:virtual:allow-fund}):
     \end{algorithmic}
   \end{protocolbox}
   \caption{}

@@ -31,14 +31,16 @@
       \State On (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
       counterparty), \texttt{outer\_parties} = (\charlie, \dave),
       \texttt{funder} = \alice, id) by \fchan:
+      \label{code:simulator:fund}
       \Indent
-        \State add (id, \alice) to \texttt{virtual\_opening}
+        \State add the message data to \texttt{virtual\_opening}
         \State simulate execution of
         line~\ref{code:functionality:chan:skeleton:virtual:fund:init} of
         Fig.~\ref{code:functionality:chan:skeleton:virtual} with \alice
         \Comment{\simulator knows \bob (\alice's counterparty) through opening
         procedure}
         \State send (\textsc{ok}) to \fchan
+        \label{code:simulator:fund:ok}
       \EndIndent
       \Statex
 
@@ -56,9 +58,11 @@
 
       \State On (\textsc{is open successful}, id) by \fchan:
       \Indent
-        \State retrieve and remove (id, \alice) from \texttt{virtual\_opening}
+        \State retrieve and remove from \texttt{virtual\_opening} the data
+        marked with id
         \State simulate line~\ref{code:protocol:chan:skeleton:vchan} of
-        Fig.~\ref{code:protocol:chan:skeleton:virtual} with \alice
+        Fig.~\ref{code:protocol:chan:skeleton:virtual} with \alice using this
+        data
         \State ensure \alice completes execution of VChan() successfully
         \State send (\textsc{ok}) to \fchan
       \EndIndent
