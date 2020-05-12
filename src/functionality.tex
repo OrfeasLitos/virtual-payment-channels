@@ -179,8 +179,9 @@
       \Statex
 
       \State On (\textsc{fund}, $c$, hops, \texttt{sub\_parties} = (fundee,
-      counterparty), \texttt{outer\_parties} = (\charlie, \dave)) by \alice:
+      counterparty), \texttt{outer\_parties} = (\alice, \dave)) by \alice:
       \Comment{we fund another channel}
+      % TODO: decide if \alice of outer_parties should be \charlie instead
       \label{code:functionality:chan:skeleton:virtual:fund}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
@@ -192,7 +193,7 @@
         \State generate random id
         \label{code:functionality:chan:skeleton:virtual:id}
         \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
-        counterparty), \texttt{outer\_parties} = (\charlie, \dave),
+        counterparty), \texttt{outer\_parties} = (\alice, \dave),
         \texttt{funder} = \alice, id) to \adversary and ensure reply is
         (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:fund}
@@ -218,7 +219,7 @@
           reply is (\textsc{ok})
         \EndFor
         \State $c_A \gets c_A - c$
-        % TODO: decide if need to store \alice or hops here
+        % TODO: decide if need to store hops here
         \State add (($c$, 0), hops, \texttt{sub\_parties},
         \texttt{outer\_parties}, id) to \texttt{funded}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
