@@ -263,3 +263,28 @@
   \caption{}
   \label{code:functionality:chan:skeleton:virtual}
 \end{figure}
+
+\begin{figure}[H]
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- corruption}
+    \begin{algorithmic}[1]
+      \State On (\textsc{corrupt}) by $P$, addressed to \alice:
+      \Indent
+        \State ensure $P \in \{\mathtt{opener}, \adversary\}$
+        \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_)) \in
+        \mathtt{funded}$}
+          \State send (\textsc{corrupt}) to fundee and ensure reply is
+          (\textsc{ok})
+        \EndFor
+        \State from now on, allow \adversary to handle all \alice's messages,
+        i.e. act as a relay
+        \If{\bob is not corrupted}
+          \State from now on, override reactions to messages addressed to \bob
+          with those defined in the following Figures: % TODO: add \ref{}s
+        \EndIf
+        \State output (\textsc{ok}) to $P$
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:chan:skeleton:corruption}
+\end{figure}
