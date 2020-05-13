@@ -23,7 +23,7 @@
       \label{code:functionality:chan:skeleton:init:check_top_up:start}
       \Indent
         \State ensure $\mathit{State} = \textsc{sent key}$
-        \State send (\textsc{read}) to \ledger as \alice and assign reply to
+        \State input (\textsc{read}) to \ledger as \alice and assign ouput to
         $\Sigma$
         \State ensure $\exists \mathrm{tx} \in \Sigma, c_{\mathrm{on}}:
         c_{\mathrm{on}} \geq c_{\mathrm{min}} \wedge (c_{\mathrm{on}}, pk) \in
@@ -61,7 +61,7 @@
       \State On (\textsc{check funding}) by \alice:
       \Indent
         \State ensure $\mathit{State} = \textsc{waiting for ledger}$
-        \State send (\textsc{read}) to \ledger as \alice and assign reply to
+        \State input (\textsc{read}) to \ledger as \alice and assign output to
         $\Sigma$
         \State ensure $F \in \Sigma$
         \State $c_A \gets c$; $c_B \gets 0$
@@ -105,9 +105,11 @@
         \If{$\mathit{State} = \textsc{open base}$}
           \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
           \mathrm{out}}), (c_B, pk_{B, \mathrm{out}})$\}
-          \State $\mathrm{sig}_C \gets \textsc{sign}(C, sk_{A, F}, sk_{B, F})$
+          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$;
+          $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
           \State $\mathit{State} \gets \textsc{closed}$
-          \State input (\textsc{submit}, $(C, \mathrm{sig}_C)$) to \ledger
+          \State input (\textsc{submit}, $(C, \mathrm{sig}_{A, C},
+          \mathrm{sig}_{B, C})$) to \ledger
         \ElsIf{$\mathit{State} = \textsc{open virtual}$}
           \State $\mathit{State} \gets \textsc{closed}$
           \State output (\textsc{closing}, $c_A$, $c_B$) to \texttt{opener}
@@ -302,7 +304,7 @@
         2/\{pk_{A, F}, pk_{B, F}\})$\}
         \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
         \State $\mathit{State} \gets \textsc{waiting for ledger}$
-        \State send $(\textsc{submit}, (F, \mathrm{sig}_F))$ to \ledger
+        \State input $(\textsc{submit}, (F, \mathrm{sig}_F))$ to \ledger
       \EndIndent
       \Statex
 
