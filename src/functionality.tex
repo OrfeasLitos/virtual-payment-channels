@@ -103,7 +103,7 @@
       \State On (\textsc{close}) by \alice:
       \Indent
         \If{$\mathit{State} = \textsc{open base}$}
-          \State $C \gets$ TX \{input: $F$.out, outputs: $(c_A, pk_{A,
+          \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
           \mathrm{out}}), (c_B, pk_{B, \mathrm{out}})$\}
           \State $\mathrm{sig}_C \gets \textsc{sign}(C, sk_{A, F}, sk_{B, F})$
           \State $\mathit{State} \gets \textsc{closed}$
