@@ -119,6 +119,20 @@
       \EndIndent
       \Statex
 
+      \State On (\textsc{close}) by \adversary:
+      \Indent
+        \State ensure that exactly one party in $\{\alice, \bob\}$ is corrupted
+        \State wlog, let \alice corrupted, \bob honest
+        \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_B, pk_{B,
+        \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
+        \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, F})$
+        \State $\mathit{State} \gets \textsc{closed}$
+        \State send (C', $\mathrm{sig}_{B, C'}$) to \adversary
+        \State \TODO{asynchronously, if a lot of time passes and $C'$ not in
+        \ledger, submit $C$ to \ledger for good measure}
+      \EndIndent
+      \Statex
+
       \State On (\textsc{closing}, $c_{\mathrm{left}}$, $c_{\mathrm{right}}$) by
       \fchan:
       \Indent
