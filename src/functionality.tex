@@ -296,7 +296,7 @@
         \mathrm{out}}, pk_{B, F}, \bob)$ to \adversary, assign reply to ($pk_{A,
         F}$, $C =$ TX \{input: $F$.output, outputs: ($c_F, pk_{B, \mathrm{out}}
         \wedge t$), ($0, pk_{A, \mathrm{out}}$)\}, $\mathrm{sig}_{A, C}$)
-        \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, 0}$, $pk_{A, F}$) =
+        \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, F}$) =
         True
         \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
         2/\{pk_{A, F}, pk_{B, F}\})$\}
