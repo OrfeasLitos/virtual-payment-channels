@@ -6,8 +6,8 @@
       \Indent
         \State simulate \alice receiving input $(\textsc{open}, c_F, pk_{A,
         \mathrm{out}}, pk_{B, \mathrm{out}})$ by \environment
-        \State ensure simulated \alice outputs (\textsc{ok})
-        \State send (\textsc{ok}) to \fchan
+        \State ensure simulated \alice sends (\textsc{submit}, $F'$) to \ledger
+        \State send (\textsc{submit}, $F$) to \ledger
       \EndIndent
       \Statex
 
