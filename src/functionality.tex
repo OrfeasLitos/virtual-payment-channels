@@ -46,11 +46,11 @@
       \mathrm{out}}$) by \alice:
       \Indent
         \State ensure $\mathit{State} = (\textsc{topped up}, \alice)$
-        \State ensure $c_F \leq c_{\mathrm{on}}$
+        \State ensure $c_F = c_{\mathrm{on}}$
         \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{KeyGen}()$; $(sk_{B, F},
         pk_{B, F}) \gets \textsc{KeyGen}()$
-        \State $F \gets$ TX \{input: \texttt{base\_output}, outputs: $(c_F,
-        2/\{pk_{A, F}, pk_{B, F}\}), (c_{\mathrm{on}} - c_F, pk)$\}
+        \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
+        2/\{pk_{A, F}, pk_{B, F}\})$\}
         \State $F \gets F\mathrm{.sign(}sk\mathrm{)}$
         \State $\mathit{State} \gets \textsc{waiting for ledger}$
         \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
