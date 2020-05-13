@@ -2,12 +2,21 @@
   \begin{simulatorbox}{\simulator}
     \begin{algorithmic}[1]
       \State On $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-      \mathrm{out}}, F, \alice)$ by \fchan:
+      \mathrm{out}}, F, \alice)$ by \fchan: \Comment{both honest}
       \Indent
         \State simulate \alice receiving input $(\textsc{open}, c_F, pk_{A,
         \mathrm{out}}, pk_{B, \mathrm{out}})$ by \environment
         \State ensure simulated \alice sends (\textsc{submit}, $F'$) to \ledger
         \State send (\textsc{submit}, $F$) to \ledger
+      \EndIndent
+      \Statex
+
+      \State On $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
+      \mathrm{out}}, pk_{B, F}, \bob)$ by \fchan: \Comment{\alice corrupted}
+      \Indent
+        \State send LN message (\textsc{open}, $pk_{B, F}$) to \alice and relay
+        reply to \fchan \TODO{change msg to fit LN, ensure \alice doesn't see a
+        difference from real world}
       \EndIndent
       \Statex
 

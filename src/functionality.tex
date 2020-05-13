@@ -276,10 +276,32 @@
         \State from now on, allow \adversary to handle all \alice's messages,
         i.e. act as a relay
         \If{\bob is not corrupted}
-          \State from now on, override reactions to messages addressed to \bob
-          with those defined in the following Figures: % TODO: add \ref{}s
+          \State from now on, override reactions to message (\textsc{open})
+          addressed to \bob
+          with those defined in the current and following Figures:
+          % TODO: add \ref{}s
         \EndIf
         \State output (\textsc{ok}) to $P$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{open}, $c_F$, $pk_{A, \mathrm{out}}$, $pk_{B,
+      \mathrm{out}}$) by \bob:
+      \Indent
+        \State ensure $\mathit{State} = (\textsc{topped up}, \bob)$ \TODO{decide
+        what happens when channel funded by corrupted party}
+        \State ensure $c_F = c_{\mathrm{on}}$
+        \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{KeyGen}()$
+        \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
+        \mathrm{out}}, pk_{B, F}, \bob)$ to \adversary, assign reply to ($pk_{A,
+        F}$, $C =$ TX \{input: $F$.output, output: ($c_F, pk_{B,
+        \mathrm{out}}$)\}) \Comment{Timelock redundant when \bob owns all coins}
+        \State ensure $C$.verify($pk_{A, F}, pk_{B, F}$) = True
+        \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
+        2/\{pk_{A, F}, pk_{B, F}\})$\}
+        \State $F \gets F\mathrm{.sign(}sk\mathrm{)}$
+        \State $\mathit{State} \gets \textsc{waiting for ledger}$
+        \State send $(\textsc{submit}, F)$ to \ledger
       \EndIndent
     \end{algorithmic}
   \end{systembox}
