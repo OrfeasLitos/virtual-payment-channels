@@ -96,21 +96,23 @@
   \label{code:functionality:chan:skeleton:base}
 \end{figure}
 
-% TODO: think more about closing
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close}
     \begin{algorithmic}[1]
       \State On (\textsc{close}) by \alice:
       \Indent
         \If{$\mathit{State} = \textsc{open base}$}
-          \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-          \mathrm{out}}), (c_B, pk_{B, \mathrm{out}})$\}
-          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$;
-          $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
+          \If{both channel parties are honest}
+            \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
+            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
+          \EndIf \Comment{note that rest is run only if \alice is honest}
+          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
           \State $\mathit{State} \gets \textsc{closed}$
           \State input (\textsc{submit}, $(C, \mathrm{sig}_{A, C},
           \mathrm{sig}_{B, C})$) to \ledger
-        \ElsIf{$\mathit{State} = \textsc{open virtual}$}
+        \ElsIf{$\mathit{State} = \textsc{open virtual}$} \TODO{think more about
+        closing w/ one corrupted party}
           \State $\mathit{State} \gets \textsc{closed}$
           \State output (\textsc{closing}, $c_A$, $c_B$) to \texttt{opener}
         \EndIf
