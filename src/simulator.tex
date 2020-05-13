@@ -23,9 +23,21 @@
 
       \State On (\textsc{pay}, $x$, \dave) by \fchan:
       \Indent
-        \State simulate \dave receiving input (\textsc{pay}, $x$) by \environment
-        \State ensure simulated \dave outputs (\textsc{ok})
-        \State send (\textsc{ok}) to \fchan
+        \If{both channel parties are honest}
+          \State simulate \dave receiving input (\textsc{pay}, $x$) by
+          \environment
+          \State ensure simulated \dave outputs (\textsc{ok})
+          \State send (\textsc{ok}) to \fchan
+        \ElsIf{only \dave's counterparty is corrupted} \Comment{else just relay
+        to \adversary}
+          \State simulate \dave receiving input (\textsc{pay}, $x$) by
+          \environment
+          \State ensure simulated \dave outputs (\textsc{ok})
+          \State extract the latest commitment transaction $C$ and its signature
+          by \dave's counterparty $\mathrm{sig}_{\bar{D}, C}$ from simulated
+          \dave's state
+          \State send $(C, \mathrm{sig}_{\bar{D}, C})$ to \fchan
+        \EndIf
       \EndIndent
       \Statex
 
