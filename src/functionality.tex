@@ -294,8 +294,8 @@
         \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{KeyGen}()$
         \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
         \mathrm{out}}, pk_{B, F}, \bob)$ to \adversary, assign reply to ($pk_{A,
-        F}$, $C =$ TX \{input: $F$.output, output: ($c_F, pk_{B,
-        \mathrm{out}}$)\}) \Comment{Timelock redundant when \bob owns all coins}
+        F}$, $C =$ TX \{input: $F$.output, outputs: ($c_F, pk_{B, \mathrm{out}}
+        \wedge t$), ($0, pk_{A, \mathrm{out}}$)\}, $\mathrm{sig}_{A, C}$)
         \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, 0}$, $pk_{A, F}$) =
         True
         \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
