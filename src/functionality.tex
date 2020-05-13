@@ -276,8 +276,8 @@
         \State from now on, allow \adversary to handle all \alice's messages,
         i.e. act as a relay
         \If{\bob is not corrupted}
-          \State from now on, override reactions to message (\textsc{open})
-          addressed to \bob
+          \State from now on, override reactions to messages (\textsc{open}) and
+          (\textsc{pay}) addressed to \bob
           with those defined in the current and following Figures:
           % TODO: add \ref{}s
         \EndIf
@@ -303,6 +303,23 @@
         \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
         \State $\mathit{State} \gets \textsc{waiting for ledger}$
         \State send $(\textsc{submit}, (F, \mathrm{sig}_F))$ to \ledger
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{pay}, $x$) by \bob:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $c_B - \mathrm{locked}_B \geq x$
+        \State send (\textsc{pay}, $x$, \bob) to \adversary and assign reply to
+        ($C' =$ TX \{input: $F$.output, outputs: $(c_A + x, pk_{A, \mathrm{out}}),
+        (c_B - \mathrm{locked}_B - x, pk_{B, \mathrm{out}} \wedge t)$\},
+        $\mathrm{sig}_{A, C}'$) \TODO{think about locked coins again}
+        \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C}'$, $pk_{A, F}$)
+        = True
+        \State $C \gets C'$; $\mathrm{sig}_{A, C} \gets \mathrm{sig}_{A, C}'$
+        \State $c_B \gets c_B - x; c_A \gets c_A + x$
+        \State output (\textsc{pay success}) to \bob
       \EndIndent
     \end{algorithmic}
   \end{systembox}
