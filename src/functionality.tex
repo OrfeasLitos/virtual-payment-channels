@@ -29,7 +29,7 @@
         c_{\mathrm{on}} \geq c_{\mathrm{min}} \wedge (c_{\mathrm{on}}, pk) \in
         \mathrm{tx.outputs}$
         \State $\mathtt{base\_output} \gets (c_{\mathrm{on}}, pk) \text{ of tx}$
-        \State $\mathit{State} \gets \textsc{topped up}$
+        \State $\mathit{State} \gets (\textsc{topped up}, \alice)$
         \State output (\textsc{topped up}) to \alice
         \label{code:functionality:chan:skeleton:init:check_top_up:end}
       \EndIndent
@@ -45,7 +45,7 @@
       \State On (\textsc{open}, $c_F$, $pk_{A, \mathrm{out}}$, $pk_{B,
       \mathrm{out}}$) by \alice:
       \Indent
-        \State ensure $\mathit{State} = \textsc{topped up}$
+        \State ensure $\mathit{State} = (\textsc{topped up}, \alice)$
         \State ensure $c_F \leq c_{\mathrm{on}}$
         \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{KeyGen}()$; $(sk_{B, F},
         pk_{B, F}) \gets \textsc{KeyGen}()$
