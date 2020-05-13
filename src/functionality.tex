@@ -51,10 +51,10 @@
         pk_{B, F}) \gets \textsc{KeyGen}()$
         \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
         2/\{pk_{A, F}, pk_{B, F}\})$\}
-        \State $F \gets F\mathrm{.sign(}sk\mathrm{)}$
+        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
         \State $\mathit{State} \gets \textsc{waiting for ledger}$
         \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-        \mathrm{out}}, F, \alice)$ to \adversary
+        \mathrm{out}}, F, \mathrm{sig}_F, \alice)$ to \adversary
       \EndIndent
       \Statex
 
@@ -105,9 +105,9 @@
         \If{$\mathit{State} = \textsc{open base}$}
           \State $C \gets$ TX \{input: $F$.out, outputs: $(c_A, pk_{A,
           \mathrm{out}}), (c_B, pk_{B, \mathrm{out}})$\}
-          \State $C \gets C\mathrm{.sign(sk_{A, F}, sk_{B, F}}\mathrm{)}$
+          \State $\mathrm{sig}_C \gets \textsc{sign}(C, sk_{A, F}, sk_{B, F})$
           \State $\mathit{State} \gets \textsc{closed}$
-          \State input (\textsc{submit}, $C$) to \ledger
+          \State input (\textsc{submit}, $(C, \mathrm{sig}_C)$) to \ledger
         \ElsIf{$\mathit{State} = \textsc{open virtual}$}
           \State $\mathit{State} \gets \textsc{closed}$
           \State output (\textsc{closing}, $c_A$, $c_B$) to \texttt{opener}
@@ -296,12 +296,13 @@
         \mathrm{out}}, pk_{B, F}, \bob)$ to \adversary, assign reply to ($pk_{A,
         F}$, $C =$ TX \{input: $F$.output, output: ($c_F, pk_{B,
         \mathrm{out}}$)\}) \Comment{Timelock redundant when \bob owns all coins}
-        \State ensure $C$.verify($pk_{A, F}, pk_{B, F}$) = True
+        \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, 0}$, $pk_{A, F}$) =
+        True
         \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
         2/\{pk_{A, F}, pk_{B, F}\})$\}
-        \State $F \gets F\mathrm{.sign(}sk\mathrm{)}$
+        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
         \State $\mathit{State} \gets \textsc{waiting for ledger}$
-        \State send $(\textsc{submit}, F)$ to \ledger
+        \State send $(\textsc{submit}, (F, \mathrm{sig}_F))$ to \ledger
       \EndIndent
     \end{algorithmic}
   \end{systembox}

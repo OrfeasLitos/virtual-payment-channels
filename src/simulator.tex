@@ -2,12 +2,13 @@
   \begin{simulatorbox}{\simulator}
     \begin{algorithmic}[1]
       \State On $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-      \mathrm{out}}, F, \alice)$ by \fchan: \Comment{both honest}
+      \mathrm{out}}, F, \mathrm{sig}_F \alice)$ by \fchan: \Comment{both honest}
       \Indent
         \State simulate \alice receiving input $(\textsc{open}, c_F, pk_{A,
         \mathrm{out}}, pk_{B, \mathrm{out}})$ by \environment
-        \State ensure simulated \alice sends (\textsc{submit}, $F'$) to \ledger
-        \State send (\textsc{submit}, $F$) to \ledger
+        \State ensure simulated \alice sends (\textsc{submit}, $(F',
+        \mathrm{sig}_{F'})$) to \ledger
+        \State send (\textsc{submit}, $(F, \mathrm{sig}_F)$) to \ledger
       \EndIndent
       \Statex
 
