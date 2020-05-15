@@ -1,6 +1,7 @@
 \section{Security Proof}
   When \environment sends (\textsc{fund}, $c$, hops, (fundee, counterparty),
-  (\charlie, \dave)) to \alice in the real world,
+  (\charlie, \dave), $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB}, out}$) to \alice
+  in the real world,
   lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:subfunc}
   of Fig.~\ref{code:functionality:chan:skeleton:virtual} are executed and then
   control is handed over to the ``fundee'' ITI, which executes
