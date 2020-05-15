@@ -183,27 +183,12 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- fund virtual}
     \begin{algorithmic}[1]
-      \State On (\textsc{fund you}, $c$, \dave) by $\charlie$ as input to
-      \alice: \Comment{\alice is funded by \charlie}
-      \label{code:functionality:chan:skeleton:virtual:fund-you}
-      \Indent
-        \State ensure $\mathit{State} = \textsc{init}$
-        \State $\bob \gets \dave$
-        \State send (\textsc{fund you}, $c$, \bob, \charlie, \alice) to
-        \adversary and ensure reply is \textsc{(ok)}
-        \label{code:functionality:chan:skeleton:virtual:inform}
-        \State $c_A \gets c; c_B \gets 0$
-        \State $\mathtt{opener} \gets \charlie$
-        \State $\mathit{State} \gets \textsc{open virtual}$
-        \State output (\textsc{ok}) to \charlie
-      \EndIndent
-      \Statex
-
       \State On (\textsc{fund}, $c$, hops, \texttt{sub\_parties} = (fundee,
-      counterparty), \texttt{outer\_parties} = (\alice, \dave)) by \alice:
-      \Comment{we fund another channel}
+      counterparty), \texttt{outer\_parties} = (\alice, \dave),
+      $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB}, out}$) by \alice:
+      \Comment{we fund another channel} \TODO{use $pk_{VA}$ in virtual LN()}
       % TODO: decide if \alice of outer_parties should be \charlie instead
       \label{code:functionality:chan:skeleton:virtual:fund}
       \Indent
@@ -232,8 +217,23 @@
           \label{code:functionality:chan:skeleton:virtual:fund:for:allow:send}
         \EndFor
         \label{code:functionality:chan:skeleton:virtual:fund:for:allow:end}
-        \State send (\textsc{is open successful}, id) to \adversary and ensure
-        reply is (\textsc{ok})
+        \If{both channel parties are honest}
+          \State send (\textsc{is open successful}, id) to \adversary and ensure
+          reply is (\textsc{ok})
+        \ElsIf{only \alice is honest}
+          \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$
+          \State send (\textsc{update to virtual}, $pk_{A, V}$) to \adversary
+          and assign reply to ($V =$ TX \{input: $F$.output, outputs: ($c_A +
+          c_B - c$, $2/\{pk_{A, V}, pk_{B, V}\}$), ($c$, $2/\{pk_{G, V}, pk_{A,
+          V}\}$), (0, $|\mathrm{hops}|$/$\{\mathrm{hops}_i.pk\}_i$)\},
+          $\mathrm{sig}_{B, V}$, $C' =$ TX \{input: $V$.outputs.0, outputs:
+          $(c_A - \mathrm{locked}_A - c, pk_{A, \mathrm{out}} \wedge t), (c_B -
+          \mathrm{locked}_B, pk_{B, \mathrm{out}})$\}, $\mathrm{sig}_{B, C'}$)
+          \TODO{think about locked coins}
+          \State ensure \textsc{verify}($V$, $\mathrm{sig}_{B, V}$, $pk_{B,
+          F}$) = \textsc{verify}($C'$, $\mathrm{sig}_{B, C'}$, $pk_{A, V}$) =
+          True
+        \EndIf
         \label{code:functionality:chan:skeleton:virtual:fund:simulate}
         \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
         |\mathrm{hops}|\}$}
@@ -242,11 +242,37 @@
           reply is (\textsc{ok})
         \EndFor
         \State $c_A \gets c_A - c$
+        \If{only \alice is honest}
+          \State $C \gets C'$; $\mathrm{sig}_{B, C} \gets \mathrm{sig}_{B, C'}$
+        \EndIf
         % TODO: decide if need to store hops here
         \State add (($c$, 0), hops, \texttt{sub\_parties},
         \texttt{outer\_parties}, id) to \texttt{funded}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
         \State output (\textsc{ok}) to \alice
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:chan:skeleton:virtual:fund:fig}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
+    \begin{algorithmic}[1]
+      \State On (\textsc{fund you}, $c$, \dave) by $\charlie$ as input to
+      \alice: \Comment{\alice is funded by \charlie}
+      \label{code:functionality:chan:skeleton:virtual:fund-you}
+      \Indent
+        \State ensure $\mathit{State} = \textsc{init}$
+        \State $\bob \gets \dave$
+        \State send (\textsc{fund you}, $c$, \bob, \charlie, \alice) to
+        \adversary and ensure reply is \textsc{(ok)}
+        \label{code:functionality:chan:skeleton:virtual:inform}
+        \State $c_A \gets c; c_B \gets 0$
+        \State $\mathtt{opener} \gets \charlie$
+        \State $\mathit{State} \gets \textsc{open virtual}$
+        \State output (\textsc{ok}) to \charlie
       \EndIndent
       \Statex
 
@@ -302,9 +328,8 @@
         i.e. act as a relay
         \If{\bob is not corrupted}
           \State from now on, override reactions to messages (\textsc{open}) and
-          (\textsc{pay}) addressed to \bob
-          with those defined in the current and following Figures:
-          % TODO: add \ref{}s
+          (\textsc{pay}) addressed to \bob with those defined in the current
+          Figure:
         \EndIf
         \State output (\textsc{ok}) to $P$
       \EndIndent
