@@ -13,7 +13,7 @@
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\mathit{State} \gets \textsc{sent key}$
-        \State $(sk, pk) \gets \textsc{KeyGen}()$
+        \State $(sk, pk) \gets \textsc{keyGen}()$
         \State output (\textsc{public key}, $pk$) to \alice
         \label{code:functionality:chan:skeleton:init:top_up:end}
       \EndIndent
@@ -47,8 +47,8 @@
       \Indent
         \State ensure $\mathit{State} = (\textsc{topped up}, \alice)$
         \State ensure $c_F = c_{\mathrm{on}}$
-        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{KeyGen}()$; $(sk_{B, F},
-        pk_{B, F}) \gets \textsc{KeyGen}()$
+        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$; $(sk_{B, F},
+        pk_{B, F}) \gets \textsc{keyGen}()$
         \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
         2/\{pk_{A, F}, pk_{B, F}\})$\}
         \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
@@ -309,7 +309,7 @@
         \State ensure $\mathit{State} = (\textsc{topped up}, \bob)$ \TODO{decide
         what happens when channel funded by corrupted party}
         \State ensure $c_F = c_{\mathrm{on}}$
-        \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{KeyGen}()$
+        \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
         \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
         \mathrm{out}}, pk_{B, F}, \bob)$ to \adversary, assign reply to ($pk_{A,
         F}$, $C =$ TX \{input: $F$.output, outputs: ($c_F, pk_{B, \mathrm{out}}
