@@ -97,7 +97,7 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 1}
     \begin{algorithmic}[1]
       \State On (\textsc{close}) by \alice:
       \Indent
@@ -131,8 +131,15 @@
         \State \TODO{asynchronously, if a lot of time passes and $C'$ not in
         \ledger, submit $C$ to \ledger for good measure}
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:chan:skeleton:close:pt1}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 2}
+    \begin{algorithmic}[1]
       \State On (\textsc{closing}, $c_{\mathrm{left}}$, $c_{\mathrm{right}}$) by
       \fchan:
       \Indent
@@ -172,7 +179,7 @@
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:chan:skeleton:close}
+  \label{code:functionality:chan:skeleton:close:pt2}
 \end{figure}
 
 \begin{figure}[H]
