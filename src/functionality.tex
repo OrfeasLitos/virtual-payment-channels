@@ -276,14 +276,16 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties}, \dave, id,
-      \texttt{is\_last}) by \charlie:
+      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
+      \texttt{next\_hop}, \dave, id, \texttt{is\_last}) by \charlie:
       \label{code:functionality:chan:skeleton:virtual:allow-fund}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
         \State ensure $\dave \in \{\alice, \bob\}$
         \State ensure $c_D - \mathrm{locked}_D \geq c$
+        \State ensure \dave's counterparty belongs to the same group as
+        \texttt{next\_hop}
         \State output received message to \dave and ensure reply is
         \textsc{(ok)}
         \State $\mathrm{locked}_D \gets \mathrm{locked}_D + c$
