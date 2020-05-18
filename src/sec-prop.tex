@@ -1,0 +1,49 @@
+\begin{theorem}
+  Assume that at the end of the execution, \ledger contains exactly one
+  ``groups'' transaction that precedes all ``funding'' transactions and contains
+  as payload a partition $\mathcal{G}$ into groups of all VChan parties, with
+  each group containing the parties that belong to the same (human) owner. Then
+  the following holds:
+  \begin{gather*}
+    \forall G \in \mathcal{G} \text{ such that all parties in } G \text{ are
+    honest}, \\
+    \sum\limits_{P \in G}\text{\emph{logged-coins}}(P) = \sum\limits_{P \in
+    G}\text{\emph{ledger-coins}}(P) = \\
+    = \sum\limits_{P \in G}(\text{\emph{top-up}}(P) + \sum\limits_{m \in
+    \mathcal{T}}\text{\emph{pay-in}}(m, P) - \sum\limits_{m \in
+    \mathcal{T}}\text{\emph{pay-out}}(m, P)) \enspace,
+  \end{gather*}
+  where $\mathcal{T}$ is the execution transcript and:
+  \begin{align*}
+    \text{\emph{logged-coins}}(P) &= c_P, \text{as recorded in \fchan/\pchan} \\
+    \text{\emph{ledger-coins}}(P) &= \text{coins spendable with the secret key }
+    sk \text{ of } P \text{ if the closing} \\
+    &\phantomrel{=} \text{transactions of all open channels are submitted to
+    \ledger} \\
+    &\phantomrel{=} \text{and added to the state of all parties and then } t
+    \text{ new blocks } \\
+    &\phantomrel{=} \text{enter the state of all honest parties} \\
+    \text{\emph{top-up}}(P) &=
+    \left\{\begin{array}{@{}lr@{}}
+      \multirow[t]{2}{*}{$c_{\mathrm{on}},$} & \text{as determined on message
+      \textsc{(check top up)},} \\
+      & \text{if such a message was handled} \\
+      0, & \text{otherwise}
+    \end{array}\right. \\
+    \text{\emph{pay-in}}(m, P) &=
+    \left\{\begin{array}{@{}lr@{}}
+      \multirow[t]{2}{*}{$x$}, & \text{if message } m \text{ updated the
+      channel to} \\
+      & \text{a state in which } P \text{ had } x \text{ more coins\TODO{improve
+      prev}} \\
+      0, & \text{otherwise}
+    \end{array}\right. \\
+    \text{\emph{pay-out}}(m, P) &=
+    \left\{\begin{array}{@{}lr@{}}
+      \multirow[t]{2}{*}{$x$}, & \text{if } m = (\textsc{pay} , x) \text{ was
+      received by } P \text{ and} \\
+      & P \text{ output \textsc{(pay success)} as a result} \\
+      0, & \text{otherwise}
+    \end{array}\right. \\
+  \end{align*}
+\end{theorem}

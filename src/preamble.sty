@@ -10,6 +10,7 @@
 \let\endproof\relax
 \usepackage{amsthm}
 \usepackage{mathtools}
+\usepackage{multirow}
 \usepackage{amssymb}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
@@ -177,6 +178,8 @@
 \newcommand{\clock}{\ensuremath{\mathcal{G}_{\mathrm{Clock}}}\xspace}
 \newcommand{\fpaynet}{\ensuremath{\mathcal{F}_{\mathrm{PayNet}}}\xspace}
 \newcommand{\fchan}{\ensuremath{\mathcal{F}_{\mathrm{Chan}}}\xspace}
+\newcommand{\pchan}{\ensuremath{\Pi_{\mathrm{Chan}}}\xspace}
 \newcommand{\simulator}{\ensuremath{\mathcal{S}}\xspace}
 \newcommand{\adversary}{\ensuremath{\mathcal{A}}\xspace}
 \newcommand{\environment}{\ensuremath{\mathcal{E}}\xspace}
+\newcommand*\phantomrel[1]{\mathrel{\phantom{#1}}}% https://tex.stackexchange.com/a/448386
