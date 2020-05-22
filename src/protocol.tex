@@ -57,11 +57,14 @@
 
       \State On (\textsc{close}) by \environment:
       \Indent
+          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
+          \Comment{$C$, $\mathrm{sig}_{B, C}$ received during last LN()}
         \If{$\mathit{State} = \textsc{open base}$}
-          \State prepare $C$ TODO
-          \State send (\textsc{submit}, $C$) to \ledger
+          \State send (\textsc{submit}, $(C, \mathrm{sig}_{A, C},
+          \mathrm{sig}_{B, C})$) to \ledger
         \ElsIf{$\mathit{State} = \textsc{open virtual}$}
-          \State TODO
+          \State output (\textsc{close}, $(C, \mathrm{sig}_{A, C},
+          \mathrm{sig}_{B, C})$) to \texttt{opener}
         \EndIf
       \EndIndent
     \end{algorithmic}
@@ -83,6 +86,7 @@
         \label{code:protocol:chan:skeleton:vchan:fund-you:state}
         \State do LN with \bob{} -- TODO
         \label{code:protocol:chan:skeleton:vchan:ln}
+        \State $\mathtt{opener} \gets \charlie$
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}) to \charlie
         \label{code:protocol:chan:skeleton:vchan:fund-you:output}
@@ -122,6 +126,14 @@
       (Fig~\ref{code:functionality:chan:skeleton:virtual},
       line~\ref{code:functionality:chan:skeleton:virtual:allow-fund})
       \TODO{check again: \alice shouldn't act on behalf of \bob}
+      \Statex
+
+      \State On (\textsc{close}, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B,
+      C})$) output by \charlie:
+      \Indent
+        \State TODO: check virtual, save comm, change virtual state
+      \EndIndent
+      \TODO{check that everything done in ideal wrt closing is also done here}
     \end{algorithmic}
   \end{protocolbox}
   \caption{}

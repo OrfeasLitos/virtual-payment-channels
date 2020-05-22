@@ -105,28 +105,46 @@ with all hops of all existing virtuals, we should definitely find another way)}
     \begin{algorithmic}[1]
       \State On (\textsc{close}) by \alice:
       \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \If{both channel parties are honest}
+          \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+          \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
+          \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
+        \EndIf \Comment{if \bob is corrupted, we already have $C$ and
+        $\mathrm{sig}_{B, C}$}
+        \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
+        \State $\mathit{State} \gets \textsc{closed}$
         \If{$\mathit{State} = \textsc{open base}$}
-          \If{both channel parties are honest}
-            \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
-            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
-          \EndIf \Comment{note that rest is run only if \alice is honest}
-          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
-          \State $\mathit{State} \gets \textsc{closed}$
           \State input (\textsc{submit}, $(C, \mathrm{sig}_{A, C},
           \mathrm{sig}_{B, C})$) to \ledger
-        \ElsIf{$\mathit{State} = \textsc{open virtual}$} \TODO{think more about
-        closing w/ one corrupted party}
-          \State $\mathit{State} \gets \textsc{closed}$
-          \State output (\textsc{closing}, $c_A$, $c_B$) to \texttt{opener}
+        \ElsIf{$\mathit{State} = \textsc{open virtual}$}
+          \If{\alice had received \textsc{fund you}} \Comment{by
+          \texttt{opener}}
+            \State $\mathrm{initiator} \gets \mathtt{opener}$; $\mathrm{other}
+            \gets \mathtt{outer\_peer}$
+          \Else
+            \State $\mathrm{initiator} \gets \mathtt{outer\_peer}$;
+            $\mathrm{other} \gets \mathtt{opener}$
+          \EndIf
+          \If{both parties are honest}
+            \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+            \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
+            \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
+            $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
+            \State output (\textsc{peer closed virtual}, $(C', \mathrm{sig}_{A,
+            C}', \mathrm{sig}_{B, C}')$ to other as \bob and expect reply
+            (\textsc{ok})
+          \EndIf
+          \State output (\textsc{closed virtual}, $(C, \mathrm{sig}_{A, C},
+          \mathrm{sig}_{B, C})$) to initiator as \alice
         \EndIf
       \EndIndent
       \Statex
 
-      \State On (\textsc{close}) by \adversary:
+      \State On (\textsc{close}, \alice) by \adversary:
       \Indent
-        \State ensure that exactly one party in $\{\alice, \bob\}$ is corrupted
-        \State wlog, let \alice corrupted, \bob honest
+        \State ensure that \alice is corrupted, \bob is honest
         \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_B, pk_{B,
         \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
         \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, F})$
@@ -140,26 +158,37 @@ with all hops of all existing virtuals, we should definitely find another way)}
   \caption{}
   \label{code:functionality:chan:skeleton:close:pt1}
 \end{figure}
+\TODO{send comm TXs of sub-virtuals to our base as well}
 
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 2}
     \begin{algorithmic}[1]
-      \State On (\textsc{closing}, $c_{\mathrm{left}}$, $c_{\mathrm{right}}$) by
-      \fchan:
+      \State On (\textsc{closed virtual}, $(C, \mathrm{sig}_{A, C},
+      \mathrm{sig}_{B, C})$) by \charlie:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $((c_L, c_R), \mathrm{hops}, (\charlie, \dave), (\frank,
-        \george), \mathrm{id}) \in \mathtt{funded}$ with $\frank \in \{\alice,
-        \bob\}$
-        \State ensure $c_{\mathrm{left}} \leq c_L + c_R$
-        \State remove entry from \texttt{funded}
-        \State output (\textsc{closed virtual}, $c_{\mathrm{right}}$, id) to
+        \State ensure (($c_L$, $c_R$), hops, (\charlie, \dave), (\frank,
+        \george), $pk_{A, V}$, $pk_{B, V}$, id) $\in$ \texttt{funded}
+        with $\frank \in \{\alice, \bob\}$ \Comment{no stored commitment TX in
+        entry yet}
+        \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, V}$)
+        = \textsc{verify}($C$, $\mathrm{sig}_{B, C}$, $pk_{B, V}$) = True
+        \State $c_{\mathrm{left}} \gets C\text{.outputs.(the timelocked
+        output).coins}$
+        \State $c_{\mathrm{right}} \gets C\text{.outputs.(the other
+        output).coins}$
+        \State ensure $c_{\mathrm{left}} + c_{\mathrm{right}} = c_L + c_R$
+        \State add message contents to \texttt{funded} entry
+        \State output (\textsc{closed virtual}, $c_{\mathrm{left}}$, id) to
         \frank
       \EndIndent
       \Statex
 
-      \State On (\textsc{closed virtual}, $c_{\mathrm{right}}$, id) by \fchan:
+      \TODO{delete following and make it work like previous, but return OK to
+      \dave}
+      \State On (\textsc{peer closed virtual}, $c_{\mathrm{right}}$, id) by
+      \dave:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
@@ -169,16 +198,6 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State send (\textsc{closed}) to virtual and expect reply (\textsc{yes})
         \State $c_D \gets c_D + c_{\mathrm{right}}$
         \State remove entry from \texttt{funded}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{closed}) by $P$:
-      \Indent
-        \If{$\mathit{State} = \textsc{closed}$}
-          \State send (\textsc{yes}) to $P$
-        \Else
-          \State send (\textsc{no}) to $P$
-        \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
@@ -199,8 +218,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
         \State ensure $c_A - \mathrm{locked}_A \geq c$
-        \State input (\textsc{fund you}, $c$, counterparty) to fundee as \alice,
-        ensure output is (\textsc{ok})
+        \State input (\textsc{fund you}, $c$, counterparty, \dave) to fundee as
+        \alice, ensure output is (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$)
         \label{code:functionality:chan:skeleton:virtual:subfunc}
         \State generate random id
         \label{code:functionality:chan:skeleton:virtual:id}
@@ -251,7 +270,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \EndIf
         % TODO: decide if need to store hops here
         \State add (($c$, 0), hops, \texttt{sub\_parties},
-        \texttt{outer\_parties}, id) to \texttt{funded}
+        \texttt{outer\_parties}, $pk_{A, V}$, $pk_{B, V}$, id) to
+        \texttt{funded}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
         \State output (\textsc{ok}) to \alice
       \EndIndent
@@ -264,19 +284,22 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
-      \State On (\textsc{fund you}, $c$, \dave) by $\charlie$ as input to
-      \alice: \Comment{\alice is funded by \charlie}
+      \State On (\textsc{fund you}, $c$, local peer, \texttt{outer\_peer}) by
+      $\charlie$ as input to \alice: \Comment{\alice is funded by \charlie}
       \label{code:functionality:chan:skeleton:virtual:fund-you}
       \Indent
+        \TODO{what if counterparty corrupted?}
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $\bob \gets \dave$
+        \State $\bob \gets \text{ local peer}$
         \State send (\textsc{fund you}, $c$, \bob, \charlie, \alice) to
         \adversary and ensure reply is \textsc{(ok)}
         \label{code:functionality:chan:skeleton:virtual:inform}
         \State $c_A \gets c; c_B \gets 0$
         \State $\mathtt{opener} \gets \charlie$
+        \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$; $(sk_{B, V},
+        pk_{B, V}) \gets \textsc{keyGen}()$
         \State $\mathit{State} \gets \textsc{open virtual}$
-        \State output (\textsc{ok}) to \charlie
+        \State output (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$) to \charlie
       \EndIndent
       \Statex
 
@@ -330,12 +353,17 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \State send (\textsc{corrupt}) to fundee and ensure reply is
           (\textsc{ok})
         \EndFor
+        \If{$\mathit{State} \in \{\textsc{open base}, \textsc{open virtual}\}$}
+          \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+          \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
+          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
+        \EndIf
         \State from now on, allow \adversary to handle all \alice's messages,
         i.e. act as a relay
         \If{\bob is not corrupted}
           \State from now on, override reactions to messages (\textsc{open}) and
           (\textsc{pay}) addressed to \bob with those defined in the current
-          Figure:
+          Figure
         \EndIf
         \State output (\textsc{ok}) to $P$
       \EndIndent
@@ -379,7 +407,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \EndIndent
       \Statex
 
-      \TODO{receive payment from corrupted counterparty}
+      \State \TODO{receive payment from corrupted counterparty}
     \end{algorithmic}
   \end{systembox}
   \caption{}
