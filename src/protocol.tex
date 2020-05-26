@@ -84,7 +84,7 @@
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\mathit{State} \gets \textsc{opening virtual channel}$
         \label{code:protocol:chan:skeleton:vchan:fund-you:state}
-        \State do LN with \bob{} -- TODO
+        \State do LN with \bob{}, also send him his ``opener'' (our outer peer) -- TODO
         \label{code:protocol:chan:skeleton:vchan:ln}
         \State $\mathtt{opener} \gets \charlie$
         \State $\mathit{State} \gets \textsc{open virtual}$
