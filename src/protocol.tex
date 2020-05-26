@@ -78,7 +78,7 @@
     \begin{algorithmic}[1]
       \State \Comment{notification to funder}
       \State \Comment{trust that \alice has $c$ in her channel}
-      \State On (\textsc{fund you}, $c$, \bob) by \charlie as input:
+      \State On input (\textsc{fund you}, $c$, \bob, \texttt{outer\_peer}) by \charlie:
       \label{code:protocol:chan:skeleton:vchan:fund-you}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
