@@ -87,6 +87,10 @@
         \State do LN with \bob{}, also send him his ``opener'' (our outer peer) -- TODO
         \label{code:protocol:chan:skeleton:vchan:ln}
         \State $\mathtt{opener} \gets \charlie$
+        \State from now on, handle any (\textsc{relayed}, $m$) input by
+        \texttt{opener} as the input ($m$) by \environment
+        \State from now on, transform any output ($m$) to \environment to
+        output (\textsc{relay}, $m$) to \texttt{opener}
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}) to \charlie
         \label{code:protocol:chan:skeleton:vchan:fund-you:output}
@@ -132,6 +136,22 @@
       C})$) output by \charlie:
       \Indent
         \State TODO: check virtual, save comm, change virtual state
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{relay}, $m$, \charlie) by \environment:
+      \Indent
+        \State do the same as in \fchan,
+        Fig.~\ref{code:functionality:chan:skeleton:virtual},
+        lines~\ref{code:functionality:chan:skeleton:virtual:relay:input:start}-\ref{code:functionality:chan:skeleton:virtual:relay:input:end}
+      \EndIndent
+      \Statex
+
+      \State On output (\textsc{relay}, $m$) by \charlie:
+      \Indent
+        \State do the same as in \fchan,
+        Fig.~\ref{code:functionality:chan:skeleton:virtual},
+        lines~\ref{code:functionality:chan:skeleton:virtual:relay:output:start}-\ref{code:functionality:chan:skeleton:virtual:relay:output:end}
       \EndIndent
       \TODO{check that everything done in ideal wrt closing is also done here}
     \end{algorithmic}

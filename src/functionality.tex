@@ -298,6 +298,12 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State $\mathtt{opener} \gets \charlie$
         \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$; $(sk_{B, V},
         pk_{B, V}) \gets \textsc{keyGen}()$
+        \State from now on, handle any (\textsc{relayed}, $m$) input by
+        \{\texttt{opener}, \texttt{outer\_peer}\} as if it were input ($m$) by
+        \{\alice, \bob\} respectively
+        \State from now on, transform any output ($m$) to \{\alice, \bob\} to
+        output (\textsc{relay}, $m$) to \{\texttt{opener},
+        \texttt{outer\_peer}\} respectively
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$) to \charlie
       \EndIndent
@@ -335,6 +341,27 @@ with all hops of all existing virtuals, we should definitely find another way)}
           (\dave, $\bot$), id) to \texttt{funded}
         \EndIf
         \State send (\textsc{ok}) to \charlie
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{relay}, $m$, \charlie) by \alice:
+      \Indent
+        \State ensure there is an entry in \texttt{funded} with \alice as funder
+        outer party and \charlie as fundee sub-party
+        \label{code:functionality:chan:skeleton:virtual:relay:input:start}
+        \State input (\textsc{relayed}, $m$) to \charlie
+        \label{code:functionality:chan:skeleton:virtual:relay:input:end}
+      \EndIndent
+      \Statex
+
+      \State On output (\textsc{relay}, $m$) by \charlie to \alice:
+      \Indent
+        \State ensure there is an entry in \texttt{funded} with \alice as funder
+        outer party and \charlie as fundee sub-party \Comment{defensive check,
+        may be redundant due to being subroutine respecting}
+        \label{code:functionality:chan:skeleton:virtual:relay:output:start}
+        \State output (\textsc{relayed}, $m$, \charlie) to \environment
+        \label{code:functionality:chan:skeleton:virtual:relay:output:end}
       \EndIndent
     \end{algorithmic}
   \end{systembox}
