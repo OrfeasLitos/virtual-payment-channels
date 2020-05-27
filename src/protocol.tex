@@ -125,11 +125,39 @@
       \EndIndent
       \Statex
 
-      \State \Comment{notification to fundee}
-      \State On (\textsc{allow fund}, \dots) by \charlie, act as \fchan
-      (Fig~\ref{code:functionality:chan:skeleton:virtual},
-      line~\ref{code:functionality:chan:skeleton:virtual:allow-fund})
-      \TODO{check again: \alice shouldn't act on behalf of \bob}
+      \State \Comment{notification to hop that locks coins}
+      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
+      \texttt{next\_hop}, id, \texttt{is\_last}) by \charlie:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $c_A - \mathrm{locked}_A \geq c$ \TODO{rethink locked}
+        \State ensure \bob belongs to the same group as \texttt{next\_hop}
+        \State output received message to \dave and ensure reply is
+        \textsc{(ok)}
+        \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
+        \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) to \bob and ensure
+        reply is (\textsc{ok})
+        \State $\mathrm{locked}_A \gets \mathrm{locked}_A + c$
+        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
+        \textsc{we lock}) to \texttt{pending}
+        \State send (\textsc{ok}) to \charlie
+      \EndIndent
+      \Statex
+
+      \State \Comment{notification to hop that doesn't lock coins -- doesn't ask
+      \environment}
+      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
+      \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) by \bob:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $c_A - \mathrm{locked}_A \geq c$ \TODO{rethink locked}
+        \State ensure we belong to the same group as \texttt{next\_hop}
+        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
+        \textsc{we don't lock}) to \texttt{pending}
+        \State send (\textsc{ok}) to \bob
+      \EndIndent
       \Statex
 
       \State On (\textsc{close}, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B,
