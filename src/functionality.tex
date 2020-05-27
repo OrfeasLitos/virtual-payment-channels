@@ -290,7 +290,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Indent
         \TODO{what if counterparty corrupted?}
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $\bob \gets \text{ local peer}$
+        \State $\bob \gets \text{local peer}$
         \State send (\textsc{fund you}, $c$, \bob, \charlie, \alice) to
         \adversary and ensure reply is \textsc{(ok)}
         \label{code:functionality:chan:skeleton:virtual:inform}
@@ -301,9 +301,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State from now on, handle any (\textsc{relayed}, $m$) input by
         \{\texttt{opener}, \texttt{outer\_peer}\} as if it were input ($m$) by
         \{\alice, \bob\} respectively
-        \State from now on, transform any output ($m$) to \{\alice, \bob\} to
-        output (\textsc{relay}, $m$) to \{\texttt{opener},
-        \texttt{outer\_peer}\} respectively
+        \State from now on, transform any output ($m$) to $\{\alice, \bob\}$ to
+        output (\textsc{relay}, $m$) to $\{\mathtt{opener},
+        \mathtt{outer\_peer}\}$ respectively
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$) to \charlie
       \EndIndent
