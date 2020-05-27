@@ -156,15 +156,21 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{close}, \alice) by \adversary:
+      \State On (\textsc{close}, \alice, $\mathrm{sig}_{A, C'}$) by \adversary:
       \Indent
+        \State \TODO{in \simulator, allow corrupted party to submit and maintain
+        fake ledger. Only in case the closing tx is valid (in the simulated
+        ledger), then calculate signature of original comm tx and send this
+        message to \fchan}
         \State ensure that \alice is corrupted, \bob is honest
         \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_B, pk_{B,
         \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
+        \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C'}$, $pk_{A, F}$)
+        = True
         \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, F})$
         \State $\mathit{State} \gets \textsc{closed}$
-        \State input (\textsc{submit}, ($C'$, $\mathrm{sig}_{B, C'}$)) to
-        \ledger
+        \State input (\textsc{submit}, ($C'$, $\mathrm{sig}_{A, C'}$,
+        $\mathrm{sig}_{B, C'}$)) to \ledger as \alice
       \EndIndent
     \end{algorithmic}
   \end{systembox}
