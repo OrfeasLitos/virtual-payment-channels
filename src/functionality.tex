@@ -139,9 +139,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
             \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
             \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
             $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
-            \State output (\textsc{peer closed virtual}, $(C', \mathrm{sig}_{A,
-            C}', \mathrm{sig}_{B, C}')$ to other as \bob and expect reply
-            (\textsc{ok})
+            \State provide delayed output (\textsc{peer closed virtual}, $(C',
+            \mathrm{sig}_{A, C}', \mathrm{sig}_{B, C}')$) to \texttt{other} as
+            \bob
           \EndIf
           \If{$\mathtt{funded} \neq \emptyset$}
             \State $\mathtt{output} \gets (\textsc{closed virtual}, (V,
