@@ -111,21 +111,21 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
           \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
           \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
-        \EndIf \Comment{if \bob is corrupted, we already have $C$ and
+        \EndIf \: \Comment{if \bob is corrupted, we already have $C$ and
         $\mathrm{sig}_{B, C}$}
         \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
         \State $\mathit{State} \gets \textsc{closed}$
         \If{$\mathit{State} = \textsc{open base}$}
           \State input (\textsc{submit}, $(C, \mathrm{sig}_{A, C},
           \mathrm{sig}_{B, C})$) to \ledger
-        \ElsIf{$\mathit{State} = \textsc{open virtual}$}
-          \If{\alice had received \textsc{fund you}} \Comment{by
-          \texttt{opener}}
-            \State $\mathrm{initiator} \gets \mathtt{opener}$; $\mathrm{other}
+        \Else \: \Comment{$\mathit{State} = \textsc{open virtual}$}
+          \If{\alice is the one that had received (\textsc{fund you}, $\dots$)
+          by \texttt{opener}}
+            \State $\mathtt{initiator} \gets \mathtt{opener}$; $\mathtt{other}
             \gets \mathtt{outer\_peer}$
-          \Else
-            \State $\mathrm{initiator} \gets \mathtt{outer\_peer}$;
-            $\mathrm{other} \gets \mathtt{opener}$
+          \Else \: \Comment{\bob had received (\textsc{fund you} $\dots$)}
+            \State $\mathtt{initiator} \gets \mathtt{outer\_peer}$;
+            $\mathtt{other} \gets \mathtt{opener}$
           \EndIf
           \If{both parties are honest}
             \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
