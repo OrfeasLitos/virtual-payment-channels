@@ -234,9 +234,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
         |\mathrm{hops}|\}$}
         \label{code:functionality:chan:skeleton:virtual:fund:for:allow:start}
           \State ensure $R_{i-1} = L_i$
-          \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-          $\mathtt{local\_funder} \gets L_i$, id, $i \overset{?}{=}
-          |\mathrm{hops}|$) to $L_i$ as \alice and ensure reply is (\textsc{ok})
+          \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties}, id, $i
+          \overset{?}{=} |\mathrm{hops}|$) to $L_i$ as \alice and ensure reply
+          is (\textsc{ok})
           \label{code:functionality:chan:skeleton:virtual:fund:for:allow:send}
         \EndFor
         \label{code:functionality:chan:skeleton:virtual:fund:for:allow:end}
@@ -310,12 +310,13 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Statex
 
       \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-      \texttt{next\_hop}, \dave, id, \texttt{is\_last}) by \charlie:
+      \texttt{next\_hop}, id, \texttt{is\_last}) to \dave by \charlie:
       \label{code:functionality:chan:skeleton:virtual:allow-fund}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $\dave \in \{\alice, \bob\}$
+        \State ensure $\dave \in \{\alice, \bob\}$ \Comment{defensive check, may
+        be redundant due to UC rules}
         \State ensure $c_D - \mathrm{locked}_D \geq c$
         \State ensure \dave's counterparty belongs to the same group as
         \texttt{next\_hop}
