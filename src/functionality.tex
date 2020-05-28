@@ -108,20 +108,26 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
         \If{both channel parties are honest}
-          \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-          \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
-          \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
+          \If{$\mathtt{funded} \neq \emptyset$}
+            \State \TODO{prepare virtual layer TX $V$ and its signature --
+            careful, may be unneded!}
+            \State $C \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
+            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
+            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, V})$
+            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, V})$
+          \Else
+            \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
+            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
+            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
+          \EndIf
         \EndIf \: \Comment{if \bob is corrupted, we already have $C$ and
         $\mathrm{sig}_{B, C}$}
-        \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
-        \If{$\mathtt{funded} \neq \emptyset$}
-          \State \TODO{prepare virtual layer TX $V$ and its signature --
-          careful, may be unneded!}
-        \EndIf
         \State $\mathit{State} \gets \textsc{closed}$
         \If{$\mathit{State} = \textsc{open base}$}
-          \State input (\textsc{submit}, $(C, \mathrm{sig}_{A, C},
-          \mathrm{sig}_{B, C})$) to \ledger
+          \State input (\textsc{submit}, $(V, \mathrm{sig}_{A, V},
+          \mathrm{sig}_{B, V})$, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B,
+          C})$) to \ledger
         \Else \: \Comment{$\mathit{State} = \textsc{open virtual}$}
           \If{\alice is the one that had received (\textsc{fund you}, $\dots$)
           by \texttt{opener}}
@@ -134,11 +140,16 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \If{both parties are honest}
             \If{$\mathtt{funded} \neq \emptyset$}
               \State \TODO{prepare virtual layer TX $V$ and its signature}
+              \State $C' \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
+              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
+              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, V})$;
+              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, V})$
+            \Else \: \Comment{there are no virtual channels on top of us}
+              \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
+              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
+              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
             \EndIf
-            \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-            \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
-            \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
-            $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
             \State provide delayed output (\textsc{peer closed virtual}, $(C',
             \mathrm{sig}_{A, C}', \mathrm{sig}_{B, C}')$) to \texttt{other} as
             \bob
@@ -154,30 +165,58 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \State output \texttt{output} to \texttt{initiator} as \alice
         \EndIf
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:chan:skeleton:close:pt1}
+\end{figure}
 
-      \State On (\textsc{close}, \alice, $\mathrm{sig}_{A, C'}$) by \adversary:
+\begin{figure}[H]
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close by corrupted}
+    \begin{algorithmic}[1]
+      \State On (\textsc{close}, \alice, $\mathrm{sig}_{A, C'}$,
+      $\mathrm{sig}_{A, V'}$) by \adversary:
       \Indent
         \State \TODO{in \simulator, allow corrupted party to submit and maintain
         fake ledger. Only in case the closing tx is valid (in the simulated
         ledger), then calculate signature of original comm tx and send this
         message to \fchan}
         \State ensure that \alice is corrupted, \bob is honest
-        \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_B, pk_{B,
-        \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
-        \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C'}$, $pk_{A, F}$)
-        = True
-        \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, F})$
+        \If{$\mathtt{funded} = \emptyset$}
+          \State ensure $\mathrm{sig}_{A, V'} = \epsilon$
+          \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_B, pk_{B,
+          \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
+          \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C'}$, $pk_{A, F}$)
+          = True
+          \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, F})$
+        \Else
+          \State ensure $\mathrm{sig}_{A, V'} \neq \epsilon$
+          \State \TODO{prepare virtual TX, verify $\mathrm{sig}_{A, V'}$}
+          \State $C' \gets$ TX \{input: $V'$.output, outputs: $(c_B, pk_{B,
+          \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
+          \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C'}$, $pk_{A,
+          V'}$) = True
+          \State $\mathrm{sig}_{B, V'} \gets \textsc{sign}(V', sk_{B, F})$
+          \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, V'})$
+        \EndIf
         \State $\mathit{State} \gets \textsc{closed}$
-        \State input (\textsc{submit}, ($C'$, $\mathrm{sig}_{A, C'}$,
-        $\mathrm{sig}_{B, C'}$)) to \ledger as \alice
+        \If{$\mathit{State} = \textsc{open base}$}
+          \State input (\textsc{submit}, ($V'$, $\mathrm{sig}_{A, V}$,
+          $\mathrm{sig}_{B, V'}$), ($C'$, $\mathrm{sig}_{A, C'}$,
+          $\mathrm{sig}_{B, C'}$)) to \ledger as \alice
+        \Else
+          \State output (\textsc{closed virtual}, ($V'$, $\mathrm{sig}_{A, V}$,
+          $\mathrm{sig}_{B, V'}$), ($C'$, $\mathrm{sig}_{A, C'}$,
+          $\mathrm{sig}_{B, C'}$)) to \alice's host (\texttt{opener} if \alice
+          had received (\textsc{fund you}, $\dots$), \texttt{outer\_peer} else)
+          as \alice
+        \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:chan:skeleton:close:pt1}
+  \label{code:functionality:chan:skeleton:close:corrupted}
 \end{figure}
-\TODO{send comm TXs of sub-virtuals to our base as well}
 
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 2}
