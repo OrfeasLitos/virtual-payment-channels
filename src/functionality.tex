@@ -103,6 +103,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 1}
     \begin{algorithmic}[1]
+      \TODO{handle arbitrarily nested virtuals (now we only handle one level and
+      it leads to nested ifs}
       \State On (\textsc{close}) by \alice:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
@@ -139,7 +141,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \EndIf
           \If{both parties are honest}
             \If{$\mathtt{funded} \neq \emptyset$}
-              \State \TODO{prepare virtual layer TX $V$ and its signature}
+              \State \TODO{prepare virtual layer TXs $V_A, V_B$ and their
+              signatures}
               \State $C' \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
               \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
               \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, V})$;
@@ -150,7 +153,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
               \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
               $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
             \EndIf
-            \State provide delayed output (\textsc{peer closed virtual}, $(C',
+            \State provide delayed output (\textsc{peer closed virtual}, $(V_B,
+            \mathrm{sig}_{A, V_B}, \mathrm{sig}_{B, V_B})$, $(C',
             \mathrm{sig}_{A, C}', \mathrm{sig}_{B, C}')$) to \texttt{other} as
             \bob
           \EndIf
@@ -221,8 +225,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 2}
     \begin{algorithmic}[1]
-      \State On (\textsc{closed virtual}, $(C, \mathrm{sig}_{A, C},
-      \mathrm{sig}_{B, C})$) by \charlie:
+      \State On (\textsc{(peer) closed virtual}, $(V', \mathrm{sig}_{A, V'},
+      \mathrm{sig}_{B, V'})$, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B, C})$)
+      by \charlie:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
@@ -230,32 +235,23 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \george), $pk_{A, V}$, $pk_{B, V}$, id) $\in$ \texttt{funded}
         with $\frank \in \{\alice, \bob\}$ \Comment{no stored commitment TX in
         entry yet}
-        \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, V}$)
-        = \textsc{verify}($C$, $\mathrm{sig}_{B, C}$, $pk_{B, V}$) = True
+        \If{second tuple of message is empty}
+          \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, V}$)
+          = \textsc{verify}($C$, $\mathrm{sig}_{B, C}$, $pk_{B, V}$) = True
+        \Else
+          \State ensure \textsc{verify}($V'$, $\mathrm{sig}_{A, V'}$, $pk_{A,
+          V}$) = \textsc{verify}($V'$, $\mathrm{sig}_{B, V'}$, $pk_{B, V}$) =
+          \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, V'}$) =
+          \textsc{verify}($C$, $\mathrm{sig}_{B, C}$, $pk_{B, V'}$) = True
+        \EndIf
         \State $c_{\mathrm{left}} \gets C\text{.outputs.(the timelocked
         output).coins}$
         \State $c_{\mathrm{right}} \gets C\text{.outputs.(the other
         output).coins}$
         \State ensure $c_{\mathrm{left}} + c_{\mathrm{right}} = c_L + c_R$
         \State add message contents to \texttt{funded} entry
-        \State output (\textsc{closed virtual}, $c_{\mathrm{left}}$, id) to
-        \frank
-      \EndIndent
-      \Statex
-
-      \TODO{delete following and make it work like previous, but return OK to
-      \dave}
-      \State On (\textsc{peer closed virtual}, $c_{\mathrm{right}}$, id) by
-      \dave:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $(\mathrm{virtual}, c, \fchan, \dave, \mathrm{id}) \in
-        \mathtt{funded}$
-        \State ensure $c_{\mathrm{right}} \leq c$
-        \State send (\textsc{closed}) to virtual and expect reply (\textsc{yes})
-        \State $c_D \gets c_D + c_{\mathrm{right}}$
-        \State remove entry from \texttt{funded}
+        \State output (\textsc{(peer) closed virtual}, $c_{\mathrm{left}}$, id) to
+        \george if peer closed, to \frank else
       \EndIndent
     \end{algorithmic}
   \end{systembox}
