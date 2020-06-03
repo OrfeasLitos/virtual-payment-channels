@@ -1,0 +1,59 @@
+\begin{figure}[H]
+  \begin{systembox}{\textsc{ln}}
+    \begin{algorithmic}[1]
+      \State \textsc{init}():
+      \Indent
+        \State \TODO{}
+      \EndIndent
+      \Statex
+
+      \State \textsc{topUp}(\alice):
+      \Indent
+        \State $(sk_{\mathrm{in}}, pk_{\mathrm{in}}) \gets \textsc{keyGen}()$
+        \State output (\textsc{public key}, $pk_{\mathrm{in}}$) to \alice,
+        wait\footnote{all other messages by \alice are ignored} for input
+        (\textsc{check top up}) by \alice
+        \State input (\textsc{read}) to \ledger as \alice and assign ouput to
+        $\Sigma$
+        \State ensure $\exists \mathrm{tx} \in \Sigma, c_{\mathrm{in}}:
+        (c_{\mathrm{in}}, pk_{\mathrm{in}}) \in \mathrm{tx.outputs}$ and assign
+        this output to \texttt{base\_output}, else go back to waiting for
+        \textsc{check top up} by \alice
+        \State return (\textsc{ok})
+      \EndIndent
+      \Statex
+
+      \State \textsc{open}(\texttt{args}):
+      \Indent
+        \State ensure \texttt{args} can be parsed as ($c_F$, $pk_{A,
+        \mathrm{out}}$, $pk_{B, \mathrm{out}}$)
+        \State ensure $c_F = c_{\mathrm{in}}$
+        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$; $(sk_{B, F},
+        pk_{B, F}) \gets \textsc{keyGen}()$
+        \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
+        2/\{pk_{A, F}, pk_{B, F}\})$\}
+        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
+        \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
+        \mathrm{out}}, F, \mathrm{sig}_F, \alice)$ to \adversary, wait for
+        input (\textsc{check funding}) by \alice
+        \State input (\textsc{read}) to \ledger as \alice and assign output to
+        $\Sigma$
+        \State ensure $F \in \Sigma$
+        \State return (\textsc{ok}, $c_F$)
+      \EndIndent
+      \Statex
+
+      \State \textsc{virtualOpen}($c$, \texttt{keys})
+      \Indent
+        \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$; $(sk_{B, V},
+        pk_{B, V}) \gets \textsc{keyGen}()$
+        \State \TODO{continue}
+        \State send (\textsc{open virtual}, $c$, \bob, \charlie, \alice) to
+        \adversary and ensure reply is \textsc{(ok)}
+        \State return (\textsc{ok})
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:ln}
+\end{figure}

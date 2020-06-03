@@ -7,35 +7,25 @@ with all hops of all existing virtuals, we should definitely find another way)}
     \begin{algorithmic}[1]
       \State Initialisation: \Comment{runs on first activation}
       \Indent
+        \State $(c_A, c_B, \mathrm{locked}_A, \mathrm{locked}_B) \gets (0, 0, 0,
+        0)$
+        \State $\mathtt{virtuals} \gets \emptyset$
+        \State $(\mathtt{funder}, \mathtt{fundee}, \mathtt{outer\_funder},
+        \mathtt{outer\_fundee}) \gets (\bot, \bot, \bot, \bot)$
+        \State ensure \textsc{ln.init}() returns (\textsc{ok})
         \State $\mathit{State} \gets \textsc{init}$
-        \State $(\mathrm{locked}_A, \mathrm{locked}_B) \gets (0, 0)$
       \EndIndent
       \Statex
 
-      \State On (\textsc{top up}, $c_{\mathrm{min}}$) by \alice:
+      \State On (\textsc{top up}) by \alice:
       \label{code:functionality:chan:skeleton:init:top_up:start}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $\mathit{State} \gets \textsc{sent key}$
-        \State $(sk, pk) \gets \textsc{keyGen}()$
-        \State output (\textsc{public key}, $pk$) to \alice
-        \label{code:functionality:chan:skeleton:init:top_up:end}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{check top up}) by \alice:
-      \label{code:functionality:chan:skeleton:init:check_top_up:start}
-      \Indent
-        \State ensure $\mathit{State} = \textsc{sent key}$
-        \State input (\textsc{read}) to \ledger as \alice and assign ouput to
-        $\Sigma$
-        \State ensure $\exists \mathrm{tx} \in \Sigma, c_{\mathrm{on}}:
-        c_{\mathrm{on}} \geq c_{\mathrm{min}} \wedge (c_{\mathrm{on}}, pk) \in
-        \mathrm{tx.outputs}$
-        \State $\mathtt{base\_output} \gets (c_{\mathrm{on}}, pk) \text{ of tx}$
-        \State $\mathit{State} \gets (\textsc{topped up}, \alice)$
+        \State $\mathtt{funder} \gets \alice$
+        \State ensure \textsc{ln.topUp}(\alice) returns (\textsc{ok})
+        \State $\mathit{State} \gets (\textsc{topped up})$
         \State output (\textsc{topped up}) to \alice
-        \label{code:functionality:chan:skeleton:init:check_top_up:end}
+        \label{code:functionality:chan:skeleton:init:top_up:end}
       \EndIndent
     \end{algorithmic}
   \end{systembox}
@@ -46,28 +36,11 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
     \begin{algorithmic}[1]
-      \State On (\textsc{open}, $c_F$, $pk_{A, \mathrm{out}}$, $pk_{B,
-      \mathrm{out}}$) by \alice:
+      \State On (\textsc{open}, \texttt{keys}) by \alice:
       \Indent
-        \State ensure $\mathit{State} = (\textsc{topped up}, \alice)$
-        \State ensure $c_F = c_{\mathrm{on}}$
-        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$; $(sk_{B, F},
-        pk_{B, F}) \gets \textsc{keyGen}()$
-        \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
-        2/\{pk_{A, F}, pk_{B, F}\})$\}
-        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
-        \State $\mathit{State} \gets \textsc{waiting for ledger}$
-        \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-        \mathrm{out}}, F, \mathrm{sig}_F, \alice)$ to \adversary
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{check funding}) by \alice:
-      \Indent
-        \State ensure $\mathit{State} = \textsc{waiting for ledger}$
-        \State input (\textsc{read}) to \ledger as \alice and assign output to
-        $\Sigma$
-        \State ensure $F \in \Sigma$
+        \State ensure $\mathit{State} = (\textsc{topped up}) \wedge
+        \mathtt{funder} = \alice$
+        \State ensure \textsc{ln.open}(\texttt{keys}) returns (\textsc{ok}, $c$)
         \State $c_A \gets c$; $c_B \gets 0$
         \State $\mathit{State} \gets \textsc{open base}$
         \State output (\textsc{open success}) to \alice
@@ -80,7 +53,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
         virtual}\}$
         \State ensure $c_D - \mathrm{locked}_D \geq x$
         \State send (\textsc{pay}, $x$, \dave) to \adversary and expect reply
-        (\textsc{ok})
+        (\textsc{ok}) \TODO{decide if \textsc{ln.pay}() needed -- probably not}
         \State $c_D \gets c_D - x; c_{\bar{D}} \gets c_{\bar{D}} + x$
         \Comment{$\bar{D}$ is \alice if $D$ is \bob and vice-versa}
         \State output (\textsc{pay success}) to \dave
@@ -109,6 +82,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
+        \State ensure \textsc{ln.close}() returns (\textsc{ok}) \TODO{continue}
         \If{both channel parties are honest}
           \If{$\mathtt{funded} \neq \emptyset$}
             \State \TODO{prepare virtual layer TX $V$ and its signature --
@@ -131,11 +105,11 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \mathrm{sig}_{B, V})$, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B,
           C})$) to \ledger
         \Else \: \Comment{$\mathit{State} = \textsc{open virtual}$}
-          \If{\alice is the one that had received (\textsc{fund you}, $\dots$)
+          \If{\alice is the one that had received (\textsc{open virtual}, $\dots$)
           by \texttt{opener}}
             \State $\mathtt{initiator} \gets \mathtt{opener}$; $\mathtt{other}
             \gets \mathtt{outer\_peer}$
-          \Else \: \Comment{\bob had received (\textsc{fund you} $\dots$)}
+          \Else \: \Comment{\bob had received (\textsc{open virtual} $\dots$)}
             \State $\mathtt{initiator} \gets \mathtt{outer\_peer}$;
             $\mathtt{other} \gets \mathtt{opener}$
           \EndIf
@@ -212,8 +186,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \State output (\textsc{closed virtual}, ($V'$, $\mathrm{sig}_{A, V}$,
           $\mathrm{sig}_{B, V'}$), ($C'$, $\mathrm{sig}_{A, C'}$,
           $\mathrm{sig}_{B, C'}$)) to \alice's host (\texttt{opener} if \alice
-          had received (\textsc{fund you}, $\dots$), \texttt{outer\_peer} else)
-          as \alice
+          had received (\textsc{open virtual}, $\dots$), \texttt{outer\_peer}
+          else) as \alice
         \EndIf
       \EndIndent
     \end{algorithmic}
@@ -262,70 +236,30 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- fund virtual}
     \begin{algorithmic}[1]
-      \State On (\textsc{fund}, $c$, hops, \texttt{sub\_parties} = (fundee,
-      counterparty), \texttt{outer\_parties} = (\alice, \dave),
-      $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB}, out}$) by \alice:
-      \Comment{we fund another channel} \TODO{use $pk_{VA}$ in virtual LN()}
-      % TODO: decide if \alice of outer_parties should be \charlie instead
+      \State On (\textsc{fund}, $c$, \texttt{hops}, \texttt{inner\_parties} =
+      (\texttt{inner\_fundee}, \texttt{inner\_peer}), \texttt{outer\_parties} =
+      (\texttt{outer\_funder}, \texttt{outer\_peer}), \texttt{keys}) by \alice:
+      \TODO{\texttt{out\_keys} = $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB},
+      out}$, use this in \textsc{vn.fund}()}
+      \Comment{we fund another channel}
       \label{code:functionality:chan:skeleton:virtual:fund}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
         \State ensure $c_A - \mathrm{locked}_A \geq c$
-        \State input (\textsc{fund you}, $c$, counterparty, \dave) to fundee as
-        \alice, ensure output is (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$)
+        \State ensure \texttt{outer\_funder} = \alice
+        \State input (\textsc{open virtual}, $c$, \texttt{inner\_peer},
+        \texttt{outer\_peer}, \texttt{keys}) to \texttt{inner\_fundee} as
+        \alice, ensure output is (\textsc{ok}, \texttt{in\_keys})
         \label{code:functionality:chan:skeleton:virtual:subfunc}
-        \State generate random id
+        \State generate unique \textit{vid}
         \label{code:functionality:chan:skeleton:virtual:id}
-        \State send (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
-        counterparty), \texttt{outer\_parties} = (\alice, \dave),
-        \texttt{funder} = \alice, id) to \adversary and ensure reply is
+        \State ensure \textsc{vl.fund}($c$, \texttt{hops},
+        \texttt{inner\_parties}, \texttt{outer\_parties}, \textit{vid}) returns
         (\textsc{ok})
-        \label{code:functionality:chan:skeleton:virtual:fund:leak}
-        \State $(L_0, R_0) \gets (\alice, \bob)$
-        \label{code:functionality:chan:skeleton:virtual:fund:init}
-        \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
-        |\mathrm{hops}|\}$}
-        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:start}
-          \State ensure $R_{i-1} = L_i$
-          \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties}, id, $i
-          \overset{?}{=} |\mathrm{hops}|$) to $L_i$ as \alice and ensure reply
-          is (\textsc{ok})
-          \label{code:functionality:chan:skeleton:virtual:fund:for:allow:send}
-        \EndFor
-        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:end}
-        \If{both channel parties are honest}
-          \State send (\textsc{is open successful}, id) to \adversary and ensure
-          reply is (\textsc{ok})
-        \ElsIf{only \alice is honest}
-          \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$
-          \State send (\textsc{update to virtual}, $pk_{A, V}$) to \adversary
-          and assign reply to ($V =$ TX \{input: $F$.output, outputs: ($c_A +
-          c_B - c$, $2/\{pk_{A, V}, pk_{B, V}\}$), ($c$, $2/\{pk_{G, V}, pk_{A,
-          V}\}$), (0, $|\mathrm{hops}|$/$\{\mathrm{hops}_i.pk\}_i$)\},
-          $\mathrm{sig}_{B, V}$, $C' =$ TX \{input: $V$.outputs.0, outputs:
-          $(c_A - \mathrm{locked}_A - c, pk_{A, \mathrm{out}} \wedge t), (c_B -
-          \mathrm{locked}_B, pk_{B, \mathrm{out}})$\}, $\mathrm{sig}_{B, C'}$)
-          \TODO{think about locked coins}
-          \State ensure \textsc{verify}($V$, $\mathrm{sig}_{B, V}$, $pk_{B,
-          F}$) = \textsc{verify}($C'$, $\mathrm{sig}_{B, C'}$, $pk_{A, V}$) =
-          True
-        \EndIf
-        \label{code:functionality:chan:skeleton:virtual:fund:simulate}
-        \ForAll{$(L_i, R_i) \in \mathrm{hops}$} \Comment{$i \in \{1, \dots,
-        |\mathrm{hops}|\}$}
-        \label{code:functionality:chan:skeleton:virtual:fund:confirm}
-          \State send (\textsc{fund done}, id) to $L_i$ as \alice and ensure
-          reply is (\textsc{ok})
-        \EndFor
-        \State $c_A \gets c_A - c$
-        \If{only \alice is honest}
-          \State $C \gets C'$; $\mathrm{sig}_{B, C} \gets \mathrm{sig}_{B, C'}$
-        \EndIf
-        % TODO: decide if need to store hops here
-        \State add (($c$, 0), hops, \texttt{sub\_parties},
-        \texttt{outer\_parties}, $pk_{A, V}$, $pk_{B, V}$, id) to
-        \texttt{funded}
+        \label{code:functionality:chan:skeleton:virtual:fund:vl}
+        \State add (($c$, 0), \texttt{hops}, \texttt{sub\_parties},
+        \texttt{outer\_parties}, \textit{vid}) to \texttt{funded}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
         \State output (\textsc{ok}) to \alice
       \EndIndent
@@ -338,20 +272,19 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
-      \State On input (\textsc{fund you}, $c$, local peer, \texttt{outer\_peer})
-      by $\charlie$ to \alice: \Comment{\alice is funded by \charlie}
+      \State On input (\textsc{open virtual}, $c$, \texttt{local\_peer},
+      \texttt{outer\_peer}, \texttt{keys}) by $\charlie$ to \alice:
+      \Comment{\alice is funded by \charlie}
       \label{code:functionality:chan:skeleton:virtual:fund-you}
       \Indent
         \TODO{what if counterparty corrupted?}
         \State ensure $\mathit{State} = \textsc{init}$
+        \State ensure \textsc{ln.virtualOpen}($c$, \texttt{keys}) returns
+        (\textsc{ok})
+        \label{code:functionality:chan:skeleton:virtual:ln}
         \State $\bob \gets \text{local peer}$
-        \State send (\textsc{fund you}, $c$, \bob, \charlie, \alice) to
-        \adversary and ensure reply is \textsc{(ok)}
-        \label{code:functionality:chan:skeleton:virtual:inform}
-        \State $c_A \gets c; c_B \gets 0$
         \State $\mathtt{opener} \gets \charlie$
-        \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$; $(sk_{B, V},
-        pk_{B, V}) \gets \textsc{keyGen}()$
+        \State $c_A \gets c; c_B \gets 0$
         \State from now on, handle any (\textsc{relayed}, $m$) input by
         \{\texttt{opener}, \texttt{outer\_peer}\} as if it were input ($m$) by
         \{\alice, \bob\} respectively
@@ -360,42 +293,6 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \mathtt{outer\_peer}\}$ respectively
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$) to \charlie
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-      \texttt{next\_hop}, id, \texttt{is\_last}) to \dave by \charlie:
-      \label{code:functionality:chan:skeleton:virtual:allow-fund}
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $\dave \in \{\alice, \bob\}$ \Comment{defensive check, may
-        be redundant due to UC rules}
-        \State ensure $c_D - \mathrm{locked}_D \geq c$
-        \State ensure \dave's counterparty belongs to the same group as
-        \texttt{next\_hop}
-        \State output received message to \dave and ensure reply is
-        \textsc{(ok)}
-        \State $\mathrm{locked}_D \gets \mathrm{locked}_D + c$
-        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$, \dave) to
-        \texttt{pending}
-        \State send (\textsc{ok}) to \charlie
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{fund done}, id) by \charlie:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $(\mathrm{id}, \mathtt{is\_last}, \mathtt{sub\_parties},
-        $c$, \dave) \in \mathtt{pending}$
-        \State remove (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$, \dave)
-        from \texttt{pending}
-        \If{\texttt{is\_last}}
-          \State add ((0, $c$), $\bot$, \texttt{sub\_parties}.reverse(),
-          (\dave, $\bot$), id) to \texttt{funded}
-        \EndIf
-        \State send (\textsc{ok}) to \charlie
       \EndIndent
       \Statex
 

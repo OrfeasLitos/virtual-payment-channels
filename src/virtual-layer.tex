@@ -1,0 +1,54 @@
+\begin{figure}[H]
+  \begin{systembox}{\textsc{vl}}
+    \begin{algorithmic}[1]
+      \State \textsc{fund}($c$, \texttt{hops}, \texttt{inner\_parties},
+      \texttt{outer\_parties}, \textit{vid}):
+      \Indent
+        \State TODO
+      \EndIndent
+      \Statex
+    \TODO{continue}
+        \State $(L_0, R_0) \gets (\alice, \bob)$
+        \label{code:functionality:chan:skeleton:virtual:fund:init}
+        \ForAll{$(P, pk) \in \mathtt{hops}$} \Comment{$i \in \{1, \dots,
+        |\mathtt{hops}|\}$}
+        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:start}
+          \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties}, vid, $i
+          \overset{?}{=} |\mathtt{hops}|$) to $P$ as \alice and ensure reply
+          is (\textsc{ok})
+          \label{code:functionality:chan:skeleton:virtual:fund:for:allow:send}
+        \EndFor
+        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:end}
+        \If{both channel parties are honest}
+          \State send (\textsc{is open successful}, vid) to \adversary and ensure
+          reply is (\textsc{ok})
+        \ElsIf{only \alice is honest}
+          \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$
+          \State send (\textsc{update to virtual}, $pk_{A, V}$) to \adversary
+          and assign reply to ($V =$ TX \{input: $F$.output, outputs: ($c_A +
+          c_B - c$, $2/\{pk_{A, V}, pk_{B, V}\}$), ($c$, $2/\{pk_{G, V}, pk_{A,
+          V}\}$), (0, $|\mathtt{hops}|$/$\{\mathtt{hops}_i.pk\}_i$)\},
+          $\mathrm{sig}_{B, V}$, $C' =$ TX \{input: $V$.outputs.0, outputs:
+          $(c_A - \mathrm{locked}_A - c, pk_{A, \mathrm{out}} \wedge t), (c_B -
+          \mathrm{locked}_B, pk_{B, \mathrm{out}})$\}, $\mathrm{sig}_{B, C'}$)
+          \TODO{think about locked coins}
+          \State ensure \textsc{verify}($V$, $\mathrm{sig}_{B, V}$, $pk_{B,
+          F}$) = \textsc{verify}($C'$, $\mathrm{sig}_{B, C'}$, $pk_{A, V}$) =
+          True
+        \EndIf
+        \label{code:functionality:chan:skeleton:virtual:fund:simulate}
+        \ForAll{$(P, pk) \in \mathtt{hops}$} \Comment{$i \in \{1, \dots,
+        |\mathtt{hops}|\}$}
+        \label{code:functionality:chan:skeleton:virtual:fund:confirm}
+          \State send (\textsc{fund done}, vid) to $P$ as \alice and ensure reply
+          is (\textsc{ok})
+        \EndFor
+        \State $c_A \gets c_A - c$
+        \If{only \alice is honest}
+          \State $C \gets C'$; $\mathrm{sig}_{B, C} \gets \mathrm{sig}_{B, C'}$
+        \EndIf
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:virtual-layer}
+\end{figure}
