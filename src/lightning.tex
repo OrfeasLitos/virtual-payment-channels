@@ -52,6 +52,73 @@
         \adversary and ensure reply is \textsc{(ok)}
         \State return (\textsc{ok})
       \EndIndent
+      \Statex
+
+      \State \textsc{close}($P$):
+      \Indent
+        \TODO{continue (maybe move to virtual layer?)}
+        \TODO{handle arbitrarily nested virtuals (now we only handle one level
+        and it leads to nested ifs}
+        \If{both channel parties are honest}
+          \If{$\mathtt{funded} \neq \emptyset$}
+            \State \TODO{prepare virtual layer TX $V$ and its signature --
+            careful, may be unneded!}
+            \State $C \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
+            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
+            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, V})$
+            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, V})$
+          \Else
+            \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
+            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
+            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
+          \EndIf
+        \EndIf \: \Comment{if \bob is corrupted, we already have $C$ and
+        $\mathrm{sig}_{B, C}$}
+        \State $\mathit{State} \gets \textsc{closed}$
+        \If{$\mathit{State} = \textsc{open base}$}
+          \State input (\textsc{submit}, $(V, \mathrm{sig}_{A, V},
+          \mathrm{sig}_{B, V})$, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B,
+          C})$) to \ledger
+        \Else \: \Comment{$\mathit{State} = \textsc{open virtual}$}
+          \If{\alice is the one that had received (\textsc{open virtual}, $\dots$)
+          by \texttt{opener}}
+            \State $\texttt{initiator} \gets \texttt{opener}$; $\texttt{other}
+            \gets \texttt{outer\_peer}$
+          \Else \: \Comment{\bob had received (\textsc{open virtual} $\dots$)}
+            \State $\texttt{initiator} \gets \texttt{outer\_peer}$;
+            $\texttt{other} \gets \texttt{opener}$
+          \EndIf
+          \If{both parties are honest}
+            \If{$\texttt{funded} \neq \emptyset$}
+              \State \TODO{prepare virtual layer TXs $V_A, V_B$ and their
+              signatures}
+              \State $C' \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
+              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
+              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, V})$;
+              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, V})$
+            \Else \: \Comment{there are no virtual channels on top of us}
+              \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
+              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
+              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
+              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
+            \EndIf
+            \State provide delayed output (\textsc{peer closed virtual}, $(V_B,
+            \mathrm{sig}_{A, V_B}, \mathrm{sig}_{B, V_B})$, $(C',
+            \mathrm{sig}_{A, C}', \mathrm{sig}_{B, C}')$) to \texttt{other} as
+            \bob
+          \EndIf
+          \If{$\mathtt{funded} \neq \emptyset$}
+            \State $\mathtt{output} \gets (\textsc{closed virtual}, (V,
+            \mathrm{sig}_{A, V}, \mathrm{sig}_{B, V}), (C, \mathrm{sig}_{A, C},
+            \mathrm{sig}_{B, C}))$
+          \Else
+            \State $\mathtt{output} \gets (\textsc{closed virtual}, (C,
+            \mathrm{sig}_{A, C}, \mathrm{sig}_{B, C}))$
+          \EndIf
+          \State output \texttt{output} to \texttt{initiator} as \alice
+        \EndIf
+      \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}

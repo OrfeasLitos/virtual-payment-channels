@@ -76,71 +76,20 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 1}
     \begin{algorithmic}[1]
-      \TODO{handle arbitrarily nested virtuals (now we only handle one level and
-      it leads to nested ifs}
       \State On (\textsc{close}) by \alice:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure \textsc{ln.close}() returns (\textsc{ok}) \TODO{continue}
-        \If{both channel parties are honest}
-          \If{$\mathtt{funded} \neq \emptyset$}
-            \State \TODO{prepare virtual layer TX $V$ and its signature --
-            careful, may be unneded!}
-            \State $C \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
-            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
-            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, V})$
-            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, V})$
-          \Else
-            \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
-            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
-            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
-          \EndIf
-        \EndIf \: \Comment{if \bob is corrupted, we already have $C$ and
-        $\mathrm{sig}_{B, C}$}
+        \State ensure \textsc{ln.close}(\alice) returns (\textsc{ok},
+        $(\mathrm{tx}_i, (\sigma_ij)_{j \in \{1, \dots, m(i)})_{i \in \{1,
+        \dots, n\}}$) \Comment{\textsc{ln} knows if we are base or virtual}
         \State $\mathit{State} \gets \textsc{closed}$
-        \If{$\mathit{State} = \textsc{open base}$}
-          \State input (\textsc{submit}, $(V, \mathrm{sig}_{A, V},
-          \mathrm{sig}_{B, V})$, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B,
-          C})$) to \ledger
-        \Else \: \Comment{$\mathit{State} = \textsc{open virtual}$}
-          \If{\alice is the one that had received (\textsc{open virtual}, $\dots$)
-          by \texttt{opener}}
-            \State $\mathtt{initiator} \gets \mathtt{opener}$; $\mathtt{other}
-            \gets \mathtt{outer\_peer}$
-          \Else \: \Comment{\bob had received (\textsc{open virtual} $\dots$)}
-            \State $\mathtt{initiator} \gets \mathtt{outer\_peer}$;
-            $\mathtt{other} \gets \mathtt{opener}$
-          \EndIf
-          \If{both parties are honest}
-            \If{$\mathtt{funded} \neq \emptyset$}
-              \State \TODO{prepare virtual layer TXs $V_A, V_B$ and their
-              signatures}
-              \State $C' \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
-              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
-              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, V})$;
-              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, V})$
-            \Else \: \Comment{there are no virtual channels on top of us}
-              \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
-              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
-              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
-            \EndIf
-            \State provide delayed output (\textsc{peer closed virtual}, $(V_B,
-            \mathrm{sig}_{A, V_B}, \mathrm{sig}_{B, V_B})$, $(C',
-            \mathrm{sig}_{A, C}', \mathrm{sig}_{B, C}')$) to \texttt{other} as
-            \bob
-          \EndIf
-          \If{$\mathtt{funded} \neq \emptyset$}
-            \State $\mathtt{output} \gets (\textsc{closed virtual}, (V,
-            \mathrm{sig}_{A, V}, \mathrm{sig}_{B, V}), (C, \mathrm{sig}_{A, C},
-            \mathrm{sig}_{B, C}))$
-          \Else
-            \State $\mathtt{output} \gets (\textsc{closed virtual}, (C,
-            \mathrm{sig}_{A, C}, \mathrm{sig}_{B, C}))$
-          \EndIf
-          \State output \texttt{output} to \texttt{initiator} as \alice
+        \If{\textit{State} = \textsc{open base}}
+          \State input (\textsc{submit}, $(\mathrm{tx}_1, \sigma_1), \dots,
+          (\mathrm{tx}_n, \sigma_n)$) to \ledger
+        \Else \: \Comment{\textit{State} = \textsc{open virtual}}
+          \State output (\textsc{closed virtual}, $(\mathrm{tx}_1, \sigma_1),
+          \dots, (\mathrm{tx}_n, \sigma_n)$) to \texttt{host\_alice} as \alice
         \EndIf
       \EndIndent
     \end{algorithmic}
