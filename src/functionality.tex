@@ -282,7 +282,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State ensure \textsc{ln.virtualOpen}($c$, \texttt{keys}) returns
         (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:ln}
-        \State $\bob \gets \text{local peer}$
+        \State $\bob \gets \texttt{local\_peer}$
         \State $\mathtt{opener} \gets \charlie$
         \State $c_A \gets c; c_B \gets 0$
         \State from now on, handle any (\textsc{relayed}, $m$) input by
