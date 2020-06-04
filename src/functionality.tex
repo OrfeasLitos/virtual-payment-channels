@@ -9,9 +9,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Indent
         \State $(c_A, c_B, \mathrm{locked}_A, \mathrm{locked}_B) \gets (0, 0, 0,
         0)$
-        \State $\mathtt{virtuals} \gets \emptyset$
-        \State $(\mathtt{funder}, \mathtt{fundee}, \mathtt{outer\_funder},
-        \mathtt{outer\_fundee}) \gets (\bot, \bot, \bot, \bot)$
+        \State $\texttt{virtuals} \gets \emptyset$
+        \State $(\texttt{funder}, \texttt{fundee}, \texttt{outer\_funder},
+        \texttt{outer\_fundee}) \gets (\bot, \bot, \bot, \bot)$
         \State ensure \textsc{ln.init}() returns (\textsc{ok})
         \State $\mathit{State} \gets \textsc{init}$
       \EndIndent
@@ -290,7 +290,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \{\alice, \bob\} respectively
         \State from now on, transform any output ($m$) to $\{\alice, \bob\}$ to
         output (\textsc{relay}, $m$) to $\{\mathtt{opener},
-        \mathtt{outer\_peer}\}$ respectively
+        \texttt{outer\_peer}\}$ respectively
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$) to \charlie
       \EndIndent
