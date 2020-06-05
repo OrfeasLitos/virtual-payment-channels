@@ -105,16 +105,17 @@ then \fchan relays to the method any input by \alice until the method returns.
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure \textsc{ln.close}(\alice) returns (\textsc{ok},
-        $(\mathrm{tx}_i, (\sigma_ij)_{j \in \{1, \dots, m(i)})_{i \in \{1,
-        \dots, n\}}$) \Comment{\textsc{ln} knows if we are base or virtual}
+        \State ensure \textsc{virt.close}(\alice) returns (\textsc{ok},
+        $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$) \Comment{\textsc{virt} doesn't
+        need to know if we are base or virtual}
         \State $\mathit{State} \gets \textsc{closed}$
         \If{\textit{State} = \textsc{open base}}
-          \State input (\textsc{submit}, $(\mathrm{tx}_1, \sigma_1), \dots,
-          (\mathrm{tx}_n, \sigma_n)$) to \ledger
+          \State ensure \textsc{pcn.close}(\alice, $(\mathrm{tx}_i,
+          (\sigma_{ij})_j)_i$) returns (\textsc{ok})
+          \State output (\textsc{ok}) to \alice
         \Else \: \Comment{\textit{State} = \textsc{open virtual}}
-          \State output (\textsc{closed virtual}, $(\mathrm{tx}_1, \sigma_1),
-          \dots, (\mathrm{tx}_n, \sigma_n)$) to \texttt{host\_alice} as \alice
+          \State output (\textsc{closed virtual}, $(\mathrm{tx}_i,
+          (\sigma_{ij})_j)_i$) to \texttt{host\_alice} as \alice
         \EndIf
       \EndIndent
     \end{algorithmic}
