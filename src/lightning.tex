@@ -19,7 +19,7 @@
         (c_{\mathrm{in}}, pk_{\mathrm{in}}) \in \mathrm{tx.outputs}$ and assign
         this output to \texttt{base\_output}, else go back to waiting for
         \textsc{check top up} by \alice
-        \State return (\textsc{ok})
+        \State \Return (\textsc{ok})
       \EndIndent
       \Statex
 
@@ -39,7 +39,7 @@
         \State input (\textsc{read}) to \ledger as \alice and assign output to
         $\Sigma$
         \State ensure $F \in \Sigma$
-        \State return (\textsc{ok}, $c_F$)
+        \State \Return (\textsc{ok}, $c_F$)
       \EndIndent
       \Statex
 
@@ -50,7 +50,7 @@
         \State \TODO{continue}
         \State send (\textsc{open virtual}, $c$, \bob, \charlie, \alice) to
         \adversary and ensure reply is \textsc{(ok)}
-        \State return (\textsc{ok})
+        \State \Return (\textsc{ok})
       \EndIndent
       \Statex
 

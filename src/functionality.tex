@@ -47,7 +47,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\mathtt{funder} \gets \alice$
         \State ensure \textsc{pcn.topUp}(\alice) returns (\textsc{ok})
-        \State $\mathit{State} \gets (\textsc{topped up})$
+        \State $\mathit{State} \gets \textsc{topped up}$
         \State output (\textsc{topped up}) to \alice
         \label{code:functionality:chan:skeleton:init:top_up:end}
       \EndIndent
@@ -62,7 +62,7 @@ then \fchan relays to the method any input by \alice until the method returns.
     \begin{algorithmic}[1]
       \State On (\textsc{open}, \texttt{keys}) by \alice:
       \Indent
-        \State ensure $\mathit{State} = (\textsc{topped up}) \wedge
+        \State ensure $\mathit{State} = \textsc{topped up} \wedge
         \mathtt{funder} = \alice$
         \State ensure \textsc{pcn.openBase}(\texttt{keys}, \bob) returns
         (\textsc{ok}, $c$)
@@ -89,8 +89,8 @@ then \fchan relays to the method any input by \alice until the method returns.
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State output (\textsc{balance}, $(c_A, c_B, \mathrm{locked}_A,
-        \mathrm{locked}_B)$) to \dave % TODO: maybe remove locked_{A,B}
+        \State output (\textsc{balance}, $c_A, c_B, \mathrm{locked}_A,
+        \mathrm{locked}_B$) to \dave
       \EndIndent
     \end{algorithmic}
   \end{systembox}
@@ -213,7 +213,7 @@ then \fchan relays to the method any input by \alice until the method returns.
       \State On (\textsc{fund}, $c$, \texttt{hops}, \texttt{inner\_parties} =
       (\texttt{inner\_fundee}, \texttt{inner\_peer}), \texttt{outer\_parties} =
       (\texttt{outer\_funder}, \texttt{outer\_peer}), \texttt{keys}) by \alice:
-      \TODO{\texttt{out\_keys} = $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB},
+      \TODO{\texttt{keys} = $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB},
       out}$, use this in \textsc{vn.fund}()}
       \Comment{we fund another channel}
       \label{code:functionality:chan:skeleton:virtual:fund}
@@ -232,7 +232,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         \texttt{inner\_parties}, \texttt{outer\_parties}, \textit{vid}) returns
         (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:fund:vl}
-        \State add (($c$, 0), \texttt{hops}, \texttt{sub\_parties},
+        \State add (($c$, 0), \texttt{hops}, \texttt{inner\_parties},
         \texttt{outer\_parties}, \textit{vid}) to \texttt{funded}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
         \State output (\textsc{ok}) to \alice
@@ -247,7 +247,7 @@ then \fchan relays to the method any input by \alice until the method returns.
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
       \State On input (\textsc{open virtual}, $c$, \texttt{local\_peer},
-      \texttt{outer\_peer}, \texttt{keys}) by $\charlie$ to \alice:
+      \texttt{host\_bob}, \texttt{keys}) by $\charlie$ to \alice:
       \Comment{\alice is funded by \charlie}
       \label{code:functionality:chan:skeleton:virtual:fund-you}
       \Indent
@@ -260,11 +260,11 @@ then \fchan relays to the method any input by \alice until the method returns.
         \State $\mathtt{opener} \gets \charlie$
         \State $c_A \gets c; c_B \gets 0$
         \State from now on, handle any (\textsc{relayed}, $m$) input by
-        \{\texttt{opener}, \texttt{outer\_peer}\} as if it were input ($m$) by
+        \{\texttt{opener}, \texttt{host\_bob}\} as if it were input ($m$) by
         \{\alice, \bob\} respectively
         \State from now on, transform any output ($m$) to $\{\alice, \bob\}$ to
         output (\textsc{relay}, $m$) to $\{\mathtt{opener},
-        \texttt{outer\_peer}\}$ respectively
+        \texttt{host\_bob}\}$ respectively
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$) to \charlie
       \EndIndent
