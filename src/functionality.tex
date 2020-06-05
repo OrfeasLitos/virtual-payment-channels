@@ -19,6 +19,16 @@ then \fchan relays to the method any input by \alice until the method returns.
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init \& top up}
     \begin{algorithmic}[1]
+      \State $\mathrm{locked}_D$ for $D \in \{\alice, \bob\}$:
+      \Indent
+        \State $\mathrm{res} \gets 0$
+        \For{$((c_1, c_2), \_, \_, (D, \_), \_) \in \texttt{funded}$}
+          \State $\mathrm{res} \gets \mathrm{res} + c_1 + c_2$
+        \EndFor
+        \State \Return res
+      \EndIndent
+      \Statex
+
       \State Initialisation: \Comment{runs on first activation}
       \Indent
         \State $(c_A, c_B, \mathrm{locked}_A, \mathrm{locked}_B) \gets (0, 0, 0,
