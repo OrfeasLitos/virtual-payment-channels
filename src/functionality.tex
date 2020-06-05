@@ -41,11 +41,11 @@ then \fchan relays to the method any input by \alice until the method returns.
       \EndIndent
       \Statex
 
-      \State On (\textsc{top up}) by \alice:
+      \State On (\textsc{top up}, \bob) by \alice:
       \label{code:functionality:chan:skeleton:init:top_up:start}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $\mathtt{funder} \gets \alice$
+        \State $\mathtt{funder} \gets \alice$; $\mathtt{fundee} \gets \bob$
         \State ensure \textsc{pcn.topUp}(\alice) returns (\textsc{ok})
         \State $\mathit{State} \gets \textsc{topped up}$
         \State output (\textsc{topped up}) to \alice
@@ -60,7 +60,7 @@ then \fchan relays to the method any input by \alice until the method returns.
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
     \begin{algorithmic}[1]
-      \State On (\textsc{open}, \texttt{keys}) by \alice:
+      \State On (\textsc{open base}, \texttt{keys}) by \alice:
       \Indent
         \State ensure $\mathit{State} = \textsc{topped up} \wedge
         \mathtt{funder} = \alice$
@@ -68,7 +68,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         (\textsc{ok}, $c$)
         \State $c_A \gets c$; $c_B \gets 0$
         \State $\mathit{State} \gets \textsc{open base}$
-        \State output (\textsc{open success}) to \alice
+        \State output (\textsc{opened base}) to \alice
       \EndIndent
       \Statex
 
@@ -214,7 +214,7 @@ then \fchan relays to the method any input by \alice until the method returns.
       (\texttt{inner\_fundee}, \texttt{inner\_peer}), \texttt{outer\_parties} =
       (\texttt{outer\_funder}, \texttt{outer\_peer}), \texttt{keys}) by \alice:
       \TODO{\texttt{keys} = $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB},
-      out}$, use this in \textsc{vn.fund}()}
+      out}$, use this in \textsc{virt.fund}()}
       \Comment{we fund another channel}
       \label{code:functionality:chan:skeleton:virtual:fund}
       \Indent
@@ -228,10 +228,10 @@ then \fchan relays to the method any input by \alice until the method returns.
         \label{code:functionality:chan:skeleton:virtual:subfunc}
         \State generate unique \textit{vid}
         \label{code:functionality:chan:skeleton:virtual:id}
-        \State ensure \textsc{vl.fund}($c$, \texttt{hops},
+        \State ensure \textsc{virt.fund}($c$, \texttt{hops},
         \texttt{inner\_parties}, \texttt{outer\_parties}, \textit{vid}) returns
         (\textsc{ok})
-        \label{code:functionality:chan:skeleton:virtual:fund:vl}
+        \label{code:functionality:chan:skeleton:virtual:fund:virt}
         \State add (($c$, 0), \texttt{hops}, \texttt{inner\_parties},
         \texttt{outer\_parties}, \textit{vid}) to \texttt{funded}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
