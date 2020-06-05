@@ -36,7 +36,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         \State $\texttt{virtuals} \gets \emptyset$
         \State $(\texttt{funder}, \texttt{fundee}, \texttt{outer\_funder},
         \texttt{outer\_fundee}) \gets (\bot, \bot, \bot, \bot)$
-        \State ensure \textsc{ln.init}() returns (\textsc{ok})
+        \State ensure \textsc{pcn.init}() returns (\textsc{ok})
         \State $\mathit{State} \gets \textsc{init}$
       \EndIndent
       \Statex
@@ -46,7 +46,7 @@ then \fchan relays to the method any input by \alice until the method returns.
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\mathtt{funder} \gets \alice$
-        \State ensure \textsc{ln.topUp}(\alice) returns (\textsc{ok})
+        \State ensure \textsc{pcn.topUp}(\alice) returns (\textsc{ok})
         \State $\mathit{State} \gets (\textsc{topped up})$
         \State output (\textsc{topped up}) to \alice
         \label{code:functionality:chan:skeleton:init:top_up:end}
@@ -64,7 +64,8 @@ then \fchan relays to the method any input by \alice until the method returns.
       \Indent
         \State ensure $\mathit{State} = (\textsc{topped up}) \wedge
         \mathtt{funder} = \alice$
-        \State ensure \textsc{ln.open}(\texttt{keys}) returns (\textsc{ok}, $c$)
+        \State ensure \textsc{pcn.openBase}(\texttt{keys}, \bob) returns
+        (\textsc{ok}, $c$)
         \State $c_A \gets c$; $c_B \gets 0$
         \State $\mathit{State} \gets \textsc{open base}$
         \State output (\textsc{open success}) to \alice
@@ -77,7 +78,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         virtual}\}$
         \State ensure $c_D - \mathrm{locked}_D \geq x$
         \State send (\textsc{pay}, $x$, \dave) to \adversary and expect reply
-        (\textsc{ok}) \TODO{decide if \textsc{ln.pay}() needed -- probably not}
+        (\textsc{ok}) \TODO{decide if \textsc{pcn.pay}() needed -- probably not}
         \State $c_D \gets c_D - x; c_{\bar{D}} \gets c_{\bar{D}} + x$
         \Comment{$\bar{D}$ is \alice if $D$ is \bob and vice-versa}
         \State output (\textsc{pay success}) to \dave
@@ -252,7 +253,7 @@ then \fchan relays to the method any input by \alice until the method returns.
       \Indent
         \TODO{what if counterparty corrupted?}
         \State ensure $\mathit{State} = \textsc{init}$
-        \State ensure \textsc{ln.virtualOpen}($c$, \texttt{keys}) returns
+        \State ensure \textsc{pcn.virtualOpen}($c$, \texttt{keys}) returns
         (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:ln}
         \State $\bob \gets \texttt{local\_peer}$
