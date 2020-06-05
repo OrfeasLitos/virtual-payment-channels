@@ -257,7 +257,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:ln}
         \State $\bob \gets \texttt{local\_peer}$
-        \State $\mathtt{opener} \gets \charlie$
+        \State $\mathtt{opener}, \texttt{host\_alice} \gets \charlie$
         \State $c_A \gets c; c_B \gets 0$
         \State from now on, handle any (\textsc{relayed}, $m$) input by
         \{\texttt{opener}, \texttt{host\_bob}\} as if it were input ($m$) by
