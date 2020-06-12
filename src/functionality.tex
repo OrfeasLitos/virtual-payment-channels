@@ -308,61 +308,23 @@ then \fchan relays to the method any input by \alice until the method returns.
           \State send (\textsc{corrupt}) to fundee and ensure reply is
           (\textsc{ok})
         \EndFor
-        \If{$\mathit{State} \in \{\textsc{open base}, \textsc{open virtual}\}$}
-          \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-          \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
-          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
-        \EndIf
         \State from now on, allow \adversary to handle all \alice's messages,
         i.e. act as a relay
         \If{\bob is not corrupted}
-          \State from now on, override reactions to messages (\textsc{open}) and
-          (\textsc{pay}) addressed to \bob with those defined in the current
-          Figure
+          \State $\texttt{ln\_messages} \gets \{\textsc{open base}, \textsc{open
+          virtual}, \textsc{top up}, \textsc{pay}, \textsc{balance}\}$
+          \State $\texttt{virt\_messages} \gets \{\textsc{fund}\}$
+          \State from now on, upon receiving any message $M$ of type $T \in
+          \texttt{ln\_messages}, \texttt{virt\_messages}$ by \bob, do
+          \textsc{pcn.call}($M$, \bob) or \textsc{virt.call}($M$, \bob)
+          respectively
+          \State from now on, upon receiving a message (\textsc{close}) by \bob
+          do \textsc{pcn.close}(\bob, \textsc{virt.close}(\bob))
+          \TODO{\textsc{pcn.close}() should know to just return its input
+          (probably?) if we are \textsc{open virtual}}
         \EndIf
-        \State output (\textsc{ok}) to $P$
+        \State send \textsc{ln.secrets}(\alice) to \adversary
       \EndIndent
-      \Statex
-
-      \State On (\textsc{open}, $c_F$, $pk_{A, \mathrm{out}}$, $pk_{B,
-      \mathrm{out}}$) by \bob:
-      \Indent
-        \State ensure $\mathit{State} = (\textsc{topped up}, \bob)$ \TODO{decide
-        what happens when channel funded by corrupted party}
-        \State ensure $c_F = c_{\mathrm{on}}$
-        \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
-        \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-        \mathrm{out}}, pk_{B, F}, \bob)$ to \adversary, assign reply to ($pk_{A,
-        F}$, $C =$ TX \{input: $F$.output, outputs: ($c_F, pk_{B, \mathrm{out}}
-        \wedge t$), ($0, pk_{A, \mathrm{out}}$)\}, $\mathrm{sig}_{A, C}$)
-        \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, F}$) =
-        True
-        \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
-        2/\{pk_{A, F}, pk_{B, F}\})$\}
-        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
-        \State $\mathit{State} \gets \textsc{waiting for ledger}$
-        \State input $(\textsc{submit}, (F, \mathrm{sig}_F))$ to \ledger
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{pay}, $x$) by \bob:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_B - \mathrm{locked}_B \geq x$
-        \State send (\textsc{pay}, $x$, \bob) to \adversary and assign reply to
-        ($C' =$ TX \{input: $F$.output, outputs: $(c_A + x, pk_{A, \mathrm{out}}),
-        (c_B - \mathrm{locked}_B - x, pk_{B, \mathrm{out}} \wedge t)$\},
-        $\mathrm{sig}_{A, C}'$) \TODO{think about locked coins again}
-        \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C}'$, $pk_{A, F}$)
-        = True
-        \State $C \gets C'$; $\mathrm{sig}_{A, C} \gets \mathrm{sig}_{A, C}'$
-        \State $c_B \gets c_B - x; c_A \gets c_A + x$
-        \State output (\textsc{pay success}) to \bob
-      \EndIndent
-      \Statex
-
-      \State \TODO{receive payment from corrupted counterparty}
     \end{algorithmic}
   \end{systembox}
   \caption{}
