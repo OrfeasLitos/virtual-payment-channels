@@ -22,7 +22,7 @@ then \fchan relays to the method any input by \alice until the method returns.
       \State $\mathrm{locked}_D$ for $D \in \{\alice, \bob\}$:
       \Indent
         \State $\mathrm{res} \gets 0$
-        \For{$((c_1, c_2), \_, \_, (D, \_), \_) \in \texttt{funded}$}
+        \For{$((c_1, c_2), \_, \_, (D, \_), \_) \in \texttt{virtuals}$}
           \State $\mathrm{res} \gets \mathrm{res} + c_1 + c_2$
         \EndFor
         \State \Return res
@@ -135,7 +135,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         ledger), then calculate signature of original comm tx and send this
         message to \fchan}
         \State ensure that \alice is corrupted, \bob is honest
-        \If{$\mathtt{funded} = \emptyset$}
+        \If{$\mathtt{virtuals} = \emptyset$}
           \State ensure $\mathrm{sig}_{A, V'} = \epsilon$
           \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_B, pk_{B,
           \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
@@ -181,7 +181,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
         \State ensure (($c_L$, $c_R$), hops, (\charlie, \dave), (\frank,
-        \george), $pk_{A, V}$, $pk_{B, V}$, id) $\in$ \texttt{funded}
+        \george), $pk_{A, V}$, $pk_{B, V}$, id) $\in$ \texttt{virtuals}
         with $\frank \in \{\alice, \bob\}$ \Comment{no stored commitment TX in
         entry yet}
         \If{second tuple of message is empty}
@@ -198,7 +198,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         \State $c_{\mathrm{right}} \gets C\text{.outputs.(the other
         output).coins}$
         \State ensure $c_{\mathrm{left}} + c_{\mathrm{right}} = c_L + c_R$
-        \State add message contents to \texttt{funded} entry
+        \State add message contents to \texttt{virtuals} entry
         \State output (\textsc{(peer) closed virtual}, $c_{\mathrm{left}}$, id) to
         \george if peer closed, to \frank else
       \EndIndent
@@ -234,7 +234,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:fund:virt}
         \State add (($c$, 0), \texttt{hops}, \texttt{inner\_parties},
-        \texttt{outer\_parties}, \textit{vid}) to \texttt{funded}
+        \texttt{outer\_parties}, \textit{vid}) to \texttt{virtuals}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
         \State output (\textsc{ok}) to \alice
       \EndIndent
@@ -273,7 +273,7 @@ then \fchan relays to the method any input by \alice until the method returns.
 
       \State On (\textsc{relay}, $m$, \charlie) by \alice:
       \Indent
-        \State ensure there is an entry in \texttt{funded} with \alice as funder
+        \State ensure there is an entry in \texttt{virtuals} with \alice as funder
         outer party and \charlie as fundee sub-party
         \label{code:functionality:chan:skeleton:virtual:relay:input:start}
         \State input (\textsc{relayed}, $m$) to \charlie
@@ -283,7 +283,7 @@ then \fchan relays to the method any input by \alice until the method returns.
 
       \State On output (\textsc{relay}, $m$) by \charlie to \alice:
       \Indent
-        \State ensure there is an entry in \texttt{funded} with \alice as funder
+        \State ensure there is an entry in \texttt{virtuals} with \alice as funder
         outer party and \charlie as fundee sub-party \Comment{defensive check,
         may be redundant due to being subroutine respecting}
         \label{code:functionality:chan:skeleton:virtual:relay:output:start}
@@ -303,7 +303,7 @@ then \fchan relays to the method any input by \alice until the method returns.
       \Indent
         \State ensure $P \in \{\mathtt{opener}, \adversary\}$
         \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_)) \in
-        \mathtt{funded}$}
+        \mathtt{virtuals}$}
           \State send (\textsc{corrupt}) to fundee and ensure reply is
           (\textsc{ok})
         \EndFor
