@@ -41,14 +41,14 @@ then \fchan relays to the method any input by \alice until the method returns.
       \EndIndent
       \Statex
 
-      \State On (\textsc{top up}, \bob) by \alice:
+      \State On (\textsc{top up}, \texttt{fundee}) by \texttt{funder}:
       \label{code:functionality:chan:skeleton:init:top_up:start}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $\mathtt{funder} \gets \alice$; $\mathtt{fundee} \gets \bob$
-        \State ensure \textsc{pcn.topUp}(\alice) returns (\textsc{ok})
+        \State $\bob \gets \texttt{fundee}$
+        \State ensure \textsc{pcn.topUp}(\texttt{funder}) returns (\textsc{ok})
         \State $\mathit{State} \gets \textsc{topped up}$
-        \State output (\textsc{topped up}) to \alice
+        \State output (\textsc{topped up}) to \texttt{funder}
         \label{code:functionality:chan:skeleton:init:top_up:end}
       \EndIndent
     \end{algorithmic}
@@ -265,7 +265,7 @@ then \fchan relays to the method any input by \alice until the method returns.
         \{\texttt{opener}, \texttt{host\_bob}\} as if it were input ($m$) by
         $\{\alice, \bob\}$ respectively
         \State from now on, transform any output ($m$) to $\{\alice, \bob\}$ to
-        output (\textsc{relay}, $m$) to $\{\mathtt{opener},
+        output (\textsc{relay}, $m$) to $\{\texttt{host\_alice},
         \texttt{host\_bob}\}$ respectively
         \State $\mathit{State} \gets \textsc{open virtual}$
         \State output (\textsc{ok}, $pk_{A, V}$, $pk_{B, V}$) to \charlie
@@ -302,7 +302,7 @@ then \fchan relays to the method any input by \alice until the method returns.
     \begin{algorithmic}[1]
       \State On (\textsc{corrupt}) by $P$, addressed to \alice:
       \Indent
-        \State ensure $P \in \{\mathtt{opener}, \adversary\}$
+        \State ensure $P \in \{\texttt{host\_alice}, \adversary\}$
         \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_)) \in
         \mathtt{virtuals}$}
           \State send (\textsc{corrupt}) to fundee and ensure reply is
