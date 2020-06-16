@@ -126,53 +126,6 @@ then \fchan relays to the method any input by \alice until the method returns.
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close by corrupted}
-    \begin{algorithmic}[1]
-      \State On (\textsc{close}, \alice, $\mathrm{sig}_{A, C'}$,
-      $\mathrm{sig}_{A, V'}$) by \adversary:
-      \Indent
-        \State \TODO{in \simulator, allow corrupted party to submit and maintain
-        fake ledger. Only in case the closing tx is valid (in the simulated
-        ledger), then calculate signature of original comm tx and send this
-        message to \fchan}
-        \State ensure that \alice is corrupted, \bob is honest
-        \If{$\mathtt{virtuals} = \emptyset$}
-          \State ensure $\mathrm{sig}_{A, V'} = \epsilon$
-          \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_B, pk_{B,
-          \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
-          \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C'}$, $pk_{A, F}$)
-          = True
-          \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, F})$
-        \Else
-          \State ensure $\mathrm{sig}_{A, V'} \neq \epsilon$
-          \State \TODO{prepare virtual TX, verify $\mathrm{sig}_{A, V'}$}
-          \State $C' \gets$ TX \{input: $V'$.output, outputs: $(c_B, pk_{B,
-          \mathrm{out}}), (c_A, pk_{A, \mathrm{out}} \wedge t)$\}
-          \State ensure \textsc{verify}($C'$, $\mathrm{sig}_{A, C'}$, $pk_{A,
-          V'}$) = True
-          \State $\mathrm{sig}_{B, V'} \gets \textsc{sign}(V', sk_{B, F})$
-          \State $\mathrm{sig}_{B, C'} \gets \textsc{sign}(C', sk_{B, V'})$
-        \EndIf
-        \State $\mathit{State} \gets \textsc{closed}$
-        \If{$\mathit{State} = \textsc{open base}$}
-          \State input (\textsc{submit}, ($V'$, $\mathrm{sig}_{A, V}$,
-          $\mathrm{sig}_{B, V'}$), ($C'$, $\mathrm{sig}_{A, C'}$,
-          $\mathrm{sig}_{B, C'}$)) to \ledger as \alice
-        \Else
-          \State output (\textsc{closed virtual}, ($V'$, $\mathrm{sig}_{A, V}$,
-          $\mathrm{sig}_{B, V'}$), ($C'$, $\mathrm{sig}_{A, C'}$,
-          $\mathrm{sig}_{B, C'}$)) to \alice's host (\texttt{opener} if \alice
-          had received (\textsc{open virtual}, $\dots$), \texttt{outer\_peer}
-          else) as \alice
-        \EndIf
-      \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:chan:skeleton:close:corrupted}
-\end{figure}
-
-\begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 2}
     \begin{algorithmic}[1]
       \State On (\textsc{(peer) closed virtual}, $(V', \mathrm{sig}_{A, V'},
@@ -253,7 +206,6 @@ then \fchan relays to the method any input by \alice until the method returns.
       \Comment{\alice is funded by \charlie}
       \label{code:functionality:chan:skeleton:virtual:fund-you}
       \Indent
-        \TODO{what if counterparty corrupted?}
         \State ensure $\mathit{State} = \textsc{init}$
         \State ensure \textsc{pcn.virtualOpen}($c$, \texttt{keys}) returns
         (\textsc{ok})
