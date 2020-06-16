@@ -303,10 +303,13 @@ then \fchan relays to the method any input by \alice until the method returns.
       \State On (\textsc{corrupt}) by $P$, addressed to \alice:
       \Indent
         \State ensure $P \in \{\texttt{host\_alice}, \adversary\}$
-        \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_)) \in
+        \State $\texttt{virtual\_secrets} \gets \emptyset$
+        \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_), \textit{vid}) \in
         \mathtt{virtuals}$}
           \State send (\textsc{corrupt}) to fundee and ensure reply is
-          (\textsc{ok})
+          (\textsc{corrupted}, \texttt{secrets})
+          \State append (\texttt{secrets}, \textit{vid}) to
+          \texttt{virtual\_secrets}
         \EndFor
         \State from now on, allow \adversary to handle all \alice's messages,
         i.e. act as a relay
@@ -323,7 +326,13 @@ then \fchan relays to the method any input by \alice until the method returns.
           \TODO{\textsc{pcn.close}() should know to just return its input
           (probably?) if we are \textsc{open virtual}}
         \EndIf
-        \State send \textsc{ln.secrets}(\alice) to \adversary
+        \If{$P = \texttt{host\_alice}$}
+          \State output (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
+          \texttt{virtual\_secrets})) to \texttt{host\_alice}
+        \Else \: \Comment{$P = \adversary$}
+          \State send (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
+          \texttt{virtual\_secrets})) to \adversary
+        \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
