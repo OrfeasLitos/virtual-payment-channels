@@ -48,7 +48,8 @@ returns.
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
         \State $\bob \gets \texttt{fundee}$
-        \State ensure \textsc{pcn.topUp}(\texttt{funder}) returns (\textsc{ok})
+        \State ensure \textsc{pcn.topUp}(\texttt{funder}) returns (\textsc{ok},
+        $c_{\mathrm{chain}}$)
         \State $\mathit{State} \gets \textsc{topped up}$
         \State output (\textsc{topped up}) to \texttt{funder}
         \label{code:functionality:chan:skeleton:init:top_up:end}
