@@ -3,13 +3,14 @@
 \TODO{Add support for cooperative closing (for virtual it also needs cooperation
 with all hops of all existing virtuals, we should definitely find another way)}
 
-\fchan is parametrized by the (stateful) objects \textsc{pcn} (payment channel network)
-and \textsc{virt} (virtual layer). \TODO{if the 2 objects share too much state, merge into 1 object}
+\fchan is parametrized by the (stateful) processes \textsc{pcn} (payment channel
+network) and \textsc{virt} (virtual layer). \TODO{if the 2 processes share too
+much state, merge into 1 process}
 
 If:
 \begin{itemize}
   \item \fchan is activated by $\dave \in \{\alice, \bob\}$,
-  \item \fchan then calls a method of either object, expecting some value to be
+  \item \fchan then calls a method of either process, expecting some value to be
   returned by it,
   \item then the method gives up the execution token of the ITI (before it
   returns),
