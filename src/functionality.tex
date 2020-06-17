@@ -10,12 +10,13 @@ much state, merge into 1 process}
 If:
 \begin{itemize}
   \item \fchan is activated by $\dave \in \{\alice, \bob\}$,
-  \item \fchan then calls a method of either process, expecting some value to be
-  returned by it,
-  \item then the method gives up the execution token of the ITI (before it
-  returns),
+  \item \fchan then calls a method of either process (expecting some value to be
+  returned by it),
+  \item and subsequently the method gives up the execution token to another ITI
+  (before it returns),
 \end{itemize}
-then \fchan relays to the method any input by \alice until the method returns.
+then \fchan repeatedly relays any input by \dave to the method until the latter
+returns.
 
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init \& top up}
