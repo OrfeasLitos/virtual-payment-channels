@@ -1,0 +1,15 @@
+Both \pchan and \fchan are parametrized by the stateful processes \textsc{pcn}
+(payment channel network) and \textsc{virt} (virtual layer).
+\TODO{if the 2 processes share too much state, merge into 1 process}
+
+If:
+\begin{itemize}
+  \item \pchan (\fchan) is activated by \environment ($\dave \in \{\alice,
+  \bob\}$),
+  \item \pchan (\fchan) then calls a method of either process (expecting some
+  value to be returned by it),
+  \item and subsequently the method gives up the execution token to another ITI
+  (before it returns),
+\end{itemize}
+then \pchan (\fchan) repeatedly relays any input by \environment (\dave) to the
+method until the latter returns.
