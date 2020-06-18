@@ -6,20 +6,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init \& top up}
     \begin{algorithmic}[1]
-      \State $\mathrm{locked}_D$ for $D \in \{\alice, \bob\}$:
-      \Indent
-        \State $\mathrm{res} \gets 0$
-        \For{$((c_1, c_2), \_, \_, (D, \_), \_) \in \texttt{virtuals}$}
-          \State $\mathrm{res} \gets \mathrm{res} + c_1 + c_2$
-        \EndFor
-        \State \Return res
-      \EndIndent
-      \Statex
-
       \State Initialisation: \Comment{runs on first activation}
       \Indent
-        \State $(c_A, c_B, \mathrm{locked}_A, \mathrm{locked}_B) \gets (0, 0, 0,
-        0)$
+        \State $(c_A, c_B) \gets (0, 0)$
         \State $\texttt{virtuals} \gets \emptyset$
         \State $(\texttt{funder}, \texttt{fundee}, \texttt{outer\_funder},
         \texttt{outer\_fundee}) \gets (\bot, \bot, \bot, \bot)$
@@ -36,7 +25,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State ensure \textsc{pcn.topUp}(\texttt{funder}) returns (\textsc{ok},
         $c_{\mathrm{chain}}$)
         \State $\mathit{State} \gets \textsc{topped up}$
-        \State output (\textsc{topped up}) to \texttt{funder}
+        \State output (\textsc{top up success}) to \texttt{funder}
         \label{code:functionality:chan:skeleton:init:top_up:end}
       \EndIndent
     \end{algorithmic}
@@ -56,7 +45,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
         (\textsc{ok}, $c$)
         \State $c_A \gets c$; $c_B \gets 0$
         \State $\mathit{State} \gets \textsc{open base}$
-        \State output (\textsc{opened base}) to \alice
+        \State output (\textsc{open base success}) to \alice
       \EndIndent
       \Statex
 
@@ -64,7 +53,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $c_D - \mathrm{locked}_D \geq x$
+        \State ensure $c_D - \mathrm{locked}(D) \geq x$
         \State send (\textsc{pay}, $x$, \dave) to \adversary and expect reply
         (\textsc{ok}) \TODO{decide if \textsc{pcn.pay}() needed -- probably not}
         \State $c_D \gets c_D - x; c_{\bar{D}} \gets c_{\bar{D}} + x$
@@ -77,22 +66,18 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State output (\textsc{balance}, $c_A, c_B, \mathrm{locked}_A,
-        \mathrm{locked}_B$) to \dave
+        \label{code:functionality:chan:skeleton:base:balance:start}
+        \State output (\textsc{balance}, $c_A, c_B, \mathrm{locked}(A),
+        \mathrm{locked}(B)$) to \dave
+        \label{code:functionality:chan:skeleton:base:balance:end}
       \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:chan:skeleton:base}
-\end{figure}
+      \Statex
 
-\begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 1}
-    \begin{algorithmic}[1]
       \State On (\textsc{close}) by \alice:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
+        \label{code:functionality:chan:skeleton:close:start}
         \State ensure \textsc{virt.close}(\alice) returns (\textsc{ok},
         $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$) \Comment{\textsc{virt} doesn't
         need to know if we are base or virtual}
@@ -100,17 +85,18 @@ with all hops of all existing virtuals, we should definitely find another way)}
           \State ensure \textsc{pcn.close}(\alice, $(\mathrm{tx}_i,
           (\sigma_{ij})_j)_i$) returns (\textsc{ok})
           \State $\mathit{State} \gets \textsc{closed}$
-          \State output (\textsc{ok}) to \alice
+          \State output (\textsc{close success}) to \alice
         \Else \: \Comment{\textit{State} = \textsc{open virtual}}
           \State $\mathit{State} \gets \textsc{closed}$
           \State output (\textsc{closed virtual}, $(\mathrm{tx}_i,
           (\sigma_{ij})_j)_i$) to \texttt{host\_alice} as \alice
         \EndIf
+        \label{code:functionality:chan:skeleton:close:end}
       \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:chan:skeleton:close:pt1}
+  \label{code:functionality:chan:skeleton:base}
 \end{figure}
 
 \begin{figure}[H]
@@ -163,7 +149,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $c_A - \mathrm{locked}_A \geq c$
+        \State ensure $c_A - \mathrm{locked}(A) \geq c$
         \State ensure \texttt{outer\_funder} = \alice
         \State input (\textsc{open virtual}, $c$, \texttt{inner\_peer},
         \texttt{outer\_peer}, \texttt{keys}) to \texttt{inner\_fundee} as

@@ -12,59 +12,37 @@
       lines~\ref{code:functionality:chan:skeleton:init:top_up:start}-\ref{code:functionality:chan:skeleton:init:top_up:end})
       \Statex
 
-      \State On (\textsc{open}, $c_F$, $pk_{A, out}$, $pk_{B, out}$) by
-      \environment:
+      \State On (\textsc{open base}, \texttt{keys}) by \environment:
+      \TODO{\textsc{ln.openBase}: \texttt{keys} = $pk_{A, out}$, $pk_{B, out}$}
       \Indent
         \State ensure $\mathit{State} = \textsc{topped up}$
-        \State $\mathit{State} \gets \textsc{opening base channel}$
-        \State do LN (other box) % TODO
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{check funding}) by \environment:
-      \Indent
-        \State ensure $\mathit{State} = \textsc{waiting for ledger}$
-        \State send (\textsc{read}) to \ledger and assign reply to $\Sigma$
-        \State ensure $F \in \Sigma$
-        \State $c_A \gets c$; $c_B \gets 0$ \Comment{$c$ received in
-        \textsc{open}}
+        \State ensure \textsc{pcn.openBase}(\texttt{keys}, \texttt{fundee})
+        returns (\textsc{ok}, $c$)
+        \State $c_A \gets c$; $c_B \gets 0$
         \State $\mathit{State} \gets \textsc{open base}$
-        \State output (\textsc{open success}) to \environment
+        \State output (\textsc{open base success}) to \environment
       \EndIndent
       \Statex
 
-      \State On (\textsc{pay}, x) by \environment:
+      \State On (\textsc{pay}, $x$) by \environment:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $c_A \geq x$
-        \State do LN payment (these channels won't be async) (balance change
-        here) % TODO
-        \State output (\textsc{ok}) to \environment
+        \State ensure $c_A - \mathrm{locked}(A) \geq x$
+        \State ensure \textsc{pcn.pay}(x) returns (\textsc{ok})
+        \State $c_A \gets c_A - x$; $c_B \gets c_B + x$
+        \State output (\textsc{pay success}) to \environment
       \EndIndent
       \Statex
 
-      \State On (\textsc{balance}) by \environment:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State output (\textsc{balance}, $(c_A, c_B, \mathrm{locked}_A,
-        \mathrm{locked}_B)$) to \environment \TODO{rethink locked}
-      \EndIndent
+      \State On (\textsc{balance}) by \environment, act like \fchan
+      (Fig.~\ref{code:functionality:chan:skeleton:base},
+      lines~\ref{code:functionality:chan:skeleton:base:balance:start}-\ref{code:functionality:chan:skeleton:base:balance:end})
       \Statex
 
-      \State On (\textsc{close}) by \environment:
-      \Indent
-          \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
-          \Comment{$C$, $\mathrm{sig}_{B, C}$ received during last LN()}
-        \If{$\mathit{State} = \textsc{open base}$}
-          \State send (\textsc{submit}, $(C, \mathrm{sig}_{A, C},
-          \mathrm{sig}_{B, C})$) to \ledger
-        \ElsIf{$\mathit{State} = \textsc{open virtual}$}
-          \State output (\textsc{close}, $(C, \mathrm{sig}_{A, C},
-          \mathrm{sig}_{B, C})$) to \texttt{opener}
-        \EndIf
-      \EndIndent
+      \State On (\textsc{close}) by \environment, act like \fchan
+      (Fig.~\ref{code:functionality:chan:skeleton:base},
+      lines~\ref{code:functionality:chan:skeleton:close:start}-\ref{code:functionality:chan:skeleton:close:end}):
     \end{algorithmic}
   \end{protocolbox}
   \caption{}
@@ -129,14 +107,13 @@
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $c_A - \mathrm{locked}_A \geq c$ \TODO{rethink locked}
+        \State ensure $c_A - \mathrm{locked}(A) \geq c$
         \State ensure \bob belongs to the same group as \texttt{next\_hop}
         \State output received message to \dave and ensure reply is
         \textsc{(ok)}
         \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
         \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) to \bob and ensure
         reply is (\textsc{ok})
-        \State $\mathrm{locked}_A \gets \mathrm{locked}_A + c$
         \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
         \textsc{we lock}) to \texttt{pending}
         \State send (\textsc{ok}) to \charlie
@@ -150,7 +127,7 @@
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
-        \State ensure $c_A - \mathrm{locked}_A \geq c$ \TODO{rethink locked}
+        \State ensure $c_A - \mathrm{locked}(A) \geq c$
         \State ensure we belong to the same group as \texttt{next\_hop}
         \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
         \textsc{we don't lock}) to \texttt{pending}

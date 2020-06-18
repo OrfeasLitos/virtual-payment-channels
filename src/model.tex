@@ -13,3 +13,22 @@ If:
 \end{itemize}
 then \pchan (\fchan) repeatedly relays any input by \environment (\dave) to the
 method until the latter returns.
+
+The following functions are available for both \pchan and \fchan.
+\begin{figure}[H]
+  \begin{titlebox}{\normalfont locked coins in nested virtual
+  channels}{commonbox}{normal}
+    \begin{algorithmic}[1]
+      \State $\mathrm{locked}(\alice)$:
+      \Indent
+        \State $\mathrm{res} \gets 0$
+        \For{$((c_1, c_2), \_, \_, (\alice, \_), \_) \in \texttt{virtuals}$}
+          \State $\mathrm{res} \gets \mathrm{res} + c_1 + c_2$
+        \EndFor
+        \State \Return res
+      \EndIndent
+    \end{algorithmic}
+  \end{titlebox}
+  \caption{}
+  \label{code:locked}
+\end{figure}
