@@ -100,35 +100,25 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- close Pt. 2}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- nested virtual closing}
     \begin{algorithmic}[1]
-      \State On (\textsc{(peer) closed virtual}, $(V', \mathrm{sig}_{A, V'},
-      \mathrm{sig}_{B, V'})$, $(C, \mathrm{sig}_{A, C}, \mathrm{sig}_{B, C})$)
-      by \charlie:
+      \State On (\textsc{(peer) closed virtual}, $(\mathrm{tx}_i,
+      (\sigma_{ij})_j)_i$) by \charlie:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
         \State ensure (($c_L$, $c_R$), hops, (\charlie, \dave), (\frank,
-        \george), $pk_{A, V}$, $pk_{B, V}$, id) $\in$ \texttt{virtuals}
-        with $\frank \in \{\alice, \bob\}$ \Comment{no stored commitment TX in
-        entry yet}
-        \If{second tuple of message is empty}
-          \State ensure \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, V}$)
-          = \textsc{verify}($C$, $\mathrm{sig}_{B, C}$, $pk_{B, V}$) = True
-        \Else
-          \State ensure \textsc{verify}($V'$, $\mathrm{sig}_{A, V'}$, $pk_{A,
-          V}$) = \textsc{verify}($V'$, $\mathrm{sig}_{B, V'}$, $pk_{B, V}$) =
-          \textsc{verify}($C$, $\mathrm{sig}_{A, C}$, $pk_{A, V'}$) =
-          \textsc{verify}($C$, $\mathrm{sig}_{B, C}$, $pk_{B, V'}$) = True
-        \EndIf
-        \State $c_{\mathrm{left}} \gets C\text{.outputs.(the timelocked
-        output).coins}$
-        \State $c_{\mathrm{right}} \gets C\text{.outputs.(the other
-        output).coins}$
-        \State ensure $c_{\mathrm{left}} + c_{\mathrm{right}} = c_L + c_R$
+        \george), \texttt{keys}, \textit{vid}) $\in \texttt{virtuals}$,
+        with $\frank \in \{\alice, \bob\}$ \Comment{no stored
+        commitment TX in entry yet} \TODO{keys = $pk_{A, V}, pk_{B, V}$}
+        \State ensure \textsc{virt.closed}($c_L$, $c_R$, $(\mathrm{tx}_i,
+        (\sigma_{ij})_j)_i$) returns (\textsc{ok})
         \State add message contents to \texttt{virtuals} entry
-        \State output (\textsc{(peer) closed virtual}, $c_{\mathrm{left}}$, id) to
-        \george if peer closed, to \frank else
+        \State \TODO{decide if the following is needed:} output (\textsc{(peer)
+        closed virtual}, $c_{\mathrm{left}}$, \textit{vid}) to \george if peer
+        closed, else to \frank \TODO{if the previous is needed, we need to
+        calculate $c_\mathrm{left}$ in \textsc{virt.closed}() and return it
+        here}
       \EndIndent
     \end{algorithmic}
   \end{systembox}

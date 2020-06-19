@@ -111,6 +111,18 @@
           \EndIf
           \State output \texttt{output} to \texttt{initiator} as \alice
         \EndIf
+        \Statex
+
+        \textsc{closed}($c_L$, $c_R$, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$):
+        \Indent
+          \ForAll{$i$ in $1 \dots |(\mathrm{tx}_i, (\sigma_{ij})_j)_i|$}
+            \State ensure \textsc{verify}($\mathrm{tx}_i$, $(\sigma_{ij})_j$) =
+            True
+          \EndFor
+          \State ensure ($\mathrm{tx}_1$, $(\sigma_{1j})_j$) has exactly $1$
+          input, which spends an output of $V$ of value $c_L + c_R$
+          \State return (\textsc{ok})
+        \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
