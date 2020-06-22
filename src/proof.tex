@@ -5,7 +5,7 @@
   lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:subfunc}
   of Fig.~\ref{code:functionality:chan:skeleton:virtual} are executed and then
   control is handed over to the ``fundee'' ITI, which executes
-  lines~\ref{code:protocol:chan:skeleton:vchan:fund-you}-\ref{code:protocol:chan:skeleton:vchan:fund-you:output}
+  lines~\ref{code:protocol:chan:skeleton:vchan:open-virtual}-\ref{code:protocol:chan:skeleton:vchan:open-virtual:output}
   of Fig.~\ref{code:protocol:chan:skeleton:virtual}.  This ITI will output
   (\textsc{ok}) if and only if line~\ref{code:protocol:chan:skeleton:vchan:ln}
   of Fig.~\ref{code:protocol:chan:skeleton:virtual} succeeds.
@@ -16,10 +16,10 @@
   of Fig.~\ref{code:functionality:chan:skeleton:virtual} are executed and then
   control is handed over to the functionality that controls the ``fundee'',
   which executes
-  lines~\ref{code:functionality:chan:skeleton:virtual:fund-you}-\ref{code:functionality:chan:skeleton:virtual:inform}
+  lines~\ref{code:functionality:chan:skeleton:virtual:open-virtual}-\ref{code:functionality:chan:skeleton:virtual:inform}
   of Fig.~\ref{code:functionality:chan:skeleton:virtual} and then hands control
   over to \simulator. The latter in turn simulates
-  lines~\ref{code:protocol:chan:skeleton:vchan:fund-you}-\ref{code:protocol:chan:skeleton:vchan:fund-you:output}
+  lines~\ref{code:protocol:chan:skeleton:vchan:open-virtual}-\ref{code:protocol:chan:skeleton:vchan:open-virtual:output}
   of Fig.~\ref{code:protocol:chan:skeleton:virtual}, thus following the exact
   same steps as in the real world, therefore it will send (\textsc{ok}) to
   \fchan if and only if the simulated
@@ -49,7 +49,7 @@
   both the real and the ideal worlds. The message of
   line~\ref{code:functionality:chan:skeleton:virtual:fund:for:allow:send}
   results in the execution of
-  lines~\ref{code:protocol:chan:skeleton:vchan:fund-you}-\ref{code:protocol:chan:skeleton:vchan:fund-you:output}
+  lines~\ref{code:protocol:chan:skeleton:vchan:open-virtual}-\ref{code:protocol:chan:skeleton:vchan:open-virtual:output}
   of Fig.~\ref{code:protocol:chan:skeleton:virtual} by $L_i$ in both worlds: in
   the real world directly, in the ideal world simulated by \simulator.
 

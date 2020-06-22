@@ -4,7 +4,15 @@
       \State \textsc{fund}($c$, \texttt{hops}, \texttt{inner\_parties},
       \texttt{outer\_parties}, \textit{vid}):
       \Indent
-        \State TODO
+        \State \TODO{do VChan() with hops -- $P_{i-1} P_i, P_i P_{i+1}$ and all
+        $P_1 P_n$ held by BOTH $R_{i-1}$ and $L_i$. $P_{i-1} P_i$ held only by
+        $R_{i-1}$, $P_i P_{i+1}$ held only by $L_i$. This (probably) ensures
+        that only relevant parties can close their channels (with the exception
+        of honest $R_{i-1}$ wanting to leave channels virtual but corrupted
+        $L_i$ demoting them to base, which however doesn't cost funds to
+        anyone), but that they have minimal impact to the decisions of ajdacent
+        channels. All $P_{i-1} P_i$ inputs must be signed by $R_{i-1}$ and all
+        $P_i P_{i+1}$ inputs by $L_i$.}
       \EndIndent
       \Statex
     \TODO{continue}
@@ -47,6 +55,40 @@
         \If{only \alice is honest}
           \State $C \gets C'$; $\mathrm{sig}_{B, C} \gets \mathrm{sig}_{B, C'}$
         \EndIf
+
+      \State \Comment{notification to hop that locks coins}
+      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
+      \texttt{next\_hop}, id, \texttt{is\_last}) by \charlie:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $c_A - \mathrm{locked}(A) \geq c$
+        \State ensure \bob belongs to the same group as \texttt{next\_hop}
+        \State output received message to \dave and ensure reply is
+        \textsc{(ok)}
+        \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
+        \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) to \bob and ensure
+        reply is (\textsc{ok})
+        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
+        \textsc{we lock}) to \texttt{pending}
+        \State send (\textsc{ok}) to \charlie
+      \EndIndent
+      \Statex
+
+      \State \Comment{notification to hop that doesn't lock coins -- doesn't ask
+      \environment}
+      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
+      \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) by \bob:
+      \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $c_A - \mathrm{locked}(A) \geq c$
+        \State ensure we belong to the same group as \texttt{next\_hop}
+        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
+        \textsc{we don't lock}) to \texttt{pending}
+        \State send (\textsc{ok}) to \bob
+      \EndIndent
+      \Statex
 
       \State \textsc{close}($P$):
         \TODO{continue}

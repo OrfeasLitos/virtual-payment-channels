@@ -53,85 +53,44 @@
   \begin{protocolbox}{$\Pi_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
       \State \Comment{notification to fundee}
-      \State \Comment{trust that \alice has $c$ in her channel}
-      \State On input (\textsc{fund you}, $c$, \bob, \texttt{outer\_peer}) by \charlie:
-      \label{code:protocol:chan:skeleton:vchan:fund-you}
+      \State \Comment{trust that \charlie has $c$ in her channel}
+      \State On input (\textsc{open virtual}, $c$, \bob, \texttt{host\_bob},
+      \texttt{keys}) by \charlie:
+      \label{code:protocol:chan:skeleton:vchan:open-virtual}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $\mathit{State} \gets \textsc{opening virtual channel}$
-        \label{code:protocol:chan:skeleton:vchan:fund-you:state}
-        \State do LN with \bob{}, also send him his ``opener'' (our outer peer) -- TODO
+        \State ensure \textsc{pcn.openVirt}(keys, \bob, \texttt{host\_bob})
+        returns (\textsc{ok}, $c$)
         \label{code:protocol:chan:skeleton:vchan:ln}
-        \State $\mathtt{opener} \gets \charlie$
+        \State $\mathtt{host\_alice} \gets \charlie$
+        \State $c_A \gets c$; $c_B \gets 0$
         \State from now on, handle any (\textsc{relayed}, $m$) input by
-        \texttt{opener} as the input ($m$) by \environment
+        \texttt{host\_alice} as the input ($m$) by \environment
         \State from now on, transform any output ($m$) to \environment to
-        output (\textsc{relay}, $m$) to \texttt{opener}
+        output (\textsc{relay}, $m$) to \texttt{host\_alice}
         \State $\mathit{State} \gets \textsc{open virtual}$
-        \State output (\textsc{ok}) to \charlie
-        \label{code:protocol:chan:skeleton:vchan:fund-you:output}
+        \State output (\textsc{open virtual success}) to \charlie
+        \label{code:protocol:chan:skeleton:vchan:open-virtual:output}
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund}, $c$, hops, \texttt{sub\_parties} = (fundee,
-      counterparty), \texttt{outer\_parties} = (\alice, \dave),
-      $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB}, out}$) by
+      \State On (\textsc{fund}, $c$, hops, \texttt{inner\_parties} =
+      (\texttt{intter\_fundee}, \texttt{inner\_peer}), \texttt{outer\_parties} =
+      (\texttt{outer\_funder}, \texttt{outer\_peer}), \texttt{keys}) by
       \environment:
+      \TODO{\texttt{keys} = $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB}, out}$}
       \Indent
+        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
+        virtual}\}$
+        \State ensure $c_A - \mathrm{locked}(A) \geq c$
         \State do the same as in \fchan,
-        Fig.~\ref{code:functionality:chan:skeleton:virtual},
-        lines~\ref{code:functionality:chan:skeleton:virtual:fund}-\ref{code:functionality:chan:skeleton:virtual:fund:for:allow:end},
-        skipping line~\ref{code:functionality:chan:skeleton:virtual:fund:leak}
+        Fig.~\ref{code:functionality:chan:skeleton:virtual:fund:fig},
+        lines~\ref{code:functionality:chan:skeleton:virtual:fund:start}-\ref{code:functionality:chan:skeleton:virtual:fund:end},
+        skipping line~\ref{code:functionality:chan:skeleton:virtual:fund:id} and
+        replacing ``to \alice'' with ``to \environment''
         \Comment{``as \alice'' sender labels are applied anyway, since we
         \emph{are} \alice}
-        \State do VChan() with hops -- TODO \Comment{$P_{i-1} P_i, P_i P_{i+1}$
-        and all $P_1 P_n$ held by BOTH $R_{i-1}$ and $L_i$. $P_{i-1} P_i$ held
-        only by $R_{i-1}$, $P_i P_{i+1}$ held only by $L_i$. This (probably)
-        ensures that only relevant parties can close their channels (with the
-        exception of honest $R_{i-1}$ wanting to leave channels virtual but
-        corrupted $L_i$ demoting them to base, which however doesn't cost funds
-        to anyone), but that they have minimal impact to the decisions of
-        ajdacent channels. All $P_{i-1} P_i$ inputs must be signed by $R_{i-1}$
-        and all $P_i P_{i+1}$ inputs by $L_i$.}
         \label{code:protocol:chan:skeleton:vchan}
-        \State do the same as in \fchan,
-        Fig.~\ref{code:functionality:chan:skeleton:virtual},
-        lines~\ref{code:functionality:chan:skeleton:virtual:fund:confirm}-\ref{code:functionality:chan:skeleton:virtual:fund:store}
-        \State output (\textsc{ok}) to \environment
-      \EndIndent
-      \Statex
-
-      \State \Comment{notification to hop that locks coins}
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-      \texttt{next\_hop}, id, \texttt{is\_last}) by \charlie:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_A - \mathrm{locked}(A) \geq c$
-        \State ensure \bob belongs to the same group as \texttt{next\_hop}
-        \State output received message to \dave and ensure reply is
-        \textsc{(ok)}
-        \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-        \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) to \bob and ensure
-        reply is (\textsc{ok})
-        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
-        \textsc{we lock}) to \texttt{pending}
-        \State send (\textsc{ok}) to \charlie
-      \EndIndent
-      \Statex
-
-      \State \Comment{notification to hop that doesn't lock coins -- doesn't ask
-      \environment}
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-      \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) by \bob:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_A - \mathrm{locked}(A) \geq c$
-        \State ensure we belong to the same group as \texttt{next\_hop}
-        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
-        \textsc{we don't lock}) to \texttt{pending}
-        \State send (\textsc{ok}) to \bob
       \EndIndent
       \Statex
 

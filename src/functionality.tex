@@ -139,8 +139,10 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
+        \label{code:functionality:chan:skeleton:virtual:fund:start}
         \State ensure $c_A - \mathrm{locked}(A) \geq c$
         \State ensure \texttt{outer\_funder} = \alice
+        \label{code:functionality:chan:skeleton:virtual:fund:id}
         \State input (\textsc{open virtual}, $c$, \texttt{inner\_peer},
         \texttt{outer\_peer}, \texttt{keys}) to \texttt{inner\_fundee} as
         \alice, ensure output is (\textsc{ok}, \texttt{in\_keys})
@@ -154,7 +156,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State add (($c$, 0), \texttt{hops}, \texttt{inner\_parties},
         \texttt{outer\_parties}, \textit{vid}) to \texttt{virtuals}
         \label{code:functionality:chan:skeleton:virtual:fund:store}
-        \State output (\textsc{ok}) to \alice
+        \State output (\textsc{fund success}) to \alice
+        \label{code:functionality:chan:skeleton:virtual:fund:end}
       \EndIndent
     \end{algorithmic}
   \end{systembox}
@@ -168,7 +171,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \State On input (\textsc{open virtual}, $c$, \texttt{local\_peer},
       \texttt{host\_bob}, \texttt{keys}) by $\charlie$ to \alice:
       \Comment{\alice is funded by \charlie}
-      \label{code:functionality:chan:skeleton:virtual:fund-you}
+      \label{code:functionality:chan:skeleton:virtual:open-virtual}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
         \State ensure \textsc{pcn.virtualOpen}($c$, \texttt{keys}) returns
