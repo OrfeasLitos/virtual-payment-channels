@@ -1,5 +1,5 @@
 \begin{figure}[H]
-  \begin{systembox}{\textsc{vl}}
+  \begin{systembox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State \textsc{fund}($c$, \texttt{hops}, \texttt{inner\_parties},
       \texttt{outer\_parties}, \textit{vid}):
@@ -155,7 +155,8 @@
         \EndIf
         \Statex
 
-        \textsc{closed}($c_L$, $c_R$, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$):
+        \State \textsc{closed}($c_L$, $c_R$, $(\mathrm{tx}_i,
+        (\sigma_{ij})_j)_i$):
         \Indent
           \ForAll{$i$ in $1 \dots |(\mathrm{tx}_i, (\sigma_{ij})_j)_i|$}
             \State ensure \textsc{verify}($\mathrm{tx}_i$, $(\sigma_{ij})_j$) =
@@ -164,6 +165,12 @@
           \State ensure ($\mathrm{tx}_1$, $(\sigma_{1j})_j$) has exactly $1$
           input, which spends an output of $V$ of value $c_L + c_R$
           \State return (\textsc{ok})
+        \EndIndent
+        \Statex
+
+        \State \textsc{call}($M$, \texttt{caller}):
+        \Indent
+          \State \TODO{}
         \EndIndent
     \end{algorithmic}
   \end{systembox}

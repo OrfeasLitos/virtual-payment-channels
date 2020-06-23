@@ -23,7 +23,7 @@
       \EndIndent
       \Statex
 
-      \State \textsc{open}(\texttt{args}):
+      \State \textsc{openBase}(\texttt{args}):
       \Indent
         \State ensure \texttt{args} can be parsed as ($c_F$, $pk_{A,
         \mathrm{out}}$, $pk_{B, \mathrm{out}}$)
@@ -43,7 +43,7 @@
       \EndIndent
       \Statex
 
-      \State \textsc{virtualOpen}($c$, \texttt{keys}):
+      \State \textsc{openVirtual}($c$, \texttt{keys}):
       \Indent
         \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$; $(sk_{B, V},
         pk_{B, V}) \gets \textsc{keyGen}()$
@@ -51,6 +51,12 @@
         \State send (\textsc{open virtual}, $c$, \bob, \charlie, \alice) to
         \adversary and ensure reply is \textsc{(ok)}
         \State \Return (\textsc{ok})
+      \EndIndent
+      \Statex
+
+      \State \textsc{pay}($x$):
+      \Indent
+        \State \TODO{}
       \EndIndent
       \Statex
 
@@ -70,6 +76,12 @@
         \State ensure all transactions $(\mathrm{tx}_i)_i$ are contained in
         $\Sigma$
         \State \Return (\textsc{ok})
+      \EndIndent
+      \Statex
+
+      \State \textsc{call}($M$, \texttt{caller}):
+      \Indent
+        \State \TODO{}
       \EndIndent
     \end{algorithmic}
   \end{systembox}
