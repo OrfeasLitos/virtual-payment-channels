@@ -233,17 +233,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State from now on, allow \adversary to handle all \alice's messages,
         i.e. act as a relay
         \If{\bob is not corrupted}
-          \State $\texttt{ln\_messages} \gets \{\textsc{open base}, \textsc{open
-          virtual}, \textsc{top up}, \textsc{pay}, \textsc{balance}\}$
-          \State $\texttt{virt\_messages} \gets \{\textsc{fund}\}$
-          \State from now on, upon receiving any message $M$ of type $T \in
-          \texttt{ln\_messages}, \texttt{virt\_messages}$ by \bob, do
-          \textsc{pcn.call}($M$, \bob) or \textsc{virt.call}($M$, \bob)
-          respectively
-          \State from now on, upon receiving a message (\textsc{close}) by \bob
-          do \textsc{pcn.close}(\bob, \textsc{virt.close}(\bob))
-          \TODO{\textsc{pcn.close}() should know to just return its input
-          (probably?) if we are \textsc{open virtual}}
+          \State from now on, handle all messages by \bob as \pchan
+          (Fig.~\ref{code:protocol:chan:skeleton}-\ref{code:protocol:chan:skeleton:virtual})
         \EndIf
         \If{$P = \texttt{host\_alice}$}
           \State output (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
