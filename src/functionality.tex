@@ -4,7 +4,7 @@
 with all hops of all existing virtuals, we should definitely find another way)}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init \& top up}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init, top up \& corruption}
     \begin{algorithmic}[1]
       \State Initialisation: \Comment{runs on first activation}
       \Indent
@@ -27,6 +27,33 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State $\mathit{State} \gets \textsc{topped up}$
         \State output (\textsc{top up success}) to \texttt{funder}
         \label{code:functionality:chan:skeleton:init:top_up:end}
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{corrupt}) by $P$, addressed to \alice:
+      \Indent
+        \State ensure $P \in \{\texttt{host\_alice}, \adversary\}$
+        \State $\texttt{virtual\_secrets} \gets \emptyset$
+        \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_), \textit{vid}) \in
+        \mathtt{virtuals}$}
+          \State send (\textsc{corrupt}) to fundee and ensure reply is
+          (\textsc{corrupted}, \texttt{secrets})
+          \State append (\texttt{secrets}, \textit{vid}) to
+          \texttt{virtual\_secrets}
+        \EndFor
+        \State from now on, allow \adversary to handle all \alice's messages,
+        i.e. act as a relay
+        \If{\bob is not corrupted}
+          \State from now on, handle all messages by \bob as \pchan
+          (Fig.~\ref{code:protocol:chan:skeleton}-\ref{code:protocol:chan:skeleton:virtual})
+        \EndIf
+        \If{$P = \texttt{host\_alice}$}
+          \State output (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
+          \texttt{virtual\_secrets})) to \texttt{host\_alice}
+        \Else \: \Comment{$P = \adversary$}
+          \State send (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
+          \texttt{virtual\_secrets})) to \adversary
+        \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
@@ -93,15 +120,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \EndIf
         \label{code:functionality:chan:skeleton:close:end}
       \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:chan:skeleton:base}
-\end{figure}
+      \Statex
 
-\begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- nested virtual closing}
-    \begin{algorithmic}[1]
       \State On (\textsc{(peer) closed virtual}, $(\mathrm{tx}_i,
       (\sigma_{ij})_j)_i$) by \charlie:
       \Indent
@@ -123,11 +143,11 @@ with all hops of all existing virtuals, we should definitely find another way)}
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:chan:skeleton:close:pt2}
+  \label{code:functionality:chan:skeleton:base}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- fund virtual}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
       \State On (\textsc{fund}, $c$, \texttt{hops}, \texttt{inner\_parties} =
       (\texttt{inner\_fundee}, \texttt{inner\_peer}), \texttt{outer\_parties} =
@@ -159,15 +179,8 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State output (\textsc{fund success}) to \alice
         \label{code:functionality:chan:skeleton:virtual:fund:end}
       \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:chan:skeleton:virtual:fund:fig}
-\end{figure}
+      \Statex
 
-\begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
-    \begin{algorithmic}[1]
       \State On input (\textsc{open virtual}, $c$, \texttt{local\_peer},
       \texttt{host\_bob}, \texttt{keys}) by $\charlie$ to \alice:
       \Comment{\alice is funded by \charlie}
@@ -214,38 +227,4 @@ with all hops of all existing virtuals, we should definitely find another way)}
   \end{systembox}
   \caption{}
   \label{code:functionality:chan:skeleton:virtual}
-\end{figure}
-
-\begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- corruption}
-    \begin{algorithmic}[1]
-      \State On (\textsc{corrupt}) by $P$, addressed to \alice:
-      \Indent
-        \State ensure $P \in \{\texttt{host\_alice}, \adversary\}$
-        \State $\texttt{virtual\_secrets} \gets \emptyset$
-        \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_), \textit{vid}) \in
-        \mathtt{virtuals}$}
-          \State send (\textsc{corrupt}) to fundee and ensure reply is
-          (\textsc{corrupted}, \texttt{secrets})
-          \State append (\texttt{secrets}, \textit{vid}) to
-          \texttt{virtual\_secrets}
-        \EndFor
-        \State from now on, allow \adversary to handle all \alice's messages,
-        i.e. act as a relay
-        \If{\bob is not corrupted}
-          \State from now on, handle all messages by \bob as \pchan
-          (Fig.~\ref{code:protocol:chan:skeleton}-\ref{code:protocol:chan:skeleton:virtual})
-        \EndIf
-        \If{$P = \texttt{host\_alice}$}
-          \State output (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
-          \texttt{virtual\_secrets})) to \texttt{host\_alice}
-        \Else \: \Comment{$P = \adversary$}
-          \State send (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
-          \texttt{virtual\_secrets})) to \adversary
-        \EndIf
-      \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:chan:skeleton:corruption}
 \end{figure}
