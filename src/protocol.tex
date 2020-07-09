@@ -64,8 +64,8 @@
       \label{code:protocol:chan:skeleton:vchan:open-virtual}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
-        \State ensure \textsc{pcn.openVirt}(keys, \bob, \texttt{host\_bob})
-        returns (\textsc{ok}, $c$)
+        \State ensure \textsc{pcn.openVirtual}(\bob, \charlie,
+        \texttt{host\_bob}, $c$) returns (\textsc{ok})
         \label{code:protocol:chan:skeleton:vchan:ln}
         \State $\texttt{host\_alice} \gets \charlie$
         \State $c_A \gets c$; $c_B \gets 0$

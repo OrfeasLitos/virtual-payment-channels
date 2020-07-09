@@ -34,23 +34,68 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- base}
     \begin{algorithmic}[1]
-      \State \textsc{openBase}(\texttt{args}):
+      \State \textsc{openBase}(\texttt{fundee}):
       \Indent
-        \State ensure \texttt{args} can be parsed as ($c_F$, $pk_{A,
-        \mathrm{out}}$, $pk_{B, \mathrm{out}}$)
-        \State ensure $c_F = c_{\mathrm{in}}$
-        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$; $(sk_{B, F},
-        pk_{B, F}) \gets \textsc{keyGen}()$
-        \State $F \gets$ TX \{input: \texttt{base\_output}, output: $(c_F,
-        2/\{pk_{A, F}, pk_{B, F}\})$\}
-        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk)$
-        \State send $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-        \mathrm{out}}, F, \mathrm{sig}_F, \alice)$ to \adversary, wait for
-        input (\textsc{check funding}) by \alice
-        \State input (\textsc{read}) to \ledger as \alice and assign output to
-        $\Sigma$
-        \State ensure $F \in \Sigma$
-        \State \Return (\textsc{ok}, $c_F$)
+        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
+        \If{ideal world}
+          \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
+        \Else \: \Comment{real world}
+          \State send (\textsc{open base channel}, $c_{\mathrm{chain}}$, $pk_{A,
+          F}$, $pk_{A, \mathrm{out}}$) to \texttt{fundee}
+          \State \Comment{colored code is run by \texttt{fundee}. Validation is
+          implicit}
+          \State \foreigncode{ensure super.\textit{State} = \textsc{init}}
+          \Comment{``super'': storage of enclosing protocol}
+          \State \foreigncode{store $pk_{A, F}$, $pk_{A, \mathrm{out}}$}
+          \State \foreigncode{$(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$}
+          \State \foreigncode{reply (\textsc{accept base channel}, $pk_{B,
+          F}$, $pk_{B, \mathrm{out}}$)}
+        \EndIf
+        \State $F \gets$ TX \{input: \texttt{base\_output}, output:
+        $(c_{\mathrm{chain}}, 2/\{pk_{A, F}, pk_{B, F}\})$\}
+        \If{real world}
+          \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
+          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B,
+          \mathrm{out}}$ $\wedge$ \texttt{delay}), ($0$, $pk_{B,
+          \mathrm{out}}$)\}
+          \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
+          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, $pk_{A,
+          \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
+          $\texttt{delay}$)\}
+          \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, sk_{A,
+          F})$
+          \State send (\textsc{funding created}, \texttt{base\_output},
+          $F$, $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
+          \State \Comment{implicitly verify that this is a continuation of the
+          previous exchange}
+          \State \foreigncode{$F \gets$ TX \{input: \texttt{base\_output}, output:
+          $(c_{\mathrm{chain}}, 2/\{pk_{A, F}, pk_{B, F}\})$\}}
+          \State \foreigncode{$C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
+          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, $pk_{A,
+          \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
+          $\texttt{delay}$)\}}
+          \State \foreigncode{ensure \textsc{verify}($C_{B, 0}$,
+          $\mathrm{sig}_{A, C, 0}$, $pk_{A, F}$) = True}
+          \State \foreigncode{$C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
+          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B,
+          \mathrm{out}}$ $\wedge$ $\texttt{delay}$), ($0$, $pk_{B,
+          \mathrm{out}}$)\}}
+          \State \foreigncode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
+          0}, sk_{B, F})$}
+          \State \foreigncode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
+          C, 0}$)}
+          \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
+          $pk_{B, F}$) = True
+        \EndIf
+        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk_{\mathrm{chain}})$
+        \State send $(\textsc{open}, c_{\mathrm{chain}}, pk_{A, \mathrm{out}},
+        pk_{B, \mathrm{out}}, F, \mathrm{sig}_F, \texttt{funder})$ to \adversary
+        \While{$F \notin \Sigma$}
+          \State wait for input (\textsc{check funding}) by \texttt{funder}
+          \State input (\textsc{read}) to \ledger as \texttt{funder} and assign
+          output to $\Sigma$
+        \EndWhile
+        \State \Return (\textsc{ok}, $c_{\mathrm{chain}}$)
       \EndIndent
     \end{algorithmic}
   \end{processbox}
@@ -58,16 +103,65 @@
   \label{code:ln:base}
 \end{figure}
 
+\TODO{re-check and dedup}
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- virtual}
     \begin{algorithmic}[1]
-      \State \textsc{openVirtual}($c$, \texttt{keys}):
+      \State \textsc{openVirtual}(\texttt{fundee}, \texttt{host\_funder},
+      \texttt{host\_fundee}, $c$):
       \Indent
-        \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$; $(sk_{B, V},
-        pk_{B, V}) \gets \textsc{keyGen}()$
-        \State \TODO{continue}
-        \State send (\textsc{open virtual}, $c$, \bob, \charlie, \alice) to
-        \adversary and ensure reply is \textsc{(ok)}
+        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
+        \If{ideal world}
+          \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
+        \Else \: \Comment{real world}
+          \State send (\textsc{open virtual channel}, $c$, $pk_{A, F}$, $pk_{A,
+          \mathrm{out}}$, \texttt{host\_fundee}) to \texttt{fundee}
+          \State \Comment{colored code is run by \texttt{fundee}. Validation is
+          implicit}
+          \State \foreigncode{ensure super.\textit{State} = \textsc{init}}
+          \Comment{``super'': storage of enclosing protocol}
+          \State \foreigncode{store $pk_{A, F}$, $pk_{A, \mathrm{out}}$}
+          \State \foreigncode{$(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$}
+          \State \foreigncode{reply (\textsc{accept virtual channel}, $pk_{B,
+          F}$, $pk_{B, \mathrm{out}}$)}
+        \EndIf
+        \State send (\textsc{funding keys}, $c$, $pk_{A, F}$, $pk_{B, F}$) to
+        \texttt{host\_funder}
+        \State \foreigncode{$C_{\mathrm{temp}} \gets C_i$ with $c$ coins moved
+        from our output to new 2/\{$pk_{A, F}$, $pk_{B, F}$\} output named
+        \texttt{funding\_output}} \TODO{make more formal}
+        \State \foreigncode{reply (\textsc{funding output},
+        \texttt{funding\_output})}
+        \If{real world}
+          \State $C_{A, 0} \gets$ TX \{input: \texttt{funding\_output}, outputs:
+          ($c$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
+          \texttt{delay}), ($0$, $pk_{B, \mathrm{out}}$)\}
+          \State $C_{B, 0} \gets$ TX \{input: \texttt{funding\_output}, outputs:
+          ($c$, $pk_{A, \mathrm{out}}$), ($0$, $pk_{A, \mathrm{out}}$ $\wedge$
+          $pk_{B, \mathrm{out}}$ $\wedge$ $\texttt{delay}$)\}
+          \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, sk_{A,
+          F})$
+          \State send (\textsc{funding created}, $c$, \texttt{funding\_output},
+          $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
+          \State \Comment{implicitly verify that this is a continuation of the
+          previous exchange}
+          \State \foreigncode{$C_{B, 0} \gets$ TX \{input:
+          \texttt{funding\_output}, outputs: ($c$, $pk_{A, \mathrm{out}}$),
+          ($0$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
+          $\texttt{delay}$)\}}
+          \State \foreigncode{ensure \textsc{verify}($C_{B, 0}$,
+          $\mathrm{sig}_{A, C, 0}$, $pk_{A, F}$) = True}
+          \State \foreigncode{$C_{A, 0} \gets$ TX \{input:
+          \texttt{funding\_output}, outputs: ($c$, $pk_{A, \mathrm{out}}$
+          $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$ $\texttt{delay}$), ($0$,
+          $pk_{B, \mathrm{out}}$)\}}
+          \State \foreigncode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
+          0}, sk_{B, F})$}
+          \State \foreigncode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
+          C, 0}$)}
+          \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
+          $pk_{B, F}$) = True
+        \EndIf
         \State \Return (\textsc{ok})
       \EndIndent
       \Statex
