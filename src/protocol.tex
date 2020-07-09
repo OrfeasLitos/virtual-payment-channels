@@ -1,8 +1,13 @@
 \begin{figure}[H]
   \begin{protocolbox}{$\Pi_{\mathrm{Chan}}$}
     \begin{algorithmic}[1]
-      \State Initialisation:
+      \State On (\textsc{init}, \texttt{out\_keys}) by \environment:
       \Indent
+        \State ensure $\mathit{State} = \bot$
+        \State $(c_A, c_B) \gets (0, 0)$
+        \State $\texttt{virtuals} \gets \emptyset$
+        \State ensure \textsc{pcn.init}(\texttt{keys}, \alice) returns
+        (\textsc{ok})
         \State $\mathit{State} \gets \textsc{init}$
       \EndIndent
       \Statex
@@ -12,7 +17,7 @@
       lines~\ref{code:functionality:chan:skeleton:init:top_up:start}-\ref{code:functionality:chan:skeleton:init:top_up:end})
       \Statex
 
-      \State On (\textsc{open base}, \texttt{keys}) by \environment:
+      \State On (\textsc{open base}) by \environment:
       \TODO{\textsc{ln.openBase}: \texttt{keys} = $pk_{A, out}$, $pk_{B, out}$}
       \Indent
         \State ensure $\mathit{State} = \textsc{topped up}$

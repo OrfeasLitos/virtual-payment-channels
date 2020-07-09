@@ -1,9 +1,10 @@
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln}}
+  \begin{processbox}{\textsc{ln} -- init}
     \begin{algorithmic}[1]
-      \State \textsc{init}():
+      \State \textsc{init}(\texttt{keys}, \dave):
       \Indent
-        \State \TODO{}
+        \State $pk_{D, \mathrm{out}} \gets \texttt{keys}$
+        \State \Return (\textsc{ok})
       \EndIndent
       \Statex
 

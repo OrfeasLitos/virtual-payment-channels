@@ -6,14 +6,20 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init, top up \& corruption}
     \begin{algorithmic}[1]
-      \State Initialisation: \Comment{runs on first activation}
+      \State On (\textsc{init}, \texttt{out\_keys}) by \alice:
+      \label{code:functionality:chan:skeleton:init:init:start}
       \Indent
+        \State ensure $\mathit{State} \in \{\bot, \textsc{init}_{\bob}\}$
         \State $(c_A, c_B) \gets (0, 0)$
         \State $\texttt{virtuals} \gets \emptyset$
-        \State $(\texttt{funder}, \texttt{fundee}, \texttt{outer\_funder},
-        \texttt{outer\_fundee}) \gets (\bot, \bot, \bot, \bot)$
-        \State ensure \textsc{pcn.init}() returns (\textsc{ok})
-        \State $\mathit{State} \gets \textsc{init}$
+        \State ensure \textsc{pcn.init}(\texttt{keys}, \alice) returns
+        (\textsc{ok})
+        \If{$\mathit{State} = \bot$}
+          \State $\mathit{State} \gets \textsc{init}_{\bob}$
+        \Else \: \Comment{$\mathit{State} = \textsc{init}_{\bob}$}
+          \State $\mathit{State} \gets \textsc{init}$
+        \EndIf
+        \label{code:functionality:chan:skeleton:init:init:end}
       \EndIndent
       \Statex
 
@@ -64,7 +70,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
     \begin{algorithmic}[1]
-      \State On (\textsc{open base}, \texttt{keys}) by \alice:
+      \State On (\textsc{open base}) by \alice:
       \Indent
         \State ensure $\mathit{State} = \textsc{topped up} \wedge
         \mathtt{funder} = \alice$
