@@ -22,8 +22,15 @@
         \textsc{check top up} by \alice
         \State \Return (\textsc{ok}, $c_{\mathrm{chain}}$)
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:init}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- base}
+    \begin{algorithmic}[1]
       \State \textsc{openBase}(\texttt{args}):
       \Indent
         \State ensure \texttt{args} can be parsed as ($c_F$, $pk_{A,
@@ -42,8 +49,15 @@
         \State ensure $F \in \Sigma$
         \State \Return (\textsc{ok}, $c_F$)
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:base}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- virtual}
+    \begin{algorithmic}[1]
       \State \textsc{openVirtual}($c$, \texttt{keys}):
       \Indent
         \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$; $(sk_{B, V},
@@ -81,5 +95,5 @@
     \end{algorithmic}
   \end{processbox}
   \caption{}
-  \label{code:ln}
+  \label{code:ln:virtual}
 \end{figure}
