@@ -8,18 +8,21 @@
       \EndIndent
       \Statex
 
-      \State \textsc{topUp}(\alice):
+      \State \textsc{topUp}(\texttt{funder}): \TODO{move to \textsc{common} if
+      more stuff fits there}
       \Indent
-        \State $(sk_{\mathrm{in}}, pk_{\mathrm{in}}) \gets \textsc{keyGen}()$
-        \State output (\textsc{public key}, $pk_{\mathrm{in}}$) to \alice,
-        wait\footnote{all other messages by \alice are ignored} for input
-        (\textsc{check top up}) by \alice
-        \State input (\textsc{read}) to \ledger as \alice and assign ouput to
-        $\Sigma$
-        \State ensure $\exists \mathrm{tx} \in \Sigma, c_{\mathrm{chain}}:
-        (c_{\mathrm{chain}}, pk_{\mathrm{in}}) \in \mathrm{tx.outputs}$ and
-        assign this output to \texttt{base\_output}, else go back to waiting for
-        \textsc{check top up} by \alice
+        \State $(sk_{\mathrm{chain}}, pk_{\mathrm{chain}}) \gets
+        \textsc{keyGen}()$
+        \State output (\textsc{public key}, $pk_{\mathrm{chain}}$) to \dave
+        \While{$\nexists \mathrm{tx} \in \Sigma, c_{\mathrm{chain}}:
+        (c_{\mathrm{chain}}, pk_{\mathrm{chain}}) \in \mathrm{tx.outputs}$}
+          \State wait\footnote{while waiting, all other messages by \dave are
+          ignored} for input (\textsc{check top up}) by \dave
+          \State input (\textsc{read}) to \ledger as \dave and assign ouput to
+          $\Sigma$
+        \EndWhile
+        \State $\texttt{base\_output} \gets (c_{\mathrm{chain}},
+        pk_{\mathrm{chain}})$
         \State \Return (\textsc{ok}, $c_{\mathrm{chain}}$)
       \EndIndent
     \end{algorithmic}
