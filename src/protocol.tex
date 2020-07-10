@@ -59,8 +59,8 @@
     \begin{algorithmic}[1]
       \State \Comment{notification to fundee}
       \State \Comment{trust that \charlie has $c$ in her channel}
-      \State On input (\textsc{open virtual}, $c$, \bob, \texttt{host\_bob},
-      \texttt{keys}) by \charlie:
+      \State On input (\textsc{open virtual}, $c$, \bob, \texttt{host\_bob}) by
+      \charlie:
       \label{code:protocol:chan:skeleton:vchan:open-virtual}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
@@ -81,8 +81,7 @@
 
       \State On (\textsc{fund}, $c$, hops, \texttt{inner\_parties} =
       (\texttt{intter\_fundee}, \texttt{inner\_peer}), \texttt{outer\_parties} =
-      (\texttt{outer\_funder}, \texttt{outer\_peer}), \texttt{keys}) by
-      \environment:
+      (\texttt{outer\_funder}, \texttt{outer\_peer})) by \environment:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
         virtual}\}$
