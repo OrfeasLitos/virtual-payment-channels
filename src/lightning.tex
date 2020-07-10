@@ -174,9 +174,10 @@
 
       \State \textsc{close}($P$, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$):
       \Indent
-          \State $\mathit{State} \gets (\textsc{closing}, P, (\mathrm{tx}_i)_i)$
-          \State input (\textsc{submit}, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$)
-          to \ledger as $P$
+        \State \TODO{also cover case when we are virtual}
+        \State $\mathit{State} \gets (\textsc{closing}, P, (\mathrm{tx}_i)_i)$
+        \State input (\textsc{submit}, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$)
+        to \ledger as $P$
       \EndIndent
       \Statex
 
