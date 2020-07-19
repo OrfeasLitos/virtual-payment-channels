@@ -30,7 +30,8 @@
   \caption{}
   \label{code:ln:init}
 \end{figure}
-
+\TODO{rethink and homogenize normal-foreign code variable names -- is A and B
+ok?}
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- base}
     \begin{algorithmic}[1]
@@ -137,7 +138,8 @@
         \texttt{funding\_output}} \TODO{make more formal}
         \State \trustedcode{reply (\textsc{funding output},
         \texttt{funding\_output})}
-        \If{real world}
+        \If{real world} \TODO{repair com txs according to openBase(), also using
+        $pk_R$-- or simply dedup}
           \State $C_{A, 0} \gets$ TX \{input: \texttt{funding\_output}, outputs:
           ($c$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
           \texttt{delay}), ($0$, $pk_{B, \mathrm{out}}$)\}
@@ -169,6 +171,8 @@
         \EndIf
         \State send (\textsc{channel established}) to
         \texttt{host\_funder}.\textsc{virt}
+        \State \trustedcode{TODO: update to $C_{\mathrm{temp}}$ with hops and
+        return (\textsc{ok})}
       \EndIndent
     \end{algorithmic}
   \end{processbox}
@@ -179,7 +183,8 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- pay}
     \begin{algorithmic}[1]
-      \State \textsc{pay}($x$, \textit{payid}):
+      \State \textsc{pay}($x$, \textit{payid}): \TODO{maybe remove temp for i+1
+      (anyway no other update will happen instead of the tentative)}
       \Indent
         \State $C_{\mathrm{rem}, \mathrm{temp}} \gets C_{\mathrm{rem}, i}$ with
         $x$ coins moved from \alice's to \bob's output

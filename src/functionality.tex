@@ -152,6 +152,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
   \label{code:functionality:chan:skeleton:base}
 \end{figure}
 
+\TODO{restructure channel funding: on fund -> virt.fund(..., ln) which drives
+ln.openVirutal(). Both in real and ideal (real does some referencing) and check
+that virt - ln interactions are sane}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
