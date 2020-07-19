@@ -131,7 +131,7 @@
           F}$, $pk_{B, \mathrm{out}}$)}
         \EndIf
         \State send (\textsc{funding keys}, $c$, $pk_{A, F}$, $pk_{B, F}$) to
-        \texttt{host\_funder}
+        \texttt{host\_funder}.\textsc{virt}
         \State \trustedcode{$C_{\mathrm{temp}} \gets C_i$ with $c$ coins moved
         from our output to new 2/\{$pk_{A, F}$, $pk_{B, F}$\} output named
         \texttt{funding\_output}} \TODO{make more formal}
@@ -167,7 +167,8 @@
           \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
           $pk_{B, F}$) = True
         \EndIf
-        \State \Return (\textsc{ok})
+        \State send (\textsc{channel established}) to
+        \texttt{host\_funder}.\textsc{virt}
       \EndIndent
     \end{algorithmic}
   \end{processbox}
