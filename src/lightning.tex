@@ -60,13 +60,13 @@
         $(c_{\mathrm{chain}}, 2/\{pk_{A, F}, pk_{B, F}\})$\}
         \If{real world}
           \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B,
-          \mathrm{out}}$ $\wedge$ \texttt{delay}), ($0$, $pk_{B,
-          \mathrm{out}}$)\}
+          ($c_{\mathrm{chain}}$, ($pk_{A, \mathrm{out}}$ $\wedge$
+          \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$ $pk_{B, R}$)), ($0$,
+          $pk_{B, \mathrm{out}}$)\}
           \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, $pk_{A,
-          \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
-          $\texttt{delay}$)\}
+          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, ($pk_{B,
+          \mathrm{out}}$ $\wedge$ \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$
+          $pk_{B, R}$))\}
           \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, sk_{A,
           F})$
           \State send (\textsc{funding created}, \texttt{base\_output},
@@ -76,15 +76,15 @@
           \State \remotecode{$F \gets$ TX \{input: \texttt{base\_output}, output:
           $(c_{\mathrm{chain}}, 2/\{pk_{A, F}, pk_{B, F}\})$\}}
           \State \remotecode{$C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, $pk_{A,
-          \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
-          $\texttt{delay}$)\}}
+          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, ($pk_{B,
+          \mathrm{out}}$ $\wedge$ \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$
+          $pk_{B, R}$))\}}
           \State \remotecode{ensure \textsc{verify}($C_{B, 0}$,
           $\mathrm{sig}_{A, C, 0}$, $pk_{A, F}$) = True}
           \State \remotecode{$C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B,
-          \mathrm{out}}$ $\wedge$ $\texttt{delay}$), ($0$, $pk_{B,
-          \mathrm{out}}$)\}}
+          ($c_{\mathrm{chain}}$, ($pk_{A, \mathrm{out}}$ $\wedge$
+          \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$ $pk_{B, R}$)), ($0$,
+          $pk_{B, \mathrm{out}}$)\}}
           \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
           0}, sk_{B, F})$}
           \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
