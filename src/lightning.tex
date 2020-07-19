@@ -110,7 +110,7 @@
 
 \TODO{re-check and dedup}
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- virtual}
+  \begin{processbox}{\textsc{ln} -- open virtual}
     \begin{algorithmic}[1]
       \State \textsc{openVirtual}(\texttt{fundee}, \texttt{host\_funder},
       \texttt{host\_fundee}, $c$):
@@ -169,8 +169,15 @@
         \EndIf
         \State \Return (\textsc{ok})
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:open-virtual}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- pay}
+    \begin{algorithmic}[1]
       \State \textsc{pay}($x$, \textit{payid}):
       \Indent
         \State $C_{\mathrm{rem}, \mathrm{temp}} \gets C_{\mathrm{rem}, i}$ with
@@ -223,8 +230,15 @@
         $\mathrm{sig}_{\mathrm{payee}, R, i+1}$, $pk_{A, R}$) = True
         \State \remotecode{add ($x$, \textit{payid}) to \texttt{paid\_in}}
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:pay}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- close}
+    \begin{algorithmic}[1]
       \State \textsc{close}($P$, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$):
       \Indent
         \State \TODO{also cover case when we are virtual}
