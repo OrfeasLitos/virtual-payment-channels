@@ -30,8 +30,7 @@
   \caption{}
   \label{code:ln:init}
 \end{figure}
-\TODO{rethink and homogenize normal-foreign code variable names -- is A and B
-ok?}
+
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- base}
     \begin{algorithmic}[1]
@@ -183,56 +182,48 @@ ok?}
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- pay}
     \begin{algorithmic}[1]
-      \State \textsc{pay}($x$, \textit{payid}):
+      \State \textsc{pay}($x$, \textit{payid}): \Comment{\alice pays, \bob gets
+      paid}
       \Indent
-        \State $C_{\mathrm{rem}, i+1} \gets C_{\mathrm{rem}, i}$ with
-        $x$ coins moved from \alice's to \bob's output
-        \State $\mathrm{sig}_{\mathrm{payee}, C, i+1} \gets
-        \textsc{sign}(C_{\mathrm{rem}, i+1}, sk_{A, F})$ \Comment{kept
-        by payee}
-        \State send (\textsc{pay}, $x$, $\mathrm{sig}_{\mathrm{payee}, C, i+1}$,
+        \State $C_{B, i+1} \gets C_{B, i}$ with $x$ coins moved from \alice's to
+        \bob's output
+        \State $\mathrm{sig}_{A, C, i+1} \gets \textsc{sign}(C_{B, i+1}, sk_{A,
+        F})$ \Comment{kept by \alice}
+        \State send (\textsc{pay}, $x$, $\mathrm{sig}_{A, C, i+1}$,
         \textit{payid}) to \bob
-        \State \remotecode{$C_{\mathrm{loc}, i+1} \gets
-        C_{\mathrm{loc}, i}$ with $x$ coins moved from \alice's to \bob's
-        output}
-        \State \remotecode{ensure \textsc{verify}($C_{\mathrm{loc},
-        i+1}$, $\mathrm{sig}_{\mathrm{payee}, C, i+1}$, $pk_{A, F}$) =
-        True}
-        \State \remotecode{$C_{\mathrm{rem}, i+1} \gets
-        C_{\mathrm{rem}, i}$ with $x$ coins moved from \alice's to \bob's
-        output}
-        \State \remotecode{$\mathrm{sig}_{\mathrm{payer}, C, i+1} \gets
-        \textsc{sign}(C_{\mathrm{rem}, i+1}, sk_{B, F})$}
-        \Comment{kept by payer}
-        \State \remotecode{$R_{\mathrm{rem}, i+1} \gets$ TX \{input:
-        $C_{\mathrm{loc}, i+1}$.outputs.payee, output: ($c_B$, $pk_{A,
-        \mathrm{out}}$)\}}
-        \State \remotecode{$\mathrm{sig}_{\mathrm{payer}, R, i+1} \gets
-        \textsc{sign}(R_{\mathrm{rem}, i+1}, sk_{B, R})$}
-        \State \remotecode{reply (\textsc{commitment signed},
-        $\mathrm{sig}_{\mathrm{payer}, C, i+1}$,
-        $\mathrm{sig}_{\mathrm{payer}, R, i+1}$)}
-        \State $C_{\mathrm{loc}, i+1} \gets C_{\mathrm{loc}, i}$ with
-        $x$ coins moved from \alice's to \bob's output
-        \State ensure \textsc{verify}($C_{\mathrm{loc}, i+1}$,
-        $\mathrm{sig}_{\mathrm{payer}, C, i+1}$, $pk_{B, F}$) = True
-        \State $R_{\mathrm{loc}, i+1} \gets$ TX \{input: $C_{\mathrm{rem},
-        i+1}$.outputs.payee, output: ($c_B$, $pk_{A,
-        \mathrm{out}}$)\}
-        \State ensure \textsc{verify}($R_{\mathrm{loc}, i+1}$,
-        $\mathrm{sig}_{\mathrm{payer}, R, i+1}$, $pk_{B, R}$) = True
-        \State $R_{\mathrm{rem}, i+1} \gets$ TX \{input: $C_{\mathrm{loc},
-        i+1}$.outputs.payer, output: ($c_A$, $pk_{B, \mathrm{out}}$)\}
-        \State $\mathrm{sig}_{\mathrm{payee}, R, i+1} \gets
-        \textsc{sign}(R_{\mathrm{rem}, i+1}, sk_{A, R})$
+        \State \remotecode{$C_{B, i+1} \gets C_{B, i}$ with $x$ coins moved from
+        \alice's to \bob's output}
+        \State \remotecode{ensure \textsc{verify}($C_{B, i+1}$,
+        $\mathrm{sig}_{A, C, i+1}$, $pk_{A, F}$) = True}
+        \State \remotecode{$C_{A, i+1} \gets C_{A, i}$ with $x$ coins moved from
+        \alice's to \bob's output}
+        \State \remotecode{$\mathrm{sig}_{B, C, i+1} \gets \textsc{sign}(C_{A,
+        i+1}, sk_{B, F})$} \Comment{kept by \bob}
+        \State \remotecode{$R_{A, i+1} \gets$ TX \{input: $C_{B,
+        i+1}$.outputs.\alice, output: ($c_B$, $pk_{A, \mathrm{out}}$)\}}
+        \State \remotecode{$\mathrm{sig}_{B, R, i+1} \gets \textsc{sign}(R_{A,
+        i+1}, sk_{B, R})$}
+        \State \remotecode{reply (\textsc{commitment signed}, $\mathrm{sig}_{B,
+        C, i+1}$, $\mathrm{sig}_{B, R, i+1}$)}
+        \State $C_{A, i+1} \gets C_{A, i}$ with $x$ coins moved from \alice's to
+        \bob's output
+        \State ensure \textsc{verify}($C_{A, i+1}$, $\mathrm{sig}_{B, C, i+1}$,
+        $pk_{B, F}$) = True
+        \State $R_{A, i+1} \gets$ TX \{input: $C_{B, i+1}$.outputs.\alice,
+        output: ($c_B$, $pk_{A, \mathrm{out}}$)\}
+        \State ensure \textsc{verify}($R_{A, i+1}$, $\mathrm{sig}_{B, R, i+1}$,
+        $pk_{B, R}$) = True
+        \State $R_{B, i+1} \gets$ TX \{input: $C_{A, i+1}$.outputs.\bob,
+        output: ($c_A$, $pk_{B, \mathrm{out}}$)\}
+        \State $\mathrm{sig}_{A, R, i+1} \gets \textsc{sign}(R_{B, i+1}, sk_{A,
+        R})$
         \State add ($x$, \textit{payid}) to \texttt{paid\_out}
-        \State send (\textsc{revoke and ack}, $\mathrm{sig}_{\mathrm{payee}, R,
-        i+1}$) to \bob
-        \State $R_{\mathrm{loc}, i+1} \gets$ TX \{input: $C_{\mathrm{rem},
-        i+1}$.outputs.payer, output: ($c_A$, $pk_{B,
-        \mathrm{out}}$)\}
-        \State ensure \textsc{verify}($R_{\mathrm{loc}, i+1}$,
-        $\mathrm{sig}_{\mathrm{payee}, R, i+1}$, $pk_{A, R}$) = True
+        \State send (\textsc{revoke and ack}, $\mathrm{sig}_{A, R, i+1}$) to
+        \bob
+        \State \remotecode{$R_{B, i+1} \gets$ TX \{input: $C_{A,
+        i+1}$.outputs.\bob, output: ($c_A$, $pk_{B, \mathrm{out}}$)\}}
+        \State \remotecode{ensure \textsc{verify}($R_{B, i+1}$,
+        $\mathrm{sig}_{A, R, i+1}$, $pk_{A, R}$) = True}
         \State \remotecode{add ($x$, \textit{payid}) to \texttt{paid\_in}}
       \EndIndent
     \end{algorithmic}
