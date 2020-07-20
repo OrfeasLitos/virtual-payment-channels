@@ -160,9 +160,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
     \begin{algorithmic}[1]
       \State On (\textsc{fund}, $c$, \texttt{hops}, \texttt{inner\_parties} =
       (\texttt{funder}, \texttt{fundee}), \texttt{outer\_parties} =
-      (\texttt{host\_funder}, \texttt{host\_fundee}), \texttt{keys}) by \alice:
-      \TODO{\texttt{keys} = $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB},
-      out}$, use this in \textsc{virt.fund}() OR remove keys altogether}
+      (\texttt{host\_funder}, \texttt{host\_fundee})) by \alice:
       \Comment{we fund another channel}
       \label{code:functionality:chan:skeleton:virtual:fund}
       \Indent
