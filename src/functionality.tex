@@ -89,6 +89,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State ensure $c_D - \mathrm{locked}(D) \geq x$
         \State send (\textsc{pay}, $x$, \dave) to \adversary and expect reply
         (\textsc{ok}) \TODO{decide if \textsc{pcn.pay}() needed -- probably not}
+        \TODO{there is a problem with who returns -- last message goes to payee,
+        so control is not on our side and adding the last message would add 1
+        more purely technical attack vector and an unneeded round}
         \State $c_D \gets c_D - x; c_{\bar{D}} \gets c_{\bar{D}} + x$
         \Comment{$\bar{D}$ is \alice if $D$ is \bob and vice-versa}
         \State output (\textsc{pay success}) to \dave
