@@ -71,7 +71,7 @@
           \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, sk_{A,
           F})$
           \State send (\textsc{funding created}, \texttt{base\_output},
-          $F$, $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
+          $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
           \State \Comment{implicitly verify that this is a continuation of the
           previous exchange}
           \State \remotecode{$F \gets$ TX \{input: \texttt{base\_output}, output:
