@@ -159,8 +159,8 @@ that virt - ln interactions are sane}
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
       \State On (\textsc{fund}, $c$, \texttt{hops}, \texttt{inner\_parties} =
-      (\texttt{inner\_fundee}, \texttt{inner\_peer}), \texttt{outer\_parties} =
-      (\texttt{outer\_funder}, \texttt{outer\_peer}), \texttt{keys}) by \alice:
+      (\texttt{funder}, \texttt{fundee}), \texttt{outer\_parties} =
+      (\texttt{host\_funder}, \texttt{host\_fundee}), \texttt{keys}) by \alice:
       \TODO{\texttt{keys} = $pk_{\mathit{VA}, out}$, $pk_{\mathit{VB},
       out}$, use this in \textsc{virt.fund}() OR remove keys altogether}
       \Comment{we fund another channel}
@@ -170,10 +170,10 @@ that virt - ln interactions are sane}
         virtual}\}$
         \label{code:functionality:chan:skeleton:virtual:fund:start}
         \State ensure $c_A - \mathrm{locked}(A) \geq c$
-        \State ensure \texttt{outer\_funder} = \alice
+        \State ensure \texttt{host\_funder} = \alice
         \label{code:functionality:chan:skeleton:virtual:fund:id}
-        \State input (\textsc{open virtual}, $c$, \texttt{inner\_peer},
-        \texttt{outer\_peer}) to \texttt{inner\_fundee} as \alice, ensure output
+        \State input (\textsc{open virtual}, $c$, \texttt{fundee},
+        \texttt{host\_fundee}) to \texttt{fundee} as \alice, ensure output
         is (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:subfunc}
         \State generate unique \textit{vid}
@@ -213,8 +213,8 @@ that virt - ln interactions are sane}
 
       \State On (\textsc{relay}, $m$, \charlie) by \alice:
       \Indent
-        \State ensure there is an entry in \texttt{virtuals} with \alice as funder
-        outer party and \charlie as fundee sub-party
+        \State ensure there is an entry in \texttt{virtuals} with \alice as host
+        of funder and \charlie as fundee sub-party
         \label{code:functionality:chan:skeleton:virtual:relay:input:start}
         \State input (\textsc{relayed}, $m$) to \charlie
         \label{code:functionality:chan:skeleton:virtual:relay:input:end}
@@ -223,9 +223,9 @@ that virt - ln interactions are sane}
 
       \State On output (\textsc{relay}, $m$) by \charlie to \alice:
       \Indent
-        \State ensure there is an entry in \texttt{virtuals} with \alice as funder
-        outer party and \charlie as fundee sub-party \Comment{defensive check,
-        may be redundant due to being subroutine respecting}
+        \State ensure there is an entry in \texttt{virtuals} with \alice as host
+        of funder and \charlie as fundee sub-party \Comment{defensive check, may
+        be redundant due to being subroutine respecting}
         \label{code:functionality:chan:skeleton:virtual:relay:output:start}
         \State output (\textsc{relayed}, $m$, \charlie) to \environment
         \label{code:functionality:chan:skeleton:virtual:relay:output:end}
