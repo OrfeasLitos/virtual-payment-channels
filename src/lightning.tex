@@ -58,6 +58,7 @@
         \EndIf
         \State $F \gets$ TX \{input: \texttt{base\_output}, output:
         $(c_{\mathrm{chain}}, 2/\{pk_{A, F}, pk_{B, F}\})$\}
+        \label{code:ln:base:create-funding}
         \If{real world}
           \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
           ($c_{\mathrm{chain}}$, ($pk_{A, \mathrm{out}}$ $\wedge$
@@ -93,6 +94,7 @@
           $pk_{B, F}$) = True
         \EndIf
         \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk_{\mathrm{chain}})$
+        \label{code:ln:base:sign-funding}
         \State send $(\textsc{open}, c_{\mathrm{chain}}, pk_{A, \mathrm{out}},
         pk_{B, \mathrm{out}}, F, \mathrm{sig}_F, \texttt{funder})$ to \adversary
         \While{$F \notin \Sigma$}
@@ -108,7 +110,6 @@
   \label{code:ln:base}
 \end{figure}
 
-\TODO{re-check and dedup}
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- open virtual}
     \begin{algorithmic}[1]
@@ -130,43 +131,11 @@
           \State \remotecode{reply (\textsc{accept virtual channel}, $pk_{B,
           F}$, $pk_{B, \mathrm{out}}$)}
         \EndIf
-        \State send (\textsc{funding keys}, $c$, $pk_{A, F}$, $pk_{B, F}$) to
-        \texttt{host\_funder}.\textsc{virt}
-        \State \trustedcode{$C_{\mathrm{temp}} \gets C_i$ with $c$ coins moved
-        from our output to new 2/\{$pk_{A, F}$, $pk_{B, F}$\} output named
-        \texttt{funding\_output}} \TODO{make more formal}
-        \State \trustedcode{reply (\textsc{funding output},
-        \texttt{funding\_output})}
-        \If{real world} \TODO{repair com txs according to openBase(), also using
-        $pk_R$-- or simply dedup}
-          \State $C_{A, 0} \gets$ TX \{input: \texttt{funding\_output}, outputs:
-          ($c$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
-          \texttt{delay}), ($0$, $pk_{B, \mathrm{out}}$)\}
-          \State $C_{B, 0} \gets$ TX \{input: \texttt{funding\_output}, outputs:
-          ($c$, $pk_{A, \mathrm{out}}$), ($0$, $pk_{A, \mathrm{out}}$ $\wedge$
-          $pk_{B, \mathrm{out}}$ $\wedge$ $\texttt{delay}$)\}
-          \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, sk_{A,
-          F})$
-          \State send (\textsc{funding created}, $c$, \texttt{funding\_output},
-          $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
-          \State \Comment{implicitly verify that this is a continuation of the
-          previous exchange}
-          \State \remotecode{$C_{B, 0} \gets$ TX \{input:
-          \texttt{funding\_output}, outputs: ($c$, $pk_{A, \mathrm{out}}$),
-          ($0$, $pk_{A, \mathrm{out}}$ $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$
-          $\texttt{delay}$)\}}
-          \State \remotecode{ensure \textsc{verify}($C_{B, 0}$,
-          $\mathrm{sig}_{A, C, 0}$, $pk_{A, F}$) = True}
-          \State \remotecode{$C_{A, 0} \gets$ TX \{input:
-          \texttt{funding\_output}, outputs: ($c$, $pk_{A, \mathrm{out}}$
-          $\wedge$ $pk_{B, \mathrm{out}}$ $\wedge$ $\texttt{delay}$), ($0$,
-          $pk_{B, \mathrm{out}}$)\}}
-          \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
-          0}, sk_{B, F})$}
-          \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
-          C, 0}$)}
-          \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
-          $pk_{B, F}$) = True
+        \If{real world}
+          \State do funding ceremony as in base channel
+          (Fig.~\ref{code:ln:base},
+          lines~\ref{code:ln:base:create-funding}-\ref{code:ln:base:sign-funding})
+          \TODO{abstract better}
         \EndIf
         \State send (\textsc{channel established}) to
         \texttt{host\_funder}.\textsc{virt}
