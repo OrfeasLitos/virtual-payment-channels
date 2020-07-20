@@ -114,7 +114,7 @@
   \begin{processbox}{\textsc{ln} -- open virtual}
     \begin{algorithmic}[1]
       \State \textsc{openVirtual}(\texttt{fundee}, \texttt{host\_funder},
-      \texttt{host\_fundee}, $c$):
+      \texttt{host\_fundee}, $c$, \texttt{funding\_output}):
       \Indent
         \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
         \If{ideal world}
@@ -137,10 +137,7 @@
           lines~\ref{code:ln:base:create-funding}-\ref{code:ln:base:sign-funding})
           \TODO{abstract better}
         \EndIf
-        \State send (\textsc{channel established}) to
-        \texttt{host\_funder}.\textsc{virt}
-        \State \trustedcode{TODO: update to $C_{\mathrm{temp}}$ with hops and
-        return (\textsc{ok})}
+        \State \Return (\textsc{ok})
       \EndIndent
     \end{algorithmic}
   \end{processbox}

@@ -1,8 +1,9 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
-      \State \textsc{fund}($c$, \texttt{hops}, \texttt{inner\_parties},
-      \texttt{outer\_parties}, \textit{vid}):
+      \State \textsc{fund}($c$, \texttt{hops}, (\texttt{funder},
+      \texttt{fundee}), (\texttt{host\_funder}, \texttt{host\_fundee}),
+      \textsc{pcn}, \textit{vid}):
       \Indent
         \State \TODO{do VChan() with hops -- $P_{i-1} P_i, P_i P_{i+1}$ and all
         $P_1 P_n$ held by BOTH $R_{i-1}$ and $L_i$. $P_{i-1} P_i$ held only by
@@ -15,7 +16,15 @@
         $P_i P_{i+1}$ inputs by $L_i$.}
       \EndIndent
       \Statex
-    \TODO{continue}
+      \State have \textsc{pcn} generate $pk_{A, V}$ and
+      receive(real)/generate(ideal) $pk_{B, V}$
+      \State $C_{\mathrm{temp}} \gets C_i$ with $c$ coins moved
+      from \alice's output to new 2/\{$pk_{A, V}$, $pk_{B, V}$\} output named
+      \texttt{virtual\_output} \TODO{make more formal}
+      \State ensure \textsc{pcn.openVirtual}(\texttt{fundee},
+      \texttt{host\_funder}, \texttt{host\_fundee}, $c$,
+      \texttt{virtual\_output}) returns (\textsc{ok})
+      \TODO{continue}
         \State $(L_0, R_0) \gets (\alice, \bob)$
         \label{code:functionality:chan:skeleton:virtual:fund:init}
         \ForAll{$(P, pk) \in \mathtt{hops}$} \Comment{$i \in \{1, \dots,

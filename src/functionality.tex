@@ -155,9 +155,6 @@ with all hops of all existing virtuals, we should definitely find another way)}
   \label{code:functionality:chan:skeleton:base}
 \end{figure}
 
-\TODO{restructure channel funding: on fund -> virt.fund(..., ln) which drives
-ln.openVirutal(). Both in real and ideal (real does some referencing) and check
-that virt - ln interactions are sane}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
     \begin{algorithmic}[1]
@@ -175,15 +172,11 @@ that virt - ln interactions are sane}
         \State ensure $c_A - \mathrm{locked}(A) \geq c$
         \State ensure \texttt{host\_funder} = \alice
         \label{code:functionality:chan:skeleton:virtual:fund:id}
-        \State input (\textsc{open virtual}, $c$, \texttt{fundee},
-        \texttt{host\_fundee}) to \texttt{fundee} as \alice, ensure output
-        is (\textsc{ok})
-        \label{code:functionality:chan:skeleton:virtual:subfunc}
         \State generate unique \textit{vid}
         \label{code:functionality:chan:skeleton:virtual:id}
         \State ensure \textsc{virt.fund}($c$, \texttt{hops},
-        \texttt{inner\_parties}, \texttt{outer\_parties}, \textit{vid}) returns
-        (\textsc{ok})
+        \texttt{inner\_parties}, \texttt{outer\_parties}, \textsc{pcn},
+        \textit{vid}) returns (\textsc{ok})
         \label{code:functionality:chan:skeleton:virtual:fund:virt}
         \State add (($c$, 0), \texttt{hops}, \texttt{inner\_parties},
         \texttt{outer\_parties}, \textit{vid}) to \texttt{virtuals}
