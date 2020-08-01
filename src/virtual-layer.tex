@@ -24,7 +24,23 @@
       \texttt{virtual\_output} \TODO{(optional:) make more formal}
       \State ensure \textsc{pcn.openVirtual}(\texttt{funding\_output}) returns
       (\textsc{ok})
-      \TODO{continue}
+      \State
+      \TODO{continue: send relevant data, including signatures for next comm TX,
+      only to the next hop. Enter a waiting state, expecting reply from next hop
+      with all signatures needed for next comm TX and the revocation sig of the
+      previous comm TX. Mark virtual channel as open. Send to next hop the
+      revocation sig. While waiting, ignore everything else apart from channel
+      closing}
+      \State
+      \TODO{Think through the differences of the ideal world, e.g. that if some
+      continuous hops are honest, we only need per-hop *confirmation* by
+      \simulator (which probably simulates an honest exchange normally), whereas
+      for hops from honest to corrupt we do the whole drill with \simulator
+      (which probably does the corrupt part of the exchange according to
+      \adversary's instructions)}
+      \State
+      \TODO{Add logic for intermediaries and fundee}
+      \Statex
         \State $(L_0, R_0) \gets (\alice, \bob)$
         \label{code:functionality:chan:skeleton:virtual:fund:init}
         \ForAll{$(P, pk) \in \mathtt{hops}$} \Comment{$i \in \{1, \dots,
