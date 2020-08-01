@@ -122,12 +122,16 @@
       \Indent
         \State ensure super.\textit{State} = \textsc{init} \Comment{``super'':
         storage of enclosing protocol}
+        \State store $c$, \texttt{fundee}, \texttt{host\_funder},
+        \texttt{host\_fundee}, \textit{vid}
         \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
         \If{ideal world}
           \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
         \Else \: \Comment{real world}
           \State send (\textsc{request virtual key}, $pk_{A, F}$, $c$,
           \texttt{host\_fundee}) to \texttt{fundee}
+          \State \Comment{colored code is run by \texttt{fundee}. Validation is
+          implicit}
           \State \remotecode{ensure super.\textit{State} = \textsc{init}}
           \State \remotecode{store $pk_{A, F}$, $c$, \texttt{host\_fundee}}
           \State \remotecode{$(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$}
