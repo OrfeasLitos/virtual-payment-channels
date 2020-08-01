@@ -12,6 +12,7 @@
       \State \textsc{topUp}(\texttt{funder}): \TODO{move to \textsc{common} if
       more stuff fits there}
       \Indent
+        \State ensure super.\textit{State} = \textsc{init}
         \State $(sk_{\mathrm{chain}}, pk_{\mathrm{chain}}) \gets
         \textsc{keyGen}()$
         \State output (\textsc{public key}, $pk_{\mathrm{chain}}$) to
@@ -38,6 +39,7 @@
     \begin{algorithmic}[1]
       \State \textsc{openBase}(\texttt{fundee}):
       \Indent
+        \State ensure super.\textit{State} = \textsc{topped up}
         \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$;
         $(sk_{A, R}, pk_{A, R}) \gets \textsc{keyGen}()$
         \If{ideal world}
@@ -118,14 +120,16 @@
       \State \textsc{virtualKeys}($c$, \texttt{fundee}, \texttt{host\_funder},
       \texttt{host\_fundee}):
       \Indent
+        \State ensure super.\textit{State} = \textsc{init} \Comment{``super'':
+        storage of enclosing protocol}
         \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
         \If{ideal world}
           \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
         \Else \: \Comment{real world}
           \State send (\textsc{request virtual key}, $pk_{A, F}$, $c$,
-          \textsc{host\_fundee}) to \texttt{fundee}
+          \texttt{host\_fundee}) to \texttt{fundee}
           \State \remotecode{ensure super.\textit{State} = \textsc{init}}
-          \State \remotecode{store $pk_{A, F}$, $c$, \textsc{host\_fundee}}
+          \State \remotecode{store $pk_{A, F}$, $c$, \texttt{host\_fundee}}
           \State \remotecode{$(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$}
           \State \remotecode{reply (\textsc{deliver virtual key}, $pk_{B, F}$)}
         \EndIf

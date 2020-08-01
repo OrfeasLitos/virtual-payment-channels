@@ -20,11 +20,10 @@
       \State $(pk_{A, V}, pk_{B, V}) \gets$ \textsc{pcn.virtualKeys}($c$,
       \texttt{fundee}, \texttt{host\_funder}, \texttt{host\_fundee})
       \State $C_{\mathrm{temp}} \gets C_i$ with $c$ coins moved
-      from \alice's output to new 2/\{$pk_{A, V}$, $pk_{B, V}$\} output named
-      \texttt{virtual\_output} \TODO{make more formal}
-      \State ensure \textsc{pcn.openVirtual}(\texttt{fundee},
-      \texttt{host\_funder}, \texttt{host\_fundee}, $c$,
-      \texttt{virtual\_output}) returns (\textsc{ok})
+      from \alice's output to a new 2/\{$pk_{A, V}$, $pk_{B, V}$\} output named
+      \texttt{virtual\_output} \TODO{(optional:) make more formal}
+      \State ensure \textsc{pcn.openVirtual}(\texttt{funding\_output}) returns
+      (\textsc{ok})
       \TODO{continue}
         \State $(L_0, R_0) \gets (\alice, \bob)$
         \label{code:functionality:chan:skeleton:virtual:fund:init}
