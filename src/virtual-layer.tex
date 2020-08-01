@@ -15,9 +15,10 @@
         channels. All $P_{i-1} P_i$ inputs must be signed by $R_{i-1}$ and all
         $P_i P_{i+1}$ inputs by $L_i$.}
       \EndIndent
-      \Statex
-      \State have \textsc{pcn} generate $pk_{A, V}$ and
-      receive(real)/generate(ideal) $pk_{B, V}$
+      \State ensure \texttt{host\_funder} = \alice \: \Comment{we are hosting
+      the funder}
+      \State $(pk_{A, V}, pk_{B, V}) \gets$ \textsc{pcn.virtualKeys}($c$,
+      \texttt{fundee}, \texttt{host\_funder}, \texttt{host\_fundee})
       \State $C_{\mathrm{temp}} \gets C_i$ with $c$ coins moved
       from \alice's output to new 2/\{$pk_{A, V}$, $pk_{B, V}$\} output named
       \texttt{virtual\_output} \TODO{make more formal}

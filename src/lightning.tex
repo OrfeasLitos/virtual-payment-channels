@@ -113,8 +113,27 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- open virtual}
     \begin{algorithmic}[1]
+      \State \textsc{virtualKeys}($c$, \texttt{fundee}, \texttt{host\_funder},
+      \texttt{host\_fundee}):
+      \Indent
+        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
+        \If{ideal world}
+          \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
+        \Else \: \Comment{real world}
+          \State send (\textsc{request virtual key}, $pk_{A, F}$, $c$,
+          \textsc{host\_fundee}) to \texttt{fundee}
+          \State \remotecode{ensure super.\textit{State} = \textsc{init}}
+          \State \remotecode{store $pk_{A, F}$, $c$, \textsc{host\_fundee}}
+          \State \remotecode{$(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$}
+          \State \remotecode{reply (\textsc{deliver virtual key}, $pk_{B, F}$)}
+        \EndIf
+        \State \Return $(pk_{A, F}, pk_{B, F})$
+      \EndIndent
+      \Statex
+
       \State \textsc{openVirtual}(\texttt{fundee}, \texttt{host\_funder},
-      \texttt{host\_fundee}, $c$, \texttt{funding\_output}):
+      \texttt{host\_fundee}, $c$, \texttt{funding\_output}): \TODO{remove parts
+      duplicated in \textsc{virtualKeys}}
       \Indent
         \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
         \If{ideal world}
