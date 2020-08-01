@@ -23,15 +23,14 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{top up}, \texttt{fundee}) by \texttt{funder}:
+      \State On (\textsc{top up}) by \alice:
       \label{code:functionality:chan:skeleton:init:top_up:start}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
-        \State $\bob \gets \texttt{fundee}$
-        \State ensure \textsc{pcn.topUp}(\texttt{funder}) returns (\textsc{ok},
+        \State ensure \textsc{pcn.topUp}(\alice) returns (\textsc{ok},
         $c_{\mathrm{chain}}$)
         \State $\mathit{State} \gets \textsc{topped up}$
-        \State output (\textsc{top up success}) to \texttt{funder}
+        \State output (\textsc{top up success}) to \alice
         \label{code:functionality:chan:skeleton:init:top_up:end}
       \EndIndent
       \Statex
@@ -70,12 +69,11 @@ with all hops of all existing virtuals, we should definitely find another way)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
     \begin{algorithmic}[1]
-      \State On (\textsc{open base}) by \alice:
+      \State On (\textsc{open base}, \texttt{fundee}) by \alice:
       \Indent
-        \State ensure $\mathit{State} = \textsc{topped up} \wedge
-        \mathtt{funder} = \alice$
-        \State ensure \textsc{pcn.openBase}(\texttt{keys}, \bob) returns
-        (\textsc{ok}, $c$)
+        \State ensure \textit{State} = \textsc{topped up}
+        \State $\bob \gets \texttt{fundee}$
+        \State ensure \textsc{pcn.openBase}(\bob) returns (\textsc{ok}, $c$)
         \State $c_A \gets c$; $c_B \gets 0$
         \State $\mathit{State} \gets \textsc{open base}$
         \State output (\textsc{open base success}) to \alice

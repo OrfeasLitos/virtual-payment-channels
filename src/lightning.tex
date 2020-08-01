@@ -3,7 +3,8 @@
     \begin{algorithmic}[1]
       \State \textsc{init}(\texttt{keys}, \dave):
       \Indent
-        \State $pk_{D, \mathrm{out}} \gets \texttt{keys}$
+        \State ensure \dave = \alice
+        \State $pk_{A, \mathrm{out}} \gets \texttt{keys}$
         \State \Return (\textsc{ok})
       \EndIndent
       \Statex
@@ -13,13 +14,14 @@
       \Indent
         \State $(sk_{\mathrm{chain}}, pk_{\mathrm{chain}}) \gets
         \textsc{keyGen}()$
-        \State output (\textsc{public key}, $pk_{\mathrm{chain}}$) to \dave
+        \State output (\textsc{public key}, $pk_{\mathrm{chain}}$) to
+        \texttt{funder}
         \While{$\nexists \mathrm{tx} \in \Sigma, c_{\mathrm{chain}}:
         (c_{\mathrm{chain}}, pk_{\mathrm{chain}}) \in \mathrm{tx.outputs}$}
           \State wait\footnote{while waiting, all other messages by \dave are
-          ignored} for input (\textsc{check top up}) by \dave
-          \State input (\textsc{read}) to \ledger as \dave and assign ouput to
-          $\Sigma$
+          ignored} for input (\textsc{check top up}) by \texttt{funder}
+          \State input (\textsc{read}) to \ledger as \texttt{funder} and assign
+          ouput to $\Sigma$
         \EndWhile
         \State $\texttt{base\_output} \gets (c_{\mathrm{chain}},
         pk_{\mathrm{chain}})$
