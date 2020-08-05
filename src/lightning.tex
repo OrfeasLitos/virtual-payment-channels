@@ -141,7 +141,10 @@
       \EndIndent
       \Statex
 
-      \State \textsc{openVirtual}(\texttt{funding\_output}):
+      \State \textsc{openVirtual}(\texttt{funding\_output}): \TODO{change
+      signature to fit \textsc{virt.fund}(), change implementation to generate
+      one commiment TX per hop OR understand how to do it more cheaply (c.f.
+      ANYPREVOUT?)}
       \Indent
         \State ensure \texttt{funding\_output} = 2/\{$pk_{A, F}, pk_{B, F}$\}
         \If{real world}

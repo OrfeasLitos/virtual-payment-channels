@@ -21,60 +21,51 @@
       \texttt{fundee}, \texttt{host\_funder}, \texttt{host\_fundee})
       \State $(pk_{i, V})_{i \in [n]} \gets$ \textsc{virt.hostKeys}($c$,
       \texttt{hops})
-      \State ensure \textsc{pcn.openVirtual}(\texttt{virtual\_output}) returns
+      \State $(T_{i,j})_{i \in [n], j \in [n+2]} \gets$
+      \textsc{virt.getTXs}($c$, $pk_{A, V}$, $pk_{B, V}$, $(pk_{i, V})_i$)
+      \Comment{for $i \in \{1, n\}$, $j$ can only be equal to $1$}
+      \State ensure \textsc{pcn.openVirtual}($(T_{i, j})_{i, j}$) returns
       (\textsc{ok})
       \If{real world}
-        \State \TODO{create necessary (local and remote) txs, sign them,
-        aggregate signatures in \texttt{sigs}}
-        \State $\mathrm{sig}_{A, C, i+1} \gets \textsc{sign}(C_{B, i+1}, sk_{A,
-        F})$ \TODO{remove}
-        \State \remotecode{$\texttt{old\_state} \gets \textit{State}$}
+        \State $\texttt{old\_state} \gets \textit{State}$
         \State $\mathit{State} \gets \textsc{updating}$
         \State send (\textsc{fund}, $c$, \texttt{hops}, \texttt{fundee},
         \texttt{virtual\_output}, \texttt{sigs}, \textit{vid}) to
         \texttt{hops}$[1]$ \Comment{\texttt{hops} is 0-indexed,
         \texttt{hops}$[0]$ = \alice}
         \While{\remotecode{we are not the last hop}}
-          \State \remotecode{ensure there is a unique contiguous pair in
-          \texttt{hops} such that the sender is its first and we are its second
-          element}
           \State \remotecode{$(L, M, R) \gets$ (previous hop, current hop, next
           hop)}
-          \State \TODO{\remotecode{create necessary local TXs}}
-          \State \TODO{\remotecode{ensure all received signatures are valid on
-          their relevant TXs}}
-          \State \remotecode{ensure \textsc{verify}($C_{M, i+1}$,
-          $\mathrm{sig}_{A, C, i+1}$, $pk_{L, F}$ = True}\TODO{remove}
+          \State \remotecode{$(T_{i,j})_{i \in [n], j \in [n+2]} \gets$
+          \textsc{virt.getTXs}($c$, $pk_{A, V}$, $pk_{B, V}$, $(pk_{i, V})_i$)}
+          \State \TODO{\remotecode{verify all received signatures on their
+          relevant TXs}}
           \State \remotecode{$\texttt{old\_state} \gets \textit{State}$}
           \State \remotecode{$\mathit{State} \gets \textsc{updating}$}
           \State \TODO{\remotecode{delegate to sibling channel (with $R$)}}
-          \State \TODO{\remotecode{create necessary remote ($R$) TXs and
-          signatures}}
-          \State \remotecode{$\mathrm{sig}_{L, C, i+1} \gets \textsc{sign}(C_{R,
-          i+1}, sk_{L, F})$}\TODO{remove}
-          \State \remotecode{$\texttt{old\_state} \gets \textit{State}$}
+          \State \remotecode{$(T_{i,j})_{i \in [n], j \in [n+2]} \gets$
+          \textsc{virt.getTXs}($c$, $pk_{A, V}$, $pk_{B, V}$, $(pk_{i, V})_i$)}
+          \State \TODO{\remotecode{create necessary signatures}}
           \State \remotecode{$\mathit{State} \gets \textsc{updating}$}
           \State \remotecode{send (\textsc{fund}, $c$, \texttt{hops},
-          \texttt{fundee}, \texttt{virtual\_output}, \texttt{sigs},
-          \textit{vid}) to $R$}\TODO{decide if \texttt{virtual\_output} makes
-          sense or sth else is needed here}
+          \texttt{fundee}, \texttt{sigs}, \textit{vid}) to $R$}
         \EndWhile
         \State \remotecode{ensure we are the last hop in \texttt{hops} and that
         the previous hop is the sender}
         \State \remotecode{$(L, M) \gets$ (previous hop, current hop)}
-        \State \TODO{\remotecode{create necessary local TXs}}
-        \State \TODO{\remotecode{ensure all received signatures are valid on
-        their relevant TXs}}
+        \State \remotecode{$(T_{i,j})_{i \in [n], j \in [n+2]} \gets$
+        \textsc{virt.getTXs}($c$, $pk_{A, V}$, $pk_{B, V}$, $(pk_{i, V})_i$)}
+        \State \TODO{\remotecode{verify all received signatures on their
+        relevant TXs}}
         \State \TODO{\remotecode{maybe delegate to \texttt{fundee} to do more
         checks and/or ask \environment}}
-        \State \TODO{\remotecode{create signatures for remote TXs (and the TXs
-        as needed) and sign revocation(s) of old channel version}}
+        \State \TODO{\remotecode{create signatures for remote TXs and sign
+        revocation(s) of old channel version}}
         \State \remotecode{$\textit{State} \gets \texttt{old\_state}$}
         \State \TODO{\remotecode{send new version remote sigs and old version
         revocation sigs to sender}}
         \While{\remotecode{we are not the first hop}}
           \State \remotecode{ensure \textit{State} = \textsc{updating}}
-          \State \TODO{\remotecode{generate relevant local TXs}}
           \State \TODO{\remotecode{verify received sigs on local TXs (both for
           new and for revoked versions)}}
           \State \TODO{\remotecode{update store of supported virtual channels as
@@ -82,8 +73,8 @@
           \State \remotecode{$\textit{State} \gets \texttt{old\_state}$}
           \State \TODO{\remotecode{delegate to sibling channel (with previous
           hop)}}
-          \State \TODO{\remotecode{create signatures for remote TXs (and the TXs
-          as needed) and sign revocation(s) of old channel version}}
+          \State \TODO{\remotecode{create signatures for remote TXs  and sign
+          revocation(s) of old channel version}}
           \State \remotecode{$\textit{State} \gets \texttt{old\_state}$}
           \State \TODO{\remotecode{send new version remote sigs and old version
           revocation sigs to $L$}}
@@ -96,8 +87,8 @@
         \State \Return (\textsc{ok})
       \Else \: \Comment{ideal world}
         \State \TODO{similar to real world, but do locally (and avoid
-        verification) series of honest players interleaved with \simulator
-        notifications, whereas require \simulator to just inform of the
+        verification) series of honest players interleaved with \adversary
+        notifications, whereas require \adversary to just inform of the
         successful hopping of a series of malicious players in one message}
       \EndIf
       \TODO{expect reply from next hop with all signatures needed for next comm
@@ -188,4 +179,65 @@
   \end{processbox}
   \caption{}
   \label{code:virtual-layer}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt} -- utils}
+    \begin{algorithmic}[1]
+      \State \textsc{hostKeys}(\texttt{hops}): \Comment{can be implemented with
+      \alice as leader or with 2 direct messages between all hops ($O(n^2)$)}
+      \TODO{decide if we need to move to transient state here}
+      \Indent
+        \For{$i$ from $1$ to $n$} \Comment{one iteration executed by each hop}
+          \If{$i \neq 1$}
+            \State ensure there is a unique contiguous pair in \texttt{hops}
+            such that the sender is its first and we are its second element
+          \EndIf
+          \State $(sk_{i, V}, pk_{i, V}) \gets \textsc{keyGen}()$
+          \If{real world}
+            \State send (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j, V})_{j
+            \in \{1, \dots, i\}}$) to \texttt{hops}[$i+1$]
+          \Else \Comment{ideal world}
+            \If{\texttt{hops}[$i+1$] is honest}
+              \State send (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j,
+              V})_{j \in \{1, \dots, i\}}$, \texttt{hops}[$i+1$]) to \adversary,
+              expecting reply (\textsc{ok})
+            \Else \Comment{\texttt{hops}[$i+1$] is corrupted}
+              \State send (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j,
+              V})_{j \in \{1, \dots, i\}}$, \texttt{hops}[$i+1$]) to \adversary,
+              expecting reply (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j,
+              V})_{j \in \{1, \dots, k-1\}}$) addressed to \texttt{hops}[$k$]
+              where \texttt{hops}[$k$] is the first honest hop after
+              \texttt{hops}[$i+1$], or no response if there is no such hop
+            \EndIf
+          \EndIf
+        \EndFor \Comment{control is at \texttt{host\_fundee}}
+        \For{$i$ from $n$ down to $1$} \Comment{one iteration executed by each hop}
+          \If{$i \neq n$}
+            \State ensure \texttt{hops} is the same as in the previous ``for''
+            loop
+          \EndIf
+          \If{real world}
+            \State send (\textsc{hostKeysBackward}, \texttt{hops}, $(pk_{j,
+            V})_{j \in \{i, \dots, n\}}$) to \texttt{hops}[$i-1$]
+          \Else \Comment{ideal world}
+            \If{\texttt{hops}[$i-1$] is honest}
+              \State send (\textsc{hostKeysBackward}, \texttt{hops}, $(pk_{j,
+              V})_{j \in \{i, \dots, n\}}$, \texttt{hops}[$i-1$]) to \adversary,
+              expecting reply (\textsc{ok})
+            \Else \Comment{\texttt{hops}[$i-1$] is corrupted}
+              \State send (\textsc{hostKeysBackward}, \texttt{hops}, $(pk_{j,
+              V})_{j \in \{i, \dots, n\}}$, \texttt{hops}[$i-1$]) to \adversary,
+              expecting reply (\textsc{hostKeysBackward}, \texttt{hops}, $(pk_{j,
+              V})_{j \in \{k+1, \dots, n\}}$) addressed to \texttt{hops}[$k$]
+              where \texttt{hops}[$k$] is the first honest hop before
+              \texttt{hops}[$i-1$], or no response if there is no such hop
+            \EndIf
+          \EndIf
+        \EndFor \Comment{control is at \texttt{host\_funder}}
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:host-keys}
 \end{figure}
