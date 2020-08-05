@@ -19,100 +19,93 @@
       the funder}
       \State $(pk_{A, V}, pk_{B, V}) \gets$ \textsc{pcn.virtualKeys}($c$,
       \texttt{fundee}, \texttt{host\_funder}, \texttt{host\_fundee})
-      \State $C_{\mathrm{temp}} \gets C_i$ with $c$ coins moved
-      from \alice's output to a new 2/\{$pk_{A, V}$, $pk_{B, V}$\} output named
-      \texttt{virtual\_output} \TODO{(optional:) make more formal}
-      \State ensure \textsc{pcn.openVirtual}(\texttt{funding\_output}) returns
+      \State $(pk_{i, V})_{i \in [n]} \gets$ \textsc{virt.hostKeys}($c$,
+      \texttt{hops})
+      \State ensure \textsc{pcn.openVirtual}(\texttt{virtual\_output}) returns
       (\textsc{ok})
-      \State
-      \TODO{continue: send relevant data, including signatures for next comm TX,
-      only to the next hop. Enter a waiting state, expecting reply from next hop
-      with all signatures needed for next comm TX and the revocation sig of the
-      previous comm TX. Mark virtual channel as open. Send to next hop the
-      revocation sig. While waiting, ignore everything else apart from channel
-      closing}
-      \State
-      \TODO{Think through the differences of the ideal world, e.g. that if some
-      continuous hops are honest, we only need per-hop *confirmation* by
-      \simulator (which probably simulates an honest exchange normally), whereas
-      for hops from honest to corrupt we do the whole drill with \simulator
-      (which probably does the corrupt part of the exchange according to
-      \adversary's instructions)}
+      \If{real world}
+        \State \TODO{create necessary (local and remote) txs, sign them,
+        aggregate signatures in \texttt{sigs}}
+        \State $\mathrm{sig}_{A, C, i+1} \gets \textsc{sign}(C_{B, i+1}, sk_{A,
+        F})$ \TODO{remove}
+        \State \remotecode{$\texttt{old\_state} \gets \textit{State}$}
+        \State $\mathit{State} \gets \textsc{updating}$
+        \State send (\textsc{fund}, $c$, \texttt{hops}, \texttt{fundee},
+        \texttt{virtual\_output}, \texttt{sigs}, \textit{vid}) to
+        \texttt{hops}$[1]$ \Comment{\texttt{hops} is 0-indexed,
+        \texttt{hops}$[0]$ = \alice}
+        \While{\remotecode{we are not the last hop}}
+          \State \remotecode{ensure there is a unique contiguous pair in
+          \texttt{hops} such that the sender is its first and we are its second
+          element}
+          \State \remotecode{$(L, M, R) \gets$ (previous hop, current hop, next
+          hop)}
+          \State \TODO{\remotecode{create necessary local TXs}}
+          \State \TODO{\remotecode{ensure all received signatures are valid on
+          their relevant TXs}}
+          \State \remotecode{ensure \textsc{verify}($C_{M, i+1}$,
+          $\mathrm{sig}_{A, C, i+1}$, $pk_{L, F}$ = True}\TODO{remove}
+          \State \remotecode{$\texttt{old\_state} \gets \textit{State}$}
+          \State \remotecode{$\mathit{State} \gets \textsc{updating}$}
+          \State \TODO{\remotecode{delegate to sibling channel (with $R$)}}
+          \State \TODO{\remotecode{create necessary remote ($R$) TXs and
+          signatures}}
+          \State \remotecode{$\mathrm{sig}_{L, C, i+1} \gets \textsc{sign}(C_{R,
+          i+1}, sk_{L, F})$}\TODO{remove}
+          \State \remotecode{$\texttt{old\_state} \gets \textit{State}$}
+          \State \remotecode{$\mathit{State} \gets \textsc{updating}$}
+          \State \remotecode{send (\textsc{fund}, $c$, \texttt{hops},
+          \texttt{fundee}, \texttt{virtual\_output}, \texttt{sigs},
+          \textit{vid}) to $R$}\TODO{decide if \texttt{virtual\_output} makes
+          sense or sth else is needed here}
+        \EndWhile
+        \State \remotecode{ensure we are the last hop in \texttt{hops} and that
+        the previous hop is the sender}
+        \State \remotecode{$(L, M) \gets$ (previous hop, current hop)}
+        \State \TODO{\remotecode{create necessary local TXs}}
+        \State \TODO{\remotecode{ensure all received signatures are valid on
+        their relevant TXs}}
+        \State \TODO{\remotecode{maybe delegate to \texttt{fundee} to do more
+        checks and/or ask \environment}}
+        \State \TODO{\remotecode{create signatures for remote TXs (and the TXs
+        as needed) and sign revocation(s) of old channel version}}
+        \State \remotecode{$\textit{State} \gets \texttt{old\_state}$}
+        \State \TODO{\remotecode{send new version remote sigs and old version
+        revocation sigs to sender}}
+        \While{\remotecode{we are not the first hop}}
+          \State \remotecode{ensure \textit{State} = \textsc{updating}}
+          \State \TODO{\remotecode{generate relevant local TXs}}
+          \State \TODO{\remotecode{verify received sigs on local TXs (both for
+          new and for revoked versions)}}
+          \State \TODO{\remotecode{update store of supported virtual channels as
+          needed}}
+          \State \remotecode{$\textit{State} \gets \texttt{old\_state}$}
+          \State \TODO{\remotecode{delegate to sibling channel (with previous
+          hop)}}
+          \State \TODO{\remotecode{create signatures for remote TXs (and the TXs
+          as needed) and sign revocation(s) of old channel version}}
+          \State \remotecode{$\textit{State} \gets \texttt{old\_state}$}
+          \State \TODO{\remotecode{send new version remote sigs and old version
+          revocation sigs to $L$}}
+        \EndWhile
+        \State ensure \textit{State} = \textsc{updating}
+        \State \TODO{verify received sigs on local TXs (both for new and for
+        revoked versions)}
+        \State \remotecode{$\textit{State} \gets \texttt{old\_state}$}
+        \State \TODO{update store of supported virtual channels as needed}
+        \State \Return (\textsc{ok})
+      \Else \: \Comment{ideal world}
+        \State \TODO{similar to real world, but do locally (and avoid
+        verification) series of honest players interleaved with \simulator
+        notifications, whereas require \simulator to just inform of the
+        successful hopping of a series of malicious players in one message}
+      \EndIf
+      \TODO{expect reply from next hop with all signatures needed for next comm
+      TX and the revocation sig of the previous comm TX. While waiting, ignore
+      everything else apart from channel closing. Mark virtual channel as open.
+      Send to next hop the revocation sig.}
       \State
       \TODO{Add logic for intermediaries and fundee}
-      \Statex
-        \State $(L_0, R_0) \gets (\alice, \bob)$
-        \label{code:functionality:chan:skeleton:virtual:fund:init}
-        \ForAll{$(P, pk) \in \mathtt{hops}$} \Comment{$i \in \{1, \dots,
-        |\mathtt{hops}|\}$}
-        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:start}
-          \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties}, vid, $i
-          \overset{?}{=} |\mathtt{hops}|$) to $P$ as \alice and ensure reply
-          is (\textsc{ok})
-          \label{code:functionality:chan:skeleton:virtual:fund:for:allow:send}
-        \EndFor
-        \label{code:functionality:chan:skeleton:virtual:fund:for:allow:end}
-        \If{both channel parties are honest}
-          \State send (\textsc{is open successful}, vid) to \adversary and ensure
-          reply is (\textsc{ok})
-        \ElsIf{only \alice is honest}
-          \State $(sk_{A, V}, pk_{A, V}) \gets \textsc{keyGen}()$
-          \State send (\textsc{update to virtual}, $pk_{A, V}$) to \adversary
-          and assign reply to ($V =$ TX \{input: $F$.output, outputs: ($c_A +
-          c_B - c$, $2/\{pk_{A, V}, pk_{B, V}\}$), ($c$, $2/\{pk_{G, V}, pk_{A,
-          V}\}$), (0, $|\mathtt{hops}|$/$\{\mathtt{hops}_i.pk\}_i$)\},
-          $\mathrm{sig}_{B, V}$, $C' =$ TX \{input: $V$.outputs.0, outputs:
-          $(c_A - \mathrm{locked}_A - c, pk_{A, \mathrm{out}} \wedge t), (c_B -
-          \mathrm{locked}_B, pk_{B, \mathrm{out}})$\}, $\mathrm{sig}_{B, C'}$)
-          \TODO{think about locked coins}
-          \State ensure \textsc{verify}($V$, $\mathrm{sig}_{B, V}$, $pk_{B,
-          F}$) = \textsc{verify}($C'$, $\mathrm{sig}_{B, C'}$, $pk_{A, V}$) =
-          True
-        \EndIf
-        \label{code:functionality:chan:skeleton:virtual:fund:simulate}
-        \ForAll{$(P, pk) \in \mathtt{hops}$} \Comment{$i \in \{1, \dots,
-        |\mathtt{hops}|\}$}
-        \label{code:functionality:chan:skeleton:virtual:fund:confirm}
-          \State send (\textsc{fund done}, vid) to $P$ as \alice and ensure reply
-          is (\textsc{ok})
-        \EndFor
-        \State $c_A \gets c_A - c$
-        \If{only \alice is honest}
-          \State $C \gets C'$; $\mathrm{sig}_{B, C} \gets \mathrm{sig}_{B, C'}$
-        \EndIf
-
-      \State \Comment{notification to hop that locks coins}
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-      \texttt{next\_hop}, id, \texttt{is\_last}) by \charlie:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_A - \mathrm{locked}(A) \geq c$
-        \State ensure \bob belongs to the same group as \texttt{next\_hop}
-        \State output received message to \dave and ensure reply is
-        \textsc{(ok)}
-        \State send (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-        \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) to \bob and ensure
-        reply is (\textsc{ok})
-        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
-        \textsc{we lock}) to \texttt{pending}
-        \State send (\textsc{ok}) to \charlie
-      \EndIndent
-      \Statex
-
-      \State \Comment{notification to hop that doesn't lock coins -- doesn't ask
-      \environment}
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-      \texttt{next\_hop}, id, \texttt{is\_last}, \charlie) by \bob:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_A - \mathrm{locked}(A) \geq c$
-        \State ensure we belong to the same group as \texttt{next\_hop}
-        \State add (id, \texttt{is\_last}, \texttt{sub\_parties}, $c$,
-        \textsc{we don't lock}) to \texttt{pending}
-        \State send (\textsc{ok}) to \bob
-      \EndIndent
       \Statex
 
       \State \textsc{close}($P$):
