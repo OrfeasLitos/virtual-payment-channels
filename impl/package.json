@@ -1,0 +1,23 @@
+{
+  "name": "recursive-channels",
+  "version": "1.0.0",
+  "description": "Bitcoin implementation of (some parts of) the virtual channels construction",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "bitcoin",
+    "payment-channels",
+    "layer-2"
+  ],
+  "repository": "https://github.com/OrfeasLitos/virtual-payment-channels",
+  "author": "Orfeas Stefanos Thyfronitis Litos",
+  "license": "ISC",
+  "dependencies": {
+    "bcoin": "git+https://github.com/bcoin-org/bcoin.git#semver:~2.0.0",
+    "bcrypto": "^5.3.0",
+    "bsert": "0.0.10",
+    "mocha": "^8.1.1"
+  }
+}
