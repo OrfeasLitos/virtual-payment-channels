@@ -133,7 +133,7 @@ describe('End-to-end test', () => {
       [aliceVirtRing1, bobVirtRing],
       [aliceVirtRing2, daveVirtRing]
     ],
-    [baseAmount, virt1Amount],
+    [baseAmount - virt1Amount, virt1Amount],
     ftx
   )
 
