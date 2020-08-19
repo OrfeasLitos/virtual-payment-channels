@@ -1,6 +1,5 @@
 'use strict'
 
-
 const bcoin = require('bcoin')
 const sha256 = require('bcrypto/lib/sha256')
 const assert = require('bsert')
@@ -16,7 +15,7 @@ const Coin = bcoin.Coin
 
 const Vchan = require('../src/vchan')
 
-const rings = Array.apply(null, Array(8))
+const rings = Array.apply(null, Array(10))
       .map(x => KeyRing.generate())
 rings.map(ring => {ring.witness = true})
 
@@ -29,22 +28,40 @@ const bobAmount = Amount.fromBTC(20).toValue()
 const fundingFee = 2330
 const commitmentFee = 14900
 const revocationFee = 8520
+const virtualFee = 8520 // attention: chosen somewhat arbitrarily
 
 const aliceOrigRing = rings[0]
-const aliceFundRing = rings[1]
-const bobFundRing = rings[2]
+const aliceFundRing1 = rings[1]
+const aliceFundRingPrivateKey = aliceFundRing1.getPrivateKey()
+const aliceFundRing2 = KeyRing.fromPrivate(aliceFundRingPrivateKey)
+aliceFundRing2.witness = true
+const aliceVirtRing1 = KeyRing.fromPrivate(aliceFundRingPrivateKey)
+aliceVirtRing1.witness = true
+const aliceVirtRing2 = KeyRing.fromPrivate(aliceFundRingPrivateKey)
+aliceVirtRing2.witness = true
+const bobFundRing1 = rings[2]
+const bobFundRingPrivateKey = bobFundRing1.getPrivateKey()
+const bobFundRing2 = KeyRing.fromPrivate(bobFundRingPrivateKey)
+bobFundRing2.witness = true
+const bobVirtRing = KeyRing.fromPrivate(bobFundRingPrivateKey)
+bobVirtRing.witness = true
 const aliceRevRing = rings[3]
 const bobRevRing = rings[4]
 const aliceDelRing = rings[5]
 const bobDelRing = rings[6]
 const bobOwnRing = rings[7]
+const charlieFundRing = rings[8]
+const charlieVirtRing = KeyRing.fromPrivate(charlieFundRing.getPrivateKey())
+charlieVirtRing.witness = true
+const daveVirtRing = rings[9]
 
 describe('End-to-end test', () => {
   const ftx = Vchan.getFundingTX({
     outpoint: new Outpoint(fundingHash, 0),
     ring: aliceOrigRing,
-    fundKey1: aliceFundRing.publicKey,
-    fundKey2: bobFundRing.publicKey,
+    fundKey1: aliceFundRing1.publicKey,
+    fundKey2: bobFundRing1
+    .publicKey,
     outAmount: aliceAmount + bobAmount
   })
 
@@ -67,8 +84,8 @@ describe('End-to-end test', () => {
     }))
 
     ftx2 = Vchan.getFundingTX({
-      fctx: ftx2, fundKey1: aliceFundRing.publicKey,
-      fundKey2: bobFundRing.publicKey, outAmount: aliceAmount + bobAmount
+      fctx: ftx2, fundKey1: aliceFundRing1.publicKey,
+      fundKey2: bobFundRing1.publicKey, outAmount: aliceAmount + bobAmount
     })
 
     ftx2.sign(aliceOrigRing)
@@ -82,7 +99,8 @@ describe('End-to-end test', () => {
 
   const commTX = Vchan.getCommitmentTX({
     rings: {
-      aliceFundRing, bobFundRing,
+      aliceFundRing: aliceFundRing1,
+      bobFundRing: bobFundRing1,
       aliceRevRing, aliceDelRing,
       bobRevRing, bobOwnRing
     },
@@ -102,6 +120,34 @@ describe('End-to-end test', () => {
     it('should spend Funding TX', () => {
       assert(fundingWitnessHash.equals(commWitnessScript),
         'Funding output witness hash doesn\'t correspond to commitment input witness script')
+    })
+  })
+
+  const baseAmount = Amount.fromBTC(30).toValue()
+  const virt1Amount = Amount.fromBTC(15).toValue()
+  const virt2Amount = Amount.fromBTC(5).toValue()
+
+  const virtualTX = Vchan.getVirtualTX(
+    [aliceFundRing2, bobFundRing2],
+    [
+      [aliceVirtRing1, bobVirtRing],
+      [aliceVirtRing2, daveVirtRing]
+    ],
+    [baseAmount, virt1Amount],
+    ftx
+  )
+
+  describe('Virtual TX', () => {
+    it('should verify correctly', () => {
+      assert(virtualTX.verify(),
+        'Virtual TX does not verify correctly')
+    })
+
+    const fundingWitnessHash = ftx.outputs[0].script.code[1].data
+    const virtWitnessScript = virtualTX.inputs[0].witness.getRedeem().sha256()
+    it('should spend Funding TX', () => {
+      assert(fundingWitnessHash.equals(virtWitnessScript),
+        'Funding output witness hash doesn\'t correspond to virtual input witness script')
     })
   })
 
