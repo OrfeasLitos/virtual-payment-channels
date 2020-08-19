@@ -39,6 +39,8 @@ const aliceVirtRing1 = KeyRing.fromPrivate(aliceFundRingPrivateKey)
 aliceVirtRing1.witness = true
 const aliceVirtRing2 = KeyRing.fromPrivate(aliceFundRingPrivateKey)
 aliceVirtRing2.witness = true
+const aliceVirtRing3 = KeyRing.fromPrivate(aliceFundRingPrivateKey)
+aliceVirtRing3.witness = true
 const bobFundRing1 = rings[2]
 const bobFundRingPrivateKey = bobFundRing1.getPrivateKey()
 const bobFundRing2 = KeyRing.fromPrivate(bobFundRingPrivateKey)
@@ -148,6 +150,39 @@ describe('End-to-end test', () => {
     it('should spend Funding TX', () => {
       assert(fundingWitnessHash.equals(virtWitnessScript),
         'Funding output witness hash doesn\'t correspond to virtual input witness script')
+    })
+
+    describe('Virtualized output', () => {
+      const virtualWitnessHash = virtualTX.outputs[0].script.code[1].data
+      const commWitnessScript = commTX.inputs[0].witness.getRedeem().sha256()
+      it('should be spendable by commitment TX', () => {
+        assert(virtualWitnessHash.equals(commWitnessScript),
+          '1st virtual output witness hash doesn\'t correspond to commitment input witness script')
+        // TODO: find a way to also check signatures
+      })
+    })
+
+    describe('Updated Virtual TX', () => {
+      const virtualTX2 = Vchan.getVirtualTX(
+        [aliceFundRing2, bobFundRing2],
+        [
+          [aliceVirtRing1, bobVirtRing],
+          [aliceVirtRing2, daveVirtRing],
+          [aliceVirtRing3, charlieVirtRing]
+        ],
+        [baseAmount - virt1Amount - virt2Amount, virt2Amount, virt1Amount],
+        ftx
+      )
+
+      const virtualWitnessHash = virtualTX2.outputs[0].script.code[1].data
+      const commWitnessScript = commTX.inputs[0].witness.getRedeem().sha256()
+      describe('Virtualized output', () => {
+        it('should still be spendable by commitment TX', () => {
+          assert(virtualWitnessHash.equals(commWitnessScript),
+            '1st virtual output witness hash doesn\'t correspond to commitment input witness script')
+          // TODO: find a way to also check signatures
+        })
+      })
     })
   })
 
