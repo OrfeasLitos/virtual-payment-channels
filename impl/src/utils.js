@@ -143,7 +143,7 @@ module.exports = {
       value,
       coinbase: false,
       script,
-      hash: outpoint.hash.toString('hex'),
+      hash: outpoint.rhash(),
       index: outpoint.index
     })
   },

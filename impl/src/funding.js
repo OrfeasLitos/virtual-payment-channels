@@ -32,23 +32,23 @@ function getOutput(fundKey1, fundKey2) {
   return Utils.outputScrFromRedeemScr(redeemScript)
 }
 
-function getFundColTXFromMTX({fctx, fundKey1, fundKey2, outAmount}) {
+function getFundColTXFromMTX({fctx, fundKey1, fundKey2, outAmount, fee}) {
   const outputScript = getOutput(fundKey1, fundKey2)
-  fctx.addOutput(outputScript, outAmount)
+  fctx.addOutput(outputScript, outAmount - fee)
   return fctx
 }
 
-function getFundColTXFromRing({outpoint, ring, fundKey1, fundKey2, outAmount}) {
+function getFundColTXFromRing({outpoint, ring, fundKey1, fundKey2, outAmount, fee}) {
   const fctx = new MTX({version: 2})
 
   const output = getOutput(fundKey1, fundKey2)
-  fctx.addOutput(output, outAmount)
+  fctx.addOutput(output, outAmount - fee)
 
   const program = ring.getProgram().toRaw().toString('hex')
   const coin = Utils.getCoinFromOutpoint(outAmount, program, outpoint)
   fctx.addCoin(coin)
 
-  fctx.sign(ring)
+  fctx.sign(ring, Script.hashType.ALL)
 
   return fctx
 }

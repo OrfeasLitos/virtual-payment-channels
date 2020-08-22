@@ -1,6 +1,6 @@
 'use strict'
 
-const bcoin = require('bcoin')
+const bcoin = require('bcoin').set('regtest')
 const sha256 = require('bcrypto/lib/sha256')
 const assert = require('bsert')
 
@@ -14,6 +14,7 @@ const Witness = bcoin.Witness
 const Coin = bcoin.Coin
 
 const Vchan = require('../src/vchan')
+const Utils = require('./utils')
 
 const rings = Array.apply(null, Array(10))
       .map(x => KeyRing.generate())
@@ -24,7 +25,7 @@ const delay = 42
 const fundingHash = sha256.digest(Buffer.from('funding'))
 
 const aliceAmount = Amount.fromBTC(10).toValue()
-const bobAmount = Amount.fromBTC(20).toValue()
+const bobAmount = Amount.fromBTC(40).toValue()
 const fundingFee = 2330
 const commitmentFee = 14900
 const revocationFee = 8520
@@ -62,9 +63,9 @@ describe('End-to-end test', () => {
     outpoint: new Outpoint(fundingHash, 0),
     ring: aliceOrigRing,
     fundKey1: aliceFundRing1.publicKey,
-    fundKey2: bobFundRing1
-    .publicKey,
-    outAmount: aliceAmount + bobAmount
+    fundKey2: bobFundRing1.publicKey,
+    outAmount: aliceAmount + bobAmount,
+    fee: fundingFee,
   })
 
   describe('Funding TX', () => {
@@ -81,13 +82,15 @@ describe('End-to-end test', () => {
       value: aliceAmount + bobAmount,
       coinbase: false,
       script: aliceOrigRing.getProgram().toRaw().toString('hex'),
-      hash: fundingHash.toString('hex'),
-      index: 0
+      hash: fundingHash.reverse().toString('hex'),
+      index: 0,
     }))
 
     ftx2 = Vchan.getFundingTX({
       fctx: ftx2, fundKey1: aliceFundRing1.publicKey,
-      fundKey2: bobFundRing1.publicKey, outAmount: aliceAmount + bobAmount
+      fundKey2: bobFundRing1.publicKey,
+      outAmount: aliceAmount + bobAmount,
+      fee: fundingFee,
     })
 
     ftx2.sign(aliceOrigRing)
@@ -158,7 +161,6 @@ describe('End-to-end test', () => {
       it('should be spendable by commitment TX', () => {
         assert(virtualWitnessHash.equals(commWitnessScript),
           '1st virtual output witness hash doesn\'t correspond to commitment input witness script')
-        // TODO: find a way to also check signatures
       })
     })
 
@@ -180,7 +182,6 @@ describe('End-to-end test', () => {
         it('should still be spendable by commitment TX', () => {
           assert(virtualWitnessHash.equals(commWitnessScript),
             '1st virtual output witness hash doesn\'t correspond to commitment input witness script')
-          // TODO: find a way to also check signatures
         })
       })
     })
@@ -206,6 +207,53 @@ describe('End-to-end test', () => {
     it('should spend Commitment TX output 0', () => {
       assert(aliceWitnessHash.equals(aliceWitnessScript),
         'Alice output witness hash doesn\'t correspond to revocation input witness script')
+    })
+  })
+
+  describe('On-chain tests', () => {
+    const node = new bcoin.FullNode({
+      network: bcoin.Network.get().toString(),
+      passphrase: 'secret',
+      coinbaseAddress: [aliceOrigRing.getAddress()],
+      //logConsole: true,
+      //logLevel: 'spam',
+    })
+    let block1
+
+    beforeEach(async () => {
+      await node.open()
+      await node.connect()
+      node.startSync()
+
+      block1 = await Utils.mineBlock(node, aliceOrigRing.getAddress())
+      bcoin.protocol.consensus.COINBASE_MATURITY = 0
+      await Utils.flushEvents()
+    })
+
+    it('should create a valid on-chain funding TX', async () => {
+      const ftx = Vchan.getFundingTX({
+        outpoint: Outpoint.fromTX(block1.txs[0], 0),
+        ring: aliceOrigRing,
+        fundKey1: aliceFundRing1.publicKey,
+        fundKey2: bobFundRing1 .publicKey,
+        outAmount: aliceAmount + bobAmount,
+        fee: fundingFee,
+      }).toTX()
+
+      await node.sendTX(ftx)
+      await Utils.flushEvents()
+      const block2 = await Utils.mineBlock(node, aliceOrigRing.getAddress())
+      const onChainTX = block2.txs[1]
+
+      assert(onChainTX.hash().equals(ftx.hash()) &&
+        onChainTX.witnessHash().equals(ftx.witnessHash()),
+        'The funding TX is not accepted on-chain')
+    })
+
+    afterEach(async () => {
+      node.stopSync()
+      await node.disconnect()
+      await node.close()
     })
   })
 })
