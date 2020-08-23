@@ -235,7 +235,7 @@ describe('End-to-end test', () => {
         outpoint: Outpoint.fromTX(block1.txs[0], 0),
         ring: aliceOrigRing,
         fundKey1: aliceFundRing1.publicKey,
-        fundKey2: bobFundRing1 .publicKey,
+        fundKey2: bobFundRing1.publicKey,
         outAmount: aliceAmount + bobAmount,
         fee: fundingFee,
       }).toTX()
