@@ -131,7 +131,7 @@ module.exports = {
       value: tx.outputs[index].value,
       coinbase: false,
       script,
-      hash: tx.hash('hex'),
+      hash: tx.rhash(),
       index
     })
   },

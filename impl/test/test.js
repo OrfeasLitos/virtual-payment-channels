@@ -122,13 +122,13 @@ describe('End-to-end test', () => {
 
     const fundingWitnessHash = ftx.outputs[0].script.code[1].data
     const commWitnessScript = commTX.inputs[0].witness.getRedeem().sha256()
-    it('should spend Funding TX', () => {
+    it('should spend funding TX', () => {
       assert(fundingWitnessHash.equals(commWitnessScript),
         'Funding output witness hash doesn\'t correspond to commitment input witness script')
     })
   })
 
-  const baseAmount = Amount.fromBTC(30).toValue()
+  const baseAmount = Amount.fromBTC(50).toValue()
   const virt1Amount = Amount.fromBTC(15).toValue()
   const virt2Amount = Amount.fromBTC(5).toValue()
 
@@ -139,7 +139,7 @@ describe('End-to-end test', () => {
       [aliceVirtRing2, daveVirtRing]
     ],
     [baseAmount - virt1Amount, virt1Amount],
-    ftx
+    fundingFee, ftx
   )
 
   describe('Virtual TX', () => {
@@ -150,7 +150,7 @@ describe('End-to-end test', () => {
 
     const fundingWitnessHash = ftx.outputs[0].script.code[1].data
     const virtWitnessScript = virtualTX.inputs[0].witness.getRedeem().sha256()
-    it('should spend Funding TX', () => {
+    it('should spend funding TX', () => {
       assert(fundingWitnessHash.equals(virtWitnessScript),
         'Funding output witness hash doesn\'t correspond to virtual input witness script')
     })
@@ -173,7 +173,7 @@ describe('End-to-end test', () => {
           [aliceVirtRing3, charlieVirtRing]
         ],
         [baseAmount - virt1Amount - virt2Amount, virt2Amount, virt1Amount],
-        ftx
+        fundingFee, ftx
       )
 
       const virtualWitnessHash = virtualTX2.outputs[0].script.code[1].data
@@ -239,6 +239,13 @@ describe('End-to-end test', () => {
       bcoin.protocol.consensus.COINBASE_MATURITY = 0
     }
 
+    async function mineTX(tx) {
+      await node.sendTX(tx)
+      await Utils.flushEvents()
+      blocks.push(await Utils.mineBlock(node))
+      return blocks[blocks.length - 1].txs[1]
+    }
+
     async function mineFundingTX() {
       fundingTX = Vchan.getFundingTX({
         outpoint: Outpoint.fromTX(blocks[0].txs[0], 0),
@@ -249,10 +256,7 @@ describe('End-to-end test', () => {
         fee: fundingFee,
       }).toTX()
 
-      await node.sendTX(fundingTX)
-      await Utils.flushEvents()
-      blocks.push(await Utils.mineBlock(node))
-      onChainFundingTX = blocks[1].txs[1]
+      onChainFundingTX = await mineTX(fundingTX)
     }
 
     before(async () => {
@@ -265,6 +269,34 @@ describe('End-to-end test', () => {
       assert(onChainFundingTX.hash().equals(fundingTX.hash()) &&
         onChainFundingTX.witnessHash().equals(fundingTX.witnessHash()),
         'The funding TX is not accepted on-chain')
+    })
+
+    describe('Before new channel opening', () => {
+      async function mineVirtualTX() {
+        virtualTXs.push(Vchan.getVirtualTX(
+          [aliceFundRing1, bobFundRing1],
+          [
+            [aliceVirtRing1, bobVirtRing],
+            [aliceVirtRing2, daveVirtRing],
+            [aliceVirtRing3, charlieVirtRing]
+          ],
+          [baseAmount - virt1Amount - virt2Amount, virt2Amount, virt1Amount],
+          virtualFee, fundingTX
+        ).toTX())
+
+        onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
+      }
+
+      before(async () => {
+        await mineVirtualTX()
+      })
+
+      it('should spend the funding TX with a virtual TX', async () => {
+        const i = virtualTXs.length - 1
+        assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
+          onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
+          'The virtual TX is not accepted on-chain')
+      })
     })
 
     async function closeNode() {

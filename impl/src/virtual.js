@@ -33,7 +33,7 @@ function verifyArgs(inRings, outRings, amounts) {
 // A simplified version of the general virtual TX
 // Only includes virtualised funding outputs
 // TODO: add 0-value outputs
-function getVirtualTX(inRings, outRings, amounts, ftx) {
+function getVirtualTX(inRings, outRings, amounts, fee, ftx) {
   verifyArgs(inRings, outRings, amounts)
 
   let vtx = new MTX({version: 2})
@@ -60,8 +60,9 @@ function getVirtualTX(inRings, outRings, amounts, ftx) {
   )
 
   outputs.map((output, i) => vtx.addOutput(output, amounts[i]))
+  vtx.outputs[0].value -= fee
 
-  vtx.sign(inRings, Script.hashType.SIGHASH_SINGLE)
+  vtx.sign(inRings)
 
   return vtx
 }
