@@ -211,28 +211,37 @@ describe('End-to-end test', () => {
   })
 
   describe('On-chain tests', () => {
-    const node = new bcoin.FullNode({
-      network: bcoin.Network.get().toString(),
-      passphrase: 'secret',
-      coinbaseAddress: [aliceOrigRing.getAddress()],
-      //logConsole: true,
-      //logLevel: 'spam',
-    })
-    let block1
+    let node
+    const blocks = []
+    let fundingTX
+    let onChainFundingTX
+    const virtualTXs = []
+    const onChainVirtualTXs = []
+    let commTX
+    let onChainCommTX
 
-    beforeEach(async () => {
+    async function setupNode() {
+      node = new bcoin.FullNode({
+        network: bcoin.Network.get().toString(),
+        passphrase: 'secret',
+        coinbaseAddress: [aliceOrigRing.getAddress()],
+        //logConsole: true,
+        //logLevel: 'spam',
+      })
       await node.open()
       await node.connect()
       node.startSync()
+    }
 
-      block1 = await Utils.mineBlock(node, aliceOrigRing.getAddress())
-      bcoin.protocol.consensus.COINBASE_MATURITY = 0
+    async function mineCoins() {
+      blocks.push(await Utils.mineBlock(node))
       await Utils.flushEvents()
-    })
+      bcoin.protocol.consensus.COINBASE_MATURITY = 0
+    }
 
-    it('should create a valid on-chain funding TX', async () => {
-      const ftx = Vchan.getFundingTX({
-        outpoint: Outpoint.fromTX(block1.txs[0], 0),
+    async function mineFundingTX() {
+      fundingTX = Vchan.getFundingTX({
+        outpoint: Outpoint.fromTX(blocks[0].txs[0], 0),
         ring: aliceOrigRing,
         fundKey1: aliceFundRing1.publicKey,
         fundKey2: bobFundRing1.publicKey,
@@ -240,20 +249,32 @@ describe('End-to-end test', () => {
         fee: fundingFee,
       }).toTX()
 
-      await node.sendTX(ftx)
+      await node.sendTX(fundingTX)
       await Utils.flushEvents()
-      const block2 = await Utils.mineBlock(node, aliceOrigRing.getAddress())
-      const onChainTX = block2.txs[1]
+      blocks.push(await Utils.mineBlock(node))
+      onChainFundingTX = blocks[1].txs[1]
+    }
 
-      assert(onChainTX.hash().equals(ftx.hash()) &&
-        onChainTX.witnessHash().equals(ftx.witnessHash()),
+    before(async () => {
+      await setupNode()
+      await mineCoins()
+      await mineFundingTX()
+    })
+
+    it('should create a valid on-chain funding TX', async () => {
+      assert(onChainFundingTX.hash().equals(fundingTX.hash()) &&
+        onChainFundingTX.witnessHash().equals(fundingTX.witnessHash()),
         'The funding TX is not accepted on-chain')
     })
 
-    afterEach(async () => {
+    async function closeNode() {
       node.stopSync()
       await node.disconnect()
       await node.close()
+    }
+
+    after(async () => {
+      await closeNode()
     })
   })
 })
