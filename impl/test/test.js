@@ -26,6 +26,10 @@ const fundingHash = sha256.digest(Buffer.from('funding'))
 
 const aliceAmount = Amount.fromBTC(10).toValue()
 const bobAmount = Amount.fromBTC(40).toValue()
+const baseAmount = aliceAmount + bobAmount
+const virt1Amount = Amount.fromBTC(15).toValue()
+const virt2Amount = Amount.fromBTC(5).toValue()
+
 const fundingFee = 2330
 const commitmentFee = 14900
 const revocationFee = 8520
@@ -128,10 +132,6 @@ describe('End-to-end test', () => {
     })
   })
 
-  const baseAmount = Amount.fromBTC(50).toValue()
-  const virt1Amount = Amount.fromBTC(15).toValue()
-  const virt2Amount = Amount.fromBTC(5).toValue()
-
   const virtualTX = Vchan.getVirtualTX(
     [aliceFundRing2, bobFundRing2],
     [
@@ -209,104 +209,104 @@ describe('End-to-end test', () => {
         'Alice output witness hash doesn\'t correspond to revocation input witness script')
     })
   })
+})
 
-  describe('On-chain tests', () => {
-    let node
-    const blocks = []
-    let fundingTX
-    let onChainFundingTX
-    const virtualTXs = []
-    const onChainVirtualTXs = []
-    let commTX
-    let onChainCommTX
+describe('On-chain tests', () => {
+  let node
+  const blocks = []
+  let fundingTX
+  let onChainFundingTX
+  const virtualTXs = []
+  const onChainVirtualTXs = []
+  let commTX
+  let onChainCommTX
 
-    async function setupNode() {
-      node = new bcoin.FullNode({
-        network: bcoin.Network.get().toString(),
-        passphrase: 'secret',
-        coinbaseAddress: [aliceOrigRing.getAddress()],
-        //logConsole: true,
-        //logLevel: 'spam',
-      })
-      await node.open()
-      await node.connect()
-      node.startSync()
-    }
+  async function setupNode() {
+    node = new bcoin.FullNode({
+      network: bcoin.Network.get().toString(),
+      passphrase: 'secret',
+      coinbaseAddress: [aliceOrigRing.getAddress()],
+      //logConsole: true,
+      //logLevel: 'spam',
+    })
+    await node.open()
+    await node.connect()
+    node.startSync()
+  }
 
-    async function mineCoins() {
-      blocks.push(await Utils.mineBlock(node))
-      await Utils.flushEvents()
-      bcoin.protocol.consensus.COINBASE_MATURITY = 0
-    }
+  async function mineCoins() {
+    blocks.push(await Utils.mineBlock(node))
+    await Utils.flushEvents()
+    bcoin.protocol.consensus.COINBASE_MATURITY = 0
+  }
 
-    async function mineTX(tx) {
-      await node.sendTX(tx)
-      await Utils.flushEvents()
-      blocks.push(await Utils.mineBlock(node))
-      return blocks[blocks.length - 1].txs[1]
-    }
+  async function mineTX(tx) {
+    await node.sendTX(tx)
+    await Utils.flushEvents()
+    blocks.push(await Utils.mineBlock(node))
+    return blocks[blocks.length - 1].txs[1]
+  }
 
-    async function mineFundingTX() {
-      fundingTX = Vchan.getFundingTX({
-        outpoint: Outpoint.fromTX(blocks[0].txs[0], 0),
-        ring: aliceOrigRing,
-        fundKey1: aliceFundRing1.publicKey,
-        fundKey2: bobFundRing1.publicKey,
-        outAmount: aliceAmount + bobAmount,
-        fee: fundingFee,
-      }).toTX()
+  async function mineFundingTX() {
+    fundingTX = Vchan.getFundingTX({
+      outpoint: Outpoint.fromTX(blocks[0].txs[0], 0),
+      ring: aliceOrigRing,
+      fundKey1: aliceFundRing1.publicKey,
+      fundKey2: bobFundRing1.publicKey,
+      outAmount: aliceAmount + bobAmount,
+      fee: fundingFee,
+    }).toTX()
 
-      onChainFundingTX = await mineTX(fundingTX)
+    onChainFundingTX = await mineTX(fundingTX)
+  }
+
+  before(async () => {
+    await setupNode()
+    await mineCoins()
+    await mineFundingTX()
+  })
+
+  it('should create a valid on-chain funding TX', async () => {
+    assert(onChainFundingTX.hash().equals(fundingTX.hash()) &&
+      onChainFundingTX.witnessHash().equals(fundingTX.witnessHash()),
+      'The funding TX is not accepted on-chain')
+  })
+
+  describe('Before new channel opening', () => {
+    async function mineVirtualTX() {
+      virtualTXs.push(Vchan.getVirtualTX(
+        [aliceFundRing1, bobFundRing1],
+        [
+          [aliceVirtRing1, bobVirtRing],
+          [aliceVirtRing2, daveVirtRing],
+          [aliceVirtRing3, charlieVirtRing]
+        ],
+        [baseAmount - virt1Amount - virt2Amount, virt2Amount, virt1Amount],
+        virtualFee, fundingTX
+      ).toTX())
+
+      onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
     }
 
     before(async () => {
-      await setupNode()
-      await mineCoins()
-      await mineFundingTX()
+      await mineVirtualTX()
     })
 
-    it('should create a valid on-chain funding TX', async () => {
-      assert(onChainFundingTX.hash().equals(fundingTX.hash()) &&
-        onChainFundingTX.witnessHash().equals(fundingTX.witnessHash()),
-        'The funding TX is not accepted on-chain')
+    it('should spend the funding TX with a virtual TX', async () => {
+      const i = virtualTXs.length - 1
+      assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
+        onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
+        'The virtual TX is not accepted on-chain')
     })
+  })
 
-    describe('Before new channel opening', () => {
-      async function mineVirtualTX() {
-        virtualTXs.push(Vchan.getVirtualTX(
-          [aliceFundRing1, bobFundRing1],
-          [
-            [aliceVirtRing1, bobVirtRing],
-            [aliceVirtRing2, daveVirtRing],
-            [aliceVirtRing3, charlieVirtRing]
-          ],
-          [baseAmount - virt1Amount - virt2Amount, virt2Amount, virt1Amount],
-          virtualFee, fundingTX
-        ).toTX())
+  async function closeNode() {
+    node.stopSync()
+    await node.disconnect()
+    await node.close()
+  }
 
-        onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
-      }
-
-      before(async () => {
-        await mineVirtualTX()
-      })
-
-      it('should spend the funding TX with a virtual TX', async () => {
-        const i = virtualTXs.length - 1
-        assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
-          onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
-          'The virtual TX is not accepted on-chain')
-      })
-    })
-
-    async function closeNode() {
-      node.stopSync()
-      await node.disconnect()
-      await node.close()
-    }
-
-    after(async () => {
-      await closeNode()
-    })
+  after(async () => {
+    await closeNode()
   })
 })
