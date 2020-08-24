@@ -62,7 +62,7 @@ const charlieVirtRing = KeyRing.fromPrivate(charlieFundRing.getPrivateKey())
 charlieVirtRing.witness = true
 const daveVirtRing = rings[9]
 
-describe('End-to-end test', () => {
+describe('Unit tests', () => {
   const ftx = Vchan.getFundingTX({
     outpoint: new Outpoint(fundingHash, 0),
     ring: aliceOrigRing,
