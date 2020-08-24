@@ -63,7 +63,7 @@ charlieVirtRing.witness = true
 const daveVirtRing = rings[9]
 
 describe('Unit tests', () => {
-  const ftx = Vchan.getFundingTX({
+  const fundingTX = Vchan.getFundingTX({
     outpoint: new Outpoint(fundingHash, 0),
     ring: aliceOrigRing,
     fundKey1: aliceFundRing1.publicKey,
@@ -74,13 +74,13 @@ describe('Unit tests', () => {
 
   describe('Funding TX', () => {
     it('should verify correctly', () => {
-      assert(ftx.verify(),
+      assert(fundingTX.verify(),
         'Funding TX does not verify correctly')
     })
 
-    let ftx2 = new MTX({version: 2})
+    let fundingTX2 = new MTX({version: 2})
 
-    ftx2.addCoin(Coin.fromJSON({
+    fundingTX2.addCoin(Coin.fromJSON({
       version: 2,
       height: -1,
       value: aliceAmount + bobAmount,
@@ -90,18 +90,18 @@ describe('Unit tests', () => {
       index: 0,
     }))
 
-    ftx2 = Vchan.getFundingTX({
-      fctx: ftx2, fundKey1: aliceFundRing1.publicKey,
+    fundingTX2 = Vchan.getFundingTX({
+      fctx: fundingTX2, fundKey1: aliceFundRing1.publicKey,
       fundKey2: bobFundRing1.publicKey,
       outAmount: aliceAmount + bobAmount,
       fee: fundingFee,
     })
 
-    ftx2.sign(aliceOrigRing)
+    fundingTX2.sign(aliceOrigRing)
 
     it('should be generatable both from MTX and from KeyRing', () => {
-      assert(ftx.hash().equals(ftx2.hash()) &&
-        ftx.witnessHash().equals(ftx2.witnessHash()),
+      assert(fundingTX.hash().equals(fundingTX2.hash()) &&
+        fundingTX.witnessHash().equals(fundingTX2.witnessHash()),
         'The two funding TX generation methods do not produce same results')
     })
   })
@@ -115,7 +115,7 @@ describe('Unit tests', () => {
     },
     delay,
     amount: {aliceAmount, bobAmount, fee: fundingFee},
-    ftx
+    fundingTX
   })
 
   describe('Commitment TX', () => {
@@ -124,7 +124,7 @@ describe('Unit tests', () => {
         'Commitment TX does not verify correctly')
     })
 
-    const fundingWitnessHash = ftx.outputs[0].script.code[1].data
+    const fundingWitnessHash = fundingTX.outputs[0].script.code[1].data
     const commWitnessScript = commTX.inputs[0].witness.getRedeem().sha256()
     it('should spend funding TX', () => {
       assert(fundingWitnessHash.equals(commWitnessScript),
@@ -132,15 +132,16 @@ describe('Unit tests', () => {
     })
   })
 
-  const virtualTX = Vchan.getVirtualTX(
-    [aliceFundRing2, bobFundRing2],
-    [
+  const virtualTX = Vchan.getVirtualTX({
+    inRings: [aliceFundRing2, bobFundRing2],
+    outRings: [
       [aliceVirtRing1, bobVirtRing],
       [aliceVirtRing2, daveVirtRing]
     ],
-    [baseAmount - virt1Amount, virt1Amount],
-    fundingFee, ftx
-  )
+    amounts: [baseAmount - virt1Amount, virt1Amount],
+    fee: fundingFee,
+    fundingTX
+  })
 
   describe('Virtual TX', () => {
     it('should verify correctly', () => {
@@ -148,7 +149,7 @@ describe('Unit tests', () => {
         'Virtual TX does not verify correctly')
     })
 
-    const fundingWitnessHash = ftx.outputs[0].script.code[1].data
+    const fundingWitnessHash = fundingTX.outputs[0].script.code[1].data
     const virtWitnessScript = virtualTX.inputs[0].witness.getRedeem().sha256()
     it('should spend funding TX', () => {
       assert(fundingWitnessHash.equals(virtWitnessScript),
@@ -165,16 +166,20 @@ describe('Unit tests', () => {
     })
 
     describe('Updated Virtual TX', () => {
-      const virtualTX2 = Vchan.getVirtualTX(
-        [aliceFundRing2, bobFundRing2],
-        [
+      const virtualTX2 = Vchan.getVirtualTX({
+        inRings: [aliceFundRing2, bobFundRing2],
+        outRings: [
           [aliceVirtRing1, bobVirtRing],
           [aliceVirtRing2, daveVirtRing],
           [aliceVirtRing3, charlieVirtRing]
         ],
-        [baseAmount - virt1Amount - virt2Amount, virt2Amount, virt1Amount],
-        fundingFee, ftx
-      )
+        amounts: [
+          baseAmount - virt1Amount - virt2Amount,
+          virt2Amount, virt1Amount
+        ],
+        fee: fundingFee,
+        fundingTX
+      })
 
       const virtualWitnessHash = virtualTX2.outputs[0].script.code[1].data
       const commWitnessScript = commTX.inputs[0].witness.getRedeem().sha256()
@@ -273,23 +278,27 @@ describe('On-chain tests', () => {
   })
 
   describe('Before new channel opening', () => {
-    async function mineVirtualTX() {
-      virtualTXs.push(Vchan.getVirtualTX(
-        [aliceFundRing1, bobFundRing1],
-        [
+    async function mineFirstVirtualTX() {
+      virtualTXs.push(Vchan.getVirtualTX({
+        inRings: [aliceFundRing1, bobFundRing1],
+        outRings: [
           [aliceVirtRing1, bobVirtRing],
           [aliceVirtRing2, daveVirtRing],
           [aliceVirtRing3, charlieVirtRing]
         ],
-        [baseAmount - virt1Amount - virt2Amount, virt2Amount, virt1Amount],
-        virtualFee, fundingTX
-      ).toTX())
+        amounts: [
+          baseAmount - virt1Amount - virt2Amount,
+          virt2Amount, virt1Amount
+        ],
+        fee: virtualFee,
+        fundingTX
+      }).toTX())
 
       onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
     }
 
     before(async () => {
-      await mineVirtualTX()
+      await mineFirstVirtualTX()
     })
 
     it('should spend the funding TX with a virtual TX', async () => {

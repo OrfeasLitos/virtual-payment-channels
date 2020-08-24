@@ -33,10 +33,10 @@ function verifyArgs(inRings, outRings, amounts) {
 // A simplified version of the general virtual TX
 // Only includes virtualised funding outputs
 // TODO: add 0-value outputs
-function getVirtualTX(inRings, outRings, amounts, fee, ftx) {
+function getVirtualTX({inRings, outRings, amounts, fee, fundingTX}) {
   verifyArgs(inRings, outRings, amounts)
 
-  let vtx = new MTX({version: 2})
+  let virtualTX = new MTX({version: 2})
 
   inRings[0].script = inRings[1].script = Script.fromMultisig(2, 2, [
       inRings[0].publicKey, inRings[1].publicKey
@@ -45,8 +45,8 @@ function getVirtualTX(inRings, outRings, amounts, fee, ftx) {
 
   const prevoutScript = Utils.outputScrFromRedeemScr(inRings[1].script)
 
-  const coin = Utils.getCoinFromTX(prevoutScript.toJSON(), ftx, 0)
-  vtx.addCoin(coin)
+  const coin = Utils.getCoinFromTX(prevoutScript.toJSON(), fundingTX, 0)
+  virtualTX.addCoin(coin)
 
   outRings.map(pair => {
     pair[0].script = pair[1].script = Script.fromMultisig(2, 2, [
@@ -59,12 +59,12 @@ function getVirtualTX(inRings, outRings, amounts, fee, ftx) {
     pair => Utils.outputScrFromRedeemScr(pair[1].script)
   )
 
-  outputs.map((output, i) => vtx.addOutput(output, amounts[i]))
-  vtx.outputs[0].value -= fee
+  outputs.map((output, i) => virtualTX.addOutput(output, amounts[i]))
+  virtualTX.outputs[0].value -= fee
 
-  vtx.sign(inRings)
+  virtualTX.sign(inRings)
 
-  return vtx
+  return virtualTX
 }
 
 module.exports = getVirtualTX

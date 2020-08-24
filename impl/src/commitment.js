@@ -30,7 +30,7 @@ function getCommitmentTX({
   },
   delay,
   amount: {aliceAmount, bobAmount, fee},
-  ftx
+  fundingTX
 }) {
   const arg = arguments[0]
   verifyArgs(arg.rings, arg.delay, arg.amount)
@@ -53,7 +53,7 @@ function getCommitmentTX({
   const bobOutput = Utils.getP2WPKHOutput(bobOwnRing)
   ctx.addOutput(bobOutput, bobAmount)
 
-  const coin = Utils.getCoinFromTX(outputScript.toJSON(), ftx, 0)
+  const coin = Utils.getCoinFromTX(outputScript.toJSON(), fundingTX, 0)
   ctx.addCoin(coin)
 
   ctx.sign([aliceFundRing, bobFundRing])
