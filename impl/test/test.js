@@ -16,7 +16,7 @@ const Coin = bcoin.Coin
 const Vchan = require('../src/vchan')
 const Utils = require('./utils')
 
-const rings = Array.apply(null, Array(10))
+const rings = Array.apply(null, Array(12))
       .map(x => KeyRing.generate())
 rings.map(ring => {ring.witness = true})
 
@@ -26,6 +26,7 @@ const fundingHash = sha256.digest(Buffer.from('funding'))
 
 const aliceAmount = Amount.fromBTC(10).toValue()
 const bobAmount = Amount.fromBTC(40).toValue()
+const daveAmount = Amount.fromBTC(10).toValue()
 const baseAmount = aliceAmount + bobAmount
 const virt1Amount = Amount.fromBTC(15).toValue()
 const virt2Amount = Amount.fromBTC(5).toValue()
@@ -61,6 +62,8 @@ const charlieFundRing = rings[8]
 const charlieVirtRing = KeyRing.fromPrivate(charlieFundRing.getPrivateKey())
 charlieVirtRing.witness = true
 const daveVirtRing = rings[9]
+const daveRevRing = rings[10]
+const daveOwnRing = rings[11]
 
 describe('Unit tests', () => {
   const fundingTX = Vchan.getFundingTX({
@@ -114,8 +117,9 @@ describe('Unit tests', () => {
       bobRevRing, bobOwnRing
     },
     delay,
-    amount: {aliceAmount, bobAmount, fee: fundingFee},
-    fundingTX
+    amounts: {aliceAmount, bobAmount, fee: fundingFee},
+    fundingTX,
+    fundingIndex: 0,
   })
 
   describe('Commitment TX', () => {
@@ -223,7 +227,7 @@ describe('On-chain tests', () => {
   let onChainFundingTX
   const virtualTXs = []
   const onChainVirtualTXs = []
-  let commTX
+  let aliceCommTX
   let onChainCommTX
 
   async function setupNode() {
@@ -297,14 +301,44 @@ describe('On-chain tests', () => {
       onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
     }
 
+    async function mineCommitmentTX() {
+      aliceCommTX = Vchan.getCommitmentTX({
+        rings: {
+          aliceFundRing: aliceVirtRing2,
+          bobFundRing: daveVirtRing,
+          aliceRevRing,
+          aliceDelRing,
+          bobRevRing: daveRevRing,
+          bobOwnRing: daveOwnRing,
+        },
+        delay,
+        amounts: {
+          aliceAmount: virt1Amount - daveAmount,
+          bobAmount: daveAmount,
+          fee: commitmentFee,
+        },
+        fundingTX: virtualTXs[virtualTXs.length - 1],
+        fundingIndex: 1,
+      }).toTX()
+
+      onChainCommTX = await mineTX(aliceCommTX)
+    }
+
     before(async () => {
       await mineFirstVirtualTX()
+      await mineCommitmentTX()
     })
 
     it('should spend the funding TX with a virtual TX', async () => {
       const i = virtualTXs.length - 1
       assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
         onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
+        'The virtual TX is not accepted on-chain')
+    })
+
+    it('should spend the virtual TX with the commitment TX', async () => {
+      assert(onChainCommTX.hash().equals(aliceCommTX.hash()) &&
+        onChainCommTX.witnessHash().equals(aliceCommTX.witnessHash()),
         'The virtual TX is not accepted on-chain')
     })
   })

@@ -29,13 +29,12 @@ function getCommitmentTX({
     aliceDelRing, bobRevRing, bobOwnRing
   },
   delay,
-  amount: {aliceAmount, bobAmount, fee},
-  fundingTX
+  amounts: {aliceAmount, bobAmount, fee},
+  fundingTX,
+  fundingIndex,
 }) {
   const arg = arguments[0]
-  verifyArgs(arg.rings, arg.delay, arg.amount)
-
-  const totalAmount = aliceAmount + bobAmount + fee
+  verifyArgs(arg.rings, arg.delay, arg.amounts)
 
   aliceFundRing.script = bobFundRing.script = Script.fromMultisig(2, 2, [
     aliceFundRing.publicKey, bobFundRing.publicKey
@@ -48,12 +47,12 @@ function getCommitmentTX({
     aliceRevRing.publicKey, bobRevRing.publicKey,
     delay, aliceDelRing.publicKey
   )
-  ctx.addOutput(aliceOutput, aliceAmount)
+  ctx.addOutput(aliceOutput, aliceAmount - fee)
 
   const bobOutput = Utils.getP2WPKHOutput(bobOwnRing)
   ctx.addOutput(bobOutput, bobAmount)
 
-  const coin = Utils.getCoinFromTX(outputScript.toJSON(), fundingTX, 0)
+  const coin = Utils.getCoinFromTX(outputScript.toJSON(), fundingTX, fundingIndex)
   ctx.addCoin(coin)
 
   ctx.sign([aliceFundRing, bobFundRing])
