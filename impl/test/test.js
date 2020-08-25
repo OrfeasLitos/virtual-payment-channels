@@ -225,8 +225,10 @@ describe('On-chain tests', () => {
   const blocks = []
   let fundingTX
   let onChainFundingTX
-  const virtualTXs = []
-  const onChainVirtualTXs = []
+  let firstVirtualTX
+  let secondVirtualTX
+  let onChainFirstVirtualTX
+  let onChainSecondVirtualTX
   let aliceCommTX
   let onChainCommTX
 
@@ -285,7 +287,7 @@ describe('On-chain tests', () => {
         bobAmount: daveAmount,
         fee: commitmentFee,
       },
-      fundingTX: virtualTXs[virtualTXs.length - 1],
+      fundingTX: firstVirtualTX,
       fundingIndex: 1,
     }).toTX()
 
@@ -306,7 +308,7 @@ describe('On-chain tests', () => {
 
   describe('Before new channel opening', () => {
     async function mineFirstVirtualTX() {
-      virtualTXs.push(Vchan.getVirtualTX({
+      firstVirtualTX = Vchan.getVirtualTX({
         inRings: [aliceFundRing1, bobFundRing1],
         outRings: [
           [aliceVirtRing1, bobVirtRing],
@@ -315,9 +317,9 @@ describe('On-chain tests', () => {
         amounts: [baseAmount - virt1Amount, virt1Amount],
         fee: virtualFee,
         fundingTX
-      }).toTX())
+      }).toTX()
 
-      onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
+      onChainFirstVirtualTX = await mineTX(firstVirtualTX)
     }
 
     before(async () => {
@@ -326,9 +328,8 @@ describe('On-chain tests', () => {
     })
 
     it('should spend the funding TX with first virtual TX', async () => {
-      const i = virtualTXs.length - 1
-      assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
-        onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
+      assert(onChainFirstVirtualTX.hash().equals(firstVirtualTX.hash()) &&
+        onChainFirstVirtualTX.witnessHash().equals(firstVirtualTX.witnessHash()),
         'The virtual TX is not accepted on-chain')
     })
 
@@ -353,7 +354,7 @@ describe('On-chain tests', () => {
 
   describe('After new channel opening', () => {
     async function mineSecondVirtualTX() {
-      virtualTXs.push(Vchan.getVirtualTX({
+      secondVirtualTX = Vchan.getVirtualTX({
         inRings: [aliceFundRing1, bobFundRing1],
         outRings: [
           [aliceVirtRing1, bobVirtRing],
@@ -366,9 +367,9 @@ describe('On-chain tests', () => {
         ],
         fee: virtualFee,
         fundingTX
-      }).toTX())
+      }).toTX()
 
-      onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
+      onChainSecondVirtualTX = await mineTX(secondVirtualTX)
     }
 
     }
@@ -378,9 +379,8 @@ describe('On-chain tests', () => {
     })
 
     it('should spend the funding TX with second virtual TX', async () => {
-      const i = virtualTXs.length - 1
-      assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
-        onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
+      assert(onChainSecondVirtualTX.hash().equals(secondVirtualTX.hash()) &&
+        onChainSecondVirtualTX.witnessHash().equals(secondVirtualTX.witnessHash()),
         'The virtual TX is not accepted on-chain')
     })
 
