@@ -269,6 +269,29 @@ describe('On-chain tests', () => {
     onChainFundingTX = await mineTX(fundingTX)
   }
 
+  async function mineCommitmentTX() {
+    aliceCommTX = Vchan.getCommitmentTX({
+      rings: {
+        aliceFundRing: aliceVirtRing2,
+        bobFundRing: daveVirtRing,
+        aliceRevRing,
+        aliceDelRing,
+        bobRevRing: daveRevRing,
+        bobOwnRing: daveOwnRing,
+      },
+      delay,
+      amounts: {
+        aliceAmount: virt1Amount - daveAmount,
+        bobAmount: daveAmount,
+        fee: commitmentFee,
+      },
+      fundingTX: virtualTXs[virtualTXs.length - 1],
+      fundingIndex: 1,
+    }).toTX()
+
+    onChainCommTX = await mineTX(aliceCommTX)
+  }
+
   before(async () => {
     await setupNode()
     await mineCoins()
@@ -288,6 +311,53 @@ describe('On-chain tests', () => {
         outRings: [
           [aliceVirtRing1, bobVirtRing],
           [aliceVirtRing2, daveVirtRing],
+        ],
+        amounts: [baseAmount - virt1Amount, virt1Amount],
+        fee: virtualFee,
+        fundingTX
+      }).toTX())
+
+      onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
+    }
+
+    before(async () => {
+      await mineFirstVirtualTX()
+      await mineCommitmentTX()
+    })
+
+    it('should spend the funding TX with first virtual TX', async () => {
+      const i = virtualTXs.length - 1
+      assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
+        onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
+        'The virtual TX is not accepted on-chain')
+    })
+
+    it('should spend the first virtual TX with the commitment TX', async () => {
+      assert(onChainCommTX.hash().equals(aliceCommTX.hash()) &&
+        onChainCommTX.witnessHash().equals(aliceCommTX.witnessHash()),
+        'The virtual TX is not accepted on-chain')
+    })
+
+    async function forgetBlocks(n) {
+      for (let i = 0; i < n; i++) {
+        const oldTip = node.chain.tip
+        await node.chain.disconnect(node.chain.tip)
+        await node.chain.emitAsync('reorganize', oldTip, node.chain.tip)
+      }
+    }
+
+    after(async () => {
+      await forgetBlocks(2) // forget commitment TX and 1st virtual TX
+    })
+  })
+
+  describe('After new channel opening', () => {
+    async function mineSecondVirtualTX() {
+      virtualTXs.push(Vchan.getVirtualTX({
+        inRings: [aliceFundRing1, bobFundRing1],
+        outRings: [
+          [aliceVirtRing1, bobVirtRing],
+          [aliceVirtRing2, daveVirtRing],
           [aliceVirtRing3, charlieVirtRing]
         ],
         amounts: [
@@ -301,46 +371,19 @@ describe('On-chain tests', () => {
       onChainVirtualTXs.push(await mineTX(virtualTXs[virtualTXs.length - 1]))
     }
 
-    async function mineCommitmentTX() {
-      aliceCommTX = Vchan.getCommitmentTX({
-        rings: {
-          aliceFundRing: aliceVirtRing2,
-          bobFundRing: daveVirtRing,
-          aliceRevRing,
-          aliceDelRing,
-          bobRevRing: daveRevRing,
-          bobOwnRing: daveOwnRing,
-        },
-        delay,
-        amounts: {
-          aliceAmount: virt1Amount - daveAmount,
-          bobAmount: daveAmount,
-          fee: commitmentFee,
-        },
-        fundingTX: virtualTXs[virtualTXs.length - 1],
-        fundingIndex: 1,
-      }).toTX()
-
-      onChainCommTX = await mineTX(aliceCommTX)
     }
 
     before(async () => {
-      await mineFirstVirtualTX()
-      await mineCommitmentTX()
+      await mineSecondVirtualTX()
     })
 
-    it('should spend the funding TX with a virtual TX', async () => {
+    it('should spend the funding TX with second virtual TX', async () => {
       const i = virtualTXs.length - 1
       assert(onChainVirtualTXs[i].hash().equals(virtualTXs[i].hash()) &&
         onChainVirtualTXs[i].witnessHash().equals(virtualTXs[i].witnessHash()),
         'The virtual TX is not accepted on-chain')
     })
 
-    it('should spend the virtual TX with the commitment TX', async () => {
-      assert(onChainCommTX.hash().equals(aliceCommTX.hash()) &&
-        onChainCommTX.witnessHash().equals(aliceCommTX.witnessHash()),
-        'The virtual TX is not accepted on-chain')
-    })
   })
 
   async function closeNode() {
