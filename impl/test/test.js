@@ -271,29 +271,6 @@ describe('On-chain tests', () => {
     onChainFundingTX = await mineTX(fundingTX)
   }
 
-  async function mineCommitmentTX() {
-    aliceCommTX = Vchan.getCommitmentTX({
-      rings: {
-        aliceFundRing: aliceVirtRing2,
-        bobFundRing: daveVirtRing,
-        aliceRevRing,
-        aliceDelRing,
-        bobRevRing: daveRevRing,
-        bobOwnRing: daveOwnRing,
-      },
-      delay,
-      amounts: {
-        aliceAmount: virt1Amount - daveAmount,
-        bobAmount: daveAmount,
-        fee: commitmentFee,
-      },
-      fundingTX: firstVirtualTX,
-      fundingIndex: 1,
-    }).toTX()
-
-    onChainCommTX = await mineTX(aliceCommTX)
-  }
-
   before(async () => {
     await setupNode()
     await mineCoins()
@@ -320,6 +297,29 @@ describe('On-chain tests', () => {
       }).toTX()
 
       onChainFirstVirtualTX = await mineTX(firstVirtualTX)
+    }
+
+    async function mineCommitmentTX() {
+      aliceCommTX = Vchan.getCommitmentTX({
+        rings: {
+          aliceFundRing: aliceVirtRing2,
+          bobFundRing: daveVirtRing,
+          aliceRevRing,
+          aliceDelRing,
+          bobRevRing: daveRevRing,
+          bobOwnRing: daveOwnRing,
+        },
+        delay,
+        amounts: {
+          aliceAmount: virt1Amount - daveAmount,
+          bobAmount: daveAmount,
+          fee: commitmentFee,
+        },
+        fundingTX: firstVirtualTX,
+        fundingIndex: 1,
+      }).toTX()
+
+      onChainCommTX = await mineTX(aliceCommTX)
     }
 
     before(async () => {
