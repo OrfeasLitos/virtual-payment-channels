@@ -363,7 +363,7 @@ describe('On-chain tests', () => {
         ],
         amounts: [
           baseAmount - virt1Amount - virt2Amount,
-          virt2Amount, virt1Amount
+          virt1Amount, virt2Amount
         ],
         fee: virtualFee,
         fundingTX
@@ -372,10 +372,14 @@ describe('On-chain tests', () => {
       onChainSecondVirtualTX = await mineTX(secondVirtualTX)
     }
 
+    function modifyCommitmentTX() {
+      aliceCommTX.inputs[0].prevout = Outpoint.fromTX(secondVirtualTX, 1)
     }
 
     before(async () => {
       await mineSecondVirtualTX()
+      modifyCommitmentTX()
+      onChainCommTX = await mineTX(aliceCommTX) // this can't work :(
     })
 
     it('should spend the funding TX with second virtual TX', async () => {
@@ -384,6 +388,11 @@ describe('On-chain tests', () => {
         'The virtual TX is not accepted on-chain')
     })
 
+    it.skip('should spend the second virtual TX with the modified commitment TX', async () => {
+      assert(onChainCommTX.hash().equals(aliceCommTX.hash()) &&
+        onChainCommTX.witnessHash().equals(aliceCommTX.witnessHash()),
+        'The virtual TX is not accepted on-chain')
+    })
   })
 
   async function closeNode() {
