@@ -1,0 +1,26 @@
+\begin{figure}[H]
+  \begin{systembox}{\gtrust}
+    \begin{algorithmic}[1]
+      \State On (\textsc{set trusts}, $G$) by \environment:
+      \Indent
+        \State ensure $\textit{State} = \bot$
+        \State ensure $G$ is a directed forest where the nodes are ITM
+        identifiers
+        \State store $G$
+        \State $\textit{State} \gets \top$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{is parent}, $\mathrm{id}_1$, $\mathrm{id}_2$) by $P$
+      \Indent
+        \If{$\mathrm{id}_1$ is the parent of $\mathrm{id}_2$ in $G$}
+          \State send (\textsc{is parent}, $\mathrm{id}_1$, $\mathrm{id}_2$,
+          $\true$) to $P$
+        \Else
+          \State send (\textsc{is parent}, $\mathrm{id}_1$, $\mathrm{id}_2$,
+          $\false$) to $P$
+        \EndIf
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+\end{figure}

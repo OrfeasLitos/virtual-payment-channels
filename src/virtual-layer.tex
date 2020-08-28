@@ -17,8 +17,9 @@
       \EndIndent
       \State ensure \texttt{host\_funder} = \alice \: \Comment{we are hosting
       the funder}
-      \State $(pk_{A, V}, pk_{B, V}) \gets$ \textsc{pcn.virtualKeys}($c$,
-      \texttt{fundee}, \texttt{host\_funder}, \texttt{host\_fundee})
+      \State call (\textsc{pcn.virtualKeys}, $c$, \texttt{fundee},
+      \texttt{host\_funder}, \texttt{host\_fundee}) of \texttt{funder} and
+      assign reply to $(pk_{A, V}, pk_{B, V})$
       \State $(pk_{i, V})_{i \in [n]} \gets$ \textsc{virt.hostKeys}($c$,
       \texttt{hops})
       \State $(T_{i,j})_{i \in [n], j \in [n+2]} \gets$

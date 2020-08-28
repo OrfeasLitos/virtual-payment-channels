@@ -118,8 +118,11 @@
   \begin{processbox}{\textsc{ln} -- open virtual}
     \begin{algorithmic}[1]
       \State \textsc{virtualKeys}($c$, \texttt{fundee}, \texttt{host\_funder},
-      \texttt{host\_fundee}):
+      \texttt{host\_fundee}): \Comment{callable by other ITMs}
       \Indent
+        \State send (\textsc{is parent}, caller, \alice) to \gtrust and ensure
+        reply is (\textsc{is parent}, caller, \alice, $\true$) \Comment{ensure
+        caller is trusted}
         \State ensure super.\textit{State} = \textsc{init} \Comment{``super'':
         storage of enclosing protocol}
         \State store $c$, \texttt{fundee}, \texttt{host\_funder},
