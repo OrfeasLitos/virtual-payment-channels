@@ -15,7 +15,7 @@
         channels. All $P_{i-1} P_i$ inputs must be signed by $R_{i-1}$ and all
         $P_i P_{i+1}$ inputs by $L_i$.}
       \EndIndent
-      \State ensure \texttt{host\_funder} = \alice \: \Comment{we are hosting
+      \State ensure \texttt{host\_funder} = \alice{} \Comment{we are hosting
       the funder}
       \State call (\textsc{pcn.virtualKeys}, $c$, \texttt{fundee},
       \texttt{host\_funder}, \texttt{host\_fundee}) of \texttt{funder} and
