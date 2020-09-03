@@ -20,11 +20,13 @@
       \State call \textsc{pcn.virtualKeys}($c$, \texttt{fundee},
       \texttt{host\_funder}, \texttt{host\_fundee}) of \texttt{funder} and
       assign result to $(pk_{A, V}, pk_{B, V})$
-      \State $(pk_{i, V})_{i \in [n]} \gets$ \textsc{virt.hostKeys}($c$,
-      \texttt{hops})
+      \State $((pk_{j, V})_{j \in [n]}, (C_j)_{j \in [n]}) \gets$
+      \textsc{virt.hostInitData}(\texttt{hops}) \TODO{also return funding TX output of each hop and input
+      those outputs to \textsc{virt.getTXs}()}
       \State $(T_{i,j})_{i \in [n], j \in [n+2]} \gets$
-      \textsc{virt.getTXs}($c$, $pk_{A, V}$, $pk_{B, V}$, $(pk_{i, V})_i$)
-      \Comment{for $i \in \{1, n\}$, $j$ can only be equal to $1$}
+      \textsc{virt.getTXs}($c$, $pk_{A, V}$, $pk_{B, V}$, $(pk_{i, V})_i$,
+      $(C_j)_{j \in [n]}$) \Comment{for $i \in \{1, n\}$, $j$ can only be equal
+      to $1$}
       \State ensure \textsc{pcn.openVirtual}($(T_{i, j})_{i, j}$) returns
       (\textsc{ok})
       \If{real world}
@@ -183,72 +185,78 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt} -- utils}
+  \begin{notitlebox}{\textsc{virt.hostInitData}($C_i$, $c$, \texttt{hops})}
     \begin{algorithmic}[1]
-      \State \textsc{hostKeys}(\texttt{hops}): \Comment{can be implemented with
-      \alice as leader or with 2 direct messages between all hops ($O(n^2)$)}
-      \TODO{decide if we need to move to \textsc{updating} state here}
-      \Indent
-        \For{$i$ from $1$ to $n$} \Comment{one iteration executed by each hop}
-          \If{$i \neq 1$}
-            \State ensure $\texttt{hops}[i-1] =$ sender $\wedge \texttt{hops}[i]
-            =$ self
+      \State \Comment{can be implemented with \alice as leader or with 2 direct
+      messages between all hops ($O(n^2)$)} \TODO{decide if we need to move to
+      \textsc{updating} state here}
+      \For{$i$ from $1$ to $n$} \Comment{one iteration executed by each hop}
+        \If{$i \neq 1$}
+          \State ensure $\texttt{hops}[i-1] =$ sender $\wedge \:
+          \texttt{hops}[i] =$ self
+        \EndIf
+        \State $(sk_{i, V}, pk_{i, V}) \gets \textsc{keyGen}()$
+        \If{real world}
+          \State send (\textsc{hostDataForward}, \texttt{hops}, $(pk_{j, V})_{j
+          \in \{1, \dots, i\}}$, $(C_j)_{j \in \{1, \dots, i\}}$) to
+          \texttt{hops}[$i+1$] \Comment{$C_j$ is the lastest commitment TX of
+          the $j$-th hop, not our commitment TX for the $j$-th update}
+        \Else \: \Comment{ideal world}
+          \If{\texttt{hops}[$i+1$] is honest}
+            \State send (\textsc{hostDataForward}, \texttt{hops}, $(pk_{j,
+            V})_{j \in \{1, \dots, i\}}$, $(C_j)_{j \in \{1, \dots, i\}}$,
+            \texttt{hops}[$i+1$]) to \adversary, expecting reply (\textsc{ok})
+          \Else \: \Comment{\texttt{hops}[$i+1$] is corrupted}
+            \State send (\textsc{hostDataForward}, \texttt{hops}, $(pk_{j,
+            V})_{j \in \{1, \dots, i\}}$ $(C_j)_{j \in \{1, \dots, i\}}$,,
+            \texttt{hops}[$i+1$]) to \adversary, expecting reply
+            (\textsc{hostDataForward}, \texttt{hops}, $(pk_{j, V})_{j \in \{1,
+            \dots, k-1\}}$, $(C_j)_{j \in \{1, \dots, i\}}$, \texttt{hops}[$k$])
+            where \texttt{hops}[$k$] is the first honest hop after
+            \texttt{hops}[$i+1$], or no response if there is no such hop
           \EndIf
-          \State $(sk_{i, V}, pk_{i, V}) \gets \textsc{keyGen}()$
-          \If{real world}
-            \State send (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j, V})_{j
-            \in \{1, \dots, i\}}$) to \texttt{hops}[$i+1$]
-          \Else \: \Comment{ideal world}
-            \If{\texttt{hops}[$i+1$] is honest}
-              \State send (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j,
-              V})_{j \in \{1, \dots, i\}}$, \texttt{hops}[$i+1$]) to \adversary,
-              expecting reply (\textsc{ok})
-            \Else \: \Comment{\texttt{hops}[$i+1$] is corrupted}
-              \State send (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j,
-              V})_{j \in \{1, \dots, i\}}$, \texttt{hops}[$i+1$]) to \adversary,
-              expecting reply (\textsc{hostKeysForward}, \texttt{hops}, $(pk_{j,
-              V})_{j \in \{1, \dots, k-1\}}$, \texttt{hops}[$k$]) where
-              \texttt{hops}[$k$] is the first honest hop after
-              \texttt{hops}[$i+1$], or no response if there is no such hop
-            \EndIf
+        \EndIf
+      \EndFor \: \Comment{control is at \texttt{host\_fundee}}
+      \For{$i$ from $n$ down to $1$} \Comment{one iteration executed by each hop}
+        \If{$i \neq n$}
+          \State ensure \texttt{hops} is the same as in the previous ``for''
+          loop
+        \EndIf
+        \If{real world}
+          \State send (\textsc{hostDataBackward}, \texttt{hops}, $(pk_{j, V})_{j
+          \in \{i, \dots, n\}}$, $(C_j)_{j \in \{i, \dots, n\}}$) to
+          \texttt{hops}[$i-1$]
+        \Else \: \Comment{ideal world}
+          \If{\texttt{hops}[$i-1$] is honest}
+            \State send (\textsc{hostDataBackward}, \texttt{hops}, $(pk_{j,
+            V})_{j \in \{i, \dots, n\}}$, $(C_j)_{j \in \{i, \dots, n\}}$,
+            \texttt{hops}[$i-1$]) to \adversary, expecting reply (\textsc{ok})
+          \Else \: \Comment{\texttt{hops}[$i-1$] is corrupted}
+            \State send (\textsc{hostDataBackward}, \texttt{hops}, $(pk_{j,
+            V})_{j \in \{i, \dots, n\}}$, $(C_j)_{j \in \{i, \dots, n\}}$,
+            \texttt{hops}[$i-1$]) to \adversary, expecting reply
+            (\textsc{hostDataBackward}, \texttt{hops}, $(pk_{j, V})_{j \in
+            \{k+1, \dots, n\}}$, $(C_j)_{j \in \{i, \dots, n\}}$,
+            \texttt{hops}[$k$]) where \texttt{hops}[$k$] is the first honest hop
+            before \texttt{hops}[$i-1$], or no response if there is no such hop
           \EndIf
-        \EndFor \: \Comment{control is at \texttt{host\_fundee}}
-        \For{$i$ from $n$ down to $1$} \Comment{one iteration executed by each hop}
-          \If{$i \neq n$}
-            \State ensure \texttt{hops} is the same as in the previous ``for''
-            loop
-          \EndIf
-          \If{real world}
-            \State send (\textsc{hostKeysBackward}, \texttt{hops}, $(pk_{j,
-            V})_{j \in \{i, \dots, n\}}$) to \texttt{hops}[$i-1$]
-          \Else \: \Comment{ideal world}
-            \If{\texttt{hops}[$i-1$] is honest}
-              \State send (\textsc{hostKeysBackward}, \texttt{hops}, $(pk_{j,
-              V})_{j \in \{i, \dots, n\}}$, \texttt{hops}[$i-1$]) to \adversary,
-              expecting reply (\textsc{ok})
-            \Else \: \Comment{\texttt{hops}[$i-1$] is corrupted}
-              \State send (\textsc{hostKeysBackward}, \texttt{hops}, $(pk_{j,
-              V})_{j \in \{i, \dots, n\}}$, \texttt{hops}[$i-1$]) to \adversary,
-              expecting reply (\textsc{hostKeysBackward}, \texttt{hops},
-              $(pk_{j, V})_{j \in \{k+1, \dots, n\}}$, \texttt{hops}[$k$]) where
-              \texttt{hops}[$k$] is the first honest hop before
-              \texttt{hops}[$i-1$], or no response if there is no such hop
-            \EndIf
-          \EndIf
-        \EndFor \: \Comment{control is at \texttt{host\_funder}}
-      \EndIndent
+        \EndIf
+      \EndFor \: \Comment{control is at \texttt{host\_funder}}
+      \State \Return ($(pk_{j, V})_{j \in [n]}$, $(C_j)_{j \in [n]}$)
     \end{algorithmic}
-  \end{processbox}
+  \end{notitlebox}
   \caption{}
-  \label{code:virtual-layer:host-keys}
+  \label{code:virtual-layer:host-init-data}
+\end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt.getTXs($c$, $pk_{A, V}$, $pk_{B, V}$, $(pk_{i,
-  V})_{i \in [n]}$)}}
+  \begin{notitlebox}{\textsc{virt.getTXs}($c$, $pk_{A, V}$, $pk_{B, V}$,
+  $(pk_{j, V})_{j \in [n]}$, $(C_j)_{j \in [n]}$,
+  $(\texttt{funding\_output}_j)_{j \in [n]}$)}
     \begin{algorithmic}[1]
       \State 
     \end{algorithmic}
-  \end{processbox}
+  \end{notitlebox}
   \caption{}
   \label{code:virtual-layer:get-txs}
 \end{figure}
