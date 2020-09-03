@@ -254,7 +254,30 @@
   $(pk_{j, V})_{j \in [n]}$, $(C_j)_{j \in [n]}$,
   $(\texttt{funding\_output}_j)_{j \in [n]}$)}
     \begin{algorithmic}[1]
-      \State 
+      \For{$i$ in $\{1, n-1\}$} \Comment{new TXs for the $2$ hosts}
+        \If{$C_i$ is a virtual layer TX}
+          \State $T_{i, 1} \gets C_i$ with the following changes:
+          \begin{itemize}
+            \item the value of the ($\cdot$, $pk_{i, V} \wedge pk_{i+1, V}$)
+            output is reduced by $c$
+            \item output $(c, pk_{A, V} \wedge pk_{B, V})$ is added
+            \item output $(0, \bigwedge\limits_{j \in [n]} pk_{j, V})$ is added
+          \end{itemize}
+        \Else \: \Comment{$C_i$ is the off-chain TX used in \textsc{PCN}}
+          \State $T_{i, 1} \gets$ TX \{input: $\texttt{funding\_output}_i$,
+          outputs: (($\texttt{funding\_output}_i\mathrm{.value} - c$,
+          $\texttt{funding\_output}_i$.script), ($c$, $pk_{A, V} \wedge pk_{B,
+          V}$), (0, $\bigwedge\limits_{j \in [n]} pk_{j, V}$))\} \TODO{needs
+          \texttt{ANYPREVOUT}?}
+        \EndIf
+      \EndFor
+      \For{$i$ in $2$ to $n-2$} \Comment{new TXs for intermediaries}
+      \TODO{resolve this biggie: before the two sibling channels each had a
+      separate commitment TX, now they share the same. It should be constructed
+      on one side and shared with the other. What problems may this cause?}
+        \State lala
+      \EndFor
+      \State \Return $(T_{i, j})_{i, j}$
     \end{algorithmic}
   \end{notitlebox}
   \caption{}
