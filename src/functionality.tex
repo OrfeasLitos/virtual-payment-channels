@@ -188,8 +188,12 @@ with all hops of all existing virtuals, we should definitely find another way)}
       \label{code:functionality:chan:skeleton:virtual:open-virtual}
       \Indent
         \State ensure $\mathit{State} = \textsc{init}$
+        \State send (\textsc{is parent}, \texttt{host\_funder}, \alice) to
+        \gtrust and ensure reply is (\textsc{is parent}, \texttt{host\_funder},
+        \alice, $\true$) \Comment{ensure caller is trusted}
         \State ensure \textsc{pcn.openVirtual}(\texttt{fundee},
-        \texttt{host\_funder}, \texttt{host\_fundee}, $c$) returns (\textsc{ok})
+        \texttt{host\_funder}, \texttt{host\_fundee}, $c$) returns
+        (\textsc{ok}, \texttt{keys})
         \label{code:functionality:chan:skeleton:virtual:ln}
         \State $c_A \gets c; c_B \gets 0$
         \State from now on, handle any (\textsc{relayed}, $m$) input by
@@ -199,7 +203,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
         output (\textsc{relay}, $m$) to $\{\texttt{host\_funder},
         \texttt{host\_fundee}\}$ respectively
         \State $\mathit{State} \gets \textsc{open virtual}$
-        \State output (\textsc{ok}) to \texttt{host\_funder}
+        \State output (\textsc{ok}, \texttt{keys}) to \texttt{host\_funder}
       \EndIndent
       \Statex
 

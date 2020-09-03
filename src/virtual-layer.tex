@@ -5,7 +5,22 @@
       \texttt{fundee}), (\texttt{host\_funder}, \texttt{host\_fundee}),
       \textsc{pcn}, \textit{vid}):
       \Indent
+        \State ensure \texttt{host\_funder} = \alice{} \Comment{we are hosting
+        the funder}
+        \State send (\textsc{openVirtual}, $c$, \texttt{fundee},
+        \texttt{host\_fundee}) to \texttt{funder}, ensure reply is (\textsc{ok},
+        $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$)
+        \State $(\textit{pk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{rem}}) \gets
+        \textsc{virt.circulateVirtualKeys}(\texttt{hops})$
+        \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
+        $(\textit{pk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{rem}})$,
+        $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$) returns (\textsc{ok})
+        \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops},
+        $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$) returns (\textsc{ok})
+        \State ensure \textsc{virt.circulateRevocations}(\texttt{hops}) returns
+        (\textsc{ok})
         \State \Return (\textsc{ok})
+      \EndIndent
       \Statex
 
       \State \textsc{close}($P$):
