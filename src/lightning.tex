@@ -117,33 +117,6 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- open virtual}
     \begin{algorithmic}[1]
-      \State \textsc{virtualKeys}($c$, \texttt{fundee}, \texttt{host\_funder},
-      \texttt{host\_fundee}): \Comment{callable by other ITMs}
-      \Indent
-        \State send (\textsc{is parent}, caller, \alice) to \gtrust and ensure
-        reply is (\textsc{is parent}, caller, \alice, $\true$) \Comment{ensure
-        caller is trusted}
-        \State ensure super.\textit{State} = \textsc{init} \Comment{``super'':
-        storage of enclosing protocol}
-        \State store $c$, \texttt{fundee}, \texttt{host\_funder},
-        \texttt{host\_fundee}, \textit{vid}
-        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$
-        \If{ideal world}
-          \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$
-        \Else \: \Comment{real world}
-          \State send (\textsc{request virtual key}, $pk_{A, F}$, $c$,
-          \texttt{host\_fundee}) to \texttt{fundee}
-          \State \Comment{colored code is run by \texttt{fundee}. Validation is
-          implicit}
-          \State \remotecode{ensure super.\textit{State} = \textsc{init}}
-          \State \remotecode{store $pk_{A, F}$, $c$, \texttt{host\_fundee}}
-          \State \remotecode{$(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$}
-          \State \remotecode{reply (\textsc{deliver virtual key}, $pk_{B, F}$)}
-        \EndIf
-        \State \Return $(pk_{A, F}, pk_{B, F})$
-      \EndIndent
-      \Statex
-
       \State \textsc{openVirtual}(\texttt{funding\_output}): \TODO{change
       signature to fit \textsc{virt.fund}(), change implementation to generate
       one commiment TX per hop OR understand how to do it more cheaply (c.f.
