@@ -23,6 +23,33 @@
       \EndIndent
       \Statex
 
+      \State \textsc{circulateVirtualKeys}(\texttt{hops}):
+      \Indent
+        \State \Return (\textsc{ok})
+      \EndIndent
+      \Statex
+
+      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops},
+      $(\textit{pk}_\mathrm{loc}, \textit{pk}_\mathrm{rem})$, $(\textit{pk}_{A,
+      V}, \textit{pk}_{B, V})$):
+      \Indent
+        \State \Return (\textsc{ok})
+      \EndIndent
+      \Statex
+
+      \State \textsc{circulateFundingSigs}(\texttt{hops}, $(\textit{pk}_{A, V},
+      \textit{pk}_{B, V})$):
+      \Indent
+        \State \Return (\textsc{ok})
+      \EndIndent
+      \Statex
+
+      \State \textsc{circulateRevocations}(\texttt{hops}):
+      \Indent
+        \State \Return (\textsc{ok})
+      \EndIndent
+      \Statex
+
       \State \textsc{close}($P$):
         \TODO{continue}
         \TODO{handle arbitrarily nested virtuals (now we only handle one level
