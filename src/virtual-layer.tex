@@ -15,7 +15,6 @@
         \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}) returns
         (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
-        $(\textit{pk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{rem}})$,
         $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$) returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops},
         $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$) returns (\textsc{ok})
@@ -59,11 +58,49 @@
       \EndIndent
       \Statex
 
-      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops},
-      $(\textit{pk}_\mathrm{loc}, \textit{pk}_\mathrm{rem})$, $(\textit{pk}_{A,
-      V}, \textit{pk}_{B, V})$):
+      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops}, $(\textit{pk}_{A,
+      V}, \textit{pk}_{B, V})$, $\mathrm{sigs}_{\mathrm{byLeft}}$):
       \Indent
-        \State \Return (\textsc{ok})
+        \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
+        are not \texttt{host\_funder}}
+          \State create all TXs that need $\mathrm{sigs}_{\mathrm{byLeft}}$
+          \TODO{}
+          \State verify $\mathrm{sigs}_{\mathrm{byLeft}}$ on TXs \TODO{}
+          \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
+          \texttt{host\_fundee}}
+            \State send (\textsc{virtualSigsForward}, \texttt{hops}[1:],
+            $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
+            \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
+            \State \trustedcode{create all right's TXs that need our sigs and sign
+            them for $\mathrm{sigs}_{\mathrm{toRight}}$} \TODO{}
+            \State \trustedcode{call \textsc{virt.circulateVirtualSigs}($c$,
+            \texttt{hops}, $\mathrm{sigs}_{\mathrm{toRight}}$) of
+            \texttt{hops}[0].\bob and assign reply to
+            $\mathrm{sigs}_{\mathrm{byRight}}$}
+            \State \trustedcode{create all TXs that need
+            $\mathrm{sigs}_{\mathrm{byRight}}$} \TODO{}
+            \State \trustedcode{verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs}
+            \TODO{}
+            \State \trustedcode{reply (\textsc{virtualSigsBack},
+            $\mathrm{sigs}_{\mathrm{byRight}}$)} \Comment{sibling needs
+            $\mathrm{sigs}_{\mathrm{byRight}}$ for closing}
+          \EndIf
+        \Else \: \Comment{we are \texttt{host\_funder}}
+          \State create all right's TXs that need our sigs and sign them for
+          $\mathrm{sigs}_{\mathrm{toRight}}$ \TODO{}
+          \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
+          $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
+          assign reply to $\mathrm{sigs}_{\mathrm{byRight}}$
+          \State create all TXs that need $\mathrm{sigs}_{\mathrm{byRight}}$
+          \TODO{}
+          \State verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs \TODO{}
+          \State \Return (\textsc{ok})
+        \EndIf
+        \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given}
+          \State create all left's TXs that need our sigs and sign
+          them for $\mathrm{sigs}_{\mathrm{toLeft}}$ \TODO{}
+          \State \Return $\mathrm{sigs}_{\mathrm{forLeft}}$
+        \EndIf
       \EndIndent
       \Statex
 
