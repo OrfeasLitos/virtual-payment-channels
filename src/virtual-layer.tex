@@ -7,11 +7,13 @@
       \Indent
         \State ensure \texttt{host\_funder} = \alice{} \Comment{we are hosting
         the funder}
+        \State ensure $\mathrm{len}(\texttt{hops}) \geq 2$ \Comment{no point in
+        opening a virtual over 1 channel}
         \State send (\textsc{openVirtual}, $c$, \texttt{fundee},
         \texttt{host\_fundee}) to \texttt{funder}, ensure reply is (\textsc{ok},
         $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$)
-        \State $(\textit{pk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{rem}}) \gets
-        \textsc{virt.circulateVirtualKeys}(\texttt{hops})$
+        \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}) returns
+        (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
         $(\textit{pk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{rem}})$,
         $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$) returns (\textsc{ok})
@@ -23,9 +25,37 @@
       \EndIndent
       \Statex
 
-      \State \textsc{circulateVirtualKeys}(\texttt{hops}):
+      \State \textsc{circulateVirtualKeys}(\texttt{hops},
+      $\textit{pk}_{\mathrm{left}}$):
       \Indent
-        \State \Return (\textsc{ok})
+        \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
+        \State $(\textit{sk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{loc}}) \gets
+        \textsc{keyGen}()$
+        \If{$\textit{pk}_{\mathrm{left}}$ is given as argument} \Comment{we are
+        not \texttt{host\_funder}}
+          \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
+          \texttt{host\_fundee}}
+            \State send (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
+            $\textit{pk}_{\mathrm{left}}$, $(\textit{sk}_{\mathrm{loc}},
+            \textit{pk}_{\mathrm{loc}})$) to \texttt{hops}[1].\alice{}
+            \Comment{sibling}
+            \State \trustedcode{store $\textit{pk}_{\mathrm{left}},
+            (\textit{sk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{loc}})$}
+            \State \trustedcode{call
+            \textsc{virt.circulateVirtualKeys}(\texttt{hops},
+            $\textit{pk}_{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
+            reply to $\textit{pk}_{\mathrm{right}}$}
+            \State \trustedcode{reply (\textsc{VirtualKeysBack},
+            $\textit{pk}_{\mathrm{right}}$)}
+            \State store $\textit{pk}_{\mathrm{right}}$
+          \EndIf
+          \State \Return $\textit{pk}_{\mathrm{loc}}$
+        \Else \: \Comment{we are \texttt{host\_funder}}
+          \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops},
+          $\textit{pk}_{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
+          reply to $\textit{pk}_{\mathrm{right}}$
+          \State \Return (\textsc{ok})
+        \EndIf
       \EndIndent
       \Statex
 
