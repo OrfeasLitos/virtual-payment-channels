@@ -56,8 +56,15 @@
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:keys}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
       \State \textsc{circulateVirtualSigs}($c$, \texttt{hops}, $(\pk{A,
       V}, \pk{B, V})$, $\mathrm{sigs}_{\mathrm{byLeft}}$):
       \Indent
@@ -104,6 +111,15 @@
       \EndIndent
       \Statex
 
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:virtual-sigs}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
       \State \textsc{circulateFundingSigs}(\texttt{hops}, $(\pk{A, V},
       \pk{B, V})$):
       \Indent
