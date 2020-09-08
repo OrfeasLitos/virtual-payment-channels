@@ -125,63 +125,61 @@
       $\pk{\mathrm{right}, \mathrm{guest}, \mathrm{fast}}$, $\pk{\mathrm{right},
       \mathrm{guest}, \mathrm{slow}}$, $\pk{\mathrm{loc}, \mathrm{out}}$):
       \Indent
-        \State $\texttt{left\_fund} \gets (c_{\mathrm{left}},
-        2/\{\pk{\mathrm{left}, \mathrm{fund}}, \pk{\mathrm{loc},
-        \mathrm{fund}}\})$
-        \State $\texttt{right\_fund} \gets (c_{\mathrm{right}},
-        2/\{\pk{\mathrm{sib}, \mathrm{fund}}, \pk{\mathrm{right},
-        \mathrm{fund}}\})$
-        \State $\texttt{left\_virt\_full\_fast} \gets (c_{\mathrm{left}},
-        2/\{\pk{\mathrm{left}, \mathrm{virt}, \mathrm{fast}}, \pk{\mathrm{loc},
-        \mathrm{virt}, \mathrm{fast}}\})$
-        \State $\texttt{left\_virt\_full\_slow} \gets (c_{\mathrm{left}},
-        2/\{\pk{\mathrm{left}, \mathrm{virt}, \mathrm{slow}}, \pk{\mathrm{loc},
-        \mathrm{virt}, \mathrm{slow}}\})$
-        \State $\texttt{left\_virt\_less\_fast} \gets (c_{\mathrm{left}} -
-        c_{\mathrm{guest}}, 2/\{\pk{\mathrm{left}, \mathrm{virt},
-        \mathrm{fast}}, \pk{\mathrm{loc}, \mathrm{virt}, \mathrm{fast}}\})$
-        \State $\texttt{left\_virt\_less\_slow} \gets (c_{\mathrm{left}} -
-        c_{\mathrm{guest}}, 2/\{\pk{\mathrm{left}, \mathrm{virt},
-        \mathrm{slow}}, \pk{\mathrm{loc}, \mathrm{virt}, \mathrm{slow}}\})$
-        \State $\texttt{right\_virt\_full\_fast} \gets (c_{\mathrm{right}},
-        2/\{\pk{\mathrm{sib}, \mathrm{virt}, \mathrm{fast}}, \pk{\mathrm{right},
-        \mathrm{virt}, \mathrm{fast}}\})$
-        \State $\texttt{right\_virt\_full\_slow} \gets (c_{\mathrm{right}},
-        2/\{\pk{\mathrm{sib}, \mathrm{virt}, \mathrm{slow}}, \pk{\mathrm{right},
-        \mathrm{virt}, \mathrm{slow}}\})$
-        \State $\texttt{right\_virt\_less\_fast} \gets (c_{\mathrm{right}} -
-        c_{\mathrm{guest}}, 2/\{\pk{\mathrm{sib}, \mathrm{virt}, \mathrm{fast}},
-        \pk{\mathrm{right}, \mathrm{virt}, \mathrm{fast}}\})$
-        \State $\texttt{right\_virt\_less\_slow} \gets (c_{\mathrm{right}} -
-        c_{\mathrm{guest}}, 2/\{\pk{\mathrm{sib}, \mathrm{virt}, \mathrm{slow}},
-        \pk{\mathrm{right}, \mathrm{virt}, \mathrm{slow}}\})$
-        \State $\texttt{guest\_fast} \gets (c_{\mathrm{guest}},
-        2/\{\pk{\mathrm{left}, \mathrm{guest}, \mathrm{fast}},
-        \pk{\mathrm{right}, \mathrm{guest}, \mathrm{fast}}\})$
-        \State $\texttt{guest\_slow} \gets (c_{\mathrm{guest}},
-        2/\{\pk{\mathrm{left}, \mathrm{guest}, \mathrm{slow}},
-        \pk{\mathrm{right}, \mathrm{guest}, \mathrm{slow}}\})$
+        \State $\texttt{left\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund}},
+        \pk{\mathrm{loc}, \mathrm{fund}}\}$
+        \State $\texttt{right\_fund} \gets 2/\{\pk{\mathrm{sib}, \mathrm{fund}},
+        \pk{\mathrm{right}, \mathrm{fund}}\}$
+        \State $\texttt{left\_virt\_fast} \gets 2/\{\pk{\mathrm{left},
+        \mathrm{virt}, \mathrm{fast}}, \pk{\mathrm{loc}, \mathrm{virt},
+        \mathrm{fast}}\}$
+        \State $\texttt{left\_virt\_slow} \gets 2/\{\pk{\mathrm{left},
+        \mathrm{virt}, \mathrm{slow}}, \pk{\mathrm{loc}, \mathrm{virt},
+        \mathrm{slow}}\}$
+        \State $\texttt{right\_virt\_fast} \gets 2/\{\pk{\mathrm{sib},
+        \mathrm{virt}, \mathrm{fast}}, \pk{\mathrm{right}, \mathrm{virt},
+        \mathrm{fast}}\}$
+        \State $\texttt{right\_virt\_slow} \gets 2/\{\pk{\mathrm{sib},
+        \mathrm{virt}, \mathrm{slow}}, \pk{\mathrm{right}, \mathrm{virt},
+        \mathrm{slow}}\}$
+        \State $\texttt{guest\_fast} \gets 2/\{\pk{\mathrm{left},
+        \mathrm{guest}, \mathrm{fast}}, \pk{\mathrm{right}, \mathrm{guest},
+        \mathrm{fast}}\}$
+        \State $\texttt{guest\_slow} \gets 2/\{\pk{\mathrm{left},
+        \mathrm{guest}, \mathrm{slow}}, \pk{\mathrm{right}, \mathrm{guest},
+        \mathrm{slow}}\}$
+        \State $\texttt{left\_out} \gets \texttt{left\_virt\_fast} \vee
+        (\texttt{left\_virt\_slow} + t)$
+        \State $\texttt{right\_out} \gets \texttt{right\_virt\_fast} \vee
+        (\texttt{right\_virt\_slow} + t)$
+        \State $\texttt{guest\_out} \gets \texttt{guest\_virt\_fast} \vee
+        (\texttt{guest\_virt\_slow} + t)$
         \State $\mathrm{TX}_{\mathrm{none}} \gets$ TX \{inputs:
-        (\texttt{left\_fund}, \texttt{right\_fund}), outputs:
-        (\texttt{left\_virt\_less\_fast} $\vee$ $(\texttt{left\_virt\_less\_slow}
-        + t)$, \texttt{right\_virt\_full\_fast} $\vee$
-        $(\texttt{right\_virt\_full\_slow} + t)$,
-        \texttt{guest\_fast} $\vee$ $(\texttt{guest\_slow} + t)$)\}
+        (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}}$,
+        \texttt{right\_fund})), outputs: (($c_{\mathrm{left}} -
+        c_{\mathrm{guest}}$, \texttt{left\_out}), ($c_{\mathrm{right}}$,
+        \texttt{right\_out}), ($c_{\mathrm{guest}}$, \texttt{guest\_out}))\}
         \State $\mathrm{TX}_{\mathrm{left}} \gets$ TX \{inputs:
-        (\texttt{left\_virt\_less\_fast}, \texttt{right\_fund}), outputs:
-        (\texttt{left\_virt\_less}, \texttt{right\_virt\_full})\}
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{left\_virt\_fast}),
+        ($c_{\mathrm{right}}$, \texttt{right\_fund})), outputs:
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{left\_out}),
+        ($c_{\mathrm{right}}$, \texttt{right\_out}))\}
         \State $\mathrm{TX}_{\mathrm{right}} \gets$ TX \{inputs:
-        (\texttt{left\_fund}, \texttt{right\_virt\_less}),
-        outputs: (\texttt{left\_virt\_full},
-        \texttt{right\_virt\_less})\}
+        (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}} -
+        c_{\mathrm{guest}}$, \texttt{right\_virt\_fast}), outputs:
+        (($c_{\mathrm{left}}$, \texttt{left\_out}), ($c_{\mathrm{right}} -
+        c_{\mathrm{guest}}$, \texttt{right\_out}))\}
         \State $\mathrm{TX}_{\mathrm{both}} \gets$ TX \{inputs:
-        (\texttt{left\_virt\_less}, \texttt{right\_virt\_less},
-        \texttt{guest}), outputs: (\texttt{left\_virt\_less},
-        \texttt{right\_virt\_less}, ($c_{\mathrm{guest}},
-        \pk{\mathrm{loc}, \mathrm{out}}$)\}
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{left\_virt\_fast}),
+        ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{right\_virt\_fast}),
+        ($c_{\mathrm{guest}}$, \texttt{guest\_fast})), outputs:
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{left\_out}),
+        ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{right\_out}),
+        ($c_{\mathrm{guest}}, \pk{\mathrm{loc}, \mathrm{out}}$)\}
         \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
         $\mathrm{TX}_{\mathrm{left}}$, $\mathrm{TX}_{\mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{both}}$)
+        $\mathrm{TX}_{\mathrm{both}}$, \TODO{add commitment txs: there's
+        probably an undesirable, but an elegant solution may be just around the
+        corner})
       \EndIndent
     \end{algorithmic}
   \end{processbox}
