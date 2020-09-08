@@ -1,21 +1,21 @@
 \begin{figure}[H]
   \begin{simulatorbox}{\simulator -- Pt. 1}
     \begin{algorithmic}[1]
-      \State On $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
+      \State On $(\textsc{open}, c_F, \pk{A, \mathrm{out}}, \pk{B,
       \mathrm{out}}, F, \mathrm{sig}_F \alice)$ by \fchan: \Comment{both honest}
       \Indent
-        \State simulate \alice receiving input $(\textsc{open}, c_F, pk_{A,
-        \mathrm{out}}, pk_{B, \mathrm{out}})$ by \environment
+        \State simulate \alice receiving input $(\textsc{open}, c_F, \pk{A,
+        \mathrm{out}}, \pk{B, \mathrm{out}})$ by \environment
         \State ensure simulated \alice inputs (\textsc{submit}, $(F',
         \mathrm{sig}_{F'})$) to \ledger
         \State input (\textsc{submit}, $(F, \mathrm{sig}_F)$) to \ledger
       \EndIndent
       \Statex
 
-      \State On $(\textsc{open}, c_F, pk_{A, \mathrm{out}}, pk_{B,
-      \mathrm{out}}, pk_{B, F}, \bob)$ by \fchan: \Comment{\alice corrupted}
+      \State On $(\textsc{open}, c_F, \pk{A, \mathrm{out}}, \pk{B,
+      \mathrm{out}}, \pk{B, F}, \bob)$ by \fchan: \Comment{\alice corrupted}
       \Indent
-        \State send LN message (\textsc{open}, $pk_{B, F}$) to \alice and relay
+        \State send LN message (\textsc{open}, $\pk{B, F}$) to \alice and relay
         reply to \fchan \TODO{change msg to fit LN, ensure \alice doesn't see a
         difference from real world}
       \EndIndent

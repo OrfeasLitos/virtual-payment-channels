@@ -11,13 +11,13 @@
         opening a virtual over 1 channel}
         \State send (\textsc{openVirtual}, $c$, \texttt{fundee},
         \texttt{host\_fundee}) to \texttt{funder}, ensure reply is (\textsc{ok},
-        $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$)
+        $(\pk{A, V}, \pk{B, V})$)
         \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}) returns
         (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
-        $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$) returns (\textsc{ok})
+        $(\pk{A, V}, \pk{B, V})$) returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops},
-        $(\textit{pk}_{A, V}, \textit{pk}_{B, V})$) returns (\textsc{ok})
+        $(\pk{A, V}, \pk{B, V})$) returns (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}(\texttt{hops}) returns
         (\textsc{ok})
         \State \Return (\textsc{ok})
@@ -25,41 +25,41 @@
       \Statex
 
       \State \textsc{circulateVirtualKeys}(\texttt{hops},
-      $\textit{pk}_{\mathrm{left}}$):
+      $\pk{\mathrm{left}}$):
       \Indent
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
-        \State $(\textit{sk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{loc}}) \gets
+        \State $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}}) \gets
         \textsc{keyGen}()$
-        \If{$\textit{pk}_{\mathrm{left}}$ is given as argument} \Comment{we are
+        \If{$\pk{\mathrm{left}}$ is given as argument} \Comment{we are
         not \texttt{host\_funder}}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
             \State send (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
-            $\textit{pk}_{\mathrm{left}}$, $(\textit{sk}_{\mathrm{loc}},
-            \textit{pk}_{\mathrm{loc}})$) to \texttt{hops}[1].\alice{}
+            $\pk{\mathrm{left}}$, $(\sk{\mathrm{loc}},
+            \pk{\mathrm{loc}})$) to \texttt{hops}[1].\alice{}
             \Comment{sibling}
-            \State \trustedcode{store $\textit{pk}_{\mathrm{left}},
-            (\textit{sk}_{\mathrm{loc}}, \textit{pk}_{\mathrm{loc}})$}
+            \State \trustedcode{store $\pk{\mathrm{left}},
+            (\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$}
             \State \trustedcode{call
             \textsc{virt.circulateVirtualKeys}(\texttt{hops},
-            $\textit{pk}_{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
-            reply to $\textit{pk}_{\mathrm{right}}$}
+            $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
+            reply to $\pk{\mathrm{right}}$}
             \State \trustedcode{reply (\textsc{VirtualKeysBack},
-            $\textit{pk}_{\mathrm{right}}$)}
-            \State store $\textit{pk}_{\mathrm{right}}$
+            $\pk{\mathrm{right}}$)}
+            \State store $\pk{\mathrm{right}}$
           \EndIf
-          \State \Return $\textit{pk}_{\mathrm{loc}}$
+          \State \Return $\pk{\mathrm{loc}}$
         \Else \: \Comment{we are \texttt{host\_funder}}
           \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops},
-          $\textit{pk}_{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
-          reply to $\textit{pk}_{\mathrm{right}}$
+          $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
+          reply to $\pk{\mathrm{right}}$
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
       \Statex
 
-      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops}, $(\textit{pk}_{A,
-      V}, \textit{pk}_{B, V})$, $\mathrm{sigs}_{\mathrm{byLeft}}$):
+      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops}, $(\pk{A,
+      V}, \pk{B, V})$, $\mathrm{sigs}_{\mathrm{byLeft}}$):
       \Indent
         \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
         are not \texttt{host\_funder}}
@@ -104,8 +104,8 @@
       \EndIndent
       \Statex
 
-      \State \textsc{circulateFundingSigs}(\texttt{hops}, $(\textit{pk}_{A, V},
-      \textit{pk}_{B, V})$):
+      \State \textsc{circulateFundingSigs}(\texttt{hops}, $(\pk{A, V},
+      \pk{B, V})$):
       \Indent
         \State \Return (\textsc{ok})
       \EndIndent
@@ -125,15 +125,15 @@
           \If{$\mathtt{funded} \neq \emptyset$}
             \State \TODO{prepare virtual layer TX $V$ and its signature --
             careful, may be unneded!}
-            \State $C \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
-            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
-            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, V})$
-            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, V})$
+            \State $C \gets$ TX \{input: $V$.output, outputs: $(c_A, \pk{A,
+            \mathrm{out}} \wedge t), (c_B, \pk{B, \mathrm{out}})$\}
+            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, \sk{B, V})$
+            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, \sk{A, V})$
           \Else
-            \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-            \mathrm{out}} \wedge t), (c_B, pk_{B, \mathrm{out}})$\}
-            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, sk_{B, F})$
-            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, sk_{A, F})$
+            \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, \pk{A,
+            \mathrm{out}} \wedge t), (c_B, \pk{B, \mathrm{out}})$\}
+            \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, \sk{B, F})$
+            \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, \sk{A, F})$
           \EndIf
         \EndIf \: \Comment{if \bob is corrupted, we already have $C$ and
         $\mathrm{sig}_{B, C}$}
@@ -155,15 +155,15 @@
             \If{$\texttt{funded} \neq \emptyset$}
               \State \TODO{prepare virtual layer TXs $V_A, V_B$ and their
               signatures}
-              \State $C' \gets$ TX \{input: $V$.output, outputs: $(c_A, pk_{A,
-              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
-              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, V})$;
-              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, V})$
+              \State $C' \gets$ TX \{input: $V$.output, outputs: $(c_A, \pk{A,
+              \mathrm{out}}), (c_B, \pk{B, \mathrm{out}} \wedge t)$\}
+              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', \sk{A, V})$;
+              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', \sk{B, V})$
             \Else \: \Comment{there are no virtual channels on top of us}
-              \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, pk_{A,
-              \mathrm{out}}), (c_B, pk_{B, \mathrm{out}} \wedge t)$\}
-              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', sk_{A, F})$;
-              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', sk_{B, F})$
+              \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, \pk{A,
+              \mathrm{out}}), (c_B, \pk{B, \mathrm{out}} \wedge t)$\}
+              \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', \sk{A, F})$;
+              $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', \sk{B, F})$
             \EndIf
             \State provide delayed output (\textsc{peer closed virtual}, $(V_B,
             \mathrm{sig}_{A, V_B}, \mathrm{sig}_{B, V_B})$, $(C',

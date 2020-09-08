@@ -137,7 +137,7 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State ensure (($c_L$, $c_R$), hops, (\charlie, \dave), (\frank,
         \george), \texttt{keys}, \textit{vid}) $\in \texttt{virtuals}$,
         with $\frank \in \{\alice, \bob\}$ \Comment{no stored
-        commitment TX in entry yet} \TODO{keys = $pk_{A, V}, pk_{B, V}$}
+        commitment TX in entry yet} \TODO{keys = $\pk{A, V}, \pk{B, V}$}
         \State ensure \textsc{virt.closed}($c_L$, $c_R$, $(\mathrm{tx}_i,
         (\sigma_{ij})_j)_i$) returns (\textsc{ok})
         \State add message contents to \texttt{virtuals} entry

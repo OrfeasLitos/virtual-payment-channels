@@ -4,7 +4,7 @@
       \State \textsc{init}(\texttt{keys}, \dave):
       \Indent
         \State ensure \dave = \alice
-        \State $pk_{A, \mathrm{out}} \gets \texttt{keys}$
+        \State $\pk{A, \mathrm{out}} \gets \texttt{keys}$
         \State \Return (\textsc{ok})
       \EndIndent
       \Statex
@@ -13,19 +13,19 @@
       more stuff fits there}
       \Indent
         \State ensure super.\textit{State} = \textsc{init}
-        \State $(sk_{\mathrm{chain}}, pk_{\mathrm{chain}}) \gets
+        \State $(\sk{\mathrm{chain}}, \pk{\mathrm{chain}}) \gets
         \textsc{keyGen}()$
-        \State output (\textsc{public key}, $pk_{\mathrm{chain}}$) to
+        \State output (\textsc{public key}, $\pk{\mathrm{chain}}$) to
         \texttt{funder}
         \While{$\nexists \mathrm{tx} \in \Sigma, c_{\mathrm{chain}}:
-        (c_{\mathrm{chain}}, pk_{\mathrm{chain}}) \in \mathrm{tx.outputs}$}
+        (c_{\mathrm{chain}}, \pk{\mathrm{chain}}) \in \mathrm{tx.outputs}$}
           \State wait\footnote{while waiting, all other messages by \dave are
           ignored} for input (\textsc{check top up}) by \texttt{funder}
           \State input (\textsc{read}) to \ledger as \texttt{funder} and assign
           ouput to $\Sigma$
         \EndWhile
         \State $\texttt{base\_output} \gets (c_{\mathrm{chain}},
-        pk_{\mathrm{chain}})$
+        \pk{\mathrm{chain}})$
         \State \Return (\textsc{ok}, $c_{\mathrm{chain}}$)
       \EndIndent
     \end{algorithmic}
@@ -40,67 +40,67 @@
       \State \textsc{openBase}(\texttt{fundee}):
       \Indent
         \State ensure super.\textit{State} = \textsc{topped up}
-        \State $(sk_{A, F}, pk_{A, F}) \gets \textsc{keyGen}()$;
-        $(sk_{A, R}, pk_{A, R}) \gets \textsc{keyGen}()$
+        \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
+        $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
         \If{ideal world}
-          \State $(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$; $(sk_{B, R},
-          pk_{B, R}) \gets \textsc{keyGen}()$
+          \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
+          \pk{B, R}) \gets \textsc{keyGen}()$
         \Else \: \Comment{real world}
-          \State send (\textsc{open base channel}, $c_{\mathrm{chain}}$, $pk_{A,
-          F}$, $pk_{A, R}$, $pk_{A, \mathrm{out}}$) to \texttt{fundee}
+          \State send (\textsc{open base channel}, $c_{\mathrm{chain}}$, $\pk{A,
+          F}$, $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
           \State \Comment{colored code is run by \texttt{fundee}. Validation is
           implicit}
           \State \remotecode{ensure super.\textit{State} = \textsc{init}}
           \Comment{``super'': storage of enclosing protocol}
-          \State \remotecode{store $pk_{A, F}$, $pk_{A, R}$, $pk_{A,
+          \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
           \mathrm{out}}$}
-          \State \remotecode{$(sk_{B, F}, pk_{B, F}) \gets \textsc{keyGen}()$};
-          $(sk_{B, R}, pk_{B, R}) \gets \textsc{keyGen}()$
-          \State \remotecode{reply (\textsc{accept base channel}, $pk_{B,
-          F}$, $pk_{B, R}$, $pk_{B, \mathrm{out}}$)}
-          \State store $pk_{B, F}$, $pk_{B, R}$, $pk_{B, \mathrm{out}}$
+          \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$};
+          $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$
+          \State \remotecode{reply (\textsc{accept base channel}, $\pk{B,
+          F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
+          \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
         \EndIf
         \State $F \gets$ TX \{input: \texttt{base\_output}, output:
-        $(c_{\mathrm{chain}}, 2/\{pk_{A, F}, pk_{B, F}\})$\}
+        $(c_{\mathrm{chain}}, 2/\{\pk{A, F}, \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
         \If{real world}
           \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, ($pk_{A, \mathrm{out}}$ $\wedge$
-          \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$ $pk_{B, R}$)), ($0$,
-          $pk_{B, \mathrm{out}}$)\}
+          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}}$ $\wedge$
+          \texttt{delay}) $\vee$ ($\pk{A, R}$ $\wedge$ $\pk{B, R}$)), ($0$,
+          $\pk{B, \mathrm{out}}$)\}
           \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, ($pk_{B,
-          \mathrm{out}}$ $\wedge$ \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$
-          $pk_{B, R}$))\}
-          \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, sk_{A,
+          ($c_{\mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
+          \mathrm{out}}$ $\wedge$ \texttt{delay}) $\vee$ ($\pk{A, R}$ $\wedge$
+          $\pk{B, R}$))\}
+          \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A,
           F})$
           \State send (\textsc{funding created}, \texttt{base\_output},
           $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
           \State \Comment{implicitly verify that this is a continuation of the
           previous exchange}
           \State \remotecode{$F \gets$ TX \{input: \texttt{base\_output}, output:
-          $(c_{\mathrm{chain}}, 2/\{pk_{A, F}, pk_{B, F}\})$\}}
+          $(c_{\mathrm{chain}}, 2/\{\pk{A, F}, \pk{B, F}\})$\}}
           \State \remotecode{$C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $pk_{A, \mathrm{out}}$), ($0$, ($pk_{B,
-          \mathrm{out}}$ $\wedge$ \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$
-          $pk_{B, R}$))\}}
+          ($c_{\mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
+          \mathrm{out}}$ $\wedge$ \texttt{delay}) $\vee$ ($\pk{A, R}$ $\wedge$
+          $\pk{B, R}$))\}}
           \State \remotecode{ensure \textsc{verify}($C_{B, 0}$,
-          $\mathrm{sig}_{A, C, 0}$, $pk_{A, F}$) = True}
+          $\mathrm{sig}_{A, C, 0}$, $\pk{A, F}$) = True}
           \State \remotecode{$C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, ($pk_{A, \mathrm{out}}$ $\wedge$
-          \texttt{delay}) $\vee$ ($pk_{A, R}$ $\wedge$ $pk_{B, R}$)), ($0$,
-          $pk_{B, \mathrm{out}}$)\}}
+          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}}$ $\wedge$
+          \texttt{delay}) $\vee$ ($\pk{A, R}$ $\wedge$ $\pk{B, R}$)), ($0$,
+          $\pk{B, \mathrm{out}}$)\}}
           \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
-          0}, sk_{B, F})$}
+          0}, \sk{B, F})$}
           \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
           C, 0}$)}
           \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
-          $pk_{B, F}$) = True
+          $\pk{B, F}$) = True
         \EndIf
-        \State $\mathrm{sig}_F \gets \textsc{sign}(F, sk_{\mathrm{chain}})$
+        \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{\mathrm{chain}})$
         \label{code:ln:base:sign-funding}
-        \State send $(\textsc{open}, c_{\mathrm{chain}}, pk_{A, \mathrm{out}},
-        pk_{B, \mathrm{out}}, F, \mathrm{sig}_F, \texttt{funder})$ to \adversary
+        \State send $(\textsc{open}, c_{\mathrm{chain}}, \pk{A, \mathrm{out}},
+        \pk{B, \mathrm{out}}, F, \mathrm{sig}_F, \texttt{funder})$ to \adversary
         \While{$F \notin \Sigma$}
           \State wait for input (\textsc{check funding}) by \texttt{funder}
           \State input (\textsc{read}) to \ledger as \texttt{funder} and assign
@@ -122,13 +122,13 @@
       one commiment TX per hop OR understand how to do it more cheaply (c.f.
       ANYPREVOUT?)}
       \Indent
-        \State ensure \texttt{funding\_output} = 2/\{$pk_{A, F}, pk_{B, F}$\}
+        \State ensure \texttt{funding\_output} = 2/\{$\pk{A, F}, \pk{B, F}$\}
         \If{real world}
           \State do funding ceremony as in base channel
           (Fig.~\ref{code:ln:base},
           lines~\ref{code:ln:base:create-funding}-\ref{code:ln:base:sign-funding})
           \TODO{abstract better}
-          \State \Return $(\textit{pk}_{A, F}, \textit{pk}_{B, F})$
+          \State \Return $(\pk{A, F}, \pk{B, F})$
         \EndIf
         \State \Return (\textsc{ok})
       \EndIndent
@@ -146,43 +146,43 @@
       \Indent
         \State $C_{B, i+1} \gets C_{B, i}$ with $x$ coins moved from \alice's to
         \bob's output
-        \State $\mathrm{sig}_{A, C, i+1} \gets \textsc{sign}(C_{B, i+1}, sk_{A,
+        \State $\mathrm{sig}_{A, C, i+1} \gets \textsc{sign}(C_{B, i+1}, \sk{A,
         F})$ \Comment{kept by \alice}
         \State send (\textsc{pay}, $x$, $\mathrm{sig}_{A, C, i+1}$,
         \textit{payid}) to \bob
         \State \remotecode{$C_{B, i+1} \gets C_{B, i}$ with $x$ coins moved from
         \alice's to \bob's output}
         \State \remotecode{ensure \textsc{verify}($C_{B, i+1}$,
-        $\mathrm{sig}_{A, C, i+1}$, $pk_{A, F}$) = True}
+        $\mathrm{sig}_{A, C, i+1}$, $\pk{A, F}$) = True}
         \State \remotecode{$C_{A, i+1} \gets C_{A, i}$ with $x$ coins moved from
         \alice's to \bob's output}
         \State \remotecode{$\mathrm{sig}_{B, C, i+1} \gets \textsc{sign}(C_{A,
-        i+1}, sk_{B, F})$} \Comment{kept by \bob}
+        i+1}, \sk{B, F})$} \Comment{kept by \bob}
         \State \remotecode{$R_{A, i+1} \gets$ TX \{input: $C_{B,
-        i+1}$.outputs.\alice, output: ($c_B$, $pk_{A, \mathrm{out}}$)\}}
+        i+1}$.outputs.\alice, output: ($c_B$, $\pk{A, \mathrm{out}}$)\}}
         \State \remotecode{$\mathrm{sig}_{B, R, i+1} \gets \textsc{sign}(R_{A,
-        i+1}, sk_{B, R})$}
+        i+1}, \sk{B, R})$}
         \State \remotecode{reply (\textsc{commitment signed}, $\mathrm{sig}_{B,
         C, i+1}$, $\mathrm{sig}_{B, R, i+1}$)}
         \State $C_{A, i+1} \gets C_{A, i}$ with $x$ coins moved from \alice's to
         \bob's output
         \State ensure \textsc{verify}($C_{A, i+1}$, $\mathrm{sig}_{B, C, i+1}$,
-        $pk_{B, F}$) = True
+        $\pk{B, F}$) = True
         \State $R_{A, i+1} \gets$ TX \{input: $C_{B, i+1}$.outputs.\alice,
-        output: ($c_B$, $pk_{A, \mathrm{out}}$)\}
+        output: ($c_B$, $\pk{A, \mathrm{out}}$)\}
         \State ensure \textsc{verify}($R_{A, i+1}$, $\mathrm{sig}_{B, R, i+1}$,
-        $pk_{B, R}$) = True
+        $\pk{B, R}$) = True
         \State $R_{B, i+1} \gets$ TX \{input: $C_{A, i+1}$.outputs.\bob,
-        output: ($c_A$, $pk_{B, \mathrm{out}}$)\}
-        \State $\mathrm{sig}_{A, R, i+1} \gets \textsc{sign}(R_{B, i+1}, sk_{A,
+        output: ($c_A$, $\pk{B, \mathrm{out}}$)\}
+        \State $\mathrm{sig}_{A, R, i+1} \gets \textsc{sign}(R_{B, i+1}, \sk{A,
         R})$
         \State add ($x$, \textit{payid}) to \texttt{paid\_out}
         \State send (\textsc{revoke and ack}, $\mathrm{sig}_{A, R, i+1}$) to
         \bob
         \State \remotecode{$R_{B, i+1} \gets$ TX \{input: $C_{A,
-        i+1}$.outputs.\bob, output: ($c_A$, $pk_{B, \mathrm{out}}$)\}}
+        i+1}$.outputs.\bob, output: ($c_A$, $\pk{B, \mathrm{out}}$)\}}
         \State \remotecode{ensure \textsc{verify}($R_{B, i+1}$,
-        $\mathrm{sig}_{A, R, i+1}$, $pk_{A, R}$) = True}
+        $\mathrm{sig}_{A, R, i+1}$, $\pk{A, R}$) = True}
         \State \remotecode{add ($x$, \textit{payid}) to \texttt{paid\_in}}
       \EndIndent
     \end{algorithmic}
