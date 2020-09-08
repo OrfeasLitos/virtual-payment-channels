@@ -190,7 +190,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \State ensure $\mathit{State} = \textsc{init}$
         \State send (\textsc{is parent}, \texttt{host\_funder}, \alice) to
         \gtrust and ensure reply is (\textsc{is parent}, \texttt{host\_funder},
-        \alice, $\true$) \Comment{ensure caller is trusted}
+        \alice, $\true$) \Comment{ensure caller is trusted} \TODO{rethink if
+        this is needless: we could just assume trust to the 1st person that asks
+        us to \textsc{open virtual}}
         \State ensure \textsc{pcn.openVirtual}(\texttt{fundee},
         \texttt{host\_funder}, \texttt{host\_fundee}, $c$) returns
         (\textsc{ok}, \texttt{keys})
