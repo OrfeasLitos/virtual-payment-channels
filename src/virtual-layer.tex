@@ -130,15 +130,14 @@
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State \textsc{getMidTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{loc}}$,
-      $c_{\mathrm{rem}}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sibRem}}$,
-      $\pk{\mathrm{left}, \mathrm{fund}}$, $\pk{\mathrm{loc}, \mathrm{fund}}$,
-      $\pk{\mathrm{sib}, \mathrm{fund}}$, $\pk{\mathrm{right}, \mathrm{fund}}$,
-      $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
-      $\pk{\mathrm{sib}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
-      $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
-      \mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$,
-      \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem},
-      \texttt{comm\_keys\_sib}, \texttt{comm\_keys\_sib\_rem}):
+      $c_{\mathrm{rem}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
+      $\pk{\mathrm{loc}, \mathrm{fund}}$, $\pk{\mathrm{sib}, \mathrm{fund}}$,
+      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
+      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{sib}, \mathrm{virt}}$,
+      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
+      $\pk{\mathrm{loc}, \mathrm{out}}$, \texttt{comm\_keys\_loc},
+      \texttt{comm\_keys\_rem}):
       \Indent
         \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{guest}} \wedge
         c_{\mathrm{loc}} \geq c_{\mathrm{guest}}$
