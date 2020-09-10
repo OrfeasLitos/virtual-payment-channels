@@ -178,15 +178,12 @@
         \texttt{3} $\wedge$ \texttt{left\_virt}), ($c_{\mathrm{right}} -
         c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{right\_virt}),
         ($c_{\mathrm{guest}}, \pk{\mathrm{loc}, \mathrm{out}}$)\}
-        \State $C_{\mathrm{loc}} \gets \textsc{pcn.getCommTX}(c_{\mathrm{loc}} -
+        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{loc}} -
         c_{\mathrm{guest}}, c_{\mathrm{rem}}, \texttt{comm\_keys\_loc},
         \texttt{comm\_keys\_rem})$
-        \State $C_{\mathrm{sib}} \gets \textsc{pcn.getCommTX}(c_{\mathrm{sib}},
-        c_{\mathrm{sibRem}} - c_{\mathrm{guest}}, \texttt{comm\_keys\_sib},
-        \texttt{comm\_keys\_sib\_rem})$
         \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
         $\mathrm{TX}_{\mathrm{left}}$, $\mathrm{TX}_{\mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{both}}$, $C_{\mathrm{loc}}$, $C_{\mathrm{sib}}$)
+        $\mathrm{TX}_{\mathrm{both}}$, $C$)
       \EndIndent
     \end{algorithmic}
   \end{processbox}
