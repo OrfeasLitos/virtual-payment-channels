@@ -28,6 +28,18 @@
         \pk{\mathrm{chain}})$
         \State \Return (\textsc{ok}, $c_{\mathrm{chain}}$)
       \EndIndent
+      \Statex
+
+      \State \Comment{pure function except for hardcoded $t$, used by
+      \textsc{virt}}
+      \State \textsc{getCommTX}($c_A$, $c_B$, $\pk{A, F}$, $\pk{A,
+      \mathrm{out}}$, $\pk{A, R}$, $\pk{B, F}$, $\pk{B, \mathrm{out}}$, $\pk{B,
+      R}$):
+      \Indent
+        \State \Return TX \{input: ($c_A + c_B$, $2/\{\pk{A, F}, \pk{B, F}\}$),
+        outputs: (($c_A$, $(\pk{A, \mathrm{out}} + t) \vee 2/\{\pk{A, R}, \pk{B,
+        R}\}$), ($c_B$, $\pk{B, \mathrm{out}}$))\}
+      \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}
@@ -37,15 +49,6 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- base}
     \begin{algorithmic}[1]
-      \State \textsc{getCommTX}($c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$, $\pk{A,
-      \mathrm{out}}$, $\pk{B, \mathrm{out}}$, $\pk{A, R}$, $\pk{B, R}$):
-      \Indent
-        \State \Return TX \{input: ($c_A + c_B$, $2/\{\pk{A, F}, \pk{B, F}\}$),
-        outputs: (($c_A$, $(\pk{A, \mathrm{out}} + t) \vee 2/\{\pk{A, R}, \pk{B,
-        R}\}$), ($c_B$, $\pk{B, \mathrm{out}}$))\}
-      \EndIndent
-      \Statex
-
       \State \textsc{openBase}(\texttt{fundee}):
       \Indent
         \State ensure super.\textit{State} = \textsc{topped up}
