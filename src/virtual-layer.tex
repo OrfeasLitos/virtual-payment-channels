@@ -12,19 +12,20 @@
         \State send (\textsc{open virtual}, $c$, \texttt{fundee},
         \texttt{host\_fundee}) to \texttt{funder}, ensure reply is (\textsc{ok},
         $(\pk{A, V}, \pk{B, V})$)
-        \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops})  returns
+        \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
+        V}$, $\pk{B, V}$)) returns (\textsc{ok})
+        \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops})
+        returns (\textsc{ok})
+        \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops}) returns
         (\textsc{ok})
-        \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
-        $(\pk{A, V}, \pk{B, V})$) returns (\textsc{ok})
-        \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops},
-        $(\pk{A, V}, \pk{B, V})$) returns (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}(\texttt{hops}) returns
         (\textsc{ok})
         \State \Return (\textsc{ok})
       \EndIndent
       \Statex
 
-      \State \textsc{circulateVirtualKeys}(\texttt{hops}, $\pk{\mathrm{left}}$):
+      \State \textsc{circulateVirtualKeys}(\texttt{hops}, ($\pk{A, V}$, $\pk{B,
+      V}$), \texttt{left\_virt\_keys}):
       \Indent
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
         \State $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}}) \gets
@@ -54,9 +55,9 @@
           \EndIf
           \State \Return $\pk{\mathrm{loc}}$
         \Else \: \Comment{we are \texttt{host\_funder}}
-          \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops},
-          $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign output to
-          $\pk{\mathrm{right}}$
+          \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
+          V}$, $\pk{B, V}$), $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and
+          assign output to ($\pk{\mathrm{right}}$, $\pk{\mathrm{right}, 2}$)
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
@@ -69,8 +70,8 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
-      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops}, $(\pk{A,
-      V}, \pk{B, V})$, $\mathrm{sigs}_{\mathrm{byLeft}}$):
+      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops},
+      $\mathrm{sigs}_{\mathrm{byLeft}}$):
       \Indent
         \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
         are not \texttt{host\_funder}}
@@ -198,8 +199,7 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
-      \State \textsc{circulateFundingSigs}(\texttt{hops}, $(\pk{A, V},
-      \pk{B, V})$):
+      \State \textsc{circulateFundingSigs}(\texttt{hops}):
       \Indent
         \State \Return (\textsc{ok})
       \EndIndent
