@@ -12,7 +12,7 @@
         \State send (\textsc{open virtual}, $c$, \texttt{fundee},
         \texttt{host\_fundee}) to \texttt{funder}, ensure reply is (\textsc{ok},
         $(\pk{A, V}, \pk{B, V})$)
-        \State ensure \textsc{virt.circulateHostData}(\texttt{hops}) returns
+        \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops})  returns
         (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
         $(\pk{A, V}, \pk{B, V})$) returns (\textsc{ok})
@@ -24,7 +24,7 @@
       \EndIndent
       \Statex
 
-      \State \textsc{circulateHostData}(\texttt{hops}, $\pk{\mathrm{left}}$):
+      \State \textsc{circulateVirtualKeys}(\texttt{hops}, $\pk{\mathrm{left}}$):
       \Indent
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
         \State $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}}) \gets
@@ -33,17 +33,17 @@
         \texttt{host\_funder}}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
-            \State input (\textsc{hostDataForward}, $\texttt{hops}$[1:],
+            \State input (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
             $\pk{\mathrm{left}}$, $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$) to
             \texttt{hops}[1].\alice{} \Comment{sibling}
             \State \trustedcode{store $\pk{\mathrm{left}},
             (\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$}
             \State \trustedcode{call
-            \textsc{virt.circulateHostData}(\texttt{hops}, $\pk{\mathrm{loc}}$)
+            \textsc{virt.circulateVirtualKeys}(\texttt{hops}, $\pk{\mathrm{loc}}$)
             of \texttt{hops}[0].\bob and assign output to $\pk{\mathrm{right}}$}
             \State \trustedcode{$(\texttt{comm\_keys\_loc},
             \texttt{comm\_keys\_rem}) \gets \textsc{pcn.getCommKeys}()$}
-            \State \trustedcode{output (\textsc{HostDataBack},
+            \State \trustedcode{output (\textsc{VirtualKeysBack},
             $\pk{\mathrm{right}}$, $c_{\alice}$, $c_{\bob}$,
             \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})}
             \State store output contents as $\pk{\mathrm{right}}$,
@@ -54,7 +54,7 @@
           \EndIf
           \State \Return $\pk{\mathrm{loc}}$
         \Else \: \Comment{we are \texttt{host\_funder}}
-          \State call \textsc{virt.circulateHostData}(\texttt{hops},
+          \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops},
           $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign output to
           $\pk{\mathrm{right}}$
           \State \Return (\textsc{ok})
