@@ -193,6 +193,12 @@ with all hops of all existing virtuals, we should definitely find another way)}
         \alice, $\true$) \Comment{ensure caller is trusted} \TODO{rethink if
         this is needless: we could just assume trust to the 1st person that asks
         us to \textsc{open virtual}}
+        \State input (\textsc{you are host}, $c$, \texttt{funder},
+        \texttt{fundee}, \texttt{host\_funder}) to \texttt{host\_fundee}
+        \State \trustedcode{ensure $c_A \geq c$}
+        \State \trustedcode{ensure we are not already supporting a virtual
+        channel}
+        \State \trustedcode{output (\textsc{ok})}
         \State ensure \textsc{pcn.openVirtual}(\texttt{fundee},
         \texttt{host\_funder}, \texttt{host\_fundee}, $c$) returns
         (\textsc{ok}, \texttt{keys})
