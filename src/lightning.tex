@@ -74,11 +74,11 @@
         \label{code:ln:base:create-funding}
         \If{real world}
           \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ ($\pk{A,
-          R}$ $\wedge$ $\pk{B, R}$)), ($0$, $\pk{B, \mathrm{out}}$)\}
+          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A,
+          R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
           \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
           ($c_{\mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
-          \mathrm{out}} + t$) $\vee$ ($\pk{A, R}$ $\wedge$ $\pk{B, R}$))\}
+          \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
           \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A,
           F})$
           \State send (\textsc{funding created}, \texttt{base\_output},
@@ -89,12 +89,12 @@
           $(c_{\mathrm{chain}}, 2/\{\pk{A, F}, \pk{B, F}\})$\}}
           \State \remotecode{$C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
           ($c_{\mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
-          \mathrm{out}} + t$) $\vee$ ($\pk{A, R}$ $\wedge$ $\pk{B, R}$))\}}
+          \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}}
           \State \remotecode{ensure \textsc{verify}($C_{B, 0}$,
           $\mathrm{sig}_{A, C, 0}$, $\pk{A, F}$) = True}
           \State \remotecode{$C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ ($\pk{A,
-          R}$ $\wedge$ $\pk{B, R}$)), ($0$, $\pk{B, \mathrm{out}}$)\}}
+          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A,
+          R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
           \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
           0}, \sk{B, F})$}
           \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,

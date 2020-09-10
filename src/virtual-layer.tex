@@ -219,12 +219,12 @@
             \State \TODO{prepare virtual layer TX $V$ and its signature --
             careful, may be unneded!}
             \State $C \gets$ TX \{input: $V$.output, outputs: $(c_A, \pk{A,
-            \mathrm{out}} \wedge t), (c_B, \pk{B, \mathrm{out}})$\}
+            \mathrm{out}} + t), (c_B, \pk{B, \mathrm{out}})$\}
             \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, \sk{B, V})$
             \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, \sk{A, V})$
           \Else
             \State $C \gets$ TX \{input: $F$.output, outputs: $(c_A, \pk{A,
-            \mathrm{out}} \wedge t), (c_B, \pk{B, \mathrm{out}})$\}
+            \mathrm{out}} + t), (c_B, \pk{B, \mathrm{out}})$\}
             \State $\mathrm{sig}_{B, C} \gets \textsc{sign}(C, \sk{B, F})$
             \State $\mathrm{sig}_{A, C} \gets \textsc{sign}(C, \sk{A, F})$
           \EndIf
@@ -249,12 +249,12 @@
               \State \TODO{prepare virtual layer TXs $V_A, V_B$ and their
               signatures}
               \State $C' \gets$ TX \{input: $V$.output, outputs: $(c_A, \pk{A,
-              \mathrm{out}}), (c_B, \pk{B, \mathrm{out}} \wedge t)$\}
+              \mathrm{out}}), (c_B, \pk{B, \mathrm{out}} + t)$\}
               \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', \sk{A, V})$;
               $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', \sk{B, V})$
             \Else \: \Comment{there are no virtual channels on top of us}
               \State $C' \gets$ TX \{input: $F$.output, outputs: $(c_A, \pk{A,
-              \mathrm{out}}), (c_B, \pk{B, \mathrm{out}} \wedge t)$\}
+              \mathrm{out}}), (c_B, \pk{B, \mathrm{out}} + t)$\}
               \State $\mathrm{sig}_{A, C}' \gets \textsc{sign}(C', \sk{A, F})$;
               $\mathrm{sig}_{B, C}' \gets \textsc{sign}(C', \sk{B, F})$
             \EndIf
