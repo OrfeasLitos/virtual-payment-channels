@@ -74,8 +74,8 @@
           \Comment{``super'': storage of enclosing protocol}
           \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
           \mathrm{out}}$}
-          \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$};
-          $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$
+          \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
+          $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
           \State \remotecode{reply (\textsc{accept base channel}, $\pk{B,
           F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
           \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$

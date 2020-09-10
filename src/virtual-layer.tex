@@ -9,7 +9,7 @@
         the funder}
         \State ensure $\mathrm{len}(\texttt{hops}) \geq 2$ \Comment{no point in
         opening a virtual over 1 channel}
-        \State send (\textsc{openVirtual}, $c$, \texttt{fundee},
+        \State send (\textsc{open virtual}, $c$, \texttt{fundee},
         \texttt{host\_fundee}) to \texttt{funder}, ensure reply is (\textsc{ok},
         $(\pk{A, V}, \pk{B, V})$)
         \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}) returns
@@ -30,8 +30,8 @@
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
         \State $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}}) \gets
         \textsc{keyGen}()$
-        \If{$\pk{\mathrm{left}}$ is given as argument} \Comment{we are
-        not \texttt{host\_funder}}
+        \If{$\pk{\mathrm{left}}$ is given as argument} \Comment{we are not
+        \texttt{host\_funder}}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
             \State input (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
