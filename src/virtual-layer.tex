@@ -34,7 +34,7 @@
         not \texttt{host\_funder}}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
-            \State send (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
+            \State input (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
             $\pk{\mathrm{left}}$, $(\sk{\mathrm{loc}},
             \pk{\mathrm{loc}})$) to \texttt{hops}[1].\alice{}
             \Comment{sibling}
@@ -43,8 +43,8 @@
             \State \trustedcode{call
             \textsc{virt.circulateVirtualKeys}(\texttt{hops},
             $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
-            reply to $\pk{\mathrm{right}}$}
-            \State \trustedcode{reply (\textsc{VirtualKeysBack},
+            output to $\pk{\mathrm{right}}$}
+            \State \trustedcode{output (\textsc{VirtualKeysBack},
             $\pk{\mathrm{right}}$)}
             \State store $\pk{\mathrm{right}}$
           \EndIf
@@ -52,7 +52,7 @@
         \Else \: \Comment{we are \texttt{host\_funder}}
           \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops},
           $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and assign
-          reply to $\pk{\mathrm{right}}$
+          output to $\pk{\mathrm{right}}$
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
@@ -75,20 +75,20 @@
           \State verify $\mathrm{sigs}_{\mathrm{byLeft}}$ on TXs \TODO{}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
-            \State send (\textsc{virtualSigsForward}, \texttt{hops}[1:],
+            \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
             $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
             \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
             \State \trustedcode{create all right's TXs that need our sigs and sign
             them for $\mathrm{sigs}_{\mathrm{toRight}}$} \TODO{}
             \State \trustedcode{call \textsc{virt.circulateVirtualSigs}($c$,
             \texttt{hops}, $\mathrm{sigs}_{\mathrm{toRight}}$) of
-            \texttt{hops}[0].\bob and assign reply to
+            \texttt{hops}[0].\bob and assign output to
             $\mathrm{sigs}_{\mathrm{byRight}}$}
             \State \trustedcode{create all TXs that need
             $\mathrm{sigs}_{\mathrm{byRight}}$} \TODO{}
             \State \trustedcode{verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs}
             \TODO{}
-            \State \trustedcode{reply (\textsc{virtualSigsBack},
+            \State \trustedcode{output (\textsc{virtualSigsBack},
             $\mathrm{sigs}_{\mathrm{byRight}}$)} \Comment{sibling needs
             $\mathrm{sigs}_{\mathrm{byRight}}$ for closing}
           \EndIf
@@ -97,7 +97,7 @@
           $\mathrm{sigs}_{\mathrm{toRight}}$ \TODO{}
           \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
           $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
-          assign reply to $\mathrm{sigs}_{\mathrm{byRight}}$
+          assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
           \State create all TXs that need $\mathrm{sigs}_{\mathrm{byRight}}$
           \TODO{}
           \State verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs \TODO{}
