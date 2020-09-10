@@ -30,30 +30,36 @@
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
         \State $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}}) \gets
         \textsc{keyGen}()$
-        \If{$\pk{\mathrm{left}}$ is given as argument} \Comment{we are not
+        \If{\texttt{left\_virt\_keys} is given as argument} \Comment{we are not
         \texttt{host\_funder}}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
             \State input (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
-            $\pk{\mathrm{left}}$, $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$) to
-            \texttt{hops}[1].\alice{} \Comment{sibling}
-            \State \trustedcode{store $\pk{\mathrm{left}},
-            (\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$}
+            ($\pk{A, V}$, $\pk{B, V}$), \texttt{left\_virt\_keys},
+            $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$, ($\pk{A, F}, \pk{B, F}$))
+            to \texttt{hops}[1].\alice{} \Comment{sibling}
+            \State \trustedcode{store inputs as \texttt{left\_virt\_keys},
+            $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$, \texttt{left\_fund\_keys}}
             \State \trustedcode{call
-            \textsc{virt.circulateVirtualKeys}(\texttt{hops}, $\pk{\mathrm{loc}}$)
-            of \texttt{hops}[0].\bob and assign output to $\pk{\mathrm{right}}$}
-            \State \trustedcode{$(\texttt{comm\_keys\_loc},
-            \texttt{comm\_keys\_rem}) \gets \textsc{pcn.getCommKeys}()$}
+            \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A, V}$,
+            $\pk{B, V}$), ($\pk{\mathrm{loc}}$, \texttt{left\_virt\_keys}[0]))
+            of \texttt{hops}[0].\bob and assign output to
+            \texttt{right\_virt\_keys}}
             \State \trustedcode{output (\textsc{VirtualKeysBack},
-            $\pk{\mathrm{right}}$, $c_{\alice}$, $c_{\bob}$,
-            \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})}
-            \State store output contents as $\pk{\mathrm{right}}$,
-            $c_{\mathrm{sib}}$, $c_{\mathrm{sibRem}}$, \texttt{comm\_keys\_sib},
-            \texttt{comm\_keys\_sib\_rem}
-            \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
-            \textsc{pcn.getCommKeys}()$
+            \texttt{right\_virt\_keys}, ($\pk{A, F}, \pk{B, F}$))}
+            \State store outputs as \texttt{right\_virt\_keys},
+            \texttt{right\_fund\_keys}
+            \State \Return ($\pk{\mathrm{loc}}$, \texttt{right\_virt\_keys}[0])
+          \Else \: \Comment{we are \texttt{host\_fundee}}
+            \State \TODO{there is a problem with the base-virtual channel
+            semantics, as a base channel becomes virtual itself when it
+            facilitates another virtual. When it's solved, we may have to
+            reconsider the \texttt{fundee} below.}
+            \State call \textsc{pcn.getCommKeys}() of \texttt{fundee} and assign
+            output to ($\pk{A, V}'$, \_, \_), ($\pk{B, V}'$, \_, \_)
+            \State ensure $\pk{A, V} = \pk{A, V}' \wedge \pk{B, V} = \pk{B, V}'$
+            \State \Return $\pk{\mathrm{loc}}$
           \EndIf
-          \State \Return $\pk{\mathrm{loc}}$
         \Else \: \Comment{we are \texttt{host\_funder}}
           \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
           V}$, $\pk{B, V}$), $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and
