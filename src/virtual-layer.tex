@@ -41,9 +41,16 @@
             \State \trustedcode{call
             \textsc{virt.circulateHostData}(\texttt{hops}, $\pk{\mathrm{loc}}$)
             of \texttt{hops}[0].\bob and assign output to $\pk{\mathrm{right}}$}
+            \State \trustedcode{$(\texttt{comm\_keys\_loc},
+            \texttt{comm\_keys\_rem}) \gets \textsc{pcn.getCommKeys}()$}
             \State \trustedcode{output (\textsc{HostDataBack},
-            $\pk{\mathrm{right}}$)}
-            \State store $\pk{\mathrm{right}}$
+            $\pk{\mathrm{right}}$, $c_{\alice}$, $c_{\bob}$,
+            \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})}
+            \State store output contents as $\pk{\mathrm{right}}$,
+            $c_{\mathrm{sib}}$, $c_{\mathrm{sibRem}}$, \texttt{comm\_keys\_sib},
+            \texttt{comm\_keys\_sib\_rem}
+            \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
+            \textsc{pcn.getCommKeys}()$
           \EndIf
           \State \Return $\pk{\mathrm{loc}}$
         \Else \: \Comment{we are \texttt{host\_funder}}
