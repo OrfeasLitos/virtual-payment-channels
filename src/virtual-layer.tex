@@ -81,6 +81,8 @@
       \Indent
         \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
         are not \texttt{host\_funder}}
+          \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
+          \textsc{pcn.getCommKeys}()$
           \State create all TXs that need $\mathrm{sigs}_{\mathrm{byLeft}}$
           \TODO{}
           \State verify $\mathrm{sigs}_{\mathrm{byLeft}}$ on TXs \TODO{}
@@ -89,8 +91,20 @@
             \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
             $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
             \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
-            \State \trustedcode{create all right's TXs that need our sigs and sign
-            them for $\mathrm{sigs}_{\mathrm{toRight}}$} \TODO{}
+            \State \trustedcode{$(\texttt{comm\_keys\_loc},
+            \texttt{comm\_keys\_rem}) \gets \textsc{pcn.getCommKeys}()$}
+            \State \trustedcode{($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
+            $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
+            $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
+            $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
+            \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+            \texttt{right\_fund\_keys}, $\pk{loc}$,
+            \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
+            \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
+            \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
+            \texttt{comm\_keys\_rem})}
+            \State \trustedcode{sign them for
+            $\mathrm{sigs}_{\mathrm{toRight}}$} \TODO{}
             \State \trustedcode{call \textsc{virt.circulateVirtualSigs}($c$,
             \texttt{hops}, $\mathrm{sigs}_{\mathrm{toRight}}$) of
             \texttt{hops}[0].\bob and assign output to
@@ -104,8 +118,18 @@
             $\mathrm{sigs}_{\mathrm{byRight}}$ for closing}
           \EndIf
         \Else \: \Comment{we are \texttt{host\_funder}}
-          \State create all right's TXs that need our sigs and sign them for
-          $\mathrm{sigs}_{\mathrm{toRight}}$ \TODO{}
+          \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
+          \textsc{pcn.getCommKeys}()$
+          \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
+          $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
+          $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
+          $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
+          \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+          \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
+          \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
+          V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
+          \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+          \State sign them for $\mathrm{sigs}_{\mathrm{toRight}}$ \TODO{}
           \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
           $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
           assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
@@ -114,7 +138,8 @@
           \State verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs \TODO{}
           \State \Return (\textsc{ok})
         \EndIf
-        \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given}
+        \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
+        are not \texttt{host\_funder}}
           \State create all left's TXs that need our sigs and sign
           them for $\mathrm{sigs}_{\mathrm{toLeft}}$ \TODO{}
           \State \Return $\mathrm{sigs}_{\mathrm{forLeft}}$
