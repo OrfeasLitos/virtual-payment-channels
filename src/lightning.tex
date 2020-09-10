@@ -133,12 +133,9 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- open virtual}
     \begin{algorithmic}[1]
-      \State \textsc{openVirtual}(\texttt{funding\_output}): \TODO{change
-      signature to fit \textsc{virt.fund}(), change implementation to generate
-      one commiment TX per hop OR understand how to do it more cheaply (c.f.
-      ANYPREVOUT?)}
+      \State \textsc{openVirtual}(\texttt{fundee}, \texttt{host\_funder},
+      \texttt{host\_fundee}, $c$):
       \Indent
-        \State ensure \texttt{funding\_output} = 2/\{$\pk{A, F}, \pk{B, F}$\}
         \If{real world}
           \State do funding ceremony as in base channel
           (Fig.~\ref{code:ln:base},
