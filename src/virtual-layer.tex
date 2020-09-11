@@ -74,91 +74,88 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt}}
+  \begin{processbox}{\textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
+  $\mathrm{sigs}_{\mathrm{byLeft}}$)}
     \begin{algorithmic}[1]
-      \State \textsc{circulateVirtualSigs}($c$, \texttt{hops},
-      $\mathrm{sigs}_{\mathrm{byLeft}}$):
-      \Indent
-        \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
-        are not \texttt{host\_funder}}
-          \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
-          \textsc{pcn.getCommKeys}()$
-          \State create all TXs that need $\mathrm{sigs}_{\mathrm{byLeft}}$
-          \TODO{}
-          \State verify $\mathrm{sigs}_{\mathrm{byLeft}}$ on TXs \TODO{}
-          \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
-          \texttt{host\_fundee}}
-            \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
-            $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
-            \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
-            \State \trustedcode{$(\texttt{comm\_keys\_loc},
-            \texttt{comm\_keys\_rem}) \gets \textsc{pcn.getCommKeys}()$}
-            \State \trustedcode{($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
-            $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
-            $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
-            $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
-            \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
-            \texttt{right\_fund\_keys}, $\pk{loc}$,
-            \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
-            \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
-            \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
-            \texttt{comm\_keys\_rem})}
-            \State \trustedcode{$\mathrm{sigs}_{\mathrm{toRight}} \gets
-            \emptyset$}
-            \For{\trustedcode{TX in ($\mathrm{TX}_{\mathrm{next},
-            \mathrm{none}}$, $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
-            $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
-            $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}}
-              \State \trustedcode{add \textsc{sign}(TX, $\sk{\mathrm{loc}}$) to
-              $\mathrm{sigs}_{\mathrm{toRight}}$}
-            \EndFor
-            \State \trustedcode{call \textsc{virt.circulateVirtualSigs}($c$,
-            \texttt{hops}, $\mathrm{sigs}_{\mathrm{toRight}}$) of
-            \texttt{hops}[0].\bob and assign output to
-            $\mathrm{sigs}_{\mathrm{byRight}}$}
-            \State \trustedcode{create all TXs that need
-            $\mathrm{sigs}_{\mathrm{byRight}}$} \TODO{}
-            \State \trustedcode{verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs}
-            \TODO{}
-            \State \trustedcode{output (\textsc{virtualSigsBack},
-            $\mathrm{sigs}_{\mathrm{byRight}}$)} \Comment{sibling needs
-            $\mathrm{sigs}_{\mathrm{byRight}}$ for closing}
-          \EndIf
-        \Else \: \Comment{we are \texttt{host\_funder}}
-          \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
-          \textsc{pcn.getCommKeys}()$
-          \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
+      \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
+      are not \texttt{host\_funder}}
+        \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
+        \textsc{pcn.getCommKeys}()$
+        \State create all TXs that need $\mathrm{sigs}_{\mathrm{byLeft}}$
+        \TODO{}
+        \State verify $\mathrm{sigs}_{\mathrm{byLeft}}$ on TXs \TODO{}
+        \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
+        \texttt{host\_fundee}}
+          \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
+          $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
+          \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
+          \State \trustedcode{$(\texttt{comm\_keys\_loc},
+          \texttt{comm\_keys\_rem}) \gets \textsc{pcn.getCommKeys}()$}
+          \State \trustedcode{($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
           $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
           $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
           \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
-          \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
-          \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
-          V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
-          \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
-          \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
-          \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
-          $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
+          \texttt{right\_fund\_keys}, $\pk{loc}$,
+          \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
+          \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
+          \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
+          \texttt{comm\_keys\_rem})}
+          \State \trustedcode{$\mathrm{sigs}_{\mathrm{toRight}} \gets
+          \emptyset$}
+          \For{\trustedcode{TX in ($\mathrm{TX}_{\mathrm{next},
+          \mathrm{none}}$, $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
-          $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
-            \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$) to
-            $\mathrm{sigs}_{\mathrm{toRight}}$
+          $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}}
+            \State \trustedcode{add \textsc{sign}(TX, $\sk{\mathrm{loc}}$) to
+            $\mathrm{sigs}_{\mathrm{toRight}}$}
           \EndFor
-          \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
-          $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
-          assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
-          \State create all TXs that need $\mathrm{sigs}_{\mathrm{byRight}}$
+          \State \trustedcode{call \textsc{virt.circulateVirtualSigs}($c$,
+          \texttt{hops}, $\mathrm{sigs}_{\mathrm{toRight}}$) of
+          \texttt{hops}[0].\bob and assign output to
+          $\mathrm{sigs}_{\mathrm{byRight}}$}
+          \State \trustedcode{create all TXs that need
+          $\mathrm{sigs}_{\mathrm{byRight}}$} \TODO{}
+          \State \trustedcode{verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs}
           \TODO{}
-          \State verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs \TODO{}
-          \State \Return (\textsc{ok})
+          \State \trustedcode{output (\textsc{virtualSigsBack},
+          $\mathrm{sigs}_{\mathrm{byRight}}$)} \Comment{sibling needs
+          $\mathrm{sigs}_{\mathrm{byRight}}$ for closing}
         \EndIf
-        \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
-        are not \texttt{host\_funder}}
-          \State create all left's TXs that need our sigs and sign
-          them for $\mathrm{sigs}_{\mathrm{toLeft}}$ \TODO{}
-          \State \Return $\mathrm{sigs}_{\mathrm{forLeft}}$
-        \EndIf
-      \EndIndent
+      \Else \: \Comment{we are \texttt{host\_funder}}
+        \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
+        \textsc{pcn.getCommKeys}()$
+        \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
+        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+        \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
+        \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
+        V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+        \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
+        \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
+          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$) to
+          $\mathrm{sigs}_{\mathrm{toRight}}$
+        \EndFor
+        \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
+        $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
+        assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
+        \State create all TXs that need $\mathrm{sigs}_{\mathrm{byRight}}$
+        \TODO{}
+        \State verify $\mathrm{sigs}_{\mathrm{byRight}}$ on TXs \TODO{}
+        \State \Return (\textsc{ok})
+      \EndIf
+      \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
+      are not \texttt{host\_funder}}
+        \State create all left's TXs that need our sigs and sign
+        them for $\mathrm{sigs}_{\mathrm{toLeft}}$ \TODO{}
+        \State \Return $\mathrm{sigs}_{\mathrm{forLeft}}$
+      \EndIf
     \end{algorithmic}
   \end{processbox}
   \caption{}
