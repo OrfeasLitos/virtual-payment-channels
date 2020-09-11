@@ -83,8 +83,14 @@
       are not \texttt{host\_funder}}
         \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
         \textsc{pcn.getCommKeys}()$
-        \State create all TXs that need $\mathrm{sigs}_{\mathrm{byLeft}}$
-        \TODO{}
+        \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
+        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+        \texttt{right\_fund\_keys}, \texttt{left\_virt\_keys}[0], $\pk{loc}$,
+        $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
+        $\pk{loc}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
         \State verify $\mathrm{sigs}_{\mathrm{byLeft}}$ on TXs \TODO{}
         \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
         \texttt{host\_fundee}}
