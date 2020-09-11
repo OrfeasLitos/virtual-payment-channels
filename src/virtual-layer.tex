@@ -44,12 +44,13 @@
             \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A, V}$,
             $\pk{B, V}$), ($\pk{\mathrm{loc}}$, \texttt{left\_virt\_keys}[0]))
             of \texttt{hops}[0].\bob and assign output to
-            \texttt{right\_virt\_keys}}
+            \texttt{right\_virt\_keys}, \texttt{right\_fund\_keys}}
             \State \trustedcode{output (\textsc{VirtualKeysBack},
             \texttt{right\_virt\_keys}, ($\pk{A, F}, \pk{B, F}$))}
             \State store outputs as \texttt{right\_virt\_keys},
             \texttt{right\_fund\_keys}
-            \State \Return ($\pk{\mathrm{loc}}$, \texttt{right\_virt\_keys}[0])
+            \State \Return ($\pk{\mathrm{loc}}$, \texttt{right\_virt\_keys}[0]),
+            \texttt{right\_fund\_keys}
           \Else \: \Comment{we are \texttt{host\_fundee}}
             \State \TODO{there is a problem with the base-virtual channel
             semantics, as a base channel becomes virtual itself when it
@@ -63,7 +64,8 @@
         \Else \: \Comment{we are \texttt{host\_funder}}
           \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
           V}$, $\pk{B, V}$), $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and
-          assign output to ($\pk{\mathrm{right}}$, $\pk{\mathrm{right}, 2}$)
+          assign output to ($\pk{\mathrm{right}}$, $\pk{\mathrm{right}, 2}$),
+          \texttt{right\_fund\_keys}
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
