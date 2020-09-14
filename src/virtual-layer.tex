@@ -76,6 +76,127 @@
 \end{figure}
 
 \begin{figure}[H]
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
+      \State \textsc{getMidTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{loc}}$,
+      $c_{\mathrm{rem}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
+      $\pk{\mathrm{loc}, \mathrm{fund}}$, $\pk{\mathrm{sib}, \mathrm{fund}}$,
+      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
+      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{sib}, \mathrm{virt}}$,
+      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
+      $\pk{\mathrm{loc}, \mathrm{out}}$, \texttt{comm\_keys\_loc},
+      \texttt{comm\_keys\_rem}):
+      \Indent
+        \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{guest}} \wedge
+        c_{\mathrm{loc}} \geq c_{\mathrm{guest}}$
+        \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sibRem}}$;
+        $c_{\mathrm{right}} \gets c_{\mathrm{loc}} + c_{\mathrm{rem}}$
+        \State $\texttt{left\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund}},
+        \pk{\mathrm{loc}, \mathrm{fund}}\}$
+        \State $\texttt{right\_fund} \gets 2/\{\pk{\mathrm{sib}, \mathrm{fund}},
+        \pk{\mathrm{right}, \mathrm{fund}}\}$
+        \State $\texttt{left\_virt} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
+        \pk{\mathrm{loc}, \mathrm{virt}}\}$
+        \State $\texttt{right\_virt} \gets 2/\{\pk{\mathrm{sib}, \mathrm{virt}},
+        \pk{\mathrm{right}, \mathrm{virt}}\}$
+        \State $\texttt{guest} \gets 2/\{\pk{\mathrm{left}, \mathrm{guest}},
+        \pk{\mathrm{right}, \mathrm{guest}}\}$
+        \State $\texttt{left\_out} \gets (\texttt{2} \wedge \texttt{left\_virt})
+        \vee (\texttt{3} \wedge \texttt{left\_virt} + t)$
+        \State $\texttt{right\_out} \gets (\texttt{1} \wedge
+        \texttt{right\_virt}) \vee (\texttt{3} \wedge \texttt{right\_virt} + t)$
+        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee
+        (\texttt{guest\_virt} + t)$
+        \State $\mathrm{TX}_{\mathrm{none}} \gets$ TX \{inputs:
+        (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}}$,
+        \texttt{right\_fund})), outputs: (($c_{\mathrm{left}} -
+        c_{\mathrm{guest}}$, \texttt{left\_out}), ($c_{\mathrm{right}} -
+        c_{\mathrm{guest}}$, \texttt{right\_out}), ($c_{\mathrm{guest}}$,
+        $\pk{\mathrm{loc}, \mathrm{out}}$), ($c_{\mathrm{guest}}$,
+        \texttt{guest\_out}))\}
+        \State $\mathrm{TX}_{\mathrm{left}} \gets$ TX \{inputs:
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{1} $\wedge$
+        \texttt{left\_virt}), ($c_{\mathrm{right}}$, \texttt{right\_fund})),
+        outputs: (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{3} $\wedge$
+        \texttt{left\_virt}), ($c_{\mathrm{right}} - c_{\mathrm{guest}}$,
+        \texttt{right\_out}), ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc},
+        \mathrm{out}}$))\}
+        \State $\mathrm{TX}_{\mathrm{right}} \gets$ TX \{inputs:
+        (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}} -
+        c_{\mathrm{guest}}$, \texttt{2} $\wedge$ \texttt{right\_virt}), outputs:
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{left\_out}),
+        ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{3} $\wedge$
+        \texttt{right\_virt}), ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc},
+        \mathrm{out}}$))\}
+        \State $\mathrm{TX}_{\mathrm{both}} \gets$ TX \{inputs:
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{1} $\wedge$
+        \texttt{left\_virt}), ($c_{\mathrm{right}} - c_{\mathrm{guest}}$,
+        \texttt{2} $\wedge$ \texttt{right\_virt}), ($c_{\mathrm{guest}}$,
+        \texttt{guest})), outputs: (($c_{\mathrm{left}} - c_{\mathrm{guest}}$,
+        \texttt{3} $\wedge$ \texttt{left\_virt}), ($c_{\mathrm{right}} -
+        c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{right\_virt}),
+        ($c_{\mathrm{guest}}, \pk{\mathrm{loc}, \mathrm{out}}$)\}
+        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{loc}} -
+        c_{\mathrm{guest}}, c_{\mathrm{rem}}, \texttt{comm\_keys\_loc},
+        \texttt{comm\_keys\_rem})$
+        \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
+        $\mathrm{TX}_{\mathrm{left}}$, $\mathrm{TX}_{\mathrm{right}}$,
+        $\mathrm{TX}_{\mathrm{both}}$, $C$)
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:mid-txs}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
+      \State \Comment{left and right refer to the two counterparties, with left
+      being the one closer to the funder. Note difference with left/right
+      meaning in \textsc{virt.getMidTXs}.}
+      \State \textsc{getEdgeTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{left}}$,
+      $c_{\mathrm{right}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
+      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
+      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
+      \texttt{comm\_keys\_left}, \texttt{comm\_keys\_right},
+      \texttt{is\_funder}):
+      \Indent
+        \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{guest}}$
+        \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
+        \State $\texttt{fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund}},
+        \pk{\mathrm{right}, \mathrm{fund}}\}$
+        \State $\texttt{virt} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
+        \pk{\mathrm{right}, \mathrm{virt}}\}$
+        \State $\texttt{guest} \gets 2/\{\pk{\mathrm{left}, \mathrm{guest}},
+        \pk{\mathrm{right}, \mathrm{guest}}\}$
+        \If{\texttt{is\_funder} = True}
+          \State $\texttt{out} \gets (\texttt{1} \wedge \texttt{virt}) \vee
+          (\texttt{3} \wedge \texttt{virt} + t)$
+        \Else \: \Comment{TXs belong to \texttt{fundee}}
+          \State $\texttt{out} \gets (\texttt{2} \wedge \texttt{virt}) \vee
+          (\texttt{3} \wedge \texttt{virt} + t)$
+        \EndIf
+        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee
+        (\texttt{guest\_virt} + t)$
+        \State $\mathrm{TX}_{\mathrm{base}} \gets$ TX \{input:
+        $c_{\mathrm{tot}}$, \texttt{fund}, outputs: (($c_{\mathrm{tot}} -
+        c_{\mathrm{guest}}$, \texttt{out}), ($c_{\mathrm{guest}}$,
+        \texttt{guest\_out}))\}
+        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{left}} -
+        c_{\mathrm{guest}}, c_{\mathrm{right}}, \texttt{comm\_keys\_left},
+        \texttt{comm\_keys\_right})$
+        \State \Return ($\mathrm{TX}_{\mathrm{base}}$, $C$)
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:edge-txs}
+\end{figure}
+
+\begin{figure}[H]
   \begin{processbox}{\textsc{virt.siblingSigs}()}
     \begin{algorithmic}[1]
       \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
@@ -258,127 +379,6 @@
   \end{processbox}
   \caption{}
   \label{code:virtual-layer:virtual-sigs}
-\end{figure}
-
-\begin{figure}[H]
-  \begin{processbox}{\textsc{virt}}
-    \begin{algorithmic}[1]
-      \State \textsc{getMidTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{loc}}$,
-      $c_{\mathrm{rem}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
-      $\pk{\mathrm{loc}, \mathrm{fund}}$, $\pk{\mathrm{sib}, \mathrm{fund}}$,
-      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
-      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{sib}, \mathrm{virt}}$,
-      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
-      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
-      $\pk{\mathrm{loc}, \mathrm{out}}$, \texttt{comm\_keys\_loc},
-      \texttt{comm\_keys\_rem}):
-      \Indent
-        \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{guest}} \wedge
-        c_{\mathrm{loc}} \geq c_{\mathrm{guest}}$
-        \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sibRem}}$;
-        $c_{\mathrm{right}} \gets c_{\mathrm{loc}} + c_{\mathrm{rem}}$
-        \State $\texttt{left\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund}},
-        \pk{\mathrm{loc}, \mathrm{fund}}\}$
-        \State $\texttt{right\_fund} \gets 2/\{\pk{\mathrm{sib}, \mathrm{fund}},
-        \pk{\mathrm{right}, \mathrm{fund}}\}$
-        \State $\texttt{left\_virt} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
-        \pk{\mathrm{loc}, \mathrm{virt}}\}$
-        \State $\texttt{right\_virt} \gets 2/\{\pk{\mathrm{sib}, \mathrm{virt}},
-        \pk{\mathrm{right}, \mathrm{virt}}\}$
-        \State $\texttt{guest} \gets 2/\{\pk{\mathrm{left}, \mathrm{guest}},
-        \pk{\mathrm{right}, \mathrm{guest}}\}$
-        \State $\texttt{left\_out} \gets (\texttt{2} \wedge \texttt{left\_virt})
-        \vee (\texttt{3} \wedge \texttt{left\_virt} + t)$
-        \State $\texttt{right\_out} \gets (\texttt{1} \wedge
-        \texttt{right\_virt}) \vee (\texttt{3} \wedge \texttt{right\_virt} + t)$
-        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee
-        (\texttt{guest\_virt} + t)$
-        \State $\mathrm{TX}_{\mathrm{none}} \gets$ TX \{inputs:
-        (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}}$,
-        \texttt{right\_fund})), outputs: (($c_{\mathrm{left}} -
-        c_{\mathrm{guest}}$, \texttt{left\_out}), ($c_{\mathrm{right}} -
-        c_{\mathrm{guest}}$, \texttt{right\_out}), ($c_{\mathrm{guest}}$,
-        $\pk{\mathrm{loc}, \mathrm{out}}$), ($c_{\mathrm{guest}}$,
-        \texttt{guest\_out}))\}
-        \State $\mathrm{TX}_{\mathrm{left}} \gets$ TX \{inputs:
-        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{1} $\wedge$
-        \texttt{left\_virt}), ($c_{\mathrm{right}}$, \texttt{right\_fund})),
-        outputs: (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{3} $\wedge$
-        \texttt{left\_virt}), ($c_{\mathrm{right}} - c_{\mathrm{guest}}$,
-        \texttt{right\_out}), ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc},
-        \mathrm{out}}$))\}
-        \State $\mathrm{TX}_{\mathrm{right}} \gets$ TX \{inputs:
-        (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}} -
-        c_{\mathrm{guest}}$, \texttt{2} $\wedge$ \texttt{right\_virt}), outputs:
-        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{left\_out}),
-        ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{3} $\wedge$
-        \texttt{right\_virt}), ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc},
-        \mathrm{out}}$))\}
-        \State $\mathrm{TX}_{\mathrm{both}} \gets$ TX \{inputs:
-        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{1} $\wedge$
-        \texttt{left\_virt}), ($c_{\mathrm{right}} - c_{\mathrm{guest}}$,
-        \texttt{2} $\wedge$ \texttt{right\_virt}), ($c_{\mathrm{guest}}$,
-        \texttt{guest})), outputs: (($c_{\mathrm{left}} - c_{\mathrm{guest}}$,
-        \texttt{3} $\wedge$ \texttt{left\_virt}), ($c_{\mathrm{right}} -
-        c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{right\_virt}),
-        ($c_{\mathrm{guest}}, \pk{\mathrm{loc}, \mathrm{out}}$)\}
-        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{loc}} -
-        c_{\mathrm{guest}}, c_{\mathrm{rem}}, \texttt{comm\_keys\_loc},
-        \texttt{comm\_keys\_rem})$
-        \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
-        $\mathrm{TX}_{\mathrm{left}}$, $\mathrm{TX}_{\mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{both}}$, $C$)
-      \EndIndent
-    \end{algorithmic}
-  \end{processbox}
-  \caption{}
-  \label{code:virtual-layer:mid-txs}
-\end{figure}
-
-\begin{figure}[H]
-  \begin{processbox}{\textsc{virt}}
-    \begin{algorithmic}[1]
-      \State \Comment{left and right refer to the two counterparties, with left
-      being the one closer to the funder. Note difference with left/right
-      meaning in \textsc{virt.getMidTXs}.}
-      \State \textsc{getEdgeTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{left}}$,
-      $c_{\mathrm{right}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
-      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
-      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
-      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
-      \texttt{comm\_keys\_left}, \texttt{comm\_keys\_right},
-      \texttt{is\_funder}):
-      \Indent
-        \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{guest}}$
-        \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
-        \State $\texttt{fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund}},
-        \pk{\mathrm{right}, \mathrm{fund}}\}$
-        \State $\texttt{virt} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
-        \pk{\mathrm{right}, \mathrm{virt}}\}$
-        \State $\texttt{guest} \gets 2/\{\pk{\mathrm{left}, \mathrm{guest}},
-        \pk{\mathrm{right}, \mathrm{guest}}\}$
-        \If{\texttt{is\_funder} = True}
-          \State $\texttt{out} \gets (\texttt{1} \wedge \texttt{virt}) \vee
-          (\texttt{3} \wedge \texttt{virt} + t)$
-        \Else \: \Comment{TXs belong to \texttt{fundee}}
-          \State $\texttt{out} \gets (\texttt{2} \wedge \texttt{virt}) \vee
-          (\texttt{3} \wedge \texttt{virt} + t)$
-        \EndIf
-        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee
-        (\texttt{guest\_virt} + t)$
-        \State $\mathrm{TX}_{\mathrm{base}} \gets$ TX \{input:
-        $c_{\mathrm{tot}}$, \texttt{fund}, outputs: (($c_{\mathrm{tot}} -
-        c_{\mathrm{guest}}$, \texttt{out}), ($c_{\mathrm{guest}}$,
-        \texttt{guest\_out}))\}
-        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{left}} -
-        c_{\mathrm{guest}}, c_{\mathrm{right}}, \texttt{comm\_keys\_left},
-        \texttt{comm\_keys\_right})$
-        \State \Return ($\mathrm{TX}_{\mathrm{base}}$, $C$)
-      \EndIndent
-    \end{algorithmic}
-  \end{processbox}
-  \caption{}
-  \label{code:virtual-layer:edge-txs}
 \end{figure}
 
 \begin{figure}[H]
