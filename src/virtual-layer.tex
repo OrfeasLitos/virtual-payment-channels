@@ -432,14 +432,49 @@
 \end{figure}
 
 \begin{figure}[H]
+  \begin{processbox}{\textsc{virt.circulateRevocations}(\texttt{hops},
+  \texttt{revoc\_by\_prev})}
+    \begin{algorithmic}[1]
+    \If{\texttt{revoc\_by\_prev} is given as argument} \Comment{we are not
+    \texttt{host\_funder}}
+      \State ensure
+      \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_prev}) returns
+      (\textsc{ok})
+    \Else \: \Comment{we are \texttt{host\_funder}}
+      \State $\texttt{revoc\_for\_next} \gets \textsc{pcn.revokePrevious}()$
+      \State call \textsc{virt.circulateRevocations}(\texttt{hops},
+      \texttt{revoc\_for\_next}) of \texttt{hops}[0].\bob and assign output to
+      \texttt{revoc\_by\_next}
+      \State ensure
+      \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_next}) returns
+      (\textsc{ok})
+      \State \Return (\textsc{ok})
+    \EndIf
+    \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
+    \texttt{host\_fundee} nor \texttt{host\_funder}}
+      \State input (\textsc{virtualRevocationForward}, \texttt{hops}[1:]) to
+      \texttt{hops}[1].\alice
+      \State \trustedcode{$\texttt{revoc\_for\_next} \gets
+      \textsc{pcn.revokePrevious}()$}
+      \State \trustedcode{call \textsc{virt.circulateRevocations}(\texttt{hops},
+      \texttt{revoc\_for\_next}) of \texttt{hops}[0].\bob and assign output to
+      \texttt{revoc\_by\_next}}
+      \State \trustedcode{ensure
+      \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_next}) returns
+      (\textsc{ok})}
+      \State \trustedcode{output (\textsc{virtualRevocationBack})}
+    \EndIf
+    \State $\texttt{revoc\_for\_prev} \gets \textsc{pcn.revokePrevious}()$
+    \State \Return \texttt{revoc\_for\_prev}
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:revocation}
+\end{figure}
+
+\begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
-      \State \textsc{circulateRevocations}(\texttt{hops}):
-      \Indent
-        \State \Return (\textsc{ok})
-      \EndIndent
-      \Statex
-
       \State \textsc{close}($P$):
         \TODO{continue}
         \TODO{handle arbitrarily nested virtuals (now we only handle one level
