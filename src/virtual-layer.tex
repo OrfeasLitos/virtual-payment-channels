@@ -385,10 +385,9 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt}}
+  \begin{processbox}{\textsc{virt.circulateFundingSigs}(\texttt{hops},
+      $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$)}
     \begin{algorithmic}[1]
-      \State \textsc{circulateFundingSigs}(\texttt{hops},
-      $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$):
       \Indent
         \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
         \Comment{we are not \texttt{host\_funder}}
@@ -399,14 +398,14 @@
           \texttt{host\_fundee}}
             \State input (\textsc{virtualBaseSigForward}, \texttt{hops}[1:],
             $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
-            \texttt{hops}[1].\alice \Comment{sibling needs
+            \texttt{hops}[1].\alice{} \Comment{sibling needs
             $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}
             \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
             \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
             \sk{\mathrm{loc}, F})$}
             \State \trustedcode{call
             \textsc{virt.circulateVirtualSigs}(\texttt{hops},
-            $\textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$) of
+            $\mathrm{sig}_{\mathrm{next}, \mathrm{none}}$) of
             \texttt{hops}[0].\bob and assign output to
             $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$}
             \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
