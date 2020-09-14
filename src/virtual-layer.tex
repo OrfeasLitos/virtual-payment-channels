@@ -242,8 +242,8 @@
       \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{both}}$, $C$)}
-        \State ensure \textsc{verify}(TX, $\mathrm{sigs}_{\mathrm{byRight}}[i]$)
-        = True
+        \State ensure \textsc{verify}(TX, $\mathrm{sigs}_{\mathrm{byRight}}[i]$,
+        \texttt{right\_virt\_keys}[0]) = True
       \EndFor
       \State output (\textsc{virtualSigsBack},
       $\mathrm{sigs}_{\mathrm{byRight}}$) \Comment{sibling needs
@@ -270,7 +270,8 @@
         $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)}
           \State ensure \textsc{verify}(TX,
-          $\mathrm{sigs}_{\mathrm{byLeft}}[i]$) = True
+          $\mathrm{sigs}_{\mathrm{byLeft}}[i]$, \texttt{left\_virt\_keys}[0]) =
+          True
         \EndFor
         \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
         $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
@@ -328,7 +329,8 @@
           \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{A, V}$, $\pk{B, V}$,
           \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, False)
           \State ensure \textsc{verify}($C$,
-          $\mathrm{sigs}_{\mathrm{byLeft}}[0]$) = True
+          $\mathrm{sigs}_{\mathrm{byLeft}}[0]$, \texttt{left\_virt\_keys}[0]) =
+          True
           \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
@@ -372,7 +374,8 @@
         $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
         \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, True)
         \State ensure \textsc{verify}($C$,
-        $\mathrm{sigs}_{\mathrm{byRight}}[0]$) = True
+        $\mathrm{sigs}_{\mathrm{byRight}}[0]$, \texttt{right\_virt\_keys}[0]) =
+        True
         \State \Return (\textsc{ok})
       \EndIf
     \end{algorithmic}
@@ -390,7 +393,8 @@
         \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
         \Comment{we are not \texttt{host\_funder}}
           \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) = True
+          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
+          \texttt{left\_virt\_keys}[0]) = True
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
             \State input (\textsc{virtualBaseSigForward}, \texttt{hops}[1:],
@@ -406,7 +410,8 @@
             \texttt{hops}[0].\bob and assign output to
             $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$}
             \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-            \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) = True}
+            \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
+            \texttt{right\_virt\_keys}[0]) = True}
             \State \trustedcode{output (\textsc{virtualBaseSigBack},
             $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
             $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
@@ -424,7 +429,8 @@
           \texttt{hops}[0].\bob and assign output to
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
           \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) = True
+          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
+          \texttt{right\_virt\_keys}[0]) = True
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
