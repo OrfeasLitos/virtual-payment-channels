@@ -257,55 +257,50 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.intermediarySigs}()}
     \begin{algorithmic}[1]
-      \Indent
-        \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-        \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
-        $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B,
-        F}$, \texttt{right\_fund\_keys}, \texttt{left\_virt\_keys}[0],
-        $\pk{loc}$, $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$,
-        $\pk{B, V}$, $\pk{loc}$, \texttt{comm\_keys\_loc},
-        \texttt{comm\_keys\_rem})
-        \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)}
-          \State ensure \textsc{verify}(TX,
-          $\mathrm{sigs}_{\mathrm{byLeft}}[i]$, \texttt{left\_virt\_keys}[0]) =
-          True
+      \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
+      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
+      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
+      $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B,
+      F}$, \texttt{right\_fund\_keys}, \texttt{left\_virt\_keys}[0], $\pk{loc}$,
+      $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
+      $\pk{loc}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+      \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
+      $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc},
+      \mathrm{both}}$, $C$)}
+        \State ensure \textsc{verify}(TX, $\mathrm{sigs}_{\mathrm{byLeft}}[i]$,
+        \texttt{left\_virt\_keys}[0]) = True
+      \EndFor
+      \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
+      $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
+      \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
+      \State \trustedcode{\textsc{virt.siblingSigs}()}
+      \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
+      \If{we have \texttt{left\_virt\_keys}[1]} \Comment{previous hop is not
+      \texttt{host\_funder}}
+        \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$,
+        $\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
+        $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
+        $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$) $\gets$
+        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+        \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
+        \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
+        V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+        \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
+        $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
+        $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$)}
+          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
+          to $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndFor
-        \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
-        $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
-        \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
-        \State \trustedcode{\textsc{virt.siblingSigs}()}
-        \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
-        \If{we have \texttt{left\_virt\_keys}[1]} \Comment{previous hop is not
-        \texttt{host\_funder}}
-          \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$,
-          $\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
-          $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
-          $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$) $\gets$
-          \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
-          \texttt{right\_fund\_keys}, $\pk{loc}$,
-          \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
-          \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
-          \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
-          \texttt{comm\_keys\_rem})
-          \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
-          $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
-          $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$)}
-            \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$,
-            \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
-          \EndFor
-        \Else \: \Comment{previous hop is \texttt{host\_funder}}
-          \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$, $C$) $\gets$
-          \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
-          \texttt{left\_virt\_keys}[0], $\pk{loc}$,  $\pk{A, V}$, $\pk{B, V}$,
-          \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, True)
-          \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$,
-          \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
-        \EndIf
-        \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
-      \EndIndent
+      \Else \: \Comment{previous hop is \texttt{host\_funder}}
+        \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$, $C$) $\gets$
+        \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
+        \texttt{left\_virt\_keys}[0], $\pk{loc}$,  $\pk{A, V}$, $\pk{B, V}$,
+        \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, True)
+        \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
+        to $\mathrm{sigs}_{\mathrm{toLeft}}$
+      \EndIf
+      \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
   \end{processbox}
   \caption{}
@@ -388,51 +383,48 @@
   \begin{processbox}{\textsc{virt.circulateFundingSigs}(\texttt{hops},
       $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$)}
     \begin{algorithmic}[1]
-      \Indent
-        \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
-        \Comment{we are not \texttt{host\_funder}}
-          \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-          \texttt{left\_virt\_keys}[0]) = True
-          \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
-          \texttt{host\_fundee}}
-            \State input (\textsc{virtualBaseSigForward}, \texttt{hops}[1:],
-            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
-            \texttt{hops}[1].\alice{} \Comment{sibling needs
-            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}
-            \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
-            \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
-            \sk{\mathrm{loc}, F})$}
-            \State \trustedcode{call
-            \textsc{virt.circulateVirtualSigs}(\texttt{hops},
-            $\mathrm{sig}_{\mathrm{next}, \mathrm{none}}$) of
-            \texttt{hops}[0].\bob and assign output to
-            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$}
-            \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-            \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-            \texttt{right\_virt\_keys}[0]) = True}
-            \State \trustedcode{output (\textsc{virtualBaseSigBack},
-            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
-            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
-          \EndIf
-          \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}} \gets
-          \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{none}},
-          \sk{\mathrm{loc}, F})$
-          \State \Return $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$
-        \Else \: \Comment{we are \texttt{host\_funder}}
-          \State $\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
+      \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
+      \Comment{we are not \texttt{host\_funder}}
+        \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+        \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
+        \texttt{left\_virt\_keys}[0]) = True
+        \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
+        \texttt{host\_fundee}}
+          \State input (\textsc{virtualBaseSigForward}, \texttt{hops}[1:],
+          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
+          \texttt{hops}[1].\alice{} \Comment{sibling needs
+          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}
+          \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
           \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
-          \sk{\mathrm{loc}, F})$
-          \State call \textsc{virt.circulateFundingSigs}(\texttt{hops},
+          \sk{\mathrm{loc}, F})$}
+          \State \trustedcode{call
+          \textsc{virt.circulateVirtualSigs}(\texttt{hops},
           $\mathrm{sig}_{\mathrm{next}, \mathrm{none}}$) of
           \texttt{hops}[0].\bob and assign output to
-          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
-          \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$}
+          \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
           \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-          \texttt{right\_virt\_keys}[0]) = True
-          \State \Return (\textsc{ok})
+          \texttt{right\_virt\_keys}[0]) = True}
+          \State \trustedcode{output (\textsc{virtualBaseSigBack},
+          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
+          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
         \EndIf
-      \EndIndent
+        \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}} \gets
+        \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{none}},
+        \sk{\mathrm{loc}, F})$
+        \State \Return $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$
+      \Else \: \Comment{we are \texttt{host\_funder}}
+        \State $\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
+        \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
+        \sk{\mathrm{loc}, F})$
+        \State call \textsc{virt.circulateFundingSigs}(\texttt{hops},
+        $\mathrm{sig}_{\mathrm{next}, \mathrm{none}}$) of \texttt{hops}[0].\bob
+        and assign output to $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
+        \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+        \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
+        \texttt{right\_virt\_keys}[0]) = True
+        \State \Return (\textsc{ok})
+      \EndIf
     \end{algorithmic}
   \end{processbox}
   \caption{}
