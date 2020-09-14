@@ -384,12 +384,59 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
-      \State \textsc{circulateFundingSigs}(\texttt{hops}):
+      \State \textsc{circulateFundingSigs}(\texttt{hops},
+      $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$):
       \Indent
-        \State \Return (\textsc{ok})
+        \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
+        \Comment{we are not \texttt{host\_funder}}
+          \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) = True
+          \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
+          \texttt{host\_fundee}}
+            \State input (\textsc{virtualBaseSigForward}, \texttt{hops}[1:],
+            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
+            \texttt{hops}[1].\alice \Comment{sibling needs
+            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}
+            \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
+            \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
+            \sk{\mathrm{loc}, F})$}
+            \State \trustedcode{call
+            \textsc{virt.circulateVirtualSigs}(\texttt{hops},
+            $\textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$) of
+            \texttt{hops}[0].\bob and assign output to
+            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$}
+            \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+            \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) = True}
+            \State \trustedcode{output (\textsc{virtualBaseSigBack},
+            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
+            $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
+          \EndIf
+          \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}} \gets
+          \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{none}},
+          \sk{\mathrm{loc}, F})$
+          \State \Return $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$
+        \Else \: \Comment{we are \texttt{host\_funder}}
+          \State $\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
+          \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
+          \sk{\mathrm{loc}, F})$
+          \State call \textsc{virt.circulateFundingSigs}(\texttt{hops},
+          $\mathrm{sig}_{\mathrm{next}, \mathrm{none}}$) of
+          \texttt{hops}[0].\bob and assign output to
+          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
+          \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) = True
+          \State \Return (\textsc{ok})
+        \EndIf
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:funding-sigs}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
       \State \textsc{circulateRevocations}(\texttt{hops}):
       \Indent
         \State \Return (\textsc{ok})
