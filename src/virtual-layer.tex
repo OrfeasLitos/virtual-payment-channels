@@ -78,8 +78,9 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.siblingSigs}()}
     \begin{algorithmic}[1]
-      \State $(\texttt{comm\_keys\_loc},
-      \texttt{comm\_keys\_rem}) \gets \textsc{pcn.getCommKeys}()$
+      \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
+      \textsc{pcn.getCommKeys}()$
+      \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
       \If{we have \texttt{right\_virt\_keys}[1]} \Comment{next
       hop is not \texttt{host\_fundee}}
         \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
@@ -92,44 +93,36 @@
         \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
         \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
         \texttt{comm\_keys\_rem})
-      \Else \: \Comment{next hop is \texttt{host\_fundee}}
-        \State \TODO{use \textsc{virt.getEdgeTXs}() below}
-        \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$,
-        $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
+        \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
-        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
-        \texttt{right\_fund\_keys}, $\pk{loc}$,
-        \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
-        \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
-        \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
-        \texttt{comm\_keys\_rem})
+        $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
+          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$,
+          \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
+        \EndFor
+      \Else \: \Comment{next hop is \texttt{host\_fundee}}
+        \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$, $C$) $\gets$
+        \textsc{virt.getEdgeTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+        $\pk{loc}$, \texttt{right\_fund\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, False)
+        \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
+        to $\mathrm{sigs}_{\mathrm{toRight}}$
       \EndIf
-      \State $\mathrm{sigs}_{\mathrm{toRight}} \gets
-      \emptyset$
-      \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
-      $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
-      $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
-        \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$,
-        \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
-      \EndFor
-      \State call \textsc{virt.circulateVirtualSigs}($c$,
-      \texttt{hops}, $\mathrm{sigs}_{\mathrm{toRight}}$) of
-      \texttt{hops}[0].\bob and assign output to
-      $\mathrm{sigs}_{\mathrm{byRight}}$
+      \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
+      $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and assign
+      output to $\mathrm{sigs}_{\mathrm{byRight}}$
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$) $\gets$
-      \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, \texttt{left\_fund\_keys},
-      $\pk{A, F}$, $\pk{B, F}$, \texttt{left\_virt\_keys}[0], $\pk{loc}$,
-      $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
-      $\pk{loc}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
-      \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc},
-      \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)}
-        \State ensure \textsc{verify}(TX,
-        $\mathrm{sigs}_{\mathrm{byRight}}[i]$) = True
+      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
+      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
+      $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$,
+      \texttt{left\_fund\_keys}, $\pk{A, F}$, $\pk{B, F}$,
+      \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{loc}$,
+      \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$, $\pk{loc}$,
+      \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+      \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
+      $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc},
+      \mathrm{both}}$, $C$)}
+        \State ensure \textsc{verify}(TX, $\mathrm{sigs}_{\mathrm{byRight}}[i]$)
+        = True
       \EndFor
       \State output (\textsc{virtualSigsBack},
       $\mathrm{sigs}_{\mathrm{byRight}}$) \Comment{sibling needs
@@ -162,6 +155,7 @@
         $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
         \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
         \State \trustedcode{\textsc{virt.siblingSigs}()}
+        \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
         \If{we have \texttt{left\_virt\_keys}[1]} \Comment{previous hop is not
         \texttt{host\_funder}}
           \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$,
@@ -174,26 +168,20 @@
           \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
           \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
           \texttt{comm\_keys\_rem})
-        \Else \: \Comment{previous hop is \texttt{host\_funder}}
-          \State \TODO{use \textsc{virt.getEdgeTXs}() below}
-          \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$,
-          $\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
+          \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
-          $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$) $\gets$
-          \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
-          \texttt{right\_fund\_keys}, $\pk{loc}$,
-          \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
-          \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
-          \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
-          \texttt{comm\_keys\_rem})
+          $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$)}
+            \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$,
+            \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
+          \EndFor
+        \Else \: \Comment{previous hop is \texttt{host\_funder}}
+          \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$, $C$) $\gets$
+          \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
+          \texttt{left\_virt\_keys}[0], $\pk{loc}$,  $\pk{A, V}$, $\pk{B, V}$,
+          \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, True)
+          \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$,
+          \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndIf
-        \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
-        \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
-        $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$)}
-          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
-          to $\mathrm{sigs}_{\mathrm{toLeft}}$
-        \EndFor
         \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
       \EndIndent
     \end{algorithmic}
@@ -214,21 +202,12 @@
         \texttt{host\_fundee}}
           \State \Return \textsc{virt.intermediarySigs}()
         \Else \: \Comment{we are \texttt{host\_fundee}}
-          \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-          $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-          \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
-          $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B,
-          F}$, \texttt{right\_fund\_keys}, \texttt{left\_virt\_keys}[0],
-          $\pk{loc}$, $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$,
-          $\pk{B, V}$, $\pk{loc}$, \texttt{comm\_keys\_loc},
-          \texttt{comm\_keys\_rem})
-          \State \TODO{use \textsc{virt.getEdgeTXs}() above}
-          \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
-          $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$,
-          $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)}
-            \State ensure \textsc{verify}(TX,
-            $\mathrm{sigs}_{\mathrm{byLeft}}[i]$) = True
-          \EndFor
+          \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
+          \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
+          \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{A, V}$, $\pk{B, V}$,
+          \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, False)
+          \State ensure \textsc{verify}($C$,
+          $\mathrm{sigs}_{\mathrm{byLeft}}[0]$) = True
           \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
@@ -267,21 +246,12 @@
         \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
         $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
         assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
-        \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$) $\gets$
-        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, \texttt{left\_fund\_keys},
-        $\pk{A, F}$, $\pk{B, F}$, \texttt{left\_virt\_keys}[0], $\pk{loc}$,
+        \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
+        \textsc{virt.getEdgeTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
         $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
-        $\pk{loc}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
-        \TODO{use \textsc{virt.getEdgeTXs}() above}
-        \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)}
-          \State ensure \textsc{verify}(TX,
-          $\mathrm{sigs}_{\mathrm{byRight}}[i]$) = True
-        \EndFor
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, True)
+        \State ensure \textsc{verify}($C$,
+        $\mathrm{sigs}_{\mathrm{byRight}}[0]$) = True
         \State \Return (\textsc{ok})
       \EndIf
     \end{algorithmic}
@@ -363,6 +333,52 @@
   \end{processbox}
   \caption{}
   \label{code:virtual-layer:mid-txs}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
+      \State \Comment{left and right refer to the two counterparties, with left
+      being the one closer to the funder. Note difference with left/right
+      meaning in \textsc{virt.getMidTXs}.}
+      \State \textsc{getEdgeTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{left}}$,
+      $c_{\mathrm{right}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
+      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
+      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
+      \texttt{comm\_keys\_left}, \texttt{comm\_keys\_right},
+      \texttt{is\_funder}):
+      \Indent
+        \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{guest}}$
+        \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
+        \State $\texttt{fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund}},
+        \pk{\mathrm{right}, \mathrm{fund}}\}$
+        \State $\texttt{virt} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
+        \pk{\mathrm{right}, \mathrm{virt}}\}$
+        \State $\texttt{guest} \gets 2/\{\pk{\mathrm{left}, \mathrm{guest}},
+        \pk{\mathrm{right}, \mathrm{guest}}\}$
+        \If{\texttt{is\_funder} = True}
+          \State $\texttt{out} \gets (\texttt{1} \wedge \texttt{virt}) \vee
+          (\texttt{3} \wedge \texttt{virt} + t)$
+        \Else \: \Comment{TXs belong to \texttt{fundee}}
+          \State $\texttt{out} \gets (\texttt{2} \wedge \texttt{virt}) \vee
+          (\texttt{3} \wedge \texttt{virt} + t)$
+        \EndIf
+        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee
+        (\texttt{guest\_virt} + t)$
+        \State $\mathrm{TX}_{\mathrm{base}} \gets$ TX \{input:
+        $c_{\mathrm{tot}}$, \texttt{fund}, outputs: (($c_{\mathrm{tot}} -
+        c_{\mathrm{guest}}$, \texttt{out}), ($c_{\mathrm{guest}}$,
+        \texttt{guest\_out}))\}
+        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{left}} -
+        c_{\mathrm{guest}}, c_{\mathrm{right}}, \texttt{comm\_keys\_left},
+        \texttt{comm\_keys\_right})$
+        \State \Return ($\mathrm{TX}_{\mathrm{base}}$, $C$)
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:edge-txs}
 \end{figure}
 
 \begin{figure}[H]
