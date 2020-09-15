@@ -231,6 +231,7 @@
       \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
       $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and assign
       output to $\mathrm{sigs}_{\mathrm{byRight}}$
+      \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\} \}$
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
@@ -257,6 +258,8 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.intermediarySigs}()}
     \begin{algorithmic}[1]
+      \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\}, 2/\{
+      \texttt{right\_fund\_keys}\} \}$
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
@@ -319,6 +322,7 @@
         \texttt{host\_fundee}}
           \State \Return \textsc{virt.intermediarySigs}()
         \Else \: \Comment{we are \texttt{host\_fundee}}
+          \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\} \}$
           \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
           \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
           \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{A, V}$, $\pk{B, V}$,
@@ -364,6 +368,7 @@
         \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
         $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
         assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
+        \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\} \}$
         \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
         \textsc{virt.getEdgeTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
         $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
@@ -388,12 +393,16 @@
         \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
         \texttt{left\_virt\_keys}[0]) = True
+        \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
+        \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
         \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
         \texttt{host\_fundee}}
           \State input (\textsc{virtual base sig forward}, \texttt{hops}[1:],
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
           \texttt{hops}[1].\alice{} \Comment{sibling needs
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}
+          \State \trustedcode{$\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets
+          \{ \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$}
           \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
           \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
           \sk{\mathrm{loc}, F})$}
@@ -405,9 +414,13 @@
           \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
           \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
           \texttt{right\_virt\_keys}[0]) = True}
+          \State \trustedcode{add $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
+          to $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$}
           \State \trustedcode{output (\textsc{virtual base sig back},
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
+          \State add $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ to
+          $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$
         \EndIf
         \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}} \gets
         \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{none}},
@@ -423,6 +436,8 @@
         \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
         \texttt{right\_virt\_keys}[0]) = True
+        \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
+        \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
         \State \Return (\textsc{ok})
       \EndIf
     \end{algorithmic}
