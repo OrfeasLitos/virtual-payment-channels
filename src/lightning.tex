@@ -189,32 +189,32 @@
         \alice's to \bob's output}
         \State \remotecode{$\mathrm{sig}_{B, C, i+1} \gets \textsc{sign}(C_{A,
         i+1}, \sk{B, F})$} \Comment{kept by \bob}
-        \State \remotecode{$R_{A, i+1} \gets$ TX \{input: $C_{B,
-        i+1}$.outputs.\alice, output: ($c_B$, $\pk{A, \mathrm{out}}$)\}}
-        \State \remotecode{$\mathrm{sig}_{B, R, i+1} \gets \textsc{sign}(R_{A,
-        i+1}, \sk{B, R})$}
+        \State \remotecode{$R_{A, i} \gets$ TX \{input: $C_{B,
+        i}$.outputs.\alice, output: ($c_B$, $\pk{A, \mathrm{out}}$)\}}
+        \State \remotecode{$\mathrm{sig}_{B, R, i} \gets \textsc{sign}(R_{A,
+        i}, \sk{B, R})$}
         \State \remotecode{reply (\textsc{commitment signed}, $\mathrm{sig}_{B,
-        C, i+1}$, $\mathrm{sig}_{B, R, i+1}$)}
+        C, i+1}$, $\mathrm{sig}_{B, R, i}$)}
         \State $C_{A, i+1} \gets C_{A, i}$ with $x$ coins moved from \alice's to
         \bob's output
         \State ensure \textsc{verify}($C_{A, i+1}$, $\mathrm{sig}_{B, C, i+1}$,
         $\pk{B, F}$) = True
-        \State $R_{A, i+1} \gets$ TX \{input: $C_{B, i+1}$.outputs.\alice,
-        output: ($c_B$, $\pk{A, \mathrm{out}}$)\}
-        \State ensure \textsc{verify}($R_{A, i+1}$, $\mathrm{sig}_{B, R, i+1}$,
+        \State $R_{A, i} \gets$ TX \{input: $C_{B, i}$.outputs.\alice, output:
+        ($c_B$, $\pk{A, \mathrm{out}}$)\}
+        \State ensure \textsc{verify}($R_{A, i}$, $\mathrm{sig}_{B, R, i}$,
         $\pk{B, R}$) = True
-        \State $R_{B, i+1} \gets$ TX \{input: $C_{A, i+1}$.outputs.\bob,
-        output: ($c_A$, $\pk{B, \mathrm{out}}$)\}
-        \State $\mathrm{sig}_{A, R, i+1} \gets \textsc{sign}(R_{B, i+1}, \sk{A,
-        R})$
+        \State $R_{B, i} \gets$ TX \{input: $C_{A, i}$.outputs.\bob, output:
+        ($c_A$, $\pk{B, \mathrm{out}}$)\}
+        \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{B, i}, \sk{A, R})$
         \State add ($x$, \textit{payid}) to \texttt{paid\_out}
-        \State send (\textsc{revoke and ack}, $\mathrm{sig}_{A, R, i+1}$) to
-        \bob
-        \State \remotecode{$R_{B, i+1} \gets$ TX \{input: $C_{A,
-        i+1}$.outputs.\bob, output: ($c_A$, $\pk{B, \mathrm{out}}$)\}}
-        \State \remotecode{ensure \textsc{verify}($R_{B, i+1}$,
-        $\mathrm{sig}_{A, R, i+1}$, $\pk{A, R}$) = True}
+        \State $c_A \gets c_A - x; c_B \gets c_B + x$
+        \State send (\textsc{revoke and ack}, $\mathrm{sig}_{A, R, i}$) to \bob
+        \State \remotecode{$R_{B, i} \gets$ TX \{input: $C_{A,
+        i}$.outputs.\bob, output: ($c_A$, $\pk{B, \mathrm{out}}$)\}}
+        \State \remotecode{ensure \textsc{verify}($R_{B, i}$, $\mathrm{sig}_{A,
+        R, i}$, $\pk{A, R}$) = True}
         \State \remotecode{add ($x$, \textit{payid}) to \texttt{paid\_in}}
+        \State \remotecode{$c_A \gets c_A - x; c_B \gets c_B + x$}
       \EndIndent
     \end{algorithmic}
   \end{processbox}
