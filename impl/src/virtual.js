@@ -32,7 +32,6 @@ function verifyArgs(inRings, outRings, amounts) {
 
 // A simplified version of the general virtual TX
 // Only includes virtualised funding outputs
-// TODO: add 0-value outputs
 function getVirtualTX({inRings, outRings, amounts, fee, fundingTX}) {
   verifyArgs(inRings, outRings, amounts)
 
