@@ -34,7 +34,7 @@
         \texttt{host\_funder}}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
-            \State input (\textsc{virtualKeysForward}, $\texttt{hops}$[1:],
+            \State input (\textsc{virtual keys forward}, $\texttt{hops}$[1:],
             ($\pk{A, V}$, $\pk{B, V}$), \texttt{left\_virt\_keys},
             $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$, ($\pk{A, F}, \pk{B, F}$))
             to \texttt{hops}[1].\alice{} \Comment{sibling}
@@ -45,7 +45,7 @@
             $\pk{B, V}$), ($\pk{\mathrm{loc}}$, \texttt{left\_virt\_keys}[0]))
             of \texttt{hops}[0].\bob and assign output to
             \texttt{right\_virt\_keys}, \texttt{right\_fund\_keys}}
-            \State \trustedcode{output (\textsc{VirtualKeysBack},
+            \State \trustedcode{output (\textsc{virtual keys back},
             \texttt{right\_virt\_keys}, ($\pk{A, F}, \pk{B, F}$))}
             \State store outputs as \texttt{right\_virt\_keys},
             \texttt{right\_fund\_keys}
@@ -270,7 +270,7 @@
         \State ensure \textsc{verify}(TX, $\mathrm{sigs}_{\mathrm{byLeft}}[i]$,
         \texttt{left\_virt\_keys}[0]) = True
       \EndFor
-      \State input (\textsc{virtualSigsForward}, \texttt{hops}[1:],
+      \State input (\textsc{virtual sigs forward}, \texttt{hops}[1:],
       $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{hops}[1].\alice{}
       \Comment{sibling needs $\mathrm{sigs}_{\mathrm{byLeft}}$ for closing}
       \State \trustedcode{\textsc{virt.siblingSigs}()}
@@ -390,7 +390,7 @@
         \texttt{left\_virt\_keys}[0]) = True
         \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
         \texttt{host\_fundee}}
-          \State input (\textsc{virtualBaseSigForward}, \texttt{hops}[1:],
+          \State input (\textsc{virtual base sig forward}, \texttt{hops}[1:],
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
           \texttt{hops}[1].\alice{} \Comment{sibling needs
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}
@@ -405,7 +405,7 @@
           \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
           \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
           \texttt{right\_virt\_keys}[0]) = True}
-          \State \trustedcode{output (\textsc{virtualBaseSigBack},
+          \State \trustedcode{output (\textsc{virtual base sig back},
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
         \EndIf
@@ -452,7 +452,7 @@
     \EndIf
     \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
     \texttt{host\_fundee} nor \texttt{host\_funder}}
-      \State input (\textsc{virtualRevocationForward}, \texttt{hops}[1:]) to
+      \State input (\textsc{virtual revocation forward}, \texttt{hops}[1:]) to
       \texttt{hops}[1].\alice
       \State \trustedcode{$\texttt{revoc\_for\_next} \gets
       \textsc{pcn.revokePrevious}()$}
@@ -462,7 +462,7 @@
       \State \trustedcode{ensure
       \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_next}) returns
       (\textsc{ok})}
-      \State \trustedcode{output (\textsc{virtualRevocationBack})}
+      \State \trustedcode{output (\textsc{virtual revocation back})}
     \EndIf
     \State $\texttt{revoc\_for\_prev} \gets \textsc{pcn.revokePrevious}()$
     \State \Return \texttt{revoc\_for\_prev}
