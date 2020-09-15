@@ -86,7 +86,7 @@
       $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
       \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
       $\pk{\mathrm{loc}, \mathrm{out}}$, \texttt{comm\_keys\_loc},
-      \texttt{comm\_keys\_rem}):
+      \texttt{comm\_keys\_rem}, $P$):
       \Indent
         \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{guest}} \wedge
         c_{\mathrm{loc}} \geq c_{\mathrm{guest}}$
@@ -139,7 +139,7 @@
         ($c_{\mathrm{guest}}, \pk{\mathrm{loc}, \mathrm{out}}$)\}
         \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{loc}} -
         c_{\mathrm{guest}}, c_{\mathrm{rem}}, \texttt{comm\_keys\_loc},
-        \texttt{comm\_keys\_rem})$
+        \texttt{comm\_keys\_rem}, $P$)$
         \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
         $\mathrm{TX}_{\mathrm{left}}$, $\mathrm{TX}_{\mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{both}}$, $C$)
@@ -162,7 +162,7 @@
       $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
       \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
       \texttt{comm\_keys\_left}, \texttt{comm\_keys\_right},
-      \texttt{is\_funder}):
+      \texttt{is\_funder}, $P$):
       \Indent
         \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{guest}}$
         \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
@@ -187,7 +187,7 @@
         \texttt{guest\_out}))\}
         \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{left}} -
         c_{\mathrm{guest}}, c_{\mathrm{right}}, \texttt{comm\_keys\_left},
-        \texttt{comm\_keys\_right})$
+        \texttt{comm\_keys\_right}, P)$
         \State \Return ($\mathrm{TX}_{\mathrm{base}}$, $C$)
       \EndIndent
     \end{algorithmic}
@@ -213,7 +213,7 @@
         \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
         \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
         \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
-        \texttt{comm\_keys\_rem})
+        \texttt{comm\_keys\_rem}, $B$)
         \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
@@ -224,7 +224,7 @@
         \State ($\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$, $C$) $\gets$
         \textsc{virt.getEdgeTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
         $\pk{loc}$, \texttt{right\_fund\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
-        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, False)
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, False, $B$)
         \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
         to $\mathrm{sigs}_{\mathrm{toRight}}$
       \EndIf
@@ -238,7 +238,7 @@
       \texttt{left\_fund\_keys}, $\pk{A, F}$, $\pk{B, F}$,
       \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{loc}$,
       \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$, $\pk{loc}$,
-      \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+      \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $A$)
       \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{both}}$, $C$)}
@@ -263,7 +263,7 @@
       $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B,
       F}$, \texttt{right\_fund\_keys}, \texttt{left\_virt\_keys}[0], $\pk{loc}$,
       $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
-      $\pk{loc}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+      $\pk{loc}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $A$)
       \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{both}}$, $C$)}
@@ -285,7 +285,7 @@
         \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
         \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
         V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
-        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $B$)
         \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$)}
@@ -296,7 +296,7 @@
         \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$, $C$) $\gets$
         \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
         \texttt{left\_virt\_keys}[0], $\pk{loc}$,  $\pk{A, V}$, $\pk{B, V}$,
-        \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, True)
+        \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, True, $B$)
         \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
         to $\mathrm{sigs}_{\mathrm{toLeft}}$
       \EndIf
@@ -322,7 +322,7 @@
           \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
           \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
           \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{A, V}$, $\pk{B, V}$,
-          \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, False)
+          \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, False, $A$)
           \State ensure \textsc{verify}($C$,
           $\mathrm{sigs}_{\mathrm{byLeft}}[0]$, \texttt{left\_virt\_keys}[0]) =
           True
@@ -334,7 +334,7 @@
           \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
           \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
           V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
-          \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+          \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $B$)
           \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
           \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
@@ -353,7 +353,7 @@
         \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
         \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
         V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
-        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem})
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $B$)
         \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
         \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
@@ -367,7 +367,7 @@
         \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
         \textsc{virt.getEdgeTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
         $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
-        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, True)
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, True, $A$)
         \State ensure \textsc{verify}($C$,
         $\mathrm{sigs}_{\mathrm{byRight}}[0]$, \texttt{right\_virt\_keys}[0]) =
         True
