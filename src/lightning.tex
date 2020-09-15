@@ -47,6 +47,25 @@
         \State \Return $(\pk{A, F}, \pk{A, \mathrm{out}}, \pk{A, R}), (\pk{B,
         F}, \pk{B, \mathrm{out}}, \pk{B, R})$
       \EndIndent
+
+      \State \Comment{used by \textsc{virt}}
+      \State \textsc{revokePrevious}():
+      \Indent
+        \State $R_{B, i} \gets$ TX \{input: $C_{A, i}$.outputs.\alice, output:
+        ($C_{A, i}$.outputs.\alice.value, $pk_{B, \mathrm{out}}$)\}
+        \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{B, i}, \sk{A, R})$
+        \State \Return $\mathrm{sig}_{A, R, i}$
+      \EndIndent
+
+      \State \Comment{used by \textsc{virt}}
+      \State \textsc{processRemoteReovcation}($\mathrm{sig}_{B, R, i}$):
+      \Indent
+        \State $R_{A, i} \gets$ TX \{input: $C_{B, i}$.outputs.\bob, output:
+        ($C_{B, i}$.outputs.\bob.value, $pk_{A, \mathrm{out}}$)\}
+        \State ensure \textsc{verify}($R_{A, i}$, $\mathrm{sig}_{B, R, i}$,
+        $\pk{B, R}$) = True
+        \State \Return (\textsc{ok})
+      \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}
