@@ -34,9 +34,9 @@
       \mathrm{out}}$, $\pk{A, R}$, $\pk{B, F}$, $\pk{B, \mathrm{out}}$, $\pk{B,
       R}$, $P$):
       \Indent
-        \State $C_{P, i+1} \gets$ TX \{input: ($c_A + c_B$, $2/\{\pk{A, F},
-        \pk{B, F}\}$), outputs: (($c_A$, $(\pk{A, \mathrm{out}} + t) \vee
-        2/\{\pk{A, R}, \pk{B, R}\}$), ($c_B$, $\pk{B, \mathrm{out}}$))\}
+        \State $C_{P, i+1} \gets$ TX \{input: ($c_A + c_B$, $\texttt{3} \wedge
+        2/\{\pk{A, F}, \pk{B, F}\}$), outputs: (($c_A$, $(\pk{A, \mathrm{out}} +
+        t) \vee 2/\{\pk{A, R}, \pk{B, R}\}$), ($c_B$, $\pk{B, \mathrm{out}}$))\}
         \State \Return $C_{P, i+1}$
       \EndIndent
       \Statex

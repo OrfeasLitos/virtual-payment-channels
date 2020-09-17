@@ -106,8 +106,8 @@
         \vee (\texttt{3} \wedge \texttt{left\_virt} + t)$
         \State $\texttt{right\_out} \gets (\texttt{1} \wedge
         \texttt{right\_virt}) \vee (\texttt{3} \wedge \texttt{right\_virt} + t)$
-        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee
-        (\texttt{guest\_virt} + t)$
+        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee (\texttt{3}
+        \wedge \texttt{guest\_virt} + t)$
         \State $\mathrm{TX}_{\mathrm{none}} \gets$ TX \{inputs:
         (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}}$,
         \texttt{right\_fund})), outputs: (($c_{\mathrm{left}} -
