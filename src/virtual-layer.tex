@@ -28,28 +28,31 @@
       V}$), \texttt{left\_virt\_keys}):
       \Indent
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
-        \State $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}}) \gets
-        \textsc{keyGen}()$
+        \State $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
+        \mathrm{virt}}) \gets \textsc{keyGen}()$
         \If{\texttt{left\_virt\_keys} is given as argument} \Comment{we are not
         \texttt{host\_funder}}
           \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
           \texttt{host\_fundee}}
             \State input (\textsc{virtual keys forward}, $\texttt{hops}$[1:],
             ($\pk{A, V}$, $\pk{B, V}$), \texttt{left\_virt\_keys},
-            $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$, ($\pk{A, F}, \pk{B, F}$))
-            to \texttt{hops}[1].\alice{} \Comment{sibling}
+            $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
+            \mathrm{virt}})$, ($\pk{A, F}, \pk{B, F}$)) to
+            \texttt{hops}[1].\alice{} \Comment{sibling}
             \State \trustedcode{store inputs as \texttt{left\_virt\_keys},
-            $(\sk{\mathrm{loc}}, \pk{\mathrm{loc}})$, \texttt{left\_fund\_keys}}
+            $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
+            \mathrm{virt}})$, \texttt{left\_fund\_keys}}
             \State \trustedcode{call
             \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A, V}$,
-            $\pk{B, V}$), ($\pk{\mathrm{loc}}$, \texttt{left\_virt\_keys}[0]))
-            of \texttt{hops}[0].\bob and assign output to
-            \texttt{right\_virt\_keys}, \texttt{right\_fund\_keys}}
+            $\pk{B, V}$), ($\pk{\mathrm{loc}, \mathrm{virt}}$,
+            \texttt{left\_virt\_keys}[0])) of \texttt{hops}[0].\bob and assign
+            output to \texttt{right\_virt\_keys}, \texttt{right\_fund\_keys}}
             \State \trustedcode{output (\textsc{virtual keys back},
             \texttt{right\_virt\_keys}, ($\pk{A, F}, \pk{B, F}$))}
             \State store outputs as \texttt{right\_virt\_keys},
             \texttt{right\_fund\_keys}
-            \State \Return ($\pk{\mathrm{loc}}$, \texttt{right\_virt\_keys}[0]),
+            \State \Return ($\pk{\mathrm{loc}, \mathrm{virt}}$,
+            \texttt{right\_virt\_keys}[0]),
             \texttt{right\_fund\_keys}
           \Else \: \Comment{we are \texttt{host\_fundee}}
             \State \TODO{there is a problem with the base-virtual channel
@@ -59,13 +62,13 @@
             \State call \textsc{pcn.getCommKeys}() of \texttt{fundee} and assign
             output to ($\pk{A, V}'$, \_, \_), ($\pk{B, V}'$, \_, \_)
             \State ensure $\pk{A, V} = \pk{A, V}' \wedge \pk{B, V} = \pk{B, V}'$
-            \State \Return $\pk{\mathrm{loc}}$
+            \State \Return $\pk{\mathrm{loc}, \mathrm{virt}}$
           \EndIf
         \Else \: \Comment{we are \texttt{host\_funder}}
           \State call \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
-          V}$, $\pk{B, V}$), $\pk{\mathrm{loc}}$) of \texttt{hops}[0].\bob and
-          assign output to ($\pk{\mathrm{right}}$, $\pk{\mathrm{right}, 2}$),
-          \texttt{right\_fund\_keys}
+          V}$, $\pk{B, V}$), $\pk{\mathrm{loc}, \mathrm{virt}}$) of
+          \texttt{hops}[0].\bob and assign output to ($\pk{\mathrm{right}}$,
+          $\pk{\mathrm{right}, 2}$), \texttt{right\_fund\_keys}
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
@@ -217,7 +220,7 @@
         \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
-          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$,
+          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}, \mathrm{virt}}$,
           \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
         \EndFor
       \Else \: \Comment{next hop is \texttt{host\_fundee}}
@@ -225,8 +228,8 @@
         \textsc{virt.getEdgeTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
         $\pk{loc}$, \texttt{right\_fund\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
         \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, False, $B$)
-        \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
-        to $\mathrm{sigs}_{\mathrm{toRight}}$
+        \State add \textsc{sign}($C$, $\sk{\mathrm{loc}, \mathrm{virt}}$,
+        \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
       \EndIf
       \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
       $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and assign
@@ -292,16 +295,16 @@
         \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$)}
-          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
-          to $\mathrm{sigs}_{\mathrm{toLeft}}$
+          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}, \mathrm{virt}}$,
+          \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndFor
       \Else \: \Comment{previous hop is \texttt{host\_funder}}
         \State ($\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$, $C$) $\gets$
         \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
         \texttt{left\_virt\_keys}[0], $\pk{loc}$,  $\pk{A, V}$, $\pk{B, V}$,
         \texttt{comm\_keys\_rem}, \texttt{comm\_keys\_loc}, True, $B$)
-        \State add \textsc{sign}($C$, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
-        to $\mathrm{sigs}_{\mathrm{toLeft}}$
+        \State add \textsc{sign}($C$, $\sk{\mathrm{loc}, \mathrm{virt}}$,
+        \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
       \EndIf
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
@@ -343,8 +346,8 @@
           \For{TX in ($\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$)}
-            \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
-            to $\mathrm{sigs}_{\mathrm{toLeft}}$
+            \State add \textsc{sign}(TX, $\sk{\mathrm{loc}, \mathrm{virt}}$,
+            \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
           \EndFor
           \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndIf
@@ -362,8 +365,8 @@
         \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
-          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}}$, \textsc{anyprevout})
-          to $\mathrm{sigs}_{\mathrm{toRight}}$
+          \State add \textsc{sign}(TX, $\sk{\mathrm{loc}, \mathrm{virt}}$,
+          \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
         \EndFor
         \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
         $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
