@@ -491,6 +491,62 @@
 \end{figure}
 
 \begin{figure}[H]
+  \begin{processbox}{\textsc{virt} -- close}
+    \begin{algorithmic}[1]
+      \State On output (\textsc{close}) by $P \in \texttt{guests}$:
+      \Indent
+        \If{\textit{State} = \textsc{closed}}
+          \State input (\textsc{closed}) to $P$
+        \EndIf
+        \State ensure \textit{State} = \textsc{open}
+        \If{$\texttt{host} \neq \ledger$} \Comment{\texttt{host} is a \textsc{virt}}
+          \State ignore all messages except for input (\textsc{closed}) by
+          \texttt{host}
+          \State output (\textsc{close}) to \texttt{host}
+        \EndIf
+        \State \Comment{if we have a \texttt{host}, continue from here on input
+        (\textsc{closed}) by it}
+        \State send (\textsc{read}) to \ledger and assign reply to
+        \texttt{chain}
+        \State let \texttt{tx} be the unique valid TX for \texttt{chain} among
+        ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
+        $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
+        \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$)
+        \Comment{if we are not an intermediary, only the first exists}
+        \State let \texttt{sigs} be the corresponding set of signatures among
+        ($\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$,
+        $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}}$,
+        $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}}$,
+        $\mathrm{sigs}_{\mathrm{loc}, \mathrm{both}}$)
+        \State add \textsc{sign}(\texttt{tx}, $\sk{A, F}$) and
+        \textsc{sign}(\texttt{tx}, $\sk{\mathrm{loc}, \mathrm{virt}}$) to
+        \texttt{sigs} \Comment{one of the two signatures may be empty, as some
+        transactions don't need a signature by both keys. This is not a
+        problem.}
+        \State ignore all messages except for (\textsc{check chain for closing})
+        by \environment
+        \State $\textit{State} \gets \textsc{closing}$
+        \State send (\textsc{submit}, (\texttt{tx}, \texttt{sigs})) to \ledger
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{check chain for closing}) by \environment:
+      \Indent
+        \State ensure \textit{State} = \textsc{closing}
+        \State send (\textsc{read}) to \ledger and assign reply to
+        \texttt{chain}
+        \If{$\texttt{tx} \in \texttt{chain}$}
+          \State $\textit{State} \gets \textsc{closed}$
+          \State input (\textsc{closed}) to $P$
+        \EndIf
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:close}
+\end{figure}
+
+\begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State \textsc{close}($P$):
