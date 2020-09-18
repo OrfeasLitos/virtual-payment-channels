@@ -466,6 +466,10 @@
       \State ensure
       \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_next}) returns
       (\textsc{ok})
+      \State input (\textsc{virtual layer ready}) to \texttt{funder}
+      \State \trustedcode{$\textit{State} \gets \textsc{open}$} \TODO{recheck
+      state machine}
+      \State \trustedcode{reply (\textsc{ok})}
       \State \Return (\textsc{ok})
     \EndIf
     \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
@@ -483,6 +487,12 @@
       \State \trustedcode{output (\textsc{virtual revocation back})}
     \EndIf
     \State $\texttt{revoc\_for\_prev} \gets \textsc{pcn.revokePrevious}()$
+    \If{len(\texttt{hops}[1:]) = 0} \Comment{we are \texttt{host\_fundee}}
+      \State input (\textsc{virtual layer ready}) to \texttt{fundee}
+      \State \trustedcode{$\textit{State} \gets \textsc{open}$} \TODO{recheck
+      state machine}
+      \State \trustedcode{reply (\textsc{ok})}
+    \EndIf
     \State \Return \texttt{revoc\_for\_prev}
     \end{algorithmic}
   \end{processbox}
