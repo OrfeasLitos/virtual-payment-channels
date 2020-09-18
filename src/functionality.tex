@@ -195,6 +195,9 @@ with all hops of all existing virtuals, we should definitely find another way)}
         us to \textsc{open virtual}}
         \State input (\textsc{you are host}, $c$, \texttt{funder},
         \texttt{fundee}, \texttt{host\_funder}) to \texttt{host\_fundee}
+        \TODO{remove this logic: \texttt{funder} (we) shouldn't be able to
+        \textit{input} something to the (remote) \texttt{host\_fundee}. Change
+        this to have \texttt{fundee} inform \texttt{host\_fundee} instead.}
         \State \trustedcode{ensure $c_A \geq c$}
         \State \trustedcode{ensure we are not already supporting a virtual
         channel}
