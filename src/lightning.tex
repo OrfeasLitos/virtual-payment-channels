@@ -90,8 +90,8 @@
           \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
           \pk{B, R}) \gets \textsc{keyGen}()$
         \Else \: \Comment{real world}
-          \State send (\textsc{open base channel}, $c_{\mathrm{chain}}$, $\pk{A,
-          F}$, $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
+          \State send (\textsc{open base channel}, $c_{P, \mathrm{chain}}$,
+          $\pk{A, F}$, $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
           \State \Comment{colored code is run by \texttt{fundee}. Validation is
           implicit}
           \State \remotecode{ensure super.\textit{State} = \textsc{init}}
@@ -104,32 +104,34 @@
           F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
           \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
         \EndIf
-        \State $F \gets$ TX \{input: \texttt{base\_output}, output:
-        $(c_{\mathrm{chain}}, 2/\{\pk{A, F}, \pk{B, F}\})$\}
+        \State $F \gets$ TX \{input: $(c_{P, \mathrm{chain}}, \pk{P,
+        \mathrm{chain}})$, output: $(c_{P, \mathrm{chain}}, 2/\{\pk{A, F},
+        \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
         \If{real world}
-          \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A,
-          R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
-          \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
+          \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs: ($c_{P,
+          \mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R},
+          \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
+          \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs: ($c_{P,
+          \mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
           \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
           \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A,
           F})$
-          \State send (\textsc{funding created}, \texttt{base\_output},
-          $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
+          \State send (\textsc{funding created}, $(c_{P, \mathrm{chain}}, \pk{P,
+          \mathrm{chain}})$, $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
           \State \Comment{implicitly verify that this is a continuation of the
           previous exchange}
-          \State \remotecode{$F \gets$ TX \{input: \texttt{base\_output}, output:
-          $(c_{\mathrm{chain}}, 2/\{\pk{A, F}, \pk{B, F}\})$\}}
+          \State \remotecode{$F \gets$ TX \{input: $(c_{P, \mathrm{chain}},
+          \pk{P, \mathrm{chain}})$, output: $(c_{P, \mathrm{chain}}, 2/\{\pk{A,
+          F}, \pk{B, F}\})$\}}
           \State \remotecode{$C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
+          ($c_{P, \mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
           \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}}
           \State \remotecode{ensure \textsc{verify}($C_{B, 0}$,
           $\mathrm{sig}_{A, C, 0}$, $\pk{A, F}$) = True}
           \State \remotecode{$C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{\mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A,
-          R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
+          ($c_{P, \mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$
+          $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
           \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
           0}, \sk{B, F})$}
           \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
@@ -137,16 +139,17 @@
           \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
           $\pk{B, F}$) = True
         \EndIf
-        \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{\mathrm{chain}})$
+        \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{P, \mathrm{chain}})$
         \label{code:ln:base:sign-funding}
-        \State send $(\textsc{open}, c_{\mathrm{chain}}, \pk{A, \mathrm{out}},
-        \pk{B, \mathrm{out}}, F, \mathrm{sig}_F, \texttt{funder})$ to \adversary
+        \State send $(\textsc{open}, c_{P, \mathrm{chain}}, \pk{A,
+        \mathrm{out}}, \pk{B, \mathrm{out}}, F, \mathrm{sig}_F,
+        \texttt{funder})$ to \adversary
         \While{$F \notin \Sigma$}
           \State wait for input (\textsc{check funding}) by \texttt{funder}
           \State input (\textsc{read}) to \ledger as \texttt{funder} and assign
           output to $\Sigma$
         \EndWhile
-        \State \Return (\textsc{ok}, $c_{\mathrm{chain}}$)
+        \State \Return (\textsc{ok}, $c_{P, \mathrm{chain}}$)
       \EndIndent
     \end{algorithmic}
   \end{processbox}
