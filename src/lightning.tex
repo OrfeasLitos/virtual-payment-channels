@@ -1,31 +1,37 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- init}
     \begin{algorithmic}[1]
-      \State \textsc{init}(\texttt{keys}, \dave):
+      \State \Comment{When not specified, input comes from and output goes to
+      \environment in the real or $P \in \{\alice, \bob\}$ in the ideal world.}
+      \State \Comment{In the real world, the player knows whether it is \alice
+      or \bob. Then $P$ is that player and $\bar{P}$ is the counterparty.}
+      \State On (\textsc{init}, $\pk{P, \mathrm{out}}$):
       \Indent
-        \State ensure \dave = \alice
-        \State $\pk{A, \mathrm{out}} \gets \texttt{keys}$
-        \State \Return (\textsc{ok})
+        \State ensure $\textit{State}^P = \bot$
+        \State $\textit{State}^P \gets \textsc{init}$
+        \State store $\pk{P, \mathrm{out}}$
+        \State $(c_A, c_B) \gets (0, 0)$
+        \State output (\textsc{ok})
       \EndIndent
       \Statex
 
-      \State \textsc{topUp}(\texttt{funder}):
+      \State On (\textsc{topUp}):
       \Indent
-        \State ensure super.\textit{State} = \textsc{init}
-        \State $(\sk{\mathrm{chain}}, \pk{\mathrm{chain}}) \gets
+        \State ensure $\textit{State}^P = \textsc{init}$
+        \State $(\sk{P, \mathrm{chain}}, \pk{P, \mathrm{chain}}) \gets
         \textsc{keyGen}()$
-        \State output (\textsc{public key}, $\pk{\mathrm{chain}}$) to
-        \texttt{funder}
-        \While{$\nexists \mathrm{tx} \in \Sigma, c_{\mathrm{chain}}:
-        (c_{\mathrm{chain}}, \pk{\mathrm{chain}}) \in \mathrm{tx.outputs}$}
-          \State wait\footnote{while waiting, all other messages by \dave are
-          ignored} for input (\textsc{check top up}) by \texttt{funder}
-          \State input (\textsc{read}) to \ledger as \texttt{funder} and assign
-          ouput to $\Sigma$
+        \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
+        $\Sigma$
+        \State output (\textsc{top up to}, $\pk{P, \mathrm{chain}}$)
+        \While{$\nexists \mathrm{tx} \in \Sigma, c_{P, \mathrm{chain}}: (c_{P,
+        \mathrm{chain}}, \pk{P, \mathrm{chain}}) \in \mathrm{tx.outputs}$}
+          \State output
+          \State \Comment{while waiting, all other messages by $P$ are ignored}
+          \State wait for input (\textsc{check top up})
+          \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
+          $\Sigma$
         \EndWhile
-        \State $\texttt{base\_output} \gets (c_{\mathrm{chain}},
-        \pk{\mathrm{chain}})$
-        \State \Return (\textsc{ok}, $c_{\mathrm{chain}}$)
+        \State output (\textsc{topped up}, $c_{P, \mathrm{chain}}$)
       \EndIndent
       \Statex
 
