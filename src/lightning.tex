@@ -53,6 +53,7 @@
         \State \Return $(\pk{A, F}, \pk{A, \mathrm{out}}, \pk{A, R}), (\pk{B,
         F}, \pk{B, \mathrm{out}}, \pk{B, R})$
       \EndIndent
+      \Statex
 
       \State \Comment{used by \textsc{virt}}
       \State \textsc{revokePrevious}():
@@ -62,6 +63,7 @@
         \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{B, i}, \sk{A, R})$
         \State \Return $\mathrm{sig}_{A, R, i}$
       \EndIndent
+      \Statex
 
       \State \Comment{used by \textsc{virt}}
       \State \textsc{processRemoteReovcation}($\mathrm{sig}_{B, R, i}$):
