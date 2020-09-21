@@ -11,7 +11,7 @@
         \State $\textit{State}^P \gets \textsc{init}$
         \State store $\pk{P, \mathrm{out}}$
         \State $(c_A, c_B) \gets (0, 0)$
-        \State output (\textsc{ok})
+        \State output (\textsc{init ok})
       \EndIndent
       \Statex
 
@@ -31,7 +31,7 @@
           \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
           $\Sigma$
         \EndWhile
-        \State output (\textsc{topped up}, $c_{P, \mathrm{chain}}$)
+        \State output (\textsc{top up ok}, $c_{P, \mathrm{chain}}$)
       \EndIndent
       \Statex
 
