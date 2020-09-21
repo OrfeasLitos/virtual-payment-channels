@@ -16,8 +16,9 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{topUp}):
+      \State On (\textsc{top up}):
       \Indent
+        \State ensure $P = \alice$ \Comment{activated party is the funder}
         \State ensure $\textit{State}^P = \textsc{init}$
         \State $(\sk{P, \mathrm{chain}}, \pk{P, \mathrm{chain}}) \gets
         \textsc{keyGen}()$
@@ -32,6 +33,7 @@
           \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
           $\Sigma$
         \EndWhile
+        \State $\textit{State}^P \gets \textsc{topped up}$
         \State output (\textsc{top up ok}, $c_{P, \mathrm{chain}}$)
       \EndIndent
     \end{algorithmic}
