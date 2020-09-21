@@ -4,7 +4,8 @@
       \State \Comment{When not specified, input comes from and output goes to
       \environment in the real or $P \in \{\alice, \bob\}$ in the ideal world.}
       \State \Comment{In the real world, the player knows whether it is \alice
-      or \bob. Then $P$ is that player and $\bar{P}$ is the counterparty.}
+      (funder) or \bob (fundee). The activated party is $P$ and the counterparty
+      is $\bar{P}$.}
       \State On (\textsc{init}, $\pk{P, \mathrm{out}}$):
       \Indent
         \State ensure $\textit{State}^P = \bot$
