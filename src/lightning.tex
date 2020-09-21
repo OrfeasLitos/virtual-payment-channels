@@ -87,59 +87,75 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- base}
+  \begin{processbox}{\textsc{ln} -- open}
     \begin{algorithmic}[1]
-      \State \textsc{openBase}(\texttt{fundee}):
+      \State On (\textsc{open}, $c$, \texttt{fundee}, \texttt{hops}):
+      \Comment{\texttt{fundee} is \bob}
       \Indent
-        \State ensure super.\textit{State} = \textsc{topped up}
+        \State ensure $P = \alice$ \Comment{activated party is the funder}
+        \State ensure $\textit{State}^A = \textsc{topped up}$
+        \State ensure $c = c_{A, \mathrm{chain}}$
         \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
         $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
         \If{ideal world}
+          \State ensure $\textit{State}^B = \textsc{init}$
           \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
           \pk{B, R}) \gets \textsc{keyGen}()$
         \Else \: \Comment{real world}
-          \State send (\textsc{open base channel}, $c_{P, \mathrm{chain}}$,
-          $\pk{A, F}$, $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
-          \State \Comment{colored code is run by \texttt{fundee}. Validation is
-          implicit}
-          \State \remotecode{ensure super.\textit{State} = \textsc{init}}
-          \Comment{``super'': storage of enclosing protocol}
+          \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
+          $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
+          \State \Comment{colored code is run by honest \texttt{fundee}.
+          Validation is implicit}
+          \State \remotecode{ensure \textit{State} = \textsc{init}}
           \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
           \mathrm{out}}$}
           \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
           $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
-          \State \remotecode{reply (\textsc{accept base channel}, $\pk{B,
-          F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
+          \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
+          $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
           \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
         \EndIf
-        \State $F \gets$ TX \{input: $(c_{P, \mathrm{chain}}, \pk{P,
-        \mathrm{chain}})$, output: $(c_{P, \mathrm{chain}}, 2/\{\pk{A, F},
-        \pk{B, F}\})$\}
-        \label{code:ln:base:create-funding}
+        \If{\texttt{hops} = \ledger} \Comment{opening base channel}
+          \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
+          \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
+          \label{code:ln:base:create-funding}
+        \Else \: \Comment{opening virtual channel}
+          \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
+          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
+          reply (\textsc{virtual ok})
+          \TODO{recheck that this works, make it work with \textsc{virt}}
+          \TODO{use \texttt{left} similarly in \textsc{virt}}
+        \EndIf
         \If{real world}
-          \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs: ($c_{P,
-          \mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R},
+          \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs: ($c$,
+          ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R},
           \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
-          \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs: ($c_{P,
-          \mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
-          \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
+          \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs: ($c$, $\pk{A,
+          \mathrm{out}}$), ($0$, ($\pk{B, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A,
+          R}, \pk{B, R}\}$)\}
           \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A,
           F})$
-          \State send (\textsc{funding created}, $(c_{P, \mathrm{chain}}, \pk{P,
-          \mathrm{chain}})$, $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
+          \State send (\textsc{funding created}, $(c, \pk{A, \mathrm{chain}})$,
+          $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
           \State \Comment{implicitly verify that this is a continuation of the
           previous exchange}
-          \State \remotecode{$F \gets$ TX \{input: $(c_{P, \mathrm{chain}},
-          \pk{P, \mathrm{chain}})$, output: $(c_{P, \mathrm{chain}}, 2/\{\pk{A,
-          F}, \pk{B, F}\})$\}}
+          \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
+          channel}
+            \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A,
+            \mathrm{chain}})$, output: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
+            \pk{B, F}\})$\}}
+          \Else \: \Comment{opening virtual channel}
+            \State \remotecode{ensure we have received (\textsc{virtual ok}) by
+            \texttt{hops}[-1].\texttt{right}}
+          \EndIf
           \State \remotecode{$C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{P, \mathrm{chain}}$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
+          ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
           \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}}
           \State \remotecode{ensure \textsc{verify}($C_{B, 0}$,
           $\mathrm{sig}_{A, C, 0}$, $\pk{A, F}$) = True}
           \State \remotecode{$C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c_{P, \mathrm{chain}}$, ($\pk{A, \mathrm{out}} + t$) $\vee$
-          $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
+          ($c$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B,
+          R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
           \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
           0}, \sk{B, F})$}
           \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
@@ -147,17 +163,18 @@
           \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
           $\pk{B, F}$) = True
         \EndIf
-        \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{P, \mathrm{chain}})$
+        \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{A, \mathrm{chain}})$
         \label{code:ln:base:sign-funding}
-        \State send $(\textsc{open}, c_{P, \mathrm{chain}}, \pk{A,
-        \mathrm{out}}, \pk{B, \mathrm{out}}, F, \mathrm{sig}_F,
-        \texttt{funder})$ to \adversary
+        \State send $(\textsc{open}, c, \pk{A, \mathrm{out}}, \pk{B,
+        \mathrm{out}}, F, \mathrm{sig}_F, \alice, \bob)$ to \adversary
         \While{$F \notin \Sigma$}
-          \State wait for input (\textsc{check funding}) by \texttt{funder}
-          \State input (\textsc{read}) to \ledger as \texttt{funder} and assign
-          output to $\Sigma$
+          \State wait for input (\textsc{check funding})
+          \State input (\textsc{read}) to \ledger as $P$ and assign output to
+          $\Sigma$
         \EndWhile
-        \State \Return (\textsc{ok}, $c_{P, \mathrm{chain}}$)
+        \State $c_A \gets c$; $c_B \gets 0$
+        \State $\textit{State} \gets \textsc{open}$
+        \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
       \EndIndent
     \end{algorithmic}
   \end{processbox}
