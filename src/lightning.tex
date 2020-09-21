@@ -34,9 +34,15 @@
         \EndWhile
         \State output (\textsc{top up ok}, $c_{P, \mathrm{chain}}$)
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:init}
+\end{figure}
 
-      \State \Comment{used by \textsc{virt}}
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- methods used by \textsc{virt}}
+    \begin{algorithmic}[1]
       \State \textsc{getCommTX}($c_A$, $c_B$, $\pk{A, F}$, $\pk{A,
       \mathrm{out}}$, $\pk{A, R}$, $\pk{B, F}$, $\pk{B, \mathrm{out}}$, $\pk{B,
       R}$, $P$):
@@ -48,7 +54,6 @@
       \EndIndent
       \Statex
 
-      \State \Comment{used by \textsc{virt}}
       \State \textsc{getCommKeys}():
       \Indent
         \State \Return $(\pk{A, F}, \pk{A, \mathrm{out}}, \pk{A, R}), (\pk{B,
@@ -56,7 +61,6 @@
       \EndIndent
       \Statex
 
-      \State \Comment{used by \textsc{virt}}
       \State \textsc{revokePrevious}():
       \Indent
         \State $R_{B, i} \gets$ TX \{input: $C_{A, i}$.outputs.\alice, output:
@@ -66,7 +70,6 @@
       \EndIndent
       \Statex
 
-      \State \Comment{used by \textsc{virt}}
       \State \textsc{processRemoteReovcation}($\mathrm{sig}_{B, R, i}$):
       \Indent
         \State $R_{A, i} \gets$ TX \{input: $C_{B, i}$.outputs.\bob, output:
@@ -78,7 +81,7 @@
     \end{algorithmic}
   \end{processbox}
   \caption{}
-  \label{code:ln:init}
+  \label{code:ln:methods-for-virt}
 \end{figure}
 
 \begin{figure}[H]
