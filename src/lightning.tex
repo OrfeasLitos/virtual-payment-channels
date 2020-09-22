@@ -196,7 +196,7 @@
         \State \remotecode{$\textit{State}^B \gets \textsc{waiting to check
         funding}$}
       \Else \: \Comment{opening virtual channel}
-        \State \remotecode{$c_A \gets c$; $c_B \gets 0$}
+        \State \remotecode{$c_A \gets c$; $c_B \gets 0$; $i \gets 0$}
         \State \remotecode{$\textit{State}^B \gets \textsc{open}$}
       \EndIf
       \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B, C,
@@ -275,7 +275,7 @@
       \ElsIf{ideal world} \Comment{opening virtual channel in ideal world}
         \State $\textit{State}^B \gets \textsc{open}$
       \EndIf
-      \State $c_A \gets c$; $c_B \gets 0$
+      \State $c_A \gets c$; $c_B \gets 0$; $i \gets 0$
       \State $\textit{State}^A \gets \textsc{open}$
       \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hosts})
     \end{algorithmic}
@@ -292,7 +292,8 @@
         \State send (\textsc{pay}, $x$) to \adversary and expect reply
         (\textsc{pay ok})
         \State ensure $\textit{State}^{\bar{P}} = \textsc{open}$
-        \State $c_P \gets c_B - x; c_{\bar{P}} \gets c_{\bar{P}} + x$
+        \State $c_P \gets c_B - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
+        i + 1$
       \Else
         \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$ coins moved from
         $P$'s to $\bar{P}$'s output
@@ -328,7 +329,8 @@
         \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
         \sk{P, R})$
         \State add $x$ to \texttt{paid\_out}
-        \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$
+        \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
+        i + 1$
         \State send (\textsc{revoke and ack}, $\mathrm{sig}_{P, R, i}$) to
         $\bar{P}$
         \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
@@ -337,7 +339,7 @@
         $\mathrm{sig}_{P, R, i}$, $\pk{P, R}$) = True}
         \State \remotecode{add $x$ to \texttt{paid\_in}}
         \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
-        x$}
+        x$; $i \gets i + 1$}
       \EndIf
       \State \Comment{No output is given to the caller, this is intentional}
     \end{algorithmic}
