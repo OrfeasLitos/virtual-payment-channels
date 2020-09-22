@@ -285,53 +285,61 @@
 \end{figure}
 
 \begin{figure}[H]
-\begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- pay}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
     \begin{algorithmic}[1]
-      \State \textsc{pay}($x$, \textit{payid}): \Comment{\alice pays, \bob gets
-      paid}
-      \Indent
-        \State $C_{B, i+1} \gets C_{B, i}$ with $x$ coins moved from \alice's to
-        \bob's output
-        \State $\mathrm{sig}_{A, C, i+1} \gets \textsc{sign}(C_{B, i+1}, \sk{A,
-        F})$ \Comment{kept by \alice}
-        \State send (\textsc{pay}, $x$, $\mathrm{sig}_{A, C, i+1}$,
-        \textit{payid}) to \bob
-        \State \remotecode{$C_{B, i+1} \gets C_{B, i}$ with $x$ coins moved from
-        \alice's to \bob's output}
-        \State \remotecode{ensure \textsc{verify}($C_{B, i+1}$,
-        $\mathrm{sig}_{A, C, i+1}$, $\pk{A, F}$) = True}
-        \State \remotecode{$C_{A, i+1} \gets C_{A, i}$ with $x$ coins moved from
-        \alice's to \bob's output}
-        \State \remotecode{$\mathrm{sig}_{B, C, i+1} \gets \textsc{sign}(C_{A,
-        i+1}, \sk{B, F})$} \Comment{kept by \bob}
-        \State \remotecode{$R_{A, i} \gets$ TX \{input: $C_{B,
-        i}$.outputs.\alice, output: ($c_B$, $\pk{A, \mathrm{out}}$)\}}
-        \State \remotecode{$\mathrm{sig}_{B, R, i} \gets \textsc{sign}(R_{A,
-        i}, \sk{B, R})$}
-        \State \remotecode{reply (\textsc{commitment signed}, $\mathrm{sig}_{B,
-        C, i+1}$, $\mathrm{sig}_{B, R, i}$)}
-        \State $C_{A, i+1} \gets C_{A, i}$ with $x$ coins moved from \alice's to
-        \bob's output
-        \State ensure \textsc{verify}($C_{A, i+1}$, $\mathrm{sig}_{B, C, i+1}$,
-        $\pk{B, F}$) = True
-        \State $R_{A, i} \gets$ TX \{input: $C_{B, i}$.outputs.\alice, output:
-        ($c_B$, $\pk{A, \mathrm{out}}$)\}
-        \State ensure \textsc{verify}($R_{A, i}$, $\mathrm{sig}_{B, R, i}$,
-        $\pk{B, R}$) = True
-        \State $R_{B, i} \gets$ TX \{input: $C_{A, i}$.outputs.\bob, output:
-        ($c_A$, $\pk{B, \mathrm{out}}$)\}
-        \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{B, i}, \sk{A, R})$
-        \State add ($x$, \textit{payid}) to \texttt{paid\_out}
-        \State $c_A \gets c_A - x; c_B \gets c_B + x$
-        \State send (\textsc{revoke and ack}, $\mathrm{sig}_{A, R, i}$) to \bob
-        \State \remotecode{$R_{B, i} \gets$ TX \{input: $C_{A,
-        i}$.outputs.\bob, output: ($c_A$, $\pk{B, \mathrm{out}}$)\}}
-        \State \remotecode{ensure \textsc{verify}($R_{B, i}$, $\mathrm{sig}_{A,
-        R, i}$, $\pk{A, R}$) = True}
-        \State \remotecode{add ($x$, \textit{payid}) to \texttt{paid\_in}}
-        \State \remotecode{$c_A \gets c_A - x; c_B \gets c_B + x$}
-      \EndIndent
+      \State ensure $\textit{State}^P = \textsc{open} \wedge c_P \geq x$
+      \If{ideal world}
+        \State send (\textsc{pay}, $x$) to \adversary and expect reply
+        (\textsc{pay ok})
+        \State ensure $\textit{State}^{\bar{P}} = \textsc{open}$
+        \State $c_P \gets c_B - x; c_{\bar{P}} \gets c_{\bar{P}} + x$
+      \Else
+        \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$ coins moved from
+        $P$'s to $\bar{P}$'s output
+        \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1},
+        \sk{P, F})$ \Comment{kept by $\bar{P}$}
+        \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
+        \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
+        and remote code}
+        \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$
+        coins moved from $P$'s to $\bar{P}$'s output}
+        \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
+        $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}$) = True}
+        \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from
+        $P$'s to $\bar{P}$'s output}
+        \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
+        \textsc{sign}(C_{P, i+1}, \sk{\bar{P}, F})$} \Comment{kept by $P$}
+        \State \remotecode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
+        i}$.outputs.$P$, output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}}
+        \State \remotecode{$\mathrm{sig}_{\bar{P}, R, i} \gets
+        \textsc{sign}(R_{P, i}, \sk{\bar{P}, R})$}
+        \State \remotecode{reply (\textsc{commitment signed},
+        $\mathrm{sig}_{\bar{P}, C, i+1}$, $\mathrm{sig}_{\bar{P}, R, i}$)}
+        \State $C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from $P$'s to
+        $\bar{P}$'s output
+        \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
+        i+1}$, $\pk{\bar{P}, F}$) = True
+        \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
+        output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}
+        \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
+        i}$, $\pk{\bar{P}, R}$) = True
+        \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$\bar{P}$,
+        output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
+        \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
+        \sk{P, R})$
+        \State add $x$ to \texttt{paid\_out}
+        \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$
+        \State send (\textsc{revoke and ack}, $\mathrm{sig}_{P, R, i}$) to
+        $\bar{P}$
+        \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
+        i}$.outputs.$\bar{P}$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
+        \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
+        $\mathrm{sig}_{P, R, i}$, $\pk{P, R}$) = True}
+        \State \remotecode{add $x$ to \texttt{paid\_in}}
+        \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
+        x$}
+      \EndIf
+      \State \Comment{No output is given to the caller, this is intentional}
     \end{algorithmic}
   \end{processbox}
   \caption{}
