@@ -87,99 +87,199 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- open}
+  \begin{processbox}{\textsc{ln.exchangeOpenKeys}()}
     \begin{algorithmic}[1]
-      \State On (\textsc{open}, $c$, \texttt{fundee}, \texttt{hops}):
-      \Comment{\texttt{fundee} is \bob}
-      \Indent
-        \State ensure $P = \alice$ \Comment{activated party is the funder}
-        \State ensure $\textit{State}^A = \textsc{topped up}$
-        \State ensure $c = c_{A, \mathrm{chain}}$
-        \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
-        $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
-        \If{ideal world}
-          \State ensure $\textit{State}^B = \textsc{init}$
-          \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
-          \pk{B, R}) \gets \textsc{keyGen}()$
-        \Else \: \Comment{real world}
-          \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
-          $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
-          \State \Comment{colored code is run by honest \texttt{fundee}.
-          Validation is implicit}
-          \State \remotecode{ensure \textit{State} = \textsc{init}}
-          \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
-          \mathrm{out}}$}
-          \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
-          $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
-          \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
-          $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
-          \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
-        \EndIf
-        \If{\texttt{hops} = \ledger} \Comment{opening base channel}
-          \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
-          \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
-          \label{code:ln:base:create-funding}
+      \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
+      $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
+      \If{ideal world}
+        \State ensure $\textit{State}^B = \textsc{init}$
+        \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
+        \pk{B, R}) \gets \textsc{keyGen}()$
+      \Else \: \Comment{real world}
+        \State $\textit{State}^A \gets \textsc{waiting for opening keys}$
+        \State send (\textsc{open channel}, $c$, \texttt{hosts}, $\pk{A, F}$,
+        $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
+        \State \Comment{colored code is run by honest \texttt{fundee}.
+        Validation is implicit}
+        \State \remotecode{ensure $\textit{State}^B = \textsc{init}$}
+        \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
+        \mathrm{out}}$}
+        \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
+        $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
+        \If{\remotecode{\texttt{hosts} = \ledger}} \Comment{opening base
+        channel}
+          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for comm
+          sig}$}
         \Else \: \Comment{opening virtual channel}
-          \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
-          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-          reply (\textsc{virtual ok})
-          \TODO{recheck that this works, make it work with \textsc{virt}}
+          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for host}$}
+        \EndIf
+        \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
+        $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
+        \State ensure $\textit{State}^A = \textsc{waiting for opening keys}$
+        \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
+        \State $\textit{State}^A \gets \textsc{opening keys ok}$
+      \EndIf
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:exchange-open-keys}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln.prepareBase}()}
+    \begin{algorithmic}[1]
+      \If{\texttt{hosts} = \ledger} \Comment{opening base channel}
+        \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
+        \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
+        \label{code:ln:base:create-funding}
+        \If{ideal world}
+          \State $\textit{State}^B \gets \textsc{waiting to check funding}$
+        \EndIf
+      \Else \: \Comment{opening virtual channel}
+        \If{ideal world}
+          \State input (\textsc{host me}, \alice, \bob, \texttt{hosts}, $c$,
+          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hosts}[0].\texttt{left} and
+          expect output (\textsc{hosts ready}) to \texttt{fundee} by
+          \texttt{hosts}[1].\texttt{right} \Comment{ignore any other message}
+          \State input (\textsc{host ack}) as \texttt{fundee} to
+          \texttt{hosts}[1].\texttt{right} and expect output (\textsc{hosts
+          ready}) to \texttt{funder} by \texttt{hosts}[0].\texttt{left}
+          \TODO{make this work with \textsc{virt}}
           \TODO{use \texttt{left} similarly in \textsc{virt}}
+        \Else \: \Comment{real world}
+          \State input (\textsc{host me}, \alice, \bob, \texttt{hosts}, $c$,
+          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hosts}[0].\texttt{left} and expect
+          reply (\textsc{hosts ready}) \Comment{ignore any other message}
         \EndIf
-        \If{real world}
-          \State $C_{A, 0} \gets$ TX \{input: $F$.output, outputs: ($c$,
-          ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R},
-          \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
-          \State $C_{B, 0} \gets$ TX \{input: $F$.output, outputs: ($c$, $\pk{A,
-          \mathrm{out}}$), ($0$, ($\pk{B, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A,
-          R}, \pk{B, R}\}$)\}
-          \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A,
-          F})$
-          \State send (\textsc{funding created}, $(c, \pk{A, \mathrm{chain}})$,
-          $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
-          \State \Comment{implicitly verify that this is a continuation of the
-          previous exchange}
-          \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
-          channel}
-            \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A,
-            \mathrm{chain}})$, output: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
-            \pk{B, F}\})$\}}
-          \Else \: \Comment{opening virtual channel}
-            \State \remotecode{ensure we have received (\textsc{virtual ok}) by
-            \texttt{hops}[-1].\texttt{right}}
-          \EndIf
-          \State \remotecode{$C_{B, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
-          \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}}
-          \State \remotecode{ensure \textsc{verify}($C_{B, 0}$,
-          $\mathrm{sig}_{A, C, 0}$, $\pk{A, F}$) = True}
-          \State \remotecode{$C_{A, 0} \gets$ TX \{input: $F$.output, outputs:
-          ($c$, ($\pk{A, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B,
-          R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
-          \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A,
-          0}, \sk{B, F})$}
-          \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B,
-          C, 0}$)}
-          \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
-          $\pk{B, F}$) = True
+      \EndIf
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:prepare-base}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln.exchangeOpenSigs}()}
+    \begin{algorithmic}[1]
+      \State $C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
+      \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + t$) $\vee$
+      $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
+      \State $C_{B, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
+      \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
+      \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
+      \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A, F})$
+      \State $\textit{State}^A \gets \textsc{waiting for comm sig}$
+      \State send (\textsc{funding created}, $(c, \pk{A, \mathrm{chain}})$,
+      $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
+      \State \remotecode{ensure $\textit{State}^B = \textsc{waiting for comm
+      sig}$} \Comment{if opening virtual channel, we have received
+      (\textsc{hosts ready}) by \texttt{hosts}[-1].\texttt{right}
+      (c.f. Fig~\ref{code:ln:bob}, line~\ref{code:ln:bob:host})} \TODO{do this
+      exchange in last hop, \textsc{virt}}
+      \If{\remotecode{\texttt{hosts} = \ledger}} \Comment{opening base channel}
+        \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$,
+        output: $(c, \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}}
+      \EndIf
+      \State \remotecode{$C_{B, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge
+      2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$),
+      ($0$, ($\pk{B, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}}
+      \State \remotecode{ensure \textsc{verify}($C_{B, 0}$, $\mathrm{sig}_{A, C,
+      0}$, $\pk{A, F}$) = True}
+      \State \remotecode{$C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge
+      2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + t$)
+      $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
+      \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A, 0},
+      \sk{B, F})$}
+      \If{\remotecode{\texttt{hosts} = \ledger}} \Comment{opening base channel}
+        \State \remotecode{$\textit{State}^B \gets \textsc{waiting to check
+        funding}$}
+      \Else \: \Comment{opening virtual channel}
+        \State \remotecode{$c_A \gets c$; $c_B \gets 0$}
+        \State \remotecode{$\textit{State}^B \gets \textsc{open}$}
+      \EndIf
+      \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B, C,
+      0}$)}
+      \State ensure $\textit{State}^A = \textsc{waiting for comm sig}$
+      \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
+      $\pk{B, F}$) = True
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:exchange-open-sigs}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln.commitBase}()}
+    \begin{algorithmic}[1]
+      \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{A, \mathrm{chain}})$
+      \label{code:ln:base:sign-funding}
+      \State send $(\textsc{open}, c, \pk{A, \mathrm{out}}, \pk{B,
+      \mathrm{out}}, F, \mathrm{sig}_F, \alice, \bob)$ to \adversary
+      \While{$F \notin \Sigma$}
+        \State wait for input (\textsc{check funding}) \Comment{ignore all other
+        messages}
+        \State input (\textsc{read}) to \ledger as $P$ and assign output to
+        $\Sigma$
+      \EndWhile
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:commit-base}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- external open messages for \bob}
+    \begin{algorithmic}[1]
+      \State On input (\textsc{check funding}): \Comment{real or ideal world}
+      \Indent
+        \State ensure $\textit{State}^B = \textsc{waiting to check funding}$
+        \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
+        \If{$F \in \Sigma$}
+          \State $\textit{State}^B \gets \textsc{open}$
+          \State reply (\textsc{open ok})
         \EndIf
-        \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{A, \mathrm{chain}})$
-        \label{code:ln:base:sign-funding}
-        \State send $(\textsc{open}, c, \pk{A, \mathrm{out}}, \pk{B,
-        \mathrm{out}}, F, \mathrm{sig}_F, \alice, \bob)$ to \adversary
-        \While{$F \notin \Sigma$}
-          \State wait for input (\textsc{check funding})
-          \State input (\textsc{read}) to \ledger as $P$ and assign output to
-          $\Sigma$
-        \EndWhile
-        \State $c_A \gets c$; $c_B \gets 0$
-        \State $\textit{State} \gets \textsc{open}$
-        \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{hosts ready}) by \texttt{hosts}[-1].\texttt{right}:
+      \Comment{real world}
+      \Indent
+        \State ensure $\textit{State}^B = \textsc{waiting for host}$
+        \State $\textit{State}^B \gets \textsc{waiting for comm sig}$
+        \label{code:ln:bob:host}
+        \State reply (\textsc{host ack})
       \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}
-  \label{code:ln:base}
+  \label{code:ln:bob}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- On (\textsc{open}, $c$, \texttt{fundee},
+  \texttt{hosts}):}
+    \begin{algorithmic}[1]
+      \State \Comment{\texttt{fundee} is \bob}
+      \State ensure $P = \alice$ \Comment{activated party is the funder}
+      \State ensure $\textit{State}^A = \textsc{topped up}$
+      \State ensure $c = c_{A, \mathrm{chain}}$
+      \State \textsc{ln.exchangeOpenKeys}()
+      \State \textsc{ln.prepareBase}()
+      \If{real world}
+        \State \textsc{ln.exchangeOpenSigs}()
+      \EndIf
+      \If{\texttt{hosts} = \ledger}
+        \State \textsc{ln.commitBase}()
+      \ElsIf{ideal world} \Comment{opening virtual channel in ideal world}
+        \State $\textit{State}^B \gets \textsc{open}$
+      \EndIf
+      \State $c_A \gets c$; $c_B \gets 0$
+      \State $\textit{State}^A \gets \textsc{open}$
+      \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hosts})
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:open}
 \end{figure}
 
 \begin{figure}[H]
