@@ -283,26 +283,6 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- open virtual}
-    \begin{algorithmic}[1]
-      \State \textsc{openVirtual}(\texttt{fundee}, \texttt{host\_funder},
-      \texttt{host\_fundee}, $c$):
-      \Indent
-        \If{real world}
-          \State do funding ceremony as in base channel
-          (Fig.~\ref{code:ln:base},
-          lines~\ref{code:ln:base:create-funding}-\ref{code:ln:base:sign-funding})
-          \TODO{abstract better}
-          \State \Return $(\pk{A, F}, \pk{B, F})$
-        \EndIf
-        \State \Return (\textsc{ok})
-      \EndIndent
-    \end{algorithmic}
-  \end{processbox}
-  \caption{}
-  \label{code:ln:open-virtual}
-\end{figure}
-
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- pay}
     \begin{algorithmic}[1]
