@@ -503,18 +503,18 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt} -- close}
     \begin{algorithmic}[1]
-      \State On output (\textsc{close}) by $P \in \texttt{guests}$:
+      \State On input (\textsc{close}) by $P \in \texttt{guests}$:
       \Indent
         \If{\textit{State} = \textsc{closed}}
-          \State input (\textsc{closed}) to $P$
+          \State output (\textsc{closed}) to $P$
         \EndIf
         \State ensure \textit{State} = \textsc{open}
         \If{$\texttt{host} \neq \ledger$} \Comment{\texttt{host} is a \textsc{virt}}
-          \State ignore all messages except for input (\textsc{closed}) by
+          \State ignore all messages except for output (\textsc{closed}) by
           \texttt{host}
-          \State output (\textsc{close}) to \texttt{host}
+          \State input (\textsc{close}) to \texttt{host}
         \EndIf
-        \State \Comment{if we have a \texttt{host}, continue from here on input
+        \State \Comment{if we have a \texttt{host}, continue from here on output
         (\textsc{closed}) by it}
         \State send (\textsc{read}) to \ledger and assign reply to
         \texttt{chain}
@@ -540,14 +540,14 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{check chain for closing}) by \environment:
+      \State On (\textsc{check chain for closing}) by $P \in \texttt{guests}$:
       \Indent
         \State ensure \textit{State} = \textsc{closing}
         \State send (\textsc{read}) to \ledger and assign reply to
         \texttt{chain}
         \If{$\texttt{tx} \in \texttt{chain}$}
           \State $\textit{State} \gets \textsc{closed}$
-          \State input (\textsc{closed}) to $P$
+          \State output (\textsc{closed}) to $P$
         \EndIf
       \EndIndent
     \end{algorithmic}
