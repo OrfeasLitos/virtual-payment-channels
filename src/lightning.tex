@@ -29,7 +29,6 @@
         \State output (\textsc{top up to}, $\pk{P, \mathrm{chain}}$)
         \While{$\nexists \mathrm{tx} \in \Sigma, c_{P, \mathrm{chain}}: (c_{P,
         \mathrm{chain}}, \pk{P, \mathrm{chain}}) \in \mathrm{tx.outputs}$}
-          \State output
           \State \Comment{while waiting, all other messages by $P$ are ignored}
           \State wait for input (\textsc{check top up})
           \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
