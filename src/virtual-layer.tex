@@ -511,7 +511,8 @@
         \State ensure \textit{State} = \textsc{open}
         \If{$\texttt{host} \neq \ledger$} \Comment{\texttt{host} is a \textsc{virt}}
           \State ignore all messages except for output (\textsc{closed}) by
-          \texttt{host}
+          \texttt{host}. Also relay to \texttt{host} any (\textsc{check chain
+          for closing}) input received
           \State input (\textsc{close}) to \texttt{host}
         \EndIf
         \State \Comment{if we have a \texttt{host}, continue from here on output

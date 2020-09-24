@@ -348,27 +348,48 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- close}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{close}):}
     \begin{algorithmic}[1]
-      \State \textsc{close}($P$, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$):
-      \Indent
-        \State \TODO{also cover case when we are virtual}
-        \State $\mathit{State} \gets (\textsc{closing}, P, (\mathrm{tx}_i)_i)$
-        \State input (\textsc{submit}, $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$)
-        to \ledger as $P$
-      \EndIndent
-      \Statex
-
-      \State On activation when $\textit{State} = (\textsc{closing}, P,
-      (\mathrm{tx}_i)_i)$:
-      \Indent
-        \State input (\textsc{read}) to \ledger as $P$ and assign output to
-        $\Sigma$
-        \State ensure all transactions $(\mathrm{tx}_i)_i$ are contained in
-        $\Sigma$
-        \State $\mathit{State} \gets \textsc{closed}$
-        \State \Return (\textsc{ok})
-      \EndIndent
+      \State ensure $\textit{State}^P = \textsc{open}$
+      \If{$\texttt{hosts} \neq \ledger$} \Comment{we have a virtual channel}
+        \State $\textit{State}^P \gets \textsc{host closing}$
+        \State input (\textsc{close}) to \texttt{hosts}[0].\texttt{left} and
+        keep relaying inputs (\textsc{check chain for closing}) to
+        \texttt{hosts}[0].\texttt{left} until receiving output
+        (\textsc{closed})
+      \EndIf
+      \State input (\textsc{read}) to \ledger as $P$ and assign output to
+      $\Sigma$
+      \If{$C_{\bar{P}, i} \in \Sigma$} \Comment{counterparty has closed
+      honestly}
+        \State no-op \Comment{do nothing}
+      \ElsIf{$\exists 0 \leq j < i : C_{\bar{P}, j} \in \Sigma$}
+      \Comment{counterparty has closed maliciously}
+        \State ensure \textsc{ln.submitRevocation}(j) returns (\textsc{ok})
+      \Else \: \Comment{counterparty is idle}
+        \While{$\nexists$ unspent \texttt{output} $\in \Sigma$ that $C_{P, i}$
+        can spend} \Comment{possibly due to an active timelock}
+          \State wait for input (\textsc{check virtual}) \Comment{ignore other
+          messages}
+          \State input (\textsc{read}) to \ledger as $P$ and assign output to
+          $\Sigma$
+        \EndWhile
+        \State \Comment{provably reachable -- c.f.~\TODO{ref}}
+        \State $\mathrm{sig}_{P, C, i}' \gets \textsc{sign}(C_{P, i}, \sk{P,
+        F})$
+        \State $\textit{State}^P \gets \textsc{closing}$
+        \State input (\textsc{submit}, $(C_{P, i}, \mathrm{sig}_{P, C, i},
+        \mathrm{sig}_{P, C, i}')$) to \ledger
+        \While{$C_{P, i} \notin \Sigma$}
+          \State wait for input (\textsc{check closed}) \Comment{ignore other
+          messages}
+          \State input (\textsc{read}) to \ledger as $P$ and assign output to
+          $\Sigma$
+        \EndWhile
+        \State \Comment{provably reachable -- c.f.~\TODO{ref}}
+      \EndIf
+      \State $\textit{State}^P \gets \textsc{closed}$
+      \State output (\textsc{closed})
     \end{algorithmic}
   \end{processbox}
   \caption{}
