@@ -11,7 +11,8 @@
         \State ensure $\textit{State}^P = \bot$
         \State $\textit{State}^P \gets \textsc{init}$
         \State store $\pk{P, \mathrm{out}}$
-        \State $(c_A, c_B) \gets (0, 0)$
+        \State $(c_A, c_B, \texttt{locked}_A, \texttt{locked}_B) \gets (0, 0, 0,
+        0)$
         \State $(\texttt{paid\_out}, \texttt{paid\_in}) \gets (\emptyset,
         \emptyset)$
         \State output (\textsc{init ok})
@@ -112,7 +113,8 @@
           \State \remotecode{$\textit{State}^B \gets \textsc{waiting for comm
           sig}$}
         \Else \: \Comment{opening virtual channel}
-          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for host}$}
+          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for host
+          init}$}
         \EndIf
         \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
         $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
@@ -140,17 +142,21 @@
         \If{ideal world}
           \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
           $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-          expect output (\textsc{hosts ready}) to \texttt{fundee} by
-          \texttt{hops}[-1].\texttt{right} \Comment{ignore any other message}
+          output (\textsc{hosts ready}, \texttt{host\_fundee}) to
+          \texttt{fundee} by \texttt{hops}[-1].\texttt{right} \Comment{ignore
+          any other message}
           \State input (\textsc{host ack}) as \texttt{fundee} to
           \texttt{hops}[-1].\texttt{right} and expect output (\textsc{hosts
-          ready}) to \texttt{funder} by \texttt{hops}[0].\texttt{left}
-          \TODO{make this work with \textsc{virt}}
-          \TODO{use \texttt{left} similarly in \textsc{virt}}
+          ready}, \texttt{host\_funder}) to \texttt{funder} by
+          \texttt{hops}[0].\texttt{left} \TODO{make this work with
+          \textsc{virt}} \TODO{use \texttt{left} similarly in \textsc{virt}}
         \Else \: \Comment{real world}
           \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
           $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-          reply (\textsc{hosts ready}) \Comment{ignore any other message}
+          message (\textsc{hosts ready}) by \bob \Comment{ignore any other
+          message}
+          \State input (\textsc{who is host}) to \texttt{hops}[0].\texttt{left}
+          and expect reply (\textsc{host is}, \texttt{host\_funder})
         \EndIf
       \EndIf
     \end{algorithmic}
@@ -174,9 +180,10 @@
       $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
       \State \remotecode{ensure $\textit{State}^B = \textsc{waiting for comm
       sig}$} \Comment{if opening virtual channel, we have received
-      (\textsc{hosts ready}) by \texttt{hops}[-1].\texttt{right}
-      (c.f. Fig~\ref{code:ln:bob}, line~\ref{code:ln:bob:host})} \TODO{do this
-      exchange in last hop, \textsc{virt}}
+      (\textsc{hosts ready}, \texttt{host\_fundee}) by
+      \texttt{hops}[-1].\texttt{right} (c.f. Fig~\ref{code:ln:bob},
+      line~\ref{code:ln:bob:host})} \TODO{do this exchange in last hop,
+      \textsc{virt}}
       \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
         \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$,
         output: $(c, \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}}
@@ -242,10 +249,21 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{hosts ready}) by \texttt{hops}[-1].\texttt{right}:
-      \Comment{real world}
+      \State On output (\textsc{host init}, \texttt{host\_fundee}) by
+      \texttt{hops}[-1].\texttt{right}: \Comment{real world}
       \Indent
-        \State ensure $\textit{State}^B = \textsc{waiting for host}$
+        \State ensure $\textit{State}^B = \textsc{waiting for host init}$
+        \State $\textit{State}^B \gets \textsc{waiting for hosts ready}$
+        \State store \texttt{host\_fundee} \Comment{we will talk directly to
+        \texttt{host\_fundee}}
+        \State reply (\textsc{host ack})
+      \EndIndent
+      \Statex
+
+      \State On output (\textsc{hosts ready}) by \texttt{host\_fundee}:
+      \Comment{real or ideal world}
+      \Indent
+        \State ensure $\textit{State}^B = \textsc{waiting for hosts ready}$
         \State $\textit{State}^B \gets \textsc{waiting for comm sig}$
         \label{code:ln:bob:host}
         \State reply (\textsc{host ack})
@@ -277,6 +295,75 @@
       \State $c_A \gets c$; $c_B \gets 0$; $i \gets 0$
       \State $\textit{State}^A \gets \textsc{open}$
       \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:open}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- virtualise}
+    \begin{algorithmic}[1]
+      \State On input (\textsc{host me}, \texttt{fundee}, \texttt{hops}, $c$,
+      $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
+      \Indent
+        \State ensure $\textit{State}^P = \textsc{open}$
+        \State ensure $c_P - \texttt{locked}_P \geq c$
+        \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
+        \State $\textit{State}^P \gets \textsc{virtualising}$
+        \State define new \textsc{virt} ITI $\texttt{host}_P$
+        \State send (\textsc{virtualising}, $\texttt{host}_P$, \texttt{hops},
+        \texttt{fundee}, $c$) to $\bar{P}$ and expect reply
+        (\textsc{virtualising ack}, $\texttt{host}_{\bar{P}}$)
+        \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
+        \texttt{hops}, $\texttt{host}_{\bar{P}}$, $\pk{A, V}$, $\pk{B, V}$, $c$)
+        to $\texttt{host}_P$ and expect reply (\textsc{hosts ready})
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{virtualising}, $\texttt{host}_{\bar{P}}$,
+      \texttt{hops}, \texttt{fundee}, $c$) by $\bar{P}$:
+      \Indent
+        \State ensure $\textit{State}^P = \textsc{open}$
+        \State ensure $c_{\bar{P}} - \texttt{locked}_{\bar{P}} \geq c$
+        \State $\texttt{locked}_{\bar{P}} \gets \texttt{locked}_{\bar{P}} + c$
+        \State $\textit{State}^P \gets \textsc{virtualising}$
+        \If{$\mathrm{len}(\texttt{hops}) > 1$} \Comment{we are not the last hop}
+          \State define new \textsc{virt} ITI $\texttt{host}_P$
+          \State input (\textsc{virtualising}, $\texttt{host}_P$,
+          \texttt{hops}[1:], \texttt{fundee}, $c$) to
+          \texttt{hops}[1].\texttt{left} and expect reply (\textsc{virtualising
+          ack}, \texttt{host\_sibling})
+          \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
+          \texttt{host\_sibling}, $c$) to $\texttt{host}_P$ and expect reply
+          (\textsc{host init ok})
+        \Else \: \Comment{we are the last hop}
+          \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$, $c$) to new
+          \textsc{virt} ITI $\texttt{host}_P$ and expect reply (\textsc{host init
+          ok})
+          \State output (\textsc{host init}, $\texttt{host}_P$) to
+          \texttt{fundee} and expect reply (\textsc{host ack})
+        \EndIf
+        \State send (\textsc{virtualising ack}, $\texttt{host}_P$) to $\bar{P}$
+      \EndIndent
+      \Statex
+
+      \State On input (\textsc{virtualising}, \texttt{host\_sibling},
+      \texttt{hops}, \texttt{fundee}, $c$) by \texttt{sibling}:
+      \Indent
+        \State ensure $\textit{State}^P = \textsc{open}$
+        \State ensure $c_P - \texttt{locked}_P \geq c$
+        \State $\textit{State}^P \gets \textsc{virtualising}$
+        \State define new \textsc{virt} ITI $\texttt{host}_P$
+        \State send (\textsc{virtualising}, $\texttt{host}_P$, \texttt{hops},
+        \texttt{fundee}, $c$) to \texttt{hops}[0].\texttt{right} and expect
+        reply (\textsc{virtualising ack}, $\texttt{host}_{\bar{P}}$)
+        \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
+        \texttt{host\_sibling}, $c$) to $\texttt{host}_P$ and expect reply
+        (\textsc{host init ok})
+        \State output (\textsc{virtualising ack}, $\texttt{host}_P$) to
+        $\bar{P}$
+      \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}

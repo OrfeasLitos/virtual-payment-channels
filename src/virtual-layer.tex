@@ -1,17 +1,20 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
-      \State \textsc{fund}($c$, \texttt{hops}, (\texttt{funder},
-      \texttt{fundee}), (\texttt{host\_funder}, \texttt{host\_fundee}),
-      \textsc{pcn}, \textit{vid}):
+      \State On input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
+      \texttt{sibling}, $c$) by \texttt{guest}:
       \Indent
-        \State ensure \texttt{host\_funder} = \alice{} \Comment{we are hosting
-        the funder}
+        \State store message contents and \texttt{guest}
+        \Comment{\texttt{sibling} is missing for edge nodes}
+        \State output (\textsc{host init ok}) to \texttt{guest}
+      \EndIndent
+      \Statex
+
+      \State On input (\textsc{host me}, \texttt{fundee}, \texttt{hops}, $c$,
+      $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
+      \Indent
         \State ensure $\mathrm{len}(\texttt{hops}) \geq 2$ \Comment{no point in
         opening a virtual over 1 channel}
-        \State send (\textsc{open virtual}, $c$, \texttt{fundee},
-        \texttt{host\_fundee}) to \texttt{funder}, ensure reply is (\textsc{ok},
-        $(\pk{A, V}, \pk{B, V})$)
         \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
         V}$, $\pk{B, V}$)) returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops})
@@ -20,7 +23,7 @@
         (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}(\texttt{hops}) returns
         (\textsc{ok})
-        \State \Return (\textsc{ok})
+        \State output (\textsc{hosts ready}) to \texttt{funder}
       \EndIndent
       \Statex
 
