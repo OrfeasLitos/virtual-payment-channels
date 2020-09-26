@@ -98,7 +98,7 @@
         \pk{B, R}) \gets \textsc{keyGen}()$
       \Else \: \Comment{real world}
         \State $\textit{State}^A \gets \textsc{waiting for opening keys}$
-        \State send (\textsc{open channel}, $c$, \texttt{hosts}, $\pk{A, F}$,
+        \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
         $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
         \State \Comment{colored code is run by honest \texttt{fundee}.
         Validation is implicit}
@@ -107,7 +107,7 @@
         \mathrm{out}}$}
         \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
         $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
-        \If{\remotecode{\texttt{hosts} = \ledger}} \Comment{opening base
+        \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
         channel}
           \State \remotecode{$\textit{State}^B \gets \textsc{waiting for comm
           sig}$}
@@ -129,7 +129,7 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln.prepareBase}()}
     \begin{algorithmic}[1]
-      \If{\texttt{hosts} = \ledger} \Comment{opening base channel}
+      \If{\texttt{hops} = \ledger} \Comment{opening base channel}
         \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
         \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
@@ -138,18 +138,18 @@
         \EndIf
       \Else \: \Comment{opening virtual channel}
         \If{ideal world}
-          \State input (\textsc{host me}, \alice, \bob, \texttt{hosts}, $c$,
-          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hosts}[0].\texttt{left} and
+          \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
+          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
           expect output (\textsc{hosts ready}) to \texttt{fundee} by
-          \texttt{hosts}[1].\texttt{right} \Comment{ignore any other message}
+          \texttt{hops}[-1].\texttt{right} \Comment{ignore any other message}
           \State input (\textsc{host ack}) as \texttt{fundee} to
-          \texttt{hosts}[1].\texttt{right} and expect output (\textsc{hosts
-          ready}) to \texttt{funder} by \texttt{hosts}[0].\texttt{left}
+          \texttt{hops}[-1].\texttt{right} and expect output (\textsc{hosts
+          ready}) to \texttt{funder} by \texttt{hops}[0].\texttt{left}
           \TODO{make this work with \textsc{virt}}
           \TODO{use \texttt{left} similarly in \textsc{virt}}
         \Else \: \Comment{real world}
-          \State input (\textsc{host me}, \alice, \bob, \texttt{hosts}, $c$,
-          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hosts}[0].\texttt{left} and expect
+          \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
+          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
           reply (\textsc{hosts ready}) \Comment{ignore any other message}
         \EndIf
       \EndIf
@@ -174,10 +174,10 @@
       $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
       \State \remotecode{ensure $\textit{State}^B = \textsc{waiting for comm
       sig}$} \Comment{if opening virtual channel, we have received
-      (\textsc{hosts ready}) by \texttt{hosts}[-1].\texttt{right}
+      (\textsc{hosts ready}) by \texttt{hops}[-1].\texttt{right}
       (c.f. Fig~\ref{code:ln:bob}, line~\ref{code:ln:bob:host})} \TODO{do this
       exchange in last hop, \textsc{virt}}
-      \If{\remotecode{\texttt{hosts} = \ledger}} \Comment{opening base channel}
+      \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
         \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$,
         output: $(c, \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}}
       \EndIf
@@ -191,7 +191,7 @@
       $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
       \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A, 0},
       \sk{B, F})$}
-      \If{\remotecode{\texttt{hosts} = \ledger}} \Comment{opening base channel}
+      \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
         \State \remotecode{$\textit{State}^B \gets \textsc{waiting to check
         funding}$}
       \Else \: \Comment{opening virtual channel}
@@ -242,7 +242,7 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{hosts ready}) by \texttt{hosts}[-1].\texttt{right}:
+      \State On (\textsc{hosts ready}) by \texttt{hops}[-1].\texttt{right}:
       \Comment{real world}
       \Indent
         \State ensure $\textit{State}^B = \textsc{waiting for host}$
@@ -258,7 +258,7 @@
 
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- On (\textsc{open}, $c$, \texttt{fundee},
-  \texttt{hosts}):}
+  \texttt{hops}):}
     \begin{algorithmic}[1]
       \State \Comment{\texttt{fundee} is \bob}
       \State ensure $P = \alice$ \Comment{activated party is the funder}
@@ -269,14 +269,14 @@
       \If{real world}
         \State \textsc{ln.exchangeOpenSigs}()
       \EndIf
-      \If{\texttt{hosts} = \ledger}
+      \If{\texttt{hops} = \ledger}
         \State \textsc{ln.commitBase}()
       \ElsIf{ideal world} \Comment{opening virtual channel in ideal world}
         \State $\textit{State}^B \gets \textsc{open}$
       \EndIf
       \State $c_A \gets c$; $c_B \gets 0$; $i \gets 0$
       \State $\textit{State}^A \gets \textsc{open}$
-      \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hosts})
+      \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
     \end{algorithmic}
   \end{processbox}
   \caption{}
@@ -351,12 +351,11 @@
   \begin{processbox}{\textsc{ln} -- On (\textsc{close}):}
     \begin{algorithmic}[1]
       \State ensure $\textit{State}^P = \textsc{open}$
-      \If{$\texttt{hosts} \neq \ledger$} \Comment{we have a virtual channel}
+      \If{$\texttt{hops} \neq \ledger$} \Comment{we have a virtual channel}
         \State $\textit{State}^P \gets \textsc{host closing}$
-        \State input (\textsc{close}) to \texttt{hosts}[0].\texttt{left} and
+        \State input (\textsc{close}) to \texttt{hops}[0].\texttt{left} and
         keep relaying inputs (\textsc{check chain for closing}) to
-        \texttt{hosts}[0].\texttt{left} until receiving output
-        (\textsc{closed})
+        \texttt{hops}[0].\texttt{left} until receiving output (\textsc{closed})
       \EndIf
       \State input (\textsc{read}) to \ledger as $P$ and assign output to
       $\Sigma$
