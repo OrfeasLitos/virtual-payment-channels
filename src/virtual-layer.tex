@@ -2,16 +2,20 @@
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State On input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
-      \texttt{sibling}, $c$) by \texttt{guest}:
+      \texttt{sibling}, $\pk{P, F}$, $\pk{\bar{P}, F}$, $\pk{\mathrm{sib},
+      \bar{P}, F}$, $c$) by \texttt{guest}:
       \Indent
         \State store message contents and \texttt{guest}
-        \Comment{\texttt{sibling} is missing for edge nodes}
+        \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
+        for edge nodes}
         \State output (\textsc{host init ok}) to \texttt{guest}
       \EndIndent
       \Statex
 
-      \State On input (\textsc{host me}, \texttt{fundee}, \texttt{hops}, $c$,
-      $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
+      \State On input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
+      $\bar{P}$, \texttt{hops}, $c$, $\pk{A, V}$, $\pk{B, V}$, $\pk{A, F}$,
+      $\pk{B, F}$) by \texttt{guest}:
+      \State \TODO{ensure that we can handle being virtual ourselves}
       \Indent
         \State ensure $\mathrm{len}(\texttt{hops}) \geq 2$ \Comment{no point in
         opening a virtual over 1 channel}
@@ -23,7 +27,7 @@
         (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}(\texttt{hops}) returns
         (\textsc{ok})
-        \State output (\textsc{hosts ready}) to \texttt{funder}
+        \State output (\textsc{hosts ready}) to \texttt{guest}
       \EndIndent
       \Statex
 
@@ -491,7 +495,7 @@
     \EndIf
     \State $\texttt{revoc\_for\_prev} \gets \textsc{pcn.revokePrevious}()$
     \If{len(\texttt{hops}[1:]) = 0} \Comment{we are \texttt{host\_fundee}}
-      \State input (\textsc{virtual layer ready}) to \texttt{fundee}
+      \State output (\textsc{hosts ready}) to \texttt{guest}
       \State \trustedcode{$\textit{State} \gets \textsc{open}$} \TODO{recheck
       state machine}
       \State \trustedcode{reply (\textsc{ok})}
