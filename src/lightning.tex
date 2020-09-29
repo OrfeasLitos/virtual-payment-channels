@@ -140,11 +140,10 @@
         \EndIf
       \Else \: \Comment{opening virtual channel}
         \If{ideal world}
-          \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
-          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-          output (\textsc{hosts ready}, \texttt{host\_fundee}) to
-          \texttt{fundee} by \texttt{hops}[-1].\texttt{right} \Comment{ignore
-          any other message}
+          \State input (\textsc{host me}, $\bar{P}$, \texttt{hops}, $c$, $\pk{A,
+          F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect output
+          (\textsc{hosts ready}, \texttt{host\_fundee}) to \texttt{fundee} by
+          \texttt{hops}[-1].\texttt{right} \Comment{ignore any other message}
           \State input (\textsc{host ack}) as \texttt{fundee} to
           \texttt{hops}[-1].\texttt{right} and expect output (\textsc{hosts
           ready}, \texttt{host\_funder}) to \texttt{funder} by
@@ -296,7 +295,6 @@
       \Indent
         \State ensure $\textit{State}^P = \textsc{open}$
         \State ensure $c_P - \texttt{locked}_P \geq c$
-        \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
         \State $\textit{State}^P \gets \textsc{virtualising}$
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
         \State define new \textsc{virt} ITI $\texttt{host}_P$
@@ -314,7 +312,6 @@
         \texttt{funder}
         \State \TODO{change \texttt{hops} to \texttt{host\_funder} (notice the
         bad naming convention)}
-        \State \TODO{also give our previous \textsc{hosts} to \textsc{virt}}
       \EndIndent
       \Statex
 
@@ -326,13 +323,18 @@
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
         \State $\textit{State}^P \gets \textsc{virtualising}$
+        \State $\texttt{locked}_{\bar{P}} \gets \texttt{locked}_{\bar{P}} + c$
+        \Comment{if $\bar{P}$ is hosting the \texttt{funder}, $\bar{P}$ will
+        transfer $c$ coins instead of locking them, but the end result is the
+        same}
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
         \If{$\mathrm{len}(\texttt{hops}) > 1$} \Comment{we are not the last hop}
           \State define new \textsc{virt} ITI $\texttt{host}_P$
           \State input (\textsc{virtualising}, $\texttt{host}_P$, ($\sk{P, F}'$,
-          $\pk{P, F}'$), \texttt{hops}[1:], \texttt{fundee}, $c$) to
-          \texttt{hops}[1].\texttt{left} and expect reply (\textsc{virtualising
-          ack}, \texttt{host\_sibling}, $\pk{\mathrm{sib}, \bar{P}}$)
+          $\pk{P, F}'$), $\pk{\bar{P}, F}'$, \texttt{hops}[1:], \texttt{fundee},
+          $c$) to \texttt{hops}[1].\texttt{left} and expect reply
+          (\textsc{virtualising ack}, \texttt{host\_sibling}, $\pk{\mathrm{sib},
+          \bar{P}, F}$)
           \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
           \texttt{host\_sibling}, $\pk{P, F}'$, $\pk{\bar{P}, F}'$,
           $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to $\texttt{host}_P$ and expect
@@ -349,13 +351,13 @@
       \Statex
 
       \State On input (\textsc{virtualising}, \texttt{host\_sibling}, ($\sk{P,
-      F}'$, $\pk{P, F}'$), \texttt{hops}, \texttt{fundee}, $c$) by
-      \texttt{sibling}:
+      F}'$, $\pk{P, F}'$), $\pk{\mathrm{sib}, \bar{P}, F}$, \texttt{hops},
+      \texttt{fundee}, $c$) by \texttt{sibling}:
       \Indent
         \State ensure $\textit{State}^P = \textsc{open}$
         \State ensure $c_P - \texttt{locked}_P \geq c$
-        \State $\texttt{locked}_{\bar{P}} \gets \texttt{locked}_{\bar{P}} + c$
         \State $\textit{State}^P \gets \textsc{virtualising}$
+        \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
         \State define new \textsc{virt} ITI $\texttt{host}_P$
         \State send (\textsc{virtualising}, $\texttt{host}_P$, $\pk{P, F}'$,
         \texttt{hops}, \texttt{fundee}, $c$) to \texttt{hops}[0].\texttt{right}
@@ -364,8 +366,10 @@
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
         \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
-        \texttt{host\_sibling}, $\pk{P, F}'$, $\pk{\bar{P}, F}'$, $c$) to
-        $\texttt{host}_P$ and expect reply (\textsc{host init ok})
+        \texttt{host\_sibling}, $\pk{P, F}'$, $\pk{\bar{P}, F}'$,
+        $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to $\texttt{host}_P$ and expect
+        reply (\textsc{host init ok})
+        \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
         \State output (\textsc{virtualising ack}, $\texttt{host}_P$,
         $\pk{\bar{P}, F}'$) to \texttt{sibling}
       \EndIndent
