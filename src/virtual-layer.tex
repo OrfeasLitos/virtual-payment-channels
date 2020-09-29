@@ -39,7 +39,7 @@
         \mathrm{virt}}) \gets \textsc{keyGen}()$
         \If{\texttt{left\_virt\_keys} is given as argument} \Comment{we are not
         \texttt{host\_funder}}
-          \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
+          \If{len(\texttt{hops}) $> 1$} \Comment{we are not
           \texttt{host\_fundee}}
             \State input (\textsc{virtual keys forward}, $\texttt{hops}$[1:],
             ($\pk{A, V}$, $\pk{B, V}$), \texttt{left\_virt\_keys},
@@ -328,8 +328,7 @@
       \textsc{pcn.getCommKeys}()$
       \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
       are not \texttt{host\_funder}}
-        \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
-        \texttt{host\_fundee}}
+        \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee}}
           \State \Return \textsc{virt.intermediarySigs}()
         \Else \: \Comment{we are \texttt{host\_fundee}}
           \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\} \}$
@@ -405,8 +404,7 @@
         \texttt{left\_virt\_keys}[0]) = True
         \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
         \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
-        \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
-        \texttt{host\_fundee}}
+        \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee}}
           \State input (\textsc{virtual base sig forward}, \texttt{hops}[1:],
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
           \texttt{hops}[1].\alice{} \Comment{sibling needs
@@ -479,8 +477,8 @@
       \State \trustedcode{reply (\textsc{ok})}
       \State \Return (\textsc{ok})
     \EndIf
-    \If{len(\texttt{hops}[1:]) $\geq 1$} \Comment{we are not
-    \texttt{host\_fundee} nor \texttt{host\_funder}}
+    \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee} nor
+    \texttt{host\_funder}}
       \State input (\textsc{virtual revocation forward}, \texttt{hops}[1:]) to
       \texttt{hops}[1].\alice
       \State \trustedcode{$\texttt{revoc\_for\_next} \gets
@@ -494,7 +492,7 @@
       \State \trustedcode{output (\textsc{virtual revocation back})}
     \EndIf
     \State $\texttt{revoc\_for\_prev} \gets \textsc{pcn.revokePrevious}()$
-    \If{len(\texttt{hops}[1:]) = 0} \Comment{we are \texttt{host\_fundee}}
+    \If{len(\texttt{hops}) = 1} \Comment{we are \texttt{host\_fundee}}
       \State output (\textsc{hosts ready}) to \texttt{guest}
       \State \trustedcode{$\textit{State} \gets \textsc{open}$} \TODO{recheck
       state machine}
