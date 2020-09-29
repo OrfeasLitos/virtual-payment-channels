@@ -271,8 +271,13 @@
     \begin{algorithmic}[1]
       \State \Comment{\texttt{fundee} is \bob}
       \State ensure $P = \alice$ \Comment{activated party is the funder}
-      \State ensure $\textit{State}^A = \textsc{topped up}$
-      \State ensure $c = c_{A, \mathrm{chain}}$
+      \If{\texttt{hops} = \ledger} \Comment{opening base channel}
+        \State ensure $\textit{State}^A = \textsc{topped up}$
+        \State ensure $c = c_{A, \mathrm{chain}}$
+      \Else \: \Comment{opening virtual channel}
+        \State ensure $\mathrm{len}(\texttt{hops}) \geq 2$ \Comment{cannot open
+        a virtual over 1 channel}
+      \EndIf
       \State \textsc{ln.exchangeOpenKeys}()
       \State \textsc{ln.prepareBase}()
       \If{real world}
