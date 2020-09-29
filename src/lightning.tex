@@ -95,6 +95,9 @@
       $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
       \If{ideal world}
         \State ensure $\textit{State}^B = \textsc{init}$
+        \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
+        $\pk{A, R}$, $\pk{A, \mathrm{out}}$ to \adversary and expect reply
+        (\textsc{open channel ok})
         \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
         \pk{B, R}) \gets \textsc{keyGen}()$
       \Else \: \Comment{real world}
@@ -272,6 +275,9 @@
       \State \textsc{ln.prepareBase}()
       \If{real world}
         \State \textsc{ln.exchangeOpenSigs}()
+      \Else \: \Comment{ideal world}
+        \State send (\textsc{funding created}, ($c$, $\pk{A, \mathrm{chain}}$))
+        to \adversary and expect reply (\textsc{funding created ok})
       \EndIf
       \If{\texttt{hops} = \ledger}
         \State \textsc{ln.commitBase}()
