@@ -138,7 +138,9 @@
         \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
         \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
+        \State $\texttt{host}_A \gets \ledger$
         \If{ideal world}
+          \State $\texttt{host}_B \gets \ledger$
           \State $\textit{State}^B \gets \textsc{waiting to check funding}$
         \EndIf
       \Else \: \Comment{opening virtual channel}
@@ -155,8 +157,8 @@
         \Else \: \Comment{real world}
           \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
           $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-          output (\textsc{hosts ready}, \texttt{host\_funder}) \Comment{ignore
-          any other message}
+          output (\textsc{hosts ready}, $\texttt{host}_P$) \Comment{ignore any
+          other message}
         \EndIf
       \EndIf
     \end{algorithmic}
@@ -249,12 +251,12 @@
       \EndIndent
       \Statex
 
-      \State On output (\textsc{hosts ready}, \texttt{host\_fundee}) by
+      \State On output (\textsc{hosts ready}, $\texttt{host}_P$) by
       \texttt{hops}[-1].\texttt{right}: \Comment{real world}
       \Indent
         \State ensure $\textit{State}^B = \textsc{waiting for hosts ready}$
-        \State store \texttt{host\_fundee} \Comment{we will talk directly to
-        \texttt{host\_fundee}}
+        \State store $\texttt{host}_P$ \Comment{we will talk directly to
+        $\texttt{host}_P$}
         \State reply (\textsc{host ack})
       \EndIndent
     \end{algorithmic}
@@ -303,25 +305,25 @@
         \State ensure $c_P - \texttt{locked}_P \geq c$
         \State $\textit{State}^P \gets \textsc{virtualising}$
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
-        \State define new \textsc{virt} ITI $\texttt{host}_P$
-        \State send (\textsc{virtualising}, $\texttt{host}_P$, $\pk{P, F}'$,
+        \State define new \textsc{virt} ITI $\texttt{host}_P'$
+        \State send (\textsc{virtualising}, $\texttt{host}_P'$, $\pk{P, F}'$,
         \texttt{hops}, \texttt{fundee}, $c$) to $\bar{P}$ and expect reply
-        (\textsc{virtualising ack}, $\texttt{host}_{\bar{P}}$, $\pk{\bar{P},
+        (\textsc{virtualising ack}, $\texttt{host}_{\bar{P}}'$, $\pk{\bar{P},
         F}'$)
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
         \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
-        $\texttt{host}_{\bar{P}}$, \TODO{old hops}, $c$, $\pk{A, V}$, $\pk{B,
-        V}$, $\pk{P, F}'$, $\pk{\bar{P}, F}'$) to $\texttt{host}_P$ and expect
-        reply (\textsc{hosts ready})
+        $\texttt{host}_{\bar{P}}'$, $\texttt{host}_P$, $c$, $\pk{A, V}$, $\pk{B,
+        V}$, $\pk{P, F}'$, $\pk{\bar{P}, F}'$) to
+        $\texttt{host}_P'$ and expect reply (\textsc{hosts ready})
+        \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
+        host, use new host instead}
         \State output (\textsc{hosts ready}, $\texttt{host}_P$) to
         \texttt{funder}
-        \State \TODO{change \texttt{hops} to \texttt{host\_funder} (notice the
-        bad naming convention)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{virtualising}, $\texttt{host}_{\bar{P}}$, $\pk{\bar{P},
+      \State On (\textsc{virtualising}, $\texttt{host}_{\bar{P}}'$, $\pk{\bar{P},
       F}'$, \texttt{hops}, \texttt{fundee}, $c$) by $\bar{P}$:
       \Indent
         \State ensure $\textit{State}^P = \textsc{open}$
@@ -335,23 +337,24 @@
         same}
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
         \If{$\mathrm{len}(\texttt{hops}) > 1$} \Comment{we are not the last hop}
-          \State define new \textsc{virt} ITI $\texttt{host}_P$
-          \State input (\textsc{virtualising}, $\texttt{host}_P$, ($\sk{P, F}'$,
+          \State define new \textsc{virt} ITI $\texttt{host}_P'$
+          \State input (\textsc{virtualising}, $\texttt{host}_P'$, ($\sk{P, F}'$,
           $\pk{P, F}'$), $\pk{\bar{P}, F}'$, \texttt{hops}[1:], \texttt{fundee},
           $c$) to \texttt{hops}[1].\texttt{left} and expect reply
           (\textsc{virtualising ack}, \texttt{host\_sibling}, $\pk{\mathrm{sib},
           \bar{P}, F}$)
-          \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
-          \texttt{host\_sibling}, $\pk{P, F}'$, $\pk{\bar{P}, F}'$,
-          $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to $\texttt{host}_P$ and expect
-          reply (\textsc{host init ok})
+          \State input (\textsc{init}, $\texttt{host}_P$,
+          $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, $\pk{P, F}'$,
+          $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to
+          $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \Else \: \Comment{we are the last hop}
-          \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$, $\pk{P, F}'$,
-          $\pk{\bar{P}, F}'$, $c$) to new \textsc{virt} ITI $\texttt{host}_P$
-          and expect reply (\textsc{host init ok})
+          \State input (\textsc{init}, $\texttt{host}_P$,
+          $\texttt{host}_{\bar{P}}'$, $\pk{P, F}'$, $\pk{\bar{P}, F}'$, $c$) to
+          new \textsc{virt} ITI $\texttt{host}_P'$ and expect reply
+          (\textsc{host init ok})
         \EndIf
         \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
-        \State send (\textsc{virtualising ack}, $\texttt{host}_P$, $\pk{P, F}'$)
+        \State send (\textsc{virtualising ack}, $\texttt{host}_P'$, $\pk{P, F}'$)
         to $\bar{P}$
       \EndIndent
       \Statex
@@ -364,30 +367,32 @@
         \State ensure $c_P - \texttt{locked}_P \geq c$
         \State $\textit{State}^P \gets \textsc{virtualising}$
         \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
-        \State define new \textsc{virt} ITI $\texttt{host}_P$
-        \State send (\textsc{virtualising}, $\texttt{host}_P$, $\pk{P, F}'$,
+        \State define new \textsc{virt} ITI $\texttt{host}_P'$
+        \State send (\textsc{virtualising}, $\texttt{host}_P'$, $\pk{P, F}'$,
         \texttt{hops}, \texttt{fundee}, $c$) to \texttt{hops}[0].\texttt{right}
-        and expect reply (\textsc{virtualising ack}, $\texttt{host}_{\bar{P}}$,
+        and expect reply (\textsc{virtualising ack}, $\texttt{host}_{\bar{P}}'$,
         $\pk{\bar{P}, F}'$)
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
-        \State input (\textsc{init}, $\texttt{host}_{\bar{P}}$,
-        \texttt{host\_sibling}, $\pk{P, F}'$, $\pk{\bar{P}, F}'$,
-        $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to $\texttt{host}_P$ and expect
-        reply (\textsc{host init ok})
+        \State input (\textsc{init}, $\texttt{host}_P$,
+        $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, $\pk{P, F}'$,
+        $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to
+        $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
-        \State output (\textsc{virtualising ack}, $\texttt{host}_P$,
+        \State output (\textsc{virtualising ack}, $\texttt{host}_P'$,
         $\pk{\bar{P}, F}'$) to \texttt{sibling}
       \EndIndent
       \Statex
 
-      \State On output (\textsc{hosts ready}) by $\texttt{host}_P$:
+      \State On output (\textsc{hosts ready}) by $\texttt{host}_P'$:
       \Comment{real or ideal world}
       \Indent
         \State ensure $\textit{State}^P = \textsc{waiting for hosts ready}$
         \State $\textit{State}^P \gets \textsc{waiting for comm sig}$
         \TODO{update former base channel as well}
         \label{code:ln:bob:host}
+        \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
+        host, use new host instead}
         \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
           \State output (\textsc{hosts ready}, $\texttt{host}_P$) to
           \texttt{fundee} and expect reply (\textsc{host ack})
