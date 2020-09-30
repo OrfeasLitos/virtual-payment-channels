@@ -319,7 +319,7 @@
         all older $\bar{P}$'s funding public keys
         \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
         $\texttt{host}_{\bar{P}}'$, $\texttt{host}_P$, $c$, $\pk{A, V}$, $\pk{B,
-        V}$, $\pk{P, F}'$, $\pk{\bar{P}, F}'$) to
+        V}$, ($\sk{P, F}'$, $\pk{P, F}'$), $\pk{\bar{P}, F}'$) to
         $\texttt{host}_P'$ and expect reply (\textsc{hosts ready})
         \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
         host, use new host instead}
@@ -349,14 +349,14 @@
           (\textsc{virtualising ack}, \texttt{host\_sibling}, $\pk{\mathrm{sib},
           \bar{P}, F}$)
           \State input (\textsc{init}, $\texttt{host}_P$,
-          $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, $\pk{P, F}'$,
-          $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to
-          $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
+          $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
+          $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
+          $c$) to $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \Else \: \Comment{we are the last hop}
           \State input (\textsc{init}, $\texttt{host}_P$,
-          $\texttt{host}_{\bar{P}}'$, $\pk{P, F}'$, $\pk{\bar{P}, F}'$, $c$) to
-          new \textsc{virt} ITI $\texttt{host}_P'$ and expect reply
-          (\textsc{host init ok})
+          $\texttt{host}_{\bar{P}}'$, ($\sk{P, F}'$, $\pk{P, F}'$),
+          $\pk{\bar{P}, F}'$, $c$) to new \textsc{virt} ITI $\texttt{host}_P'$
+          and expect reply (\textsc{host init ok})
         \EndIf
         \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
         \State send (\textsc{virtualising ack}, $\texttt{host}_P'$, $\pk{P, F}'$)
@@ -380,9 +380,9 @@
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
         \State input (\textsc{init}, $\texttt{host}_P$,
-        $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, $\pk{P, F}'$,
-        $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$, $c$) to
-        $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
+        $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
+        $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$, $c$)
+        to $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
         \State output (\textsc{virtualising ack}, $\texttt{host}_P'$,
         $\pk{\bar{P}, F}'$) to \texttt{sibling}

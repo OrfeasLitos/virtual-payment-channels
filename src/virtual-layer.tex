@@ -2,8 +2,9 @@
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State On input (\textsc{init}, $\texttt{host}_P$, $\bar{P}$,
-      \texttt{sibling}, $\pk{P, F}$, $\pk{\bar{P}, F}$, $\pk{\mathrm{sib},
-      \bar{P}, F}$, $c$) by \texttt{guest}:
+      \texttt{sibling}, ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
+      \mathrm{virt}}$), $\pk{\bar{P}, F}$, $\pk{\mathrm{sib}, \bar{P}, F}$, $c$)
+      by \texttt{guest}:
       \Indent
         \State store message contents and \texttt{guest}
         \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
@@ -13,7 +14,8 @@
       \Statex
 
       \State On input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
-      $\bar{P}$, $\texttt{host}_P$, $c$, $\pk{A, V}$, $\pk{B, V}$, $\pk{A, F}$,
+      $\bar{P}$, $\texttt{host}_P$, $c$, $\pk{A, V}$, $\pk{B, V}$,
+      ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$),
       $\pk{B, F}$) by \texttt{guest}:
       \State \TODO{ensure that we can handle being virtual ourselves}
       \Indent
@@ -35,8 +37,6 @@
       V}$), \texttt{left\_virt\_keys}):
       \Indent
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
-        \State $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
-        \mathrm{virt}}) \gets \textsc{keyGen}()$
         \If{\texttt{left\_virt\_keys} is given as argument} \Comment{we are not
         \texttt{host\_funder}}
           \If{len(\texttt{hops}) $> 1$} \Comment{we are not
