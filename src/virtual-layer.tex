@@ -19,8 +19,6 @@
       $\pk{B, F}$) by \texttt{guest}:
       \State \TODO{ensure that we can handle being virtual ourselves}
       \Indent
-        \State ensure $\mathrm{len}(\texttt{hops}) \geq 2$ \Comment{no point in
-        opening a virtual over 1 channel}
         \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
         V}$, $\pk{B, V}$)) returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops})
