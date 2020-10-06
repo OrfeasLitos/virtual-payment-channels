@@ -159,9 +159,9 @@
         ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{3} $\wedge$
         \texttt{right\_virt}), ($c_{\mathrm{guest}}, \pk{\mathrm{loc},
         \mathrm{out}}$)\}
-        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{loc}} -
-        c_{\mathrm{guest}}, c_{\mathrm{rem}}, \texttt{comm\_keys\_loc},
-        \texttt{comm\_keys\_rem}, $P$)$
+        \State $C \gets$ \textsc{pcn.getCommTX}($c_{\mathrm{loc}} -
+        c_{\mathrm{guest}}$, $c_{\mathrm{rem}}$, \texttt{comm\_keys\_loc},
+        \texttt{comm\_keys\_rem}, $P$)
         \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
         $\mathrm{TX}_{\mathrm{left}}$, $\mathrm{TX}_{\mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{both}}$, $C$)
@@ -207,9 +207,9 @@
         $c_{\mathrm{tot}}$, \texttt{fund}, outputs: (($c_{\mathrm{tot}} -
         c_{\mathrm{guest}}$, \texttt{out}), ($c_{\mathrm{guest}}$,
         \texttt{guest\_out}))\}
-        \State $C \gets \textsc{pcn.getCommTX}(c_{\mathrm{left}} -
-        c_{\mathrm{guest}}, c_{\mathrm{right}}, \texttt{comm\_keys\_left},
-        \texttt{comm\_keys\_right}, P)$
+        \State $C \gets$ \textsc{pcn.getCommTX}($c_{\mathrm{left}} -
+        c_{\mathrm{guest}}$, $c_{\mathrm{right}}$, \texttt{comm\_keys\_left},
+        \texttt{comm\_keys\_right}, $P$)
         \State \Return ($\mathrm{TX}_{\mathrm{base}}$, $C$)
       \EndIndent
     \end{algorithmic}
