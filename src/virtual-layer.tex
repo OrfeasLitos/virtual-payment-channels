@@ -93,8 +93,8 @@
       $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{sib}, \mathrm{virt}}$,
       $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
       \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
-      $\pk{\mathrm{loc}, \mathrm{out}}$, \texttt{comm\_keys\_loc},
-      \texttt{comm\_keys\_rem}, $P$):
+      $\pk{\mathrm{loc}, \mathrm{out}}$, $\{\pk{\mathrm{sec}, i}\}_{i \in 1
+      \dots n}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $P$):
       \Indent
         \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{guest}} \wedge
         c_{\mathrm{loc}} \geq c_{\mathrm{guest}}$
@@ -114,10 +114,6 @@
         \State $\texttt{right\_virt\_checked} \gets 4/\{\pk{\mathrm{sib},
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}, \pk{\mathrm{left},
         \mathrm{guest}}, \pk{\mathrm{right}, \mathrm{guest}}\}$
-        \State $\texttt{guest} \gets 2/\{\pk{\mathrm{left}, \mathrm{guest}},
-        \pk{\mathrm{right}, \mathrm{guest}}\}$
-        \State $\texttt{left\_out} \gets (\texttt{2} \wedge \texttt{left\_virt})
-        \vee (\texttt{3} \wedge \texttt{left\_virt} + t)$
         \State $\texttt{left\_out\_checked} \gets (\texttt{2} \wedge
         \texttt{left\_virt\_checked}) \vee (\texttt{3} \wedge
         \texttt{left\_virt} + t)$
@@ -126,15 +122,21 @@
         \State $\texttt{right\_out\_checked} \gets (\texttt{1} \wedge
         \texttt{right\_virt\_checked}) \vee (\texttt{3} \wedge
         \texttt{right\_virt} + t)$
-        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee (\texttt{3}
-        \wedge \texttt{guest\_virt} + t)$
+        \State $\texttt{guest\_all} \gets \texttt{5} \wedge
+        n/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
+        \mathrm{guest}}, \{\pk{\mathrm{sec}, 1 \dots n}\}\}$
+        \State $\texttt{guest\_out} \gets \texttt{4} \wedge
+        2/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
+        \mathrm{guest}}\}$
+        \State $\texttt{guest} \gets (\texttt{guest\_out} + t) \vee
+        \texttt{guest\_all}$
         \State $\mathrm{TX}_{\mathrm{none}} \gets$ TX \{inputs:
         (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}}$,
         \texttt{right\_fund})), outputs: (($c_{\mathrm{left}} -
         c_{\mathrm{guest}}$, \texttt{left\_out\_checked}), ($c_{\mathrm{right}}
         - c_{\mathrm{guest}}$, \texttt{right\_out\_checked}),
         ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
-        ($c_{\mathrm{guest}}$, \texttt{guest\_out}))\}
+        ($c_{\mathrm{guest}}$, \texttt{guest}))\}
         \State $\mathrm{TX}_{\mathrm{left}} \gets$ TX \{inputs:
         (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{1} $\wedge$
         \texttt{left\_virt\_checked}), ($c_{\mathrm{right}}$,
@@ -146,15 +148,17 @@
         \State $\mathrm{TX}_{\mathrm{right}} \gets$ TX \{inputs:
         (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}} -
         c_{\mathrm{guest}}$, \texttt{2} $\wedge$ \texttt{right\_virt\_checked}),
+        ($c_{\mathrm{guest}}$, \texttt{guest\_all})),
         outputs: (($c_{\mathrm{left}} - c_{\mathrm{guest}}$,
         \texttt{left\_out\_checked}), ($c_{\mathrm{right}} -
         c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{right\_virt}),
-        ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$))\}
+        ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+        ($c_{\mathrm{guest}}$, \texttt{guest}))\}
         \State $\mathrm{TX}_{\mathrm{both}} \gets$ TX \{inputs:
         (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{1} $\wedge$
         \texttt{left\_virt\_checked}), ($c_{\mathrm{right}} -
         c_{\mathrm{guest}}$, \texttt{2} $\wedge$ \texttt{right\_virt\_checked}),
-        ($c_{\mathrm{guest}}$, \texttt{guest})), outputs: (($c_{\mathrm{left}} -
+        ($c_{\mathrm{guest}}$, \texttt{guest\_all})), outputs: (($c_{\mathrm{left}} -
         c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{left\_virt}),
         ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{3} $\wedge$
         \texttt{right\_virt}), ($c_{\mathrm{guest}}, \pk{\mathrm{loc},
