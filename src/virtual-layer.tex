@@ -196,21 +196,28 @@
         \pk{\mathrm{right}, \mathrm{fund}}\}$
         \State $\texttt{virt} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
         \pk{\mathrm{right}, \mathrm{virt}}\}$
-        \State $\texttt{guest} \gets 2/\{\pk{\mathrm{left}, \mathrm{guest}},
-        \pk{\mathrm{right}, \mathrm{guest}}\}$
+        \State $\texttt{virt\_checked} \gets 4/\{\pk{\mathrm{left},
+        \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}, \pk{\mathrm{left},
+        \mathrm{guest}}, \pk{\mathrm{right}, \mathrm{guest}}\}$
         \If{\texttt{is\_funder} = True}
-          \State $\texttt{out} \gets (\texttt{1} \wedge \texttt{virt}) \vee
-          (\texttt{3} \wedge \texttt{virt} + t)$
+          \State $\texttt{out} \gets (\texttt{1} \wedge \texttt{virt\_checked})
+          \vee (\texttt{3} \wedge \texttt{virt} + t)$
         \Else \: \Comment{TXs belong to \texttt{fundee}}
-          \State $\texttt{out} \gets (\texttt{2} \wedge \texttt{virt}) \vee
-          (\texttt{3} \wedge \texttt{virt} + t)$
+          \State $\texttt{out} \gets (\texttt{2} \wedge \texttt{virt\_checked})
+          \vee (\texttt{3} \wedge \texttt{virt} + t)$
         \EndIf
-        \State $\texttt{guest\_out} \gets \texttt{guest\_virt} \vee
-        (\texttt{guest\_virt} + t)$
+        \State $\texttt{guest\_all} \gets \texttt{5} \wedge
+        n/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
+        \mathrm{guest}}, \{\pk{\mathrm{sec}, 1 \dots n}\}\}$
+        \State $\texttt{guest\_out} \gets \texttt{4} \wedge
+        2/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
+        \mathrm{guest}}\}$
+        \State $\texttt{guest} \gets (\texttt{guest\_out} + t) \vee
+        \texttt{guest\_all}$
         \State $\mathrm{TX}_{\mathrm{base}} \gets$ TX \{input:
-        $c_{\mathrm{tot}}$, \texttt{fund}, outputs: (($c_{\mathrm{tot}} -
+        ($c_{\mathrm{tot}}$, \texttt{fund}), outputs: (($c_{\mathrm{tot}} -
         c_{\mathrm{guest}}$, \texttt{out}), ($c_{\mathrm{guest}}$,
-        \texttt{guest\_out}))\}
+        \texttt{guest}))\}
         \State $C \gets$ \textsc{pcn.getCommTX}($c_{\mathrm{left}} -
         c_{\mathrm{guest}}$, $c_{\mathrm{right}}$, \texttt{comm\_keys\_left},
         \texttt{comm\_keys\_right}, $P$)
