@@ -3,8 +3,9 @@
     \begin{algorithmic}[1]
       \State On input (\textsc{init}, $\texttt{host}_P$, $\bar{P}$,
       \texttt{sibling}, ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-      \mathrm{virt}}$), $\pk{\bar{P}, F}$, $\pk{\mathrm{sib}, \bar{P}, F}$, $c$)
-      by \texttt{guest}:
+      \mathrm{virt}}$), $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{sib},
+      \mathrm{rem}, \mathrm{virt}}$, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc},
+      F}$), $c$) by \texttt{guest}:
       \Indent
         \State store message contents and \texttt{guest}
         \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
@@ -16,11 +17,11 @@
       \State On input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
       $\bar{P}$, $\texttt{host}_P$, $c$, $\pk{A, V}$, $\pk{B, V}$,
       ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$),
-      $\pk{B, F}$) by \texttt{guest}:
+      ($\sk{P, F}$, $\pk{P, F}$), $\pk{\mathrm{rem}, \mathrm{virt}}$) by
+      \texttt{guest}:
       \State \TODO{ensure that we can handle being virtual ourselves}
       \Indent
-        \State ensure \textsc{virt.circulateVirtualKeys}(\texttt{hops}, ($\pk{A,
-        V}$, $\pk{B, V}$)) returns (\textsc{ok})
+        \State ensure \textsc{virt.circulateVirtualKeys}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops})
         returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops}) returns
@@ -31,8 +32,7 @@
       \EndIndent
       \Statex
 
-      \State \textsc{circulateVirtualKeys}(\texttt{hops}, ($\pk{A, V}$, $\pk{B,
-      V}$), \texttt{left\_virt\_keys}):
+      \State \textsc{circulateVirtualKeys}(\texttt{left\_virt\_keys}):
       \Indent
         \State \Comment{\texttt{hops} is a list of \textit{pid} pairs}
         \If{\texttt{left\_virt\_keys} is given as argument} \Comment{we are not
