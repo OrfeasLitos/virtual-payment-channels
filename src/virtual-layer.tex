@@ -267,7 +267,6 @@
       \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
       $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and assign
       output to $\mathrm{sigs}_{\mathrm{byRight}}$
-      \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\} \}$
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
@@ -294,8 +293,6 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.intermediarySigs}()}
     \begin{algorithmic}[1]
-      \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\}, 2/\{
-      \texttt{right\_fund\_keys}\} \}$
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
@@ -360,7 +357,6 @@
         \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee}}
           \State \Return \textsc{virt.intermediarySigs}()
         \Else \: \Comment{we are \texttt{host\_fundee}}
-          \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\} \}$
           \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
           \textsc{virt.getEdgeTXs}($c$, $c_B$, $c_A$, $\pk{B, F}$, $\pk{A, F}$,
           \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{A, V}$, $\pk{B, V}$,
@@ -408,7 +404,6 @@
         \State call \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops},
         $\mathrm{sigs}_{\mathrm{toRight}}$) of \texttt{hops}[0].\bob and
         assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
-        \State $\texttt{fund\_outputs} \gets \{ 2/\{\pk{A, F}, \pk{B, F}\} \}$
         \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
         \textsc{virt.getEdgeTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
         $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
