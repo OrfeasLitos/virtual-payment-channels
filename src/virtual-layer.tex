@@ -21,7 +21,7 @@
       $\pk{\mathrm{rem}, \mathrm{virt}}$) by \texttt{guest}:
       \State \TODO{ensure that we can handle being virtual ourselves}
       \Indent
-        \State ensure \textsc{virt.circulateVirtualKeys}() returns (\textsc{ok})
+        \State ensure \textsc{virt.circulateKeysAndCoins}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}($c$, \texttt{hops})
         returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops}) returns
@@ -32,35 +32,37 @@
       \EndIndent
       \Statex
 
-      \State \textsc{circulateVirtualKeys}(\texttt{left\_keys}):
+      \State \textsc{circulateKeysAndCoins}(\texttt{left\_data}):
       \Indent
-        \If{\texttt{left\_keys} is given as argument} \Comment{we are not
+        \If{\texttt{left\_data} is given as argument} \Comment{we are not
         \texttt{host\_funder}}
           \If{we have a \texttt{sibling}} \Comment{we are not
           \texttt{host\_fundee}}
-            \State input (\textsc{virtual keys forward}, (\texttt{left\_keys},
+            \State input (\textsc{keys and coins forward}, (\texttt{left\_data},
             $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
             \mathrm{virt}})$, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$),
-            $\pk{\mathrm{rem}, F}$) to \texttt{sibling}
-            \State \trustedcode{store input as \texttt{left\_keys}}
-            \State \trustedcode{parse \texttt{left\_keys} as
-            \texttt{far\_left\_keys}, $(\sk{\mathrm{loc}, \mathrm{virt}},
+            $\pk{\mathrm{rem}, F}$, $c_P$, $c_{\bar{P}}$) to \texttt{sibling}
+            \State \trustedcode{store input as \texttt{left\_data}}
+            \State \trustedcode{parse \texttt{left\_data} as
+            \texttt{far\_left\_data}, $(\sk{\mathrm{loc}, \mathrm{virt}},
             \pk{\mathrm{loc}, \mathrm{virt}})$, ($\sk{\mathrm{sib}, F}$,
-            $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib}, \mathrm{rem}, F}$}
+            $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib}, \mathrm{rem}, F}$,
+            $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$}
             \Comment{remove parentheses as necessary}
             \State \trustedcode{call
-            \textsc{virt.circulateVirtualKeys}(\texttt{left\_keys}) of $\bar{P}$
-            and assign returned value to \texttt{right\_keys}}
-            \State \trustedcode{parse \texttt{right\_keys} as
-            \texttt{far\_right\_keys}, $\pk{\mathrm{rem}, \mathrm{virt}}$}
-            \State \trustedcode{output (\textsc{virtual keys back},
-            \texttt{right\_keys}, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc},
-            F}$), $\pk{\mathrm{rem}, F}$)}
-            \State store output as \texttt{right\_keys}
-            \State parse \texttt{right\_keys} as \texttt{far\_right\_keys},
+            \textsc{virt.circulateKeysAndCoins}(\texttt{left\_data}) of
+            $\bar{P}$ and assign returned value to \texttt{right\_data}}
+            \State \trustedcode{parse \texttt{right\_data} as
+            \texttt{far\_right\_data}, $\pk{\mathrm{rem}, \mathrm{virt}}$}
+            \State \trustedcode{output (\textsc{keys and coins back},
+            \texttt{right\_data}, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc},
+            F}$), $\pk{\mathrm{rem}, F}$, $c_P$, $c_{\bar{P}}$)}
+            \State store output as \texttt{right\_data}
+            \State parse \texttt{right\_data} as \texttt{far\_right\_data},
             ($\sk{\mathrm{sib}, F}$, $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib},
-            \mathrm{rem}, F}$
-            \State \Return (\texttt{right\_keys}, $\pk{\mathrm{loc},
+            \mathrm{rem}, F}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sib},
+            \mathrm{rem}}$
+            \State \Return (\texttt{right\_data}, $\pk{\mathrm{loc},
             \mathrm{virt}}$)
           \Else \: \Comment{we are \texttt{host\_fundee}}
             \State \TODO{there is a problem with the base-virtual channel
@@ -71,9 +73,9 @@
             \State \Return $\pk{\mathrm{loc}, \mathrm{virt}}$
           \EndIf
         \Else \: \Comment{we are \texttt{host\_funder}}
-          \State call \textsc{virt.circulateVirtualKeys}($\pk{\mathrm{loc},
+          \State call \textsc{virt.circulateKeysAndCoins}($\pk{\mathrm{loc},
           \mathrm{virt}}$) of $\bar{P}$ and assign returned value to
-          \texttt{right\_keys}
+          \texttt{right\_data}
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent
