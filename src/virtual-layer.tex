@@ -89,14 +89,15 @@
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State \textsc{getMidTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{loc}}$,
-      $c_{\mathrm{rem}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
-      $\pk{\mathrm{loc}, \mathrm{fund}}$, $\pk{\mathrm{sib}, \mathrm{fund}}$,
-      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
-      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{sib}, \mathrm{virt}}$,
-      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
-      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
-      $\pk{\mathrm{loc}, \mathrm{out}}$, $\{\pk{\mathrm{sec}, i}\}_{i \in 1
-      \dots n}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $P$):
+      $c_{\mathrm{rem}}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sibRem}}$,
+      $\pk{\mathrm{left}, \mathrm{fund}}$, $\pk{\mathrm{loc}, \mathrm{fund}}$,
+      $\pk{\mathrm{sib}, \mathrm{fund}}$, $\pk{\mathrm{right}, \mathrm{fund}}$,
+      $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
+      $\pk{\mathrm{sib}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
+      $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
+      \mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$, $\{\pk{\mathrm{sec},
+      i}\}_{i \in 1 \dots n}$, \texttt{comm\_keys\_loc},
+      \texttt{comm\_keys\_rem}, $P$):
       \Indent
         \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{guest}} \wedge
         c_{\mathrm{loc}} \geq c_{\mathrm{guest}}$
@@ -243,12 +244,12 @@
         $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
-        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
-        \texttt{right\_fund\_keys}, $\pk{loc}$,
-        \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[0],
-        \texttt{right\_virt\_keys}[1], $\pk{A, V}$, $\pk{B, V}$,
-        \texttt{right\_virt\_keys}[0], \texttt{comm\_keys\_loc},
-        \texttt{comm\_keys\_rem}, $B$)
+        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $c_{\mathrm{sib}}$,
+        $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{A, F}$, $\pk{B, F}$,
+        \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
+        \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
+        V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
+        \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $B$)
         \For{TX in ($\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$)}
@@ -270,9 +271,9 @@
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
-      $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$,
-      \texttt{left\_fund\_keys}, $\pk{A, F}$, $\pk{B, F}$,
-      \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{loc}$,
+      $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $c_{\mathrm{sib}}$,
+      $c_{\mathrm{sib}, \mathrm{rem}}$, \texttt{left\_fund\_keys}, $\pk{A, F}$,
+      $\pk{B, F}$, \texttt{left\_virt\_keys}[0], $\pk{loc}$, $\pk{loc}$,
       \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$, $\pk{loc}$,
       \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $A$)
       \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
@@ -298,8 +299,10 @@
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
       \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$, $C$)
-      $\gets$ \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B,
-      F}$, \texttt{right\_fund\_keys}, \texttt{left\_virt\_keys}[0], $\pk{loc}$,
+      $\gets$ \textsc{virt.getMidTXs}($c$, $c_P$, $c_{\bar{P}}$,
+      $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{\mathrm{loc},
+      F}$, $\pk{\mathrm{rem}, F}$, \texttt{right\_fund\_keys},
+      \texttt{left\_virt\_keys}[0], $\pk{loc}$,
       $\pk{loc}$, \texttt{right\_virt\_keys}[0], $\pk{A, V}$, $\pk{B, V}$,
       $\pk{loc}$, \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $A$)
       \For{TX, $i$ in ($\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$,
@@ -319,7 +322,8 @@
         $\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$) $\gets$
-        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $c_{\mathrm{sib}}$,
+        $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{A, F}$, $\pk{B, F}$,
         \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
         \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
         V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
@@ -368,7 +372,8 @@
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{left}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
           $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$, $C$) $\gets$
-          \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+          \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $c_{\mathrm{sib}}$,
+          $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{A, F}$, $\pk{B, F}$,
           \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
           \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
           V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
@@ -387,7 +392,8 @@
         $\mathrm{TX}_{\mathrm{next}, \mathrm{left}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$, $C$) $\gets$
-        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $\pk{A, F}$, $\pk{B, F}$,
+        \textsc{virt.getMidTXs}($c$, $c_A$, $c_B$, $c_{\mathrm{sib}}$,
+        $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{A, F}$, $\pk{B, F}$,
         \texttt{right\_fund\_keys}, $\pk{loc}$, \texttt{right\_virt\_keys}[0],
         \texttt{right\_virt\_keys}[0], \texttt{right\_virt\_keys}[1], $\pk{A,
         V}$, $\pk{B, V}$, \texttt{right\_virt\_keys}[0],
