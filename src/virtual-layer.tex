@@ -353,7 +353,8 @@
       \texttt{guest}.\textsc{getCommKeys}()$
       \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
       are not \texttt{host\_funder}}
-        \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee}}
+        \If{we have a \texttt{sibling}} \Comment{we are not
+        \texttt{host\_fundee}}
           \State \Return \textsc{virt.intermediarySigs}()
         \Else \: \Comment{we are \texttt{host\_fundee}}
           \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, $C$) $\gets$
