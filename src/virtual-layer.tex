@@ -236,7 +236,7 @@
   \begin{processbox}{\textsc{virt.siblingSigs}()}
     \begin{algorithmic}[1]
       \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
-      \textsc{pcn.getCommKeys}()$
+      \texttt{guest}.\textsc{getCommKeys}()$
       \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
       \If{we have \texttt{right\_virt\_keys}[1]} \Comment{next
       hop is not \texttt{host\_fundee}}
@@ -354,7 +354,7 @@
   $\mathrm{sigs}_{\mathrm{byLeft}}$)}
     \begin{algorithmic}[1]
       \State $(\texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}) \gets
-      \textsc{pcn.getCommKeys}()$
+      \texttt{guest}.\textsc{getCommKeys}()$
       \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
       are not \texttt{host\_funder}}
         \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee}}
