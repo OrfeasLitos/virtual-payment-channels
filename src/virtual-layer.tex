@@ -24,8 +24,7 @@
       \Indent
         \State ensure \textsc{virt.circulateKeysAndCoins}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
-        \State ensure \textsc{virt.circulateFundingSigs}(\texttt{hops}) returns
-        (\textsc{ok})
+        \State ensure \textsc{virt.circulateFundingSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}(\texttt{hops}) returns
         (\textsc{ok})
         \State output (\textsc{hosts ready}) to \texttt{guest}
@@ -445,21 +444,22 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt.circulateFundingSigs}(\texttt{hops},
-      $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$)}
+  \begin{processbox}{\textsc{virt.circulateFundingSigs}($\mathrm{sig}_{\mathrm{loc},
+  \mathrm{none}}$)}
     \begin{algorithmic}[1]
       \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
       \Comment{we are not \texttt{host\_funder}}
         \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-        \texttt{left\_virt\_keys}[0]) = True
+        $\pk{\mathrm{prev}, F}$) = True \Comment{$\pk{\mathrm{prev}, F}$, found
+        in \texttt{left\_data}}
         \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
         \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
-        \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee}}
-          \State input (\textsc{virtual base sig forward}, \texttt{hops}[1:],
-          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to
-          \texttt{hops}[1].\alice{} \Comment{sibling needs
-          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}
+        \If{we have a \texttt{sibling}} \Comment{we are not \texttt{host\_fundee}}
+          \State input (\textsc{virtual base sig forward},
+          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to \texttt{sibling}
+          \Comment{\texttt{sibling} needs $\mathrm{sig}_{\mathrm{loc},
+          \mathrm{none}}$ for closing}
           \State \trustedcode{$\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets
           \{ \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$}
           \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
@@ -467,11 +467,12 @@
           \sk{\mathrm{loc}, F})$}
           \State \trustedcode{call
           \textsc{virt.circulateVirtualSigs}($\mathrm{sig}_{\mathrm{next},
-          \mathrm{none}}$) of \texttt{hops}[0].\bob and assign output to
+          \mathrm{none}}$) of $\bar{P}$ and assign returned value to
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$}
           \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
           \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-          \texttt{right\_virt\_keys}[0]) = True}
+          $\pk{\mathrm{next}, F}$) = True} \Comment{$\pk{\mathrm{next}, F}$,
+          found in \texttt{right\_data}}
           \State \trustedcode{add $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
           to $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$}
           \State \trustedcode{output (\textsc{virtual base sig back},
@@ -488,12 +489,14 @@
         \State $\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
         \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
         \sk{\mathrm{loc}, F})$
-        \State call \textsc{virt.circulateFundingSigs}(\texttt{hops},
-        $\mathrm{sig}_{\mathrm{next}, \mathrm{none}}$) of \texttt{hops}[0].\bob
-        and assign output to $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
+        \State call
+        \textsc{virt.circulateFundingSigs}($\mathrm{sig}_{\mathrm{next},
+        \mathrm{none}}$) of $\bar{P}$ and assign returned value to
+        $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
         \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-        \texttt{right\_virt\_keys}[0]) = True
+        $\pk{\mathrm{next}, F}$) = True \Comment{$\pk{\mathrm{next}, F}$ found
+        in \texttt{right\_data}}
         \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
         \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
         \State \Return (\textsc{ok})
