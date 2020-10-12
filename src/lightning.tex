@@ -346,9 +346,9 @@
           \State define new \textsc{virt} ITI $\texttt{host}_P'$
           \State input (\textsc{virtualising}, $\texttt{host}_P'$, ($\sk{P, F}'$,
           $\pk{P, F}'$), $\pk{\bar{P}, F}'$, \texttt{hops}[1:], \texttt{fundee},
-          $c$) to \texttt{hops}[1].\texttt{left} and expect reply
-          (\textsc{virtualising ack}, \texttt{host\_sibling}, $\pk{\mathrm{sib},
-          \bar{P}, F}$)
+          $c$, $c_{\bar{P}}$, $c_P$) to \texttt{hops}[1].\texttt{left} and
+          expect reply (\textsc{virtualising ack}, \texttt{host\_sibling},
+          $\pk{\mathrm{sib}, \bar{P}, F}$)
           \State input (\textsc{init}, $\texttt{host}_P$,
           $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
           $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
@@ -369,10 +369,15 @@
 
       \State On input (\textsc{virtualising}, \texttt{host\_sibling}, ($\sk{P,
       F}'$, $\pk{P, F}'$), $\pk{\mathrm{sib}, \bar{P}, F}$, \texttt{hops},
-      \texttt{fundee}, $c$) by \texttt{sibling}:
+      \texttt{fundee}, $c$, $c_{\mathrm{sib}, \mathrm{rem}}$, $_{\mathrm{sib}}$)
+      by \texttt{sibling}:
       \Indent
         \State ensure $\textit{State}^P = \textsc{open}$
         \State ensure $c_P - \texttt{locked}_P \geq c$
+        \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P \wedge
+        c_{\bar{P}} \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by griefing
+        attack: one counterparty closes with old version, the other does not
+        close}
         \State $\textit{State}^P \gets \textsc{virtualising}$
         \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
