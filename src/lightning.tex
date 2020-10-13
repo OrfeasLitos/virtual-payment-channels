@@ -67,19 +67,21 @@
 
       \State \textsc{revokePrevious}():
       \Indent
-        \State $R_{B, i} \gets$ TX \{input: $C_{A, i}$.outputs.\alice, output:
-        ($C_{A, i}$.outputs.\alice.value, $pk_{B, \mathrm{out}}$)\}
-        \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{B, i}, \sk{A, R})$
-        \State \Return $\mathrm{sig}_{A, R, i}$
+        \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$P$,
+        output: ($C_{P, i}$.outputs.$P$.value, $pk_{\bar{P}, \mathrm{out}}$)\}
+        \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
+        \sk{P, R})$
+        \State \Return $\mathrm{sig}_{P, R, i}$
       \EndIndent
       \Statex
 
-      \State \textsc{processRemoteReovcation}($\mathrm{sig}_{B, R, i}$):
+      \State \textsc{processRemoteRevocation}($\mathrm{sig}_{\bar{P}, R, i}$):
       \Indent
-        \State $R_{A, i} \gets$ TX \{input: $C_{B, i}$.outputs.\bob, output:
-        ($C_{B, i}$.outputs.\bob.value, $pk_{A, \mathrm{out}}$)\}
-        \State ensure \textsc{verify}($R_{A, i}$, $\mathrm{sig}_{B, R, i}$,
-        $\pk{B, R}$) = True
+        \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
+        output: ($C_{\bar{P}, i}$.outputs.$\bar{P}$.value, $pk_{P,
+        \mathrm{out}}$)\}
+        \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
+        i}$, $\pk{\bar{P}, R}$) = True
         \State \Return (\textsc{ok})
       \EndIndent
     \end{algorithmic}
@@ -116,8 +118,8 @@
           \State \remotecode{$\textit{State}^B \gets \textsc{waiting for comm
           sig}$}
         \Else \: \Comment{opening virtual channel}
-          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for hosts
-          ready}$}
+          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for
+          funded}$}
         \EndIf
         \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
         $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
@@ -145,19 +147,19 @@
         \EndIf
       \Else \: \Comment{opening virtual channel}
         \If{ideal world}
-          \State input (\textsc{host me}, $\bar{P}$, \texttt{hops}, $c$, $\pk{A,
+          \State input (\textsc{fund me}, $\bar{P}$, \texttt{hops}, $c$, $\pk{A,
           F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect output
-          (\textsc{hosts ready}, \texttt{host\_fundee}) to \texttt{fundee} by
+          (\textsc{funded}, \texttt{host\_fundee}) to \texttt{fundee} by
           \texttt{hops}[-1].\texttt{right} \Comment{ignore any other message}
-          \State input (\textsc{host ack}) as \texttt{fundee} to
+          \State input (\textsc{fund ack}) as \texttt{fundee} to
           \texttt{hops}[-1].\texttt{right} and expect output (\textsc{hosts
           ready}, \texttt{host\_funder}) to \texttt{funder} by
           \texttt{hops}[0].\texttt{left} \TODO{make this work with
           \textsc{virt}} \TODO{use \texttt{left} similarly in \textsc{virt}}
         \Else \: \Comment{real world}
-          \State input (\textsc{host me}, \alice, \bob, \texttt{hops}, $c$,
+          \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
           $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-          output (\textsc{hosts ready}, $\texttt{host}_P$) \Comment{ignore any
+          output (\textsc{funded}, $\texttt{host}_P$) \Comment{ignore any
           other message}
         \EndIf
       \EndIf
@@ -182,7 +184,7 @@
       $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
       \State \remotecode{ensure $\textit{State}^B = \textsc{waiting for comm
       sig}$} \Comment{if opening virtual channel, we have received
-      (\textsc{hosts ready}, \texttt{host\_fundee}) by
+      (\textsc{funded}, \texttt{host\_fundee}) by
       \texttt{hops}[-1].\texttt{right} (c.f. Fig~\ref{code:ln:bob},
       line~\ref{code:ln:bob:host})} \TODO{do this exchange in last hop,
       \textsc{virt}}
@@ -251,13 +253,13 @@
       \EndIndent
       \Statex
 
-      \State On output (\textsc{hosts ready}, $\texttt{host}_P$) by
+      \State On output (\textsc{funded}, $\texttt{host}_P$) by
       \texttt{hops}[-1].\texttt{right}: \Comment{real world}
       \Indent
-        \State ensure $\textit{State}^B = \textsc{waiting for hosts ready}$
+        \State ensure $\textit{State}^B = \textsc{waiting for funded}$
         \State store $\texttt{host}_P$ \Comment{we will talk directly to
         $\texttt{host}_P$}
-        \State reply (\textsc{host ack})
+        \State reply (\textsc{fund ack})
       \EndIndent
     \end{algorithmic}
   \end{processbox}
@@ -303,7 +305,7 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- virtualise}
     \begin{algorithmic}[1]
-      \State On input (\textsc{host me}, \texttt{fundee}, \texttt{hops},
+      \State On input (\textsc{fund me}, \texttt{fundee}, \texttt{hops},
       $c_{\mathrm{guest}}$, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
       \Indent
         \State ensure $\textit{State}^P = \textsc{open}$
@@ -324,8 +326,7 @@
         $\texttt{host}_P'$ and expect reply (\textsc{hosts ready})
         \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
         host, use new host instead}
-        \State output (\textsc{hosts ready}, $\texttt{host}_P$) to
-        \texttt{funder}
+        \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{funder}
       \EndIndent
       \Statex
 
@@ -409,8 +410,8 @@
         \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
         host, use new host instead}
         \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
-          \State output (\textsc{hosts ready}, $\texttt{host}_P$) to
-          \texttt{fundee} and expect reply (\textsc{host ack})
+          \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{fundee}
+          and expect reply (\textsc{host ack})
         \EndIf
         \State reply (\textsc{host ack})
       \EndIndent
