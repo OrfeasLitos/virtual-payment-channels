@@ -319,6 +319,38 @@
 \end{figure}
 
 \begin{figure}[H]
+  \begin{processbox}{\textsc{ln}.\textsc{updateForVirtual}()}
+    \begin{algorithmic}[1]
+      \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, F}'$ and
+      $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
+      respectively
+      \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1})$
+      \Comment{kept by $\bar{P}$}
+      \State send (\textsc{update forward}, $\mathrm{sig}_{P, C, i+1}$) to
+      $\bar{P}$ \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both
+      in local and remote code}
+      \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P,
+      F}'$ and $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
+      respectively}
+      \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
+      $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}'$) = True}
+      \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and
+      $\pk{P, F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively}
+      \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
+      \textsc{sign}(C_{P, i+1}, sk_{\bar{P}, F}')$} \Comment{kept by $P$}
+      \State \remotecode{reply (\textsc{update back}, $\mathrm{sig}_{\bar{P}, C,
+      i+1}$)}
+      \State $C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and $\pk{P,
+      F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively
+      \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
+      i+1}$, $\pk{\bar{P}, F}'$) = True
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:open:virtual-update}
+\end{figure}
+
+\begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- virtualise start and end}
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, \texttt{fundee}, \texttt{hops},
@@ -335,6 +367,7 @@
         $\pk{\bar{P}, F}'$)
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
+        \State \textsc{ln}.\textsc{updateForVirtual}()
         \State $\textit{State}^P \gets \textsc{waiting for revocation}$
         \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
         $\texttt{host}_{\bar{P}}'$, $\texttt{host}_P$, $c_{\mathrm{guest}}$,
@@ -429,6 +462,7 @@
         ack}, $\texttt{host}_{\bar{P}}'$, $\pk{\bar{P}, F}'$)
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
+        \State \textsc{ln}.\textsc{updateForVirtual}()
         \State input (\textsc{init}, $\texttt{host}_P$,
         $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
         $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
