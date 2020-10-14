@@ -1,119 +1,11 @@
 \begin{figure}[H]
   \begin{protocolbox}{$\Pi_{\mathrm{Chan}}$}
     \begin{algorithmic}[1]
-      \State On (\textsc{init}, \texttt{out\_keys}) by \environment:
-      \Indent
-        \State ensure $\mathit{State} = \bot$
-        \State $(c_A, c_B) \gets (0, 0)$
-        \State $\texttt{virtuals} \gets \emptyset$
-        \State ensure \textsc{pcn.init}(\texttt{keys}, \alice) returns
-        (\textsc{ok})
-        \State $\mathit{State} \gets \textsc{init}$
-      \EndIndent
-      \Statex
-
-      \State On \textsc{top up} by \environment, act like \fchan
-      (Fig.~\ref{code:functionality:chan:skeleton:init},
-      lines~\ref{code:functionality:chan:skeleton:init:top_up:start}-\ref{code:functionality:chan:skeleton:init:top_up:end})
-      \Statex
-
-      \State On (\textsc{open base}) by \environment:
-      \TODO{\textsc{ln.openBase}: \texttt{keys} = $\pk{A, out}$, $\pk{B, out}$}
-      \Indent
-        \State ensure $\mathit{State} = \textsc{topped up}$
-        \State ensure \textsc{pcn.openBase}(\texttt{keys}, \texttt{fundee})
-        returns (\textsc{ok}, $c$)
-        \State $c_A \gets c$; $c_B \gets 0$
-        \State $\mathit{State} \gets \textsc{open base}$
-        \State output (\textsc{open base success}) to \environment
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{pay}, $x$) by \environment:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_A - \mathrm{locked}(A) \geq x$
-        \State ensure \textsc{pcn.pay}(x) returns (\textsc{ok})
-        \State $c_A \gets c_A - x$; $c_B \gets c_B + x$
-        \State output (\textsc{pay success}) to \environment
-      \EndIndent
-      \Statex
-
       \State On (\textsc{balance}) by \environment, act like \fchan
       (Fig.~\ref{code:functionality:chan:skeleton:base},
       lines~\ref{code:functionality:chan:skeleton:base:balance:start}-\ref{code:functionality:chan:skeleton:base:balance:end})
-      \Statex
-
-      \State On (\textsc{close}) by \environment, act like \fchan
-      (Fig.~\ref{code:functionality:chan:skeleton:base},
-      lines~\ref{code:functionality:chan:skeleton:close:start}-\ref{code:functionality:chan:skeleton:close:end}):
     \end{algorithmic}
   \end{protocolbox}
   \caption{}
   \label{code:protocol:chan:skeleton}
-\end{figure}
-
-\begin{figure}[H]
-  \begin{protocolbox}{$\Pi_{\mathrm{Chan}}$ -- virtual}
-    \begin{algorithmic}[1]
-      \State \Comment{notification to fundee}
-      \State \Comment{trust that \charlie has $c$ in her channel}
-      \State On input (\textsc{open virtual}, $c$, \bob, \texttt{host\_bob}) by
-      \charlie:
-      \label{code:protocol:chan:skeleton:vchan:open-virtual}
-      \Indent
-        \State ensure $\mathit{State} = \textsc{init}$
-        \State ensure \textsc{pcn.openVirtual}(\bob, \charlie,
-        \texttt{host\_bob}, $c$) returns (\textsc{ok}, \texttt{keys})
-        \label{code:protocol:chan:skeleton:vchan:ln}
-        \State $\texttt{host\_alice} \gets \charlie$
-        \State $c_A \gets c$; $c_B \gets 0$
-        \State from now on, handle any (\textsc{relayed}, $m$) input by
-        \texttt{host\_alice} as the input ($m$) by \environment
-        \State from now on, transform any output ($m$) to \environment to
-        output (\textsc{relay}, $m$) to \texttt{host\_alice}
-        \State $\mathit{State} \gets \textsc{open virtual}$
-        \State output (\textsc{ok}, \texttt{keys}) to \charlie
-        \label{code:protocol:chan:skeleton:vchan:open-virtual:output}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{fund}, $c$, hops, \texttt{inner\_parties} =
-      (\texttt{funder}, \texttt{fundee}), \texttt{outer\_parties} =
-      (\texttt{host\_funder}, \texttt{host\_fundee})) by \environment:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_A - \mathrm{locked}(A) \geq c$
-        \State do the same as in \fchan,
-        Fig.~\ref{code:functionality:chan:skeleton:virtual},
-        lines~\ref{code:functionality:chan:skeleton:virtual:fund:start}-\ref{code:functionality:chan:skeleton:virtual:fund:end},
-        skipping line~\ref{code:functionality:chan:skeleton:virtual:fund:id} and
-        replacing ``to \alice'' with ``to \environment''
-        \Comment{``as \alice'' sender labels are applied anyway, since we
-        \emph{are} \alice}
-        \label{code:protocol:chan:skeleton:vchan}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{relay}, $m$, \charlie) by \environment:
-      \Indent
-        \State do the same as in \fchan,
-        Fig.~\ref{code:functionality:chan:skeleton:virtual},
-        lines~\ref{code:functionality:chan:skeleton:virtual:relay:input:start}-\ref{code:functionality:chan:skeleton:virtual:relay:input:end}
-      \EndIndent
-      \Statex
-
-      \State On output (\textsc{relay}, $m$) by \charlie:
-      \Indent
-        \State do the same as in \fchan,
-        Fig.~\ref{code:functionality:chan:skeleton:virtual},
-        lines~\ref{code:functionality:chan:skeleton:virtual:relay:output:start}-\ref{code:functionality:chan:skeleton:virtual:relay:output:end}
-      \EndIndent
-      \TODO{check that everything done in ideal wrt closing is also done here}
-    \end{algorithmic}
-  \end{protocolbox}
-  \caption{}
-  \label{code:protocol:chan:skeleton:virtual}
 \end{figure}

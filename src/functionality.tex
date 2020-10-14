@@ -6,35 +6,6 @@ channel)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init, top up \& corruption}
     \begin{algorithmic}[1]
-      \State On (\textsc{init}, \texttt{out\_keys}) by \alice:
-      \label{code:functionality:chan:skeleton:init:init:start}
-      \Indent
-        \State ensure $\mathit{State} \in \{\bot, \textsc{init}_{\bob}\}$
-        \State $(c_A, c_B) \gets (0, 0)$
-        \State $\texttt{virtuals} \gets \emptyset$
-        \State ensure \textsc{pcn.init}(\texttt{keys}, \alice) returns
-        (\textsc{ok})
-        \If{$\mathit{State} = \bot$}
-          \State $\mathit{State} \gets \textsc{init}_{\bob}$
-        \Else \: \Comment{$\mathit{State} = \textsc{init}_{\bob}$}
-          \State $\mathit{State} \gets \textsc{init}$
-        \EndIf
-        \label{code:functionality:chan:skeleton:init:init:end}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{top up}) by \alice:
-      \label{code:functionality:chan:skeleton:init:top_up:start}
-      \Indent
-        \State ensure $\mathit{State} = \textsc{init}$
-        \State ensure \textsc{pcn.topUp}(\alice) returns (\textsc{ok},
-        $c_{\mathrm{chain}}$)
-        \State $\mathit{State} \gets \textsc{topped up}$
-        \State output (\textsc{top up success}) to \alice
-        \label{code:functionality:chan:skeleton:init:top_up:end}
-      \EndIndent
-      \Statex
-
       \State On (\textsc{corrupt}) by $P$, addressed to \alice:
       \Indent
         \State ensure $P \in \{\texttt{host\_alice}, \adversary\}$
@@ -69,33 +40,6 @@ channel)}
 \begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
     \begin{algorithmic}[1]
-      \State On (\textsc{open base}, \texttt{fundee}) by \alice:
-      \Indent
-        \State ensure \textit{State} = \textsc{topped up}
-        \State $\bob \gets \texttt{fundee}$
-        \State ensure \textsc{pcn.openBase}(\bob) returns (\textsc{ok}, $c$)
-        \State $c_A \gets c$; $c_B \gets 0$
-        \State $\mathit{State} \gets \textsc{open base}$
-        \State output (\textsc{open base success}) to \alice
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{pay}, $x$) by $\dave \in \{\alice, \bob\}$:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure $c_D - \mathrm{locked}(D) \geq x$
-        \State send (\textsc{pay}, $x$, \dave) to \adversary and expect reply
-        (\textsc{ok}) \TODO{decide if \textsc{pcn.pay}() needed -- probably not}
-        \TODO{there is a problem with who returns -- last message goes to payee,
-        so control is not on our side and adding the last message would add 1
-        more purely technical attack vector and an unneeded round}
-        \State $c_D \gets c_D - x; c_{\bar{D}} \gets c_{\bar{D}} + x$
-        \Comment{$\bar{D}$ is \alice if $D$ is \bob and vice-versa}
-        \State output (\textsc{pay success}) to \dave
-      \EndIndent
-      \Statex
-
       \State On (\textsc{balance}) by $\dave \in \{\alice, \bob\}$:
       \Indent
         \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
@@ -105,140 +49,8 @@ channel)}
         \mathrm{locked}(B)$) to \dave
         \label{code:functionality:chan:skeleton:base:balance:end}
       \EndIndent
-      \Statex
-
-      \State On (\textsc{close}) by \alice:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \label{code:functionality:chan:skeleton:close:start}
-        \State ensure \textsc{virt.close}(\alice) returns (\textsc{ok},
-        $(\mathrm{tx}_i, (\sigma_{ij})_j)_i$) \Comment{\textsc{virt} doesn't
-        need to know if we are base or virtual}
-        \If{\textit{State} = \textsc{open base}}
-          \State ensure \textsc{pcn.close}(\alice, $(\mathrm{tx}_i,
-          (\sigma_{ij})_j)_i$) returns (\textsc{ok})
-          \State $\mathit{State} \gets \textsc{closed}$
-          \State output (\textsc{close success}) to \alice
-        \Else \: \Comment{\textit{State} = \textsc{open virtual}}
-          \State $\mathit{State} \gets \textsc{closed}$
-          \State output (\textsc{closed virtual}, $(\mathrm{tx}_i,
-          (\sigma_{ij})_j)_i$) to \texttt{host\_alice} as \alice
-        \EndIf
-        \label{code:functionality:chan:skeleton:close:end}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{(peer) closed virtual}, $(\mathrm{tx}_i,
-      (\sigma_{ij})_j)_i$) by \charlie:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \State ensure (($c_L$, $c_R$), hops, (\charlie, \dave), (\frank,
-        \george), \texttt{keys}, \textit{vid}) $\in \texttt{virtuals}$,
-        with $\frank \in \{\alice, \bob\}$ \Comment{no stored
-        commitment TX in entry yet} \TODO{keys = $\pk{A, V}, \pk{B, V}$}
-        \State ensure \textsc{virt.closed}($c_L$, $c_R$, $(\mathrm{tx}_i,
-        (\sigma_{ij})_j)_i$) returns (\textsc{ok})
-        \State add message contents to \texttt{virtuals} entry
-        \State \TODO{decide if the following is needed:} output (\textsc{(peer)
-        closed virtual}, $c_{\mathrm{left}}$, \textit{vid}) to \george if peer
-        closed, else to \frank \TODO{if the previous is needed, we need to
-        calculate $c_\mathrm{left}$ in \textsc{virt.closed}() and return it
-        here}
-      \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
   \label{code:functionality:chan:skeleton:base}
-\end{figure}
-
-\begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- virtual}
-    \begin{algorithmic}[1]
-      \State On (\textsc{fund}, $c$, \texttt{hops}, \texttt{inner\_parties} =
-      (\texttt{funder}, \texttt{fundee}), \texttt{outer\_parties} =
-      (\texttt{host\_funder}, \texttt{host\_fundee})) by \alice:
-      \Comment{we fund another channel}
-      \label{code:functionality:chan:skeleton:virtual:fund}
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \label{code:functionality:chan:skeleton:virtual:fund:start}
-        \State ensure $c_A - \mathrm{locked}(A) \geq c$
-        \State ensure \texttt{host\_funder} = \alice
-        \label{code:functionality:chan:skeleton:virtual:fund:id}
-        \State generate unique \textit{vid}
-        \label{code:functionality:chan:skeleton:virtual:id}
-        \State ensure \textsc{virt.fund}($c$, \texttt{hops},
-        \texttt{inner\_parties}, \texttt{outer\_parties}, \textsc{pcn},
-        \textit{vid}) returns (\textsc{ok})
-        \label{code:functionality:chan:skeleton:virtual:fund:virt}
-        \State add (($c$, 0), \texttt{hops}, \texttt{inner\_parties},
-        \texttt{outer\_parties}, \textit{vid}) to \texttt{virtuals}
-        \label{code:functionality:chan:skeleton:virtual:fund:store}
-        \State output (\textsc{fund success}) to \alice
-        \label{code:functionality:chan:skeleton:virtual:fund:end}
-      \EndIndent
-      \Statex
-
-      \State On input (\textsc{open virtual}, $c$, \texttt{fundee},
-      \texttt{host\_fundee}) by \texttt{host\_funder} to \alice:
-      \Comment{\alice is funded by \texttt{host\_funder}}
-      \label{code:functionality:chan:skeleton:virtual:open-virtual}
-      \Indent
-        \State ensure $\mathit{State} = \textsc{init}$
-        \State send (\textsc{is parent}, \texttt{host\_funder}, \alice) to
-        \gtrust and ensure reply is (\textsc{is parent}, \texttt{host\_funder},
-        \alice, $\true$) \Comment{ensure caller is trusted} \TODO{rethink if
-        this is needless: we could just assume trust to the 1st person that asks
-        us to \textsc{open virtual}}
-        \State input (\textsc{you are host}, $c$, \texttt{funder},
-        \texttt{fundee}, \texttt{host\_funder}) to \texttt{host\_fundee}
-        \TODO{remove this logic: \texttt{funder} (we) shouldn't be able to
-        \textit{input} something to the (remote) \texttt{host\_fundee}. Change
-        this to have \texttt{fundee} inform \texttt{host\_fundee} instead.}
-        \State \trustedcode{ensure $c_A \geq c$}
-        \State \trustedcode{ensure we are not already supporting a virtual
-        channel}
-        \State \trustedcode{output (\textsc{ok})}
-        \State ensure \textsc{pcn.openVirtual}(\texttt{fundee},
-        \texttt{host\_funder}, \texttt{host\_fundee}, $c$) returns
-        (\textsc{ok}, \texttt{keys})
-        \label{code:functionality:chan:skeleton:virtual:ln}
-        \State $c_A \gets c; c_B \gets 0$
-        \State from now on, handle any (\textsc{relayed}, $m$) input by
-        \{\texttt{host\_funder}, \texttt{host\_fundee}\} as if it were input
-        ($m$) by $\{\alice, \bob\}$ respectively
-        \State from now on, transform any output ($m$) to $\{\alice, \bob\}$ to
-        output (\textsc{relay}, $m$) to $\{\texttt{host\_funder},
-        \texttt{host\_fundee}\}$ respectively
-        \State $\mathit{State} \gets \textsc{open virtual}$
-        \State output (\textsc{ok}, \texttt{keys}) to \texttt{host\_funder}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{relay}, $m$, \charlie) by \alice:
-      \Indent
-        \State ensure there is an entry in \texttt{virtuals} with \alice as host
-        of funder and \charlie as fundee sub-party
-        \label{code:functionality:chan:skeleton:virtual:relay:input:start}
-        \State input (\textsc{relayed}, $m$) to \charlie
-        \label{code:functionality:chan:skeleton:virtual:relay:input:end}
-      \EndIndent
-      \Statex
-
-      \State On output (\textsc{relay}, $m$) by \charlie to \alice:
-      \Indent
-        \State ensure there is an entry in \texttt{virtuals} with \alice as host
-        of funder and \charlie as fundee sub-party \Comment{defensive check, may
-        be redundant due to being subroutine respecting}
-        \label{code:functionality:chan:skeleton:virtual:relay:output:start}
-        \State output (\textsc{relayed}, $m$, \charlie) to \environment
-        \label{code:functionality:chan:skeleton:virtual:relay:output:end}
-      \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:chan:skeleton:virtual}
 \end{figure}
