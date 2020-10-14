@@ -77,6 +77,7 @@
           \State $\textit{State}^P \gets \textsc{waiting for inbound revocation}$
         \Else \: \Comment{$\textit{State}^P = \textsc{waiting for outbound
         revocation}$}
+          \State $i \gets i + 1$
           \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
         \EndIf
         \State \Return $\mathrm{sig}_{P, R, i}$
@@ -97,6 +98,7 @@
           revocation}$
         \Else \: \Comment{$\textit{State}^P = \textsc{waiting for inbound
         revocation}$}
+          \State $i \gets i + 1$
           \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
         \EndIf
         \State \Return (\textsc{ok})
