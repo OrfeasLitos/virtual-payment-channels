@@ -67,21 +67,38 @@
 
       \State \textsc{revokePrevious}():
       \Indent
+        \State ensure $\textit{State}^P \in \textsc{waiting for (outbound)
+        revocation}$
         \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$P$,
         output: ($C_{P, i}$.outputs.$P$.value, $pk_{\bar{P}, \mathrm{out}}$)\}
         \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
         \sk{P, R})$
+        \If{$\textit{State}^P = \textsc{waiting for revocation}$}
+          \State $\textit{State}^P \gets \textsc{waiting for inbound revocation}$
+        \Else \: \Comment{$\textit{State}^P = \textsc{waiting for outbound
+        revocation}$}
+          \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
+        \EndIf
         \State \Return $\mathrm{sig}_{P, R, i}$
       \EndIndent
       \Statex
 
       \State \textsc{processRemoteRevocation}($\mathrm{sig}_{\bar{P}, R, i}$):
       \Indent
+        \State ensure $\textit{State}^P = \textsc{waiting for (inbound)
+        revocation}$
         \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
         output: ($C_{\bar{P}, i}$.outputs.$\bar{P}$.value, $pk_{P,
         \mathrm{out}}$)\}
         \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
         i}$, $\pk{\bar{P}, R}$) = True
+        \If{$\textit{State}^P = \textsc{waiting for revocation}$}
+          \State $\textit{State}^P \gets \textsc{waiting for outbound
+          revocation}$
+        \Else \: \Comment{$\textit{State}^P = \textsc{waiting for inbound
+        revocation}$}
+          \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
+        \EndIf
         \State \Return (\textsc{ok})
       \EndIndent
     \end{algorithmic}
@@ -152,10 +169,9 @@
           (\textsc{funded}, \texttt{host\_fundee}) to \texttt{fundee} by
           \texttt{hops}[-1].\texttt{right} \Comment{ignore any other message}
           \State input (\textsc{fund ack}) as \texttt{fundee} to
-          \texttt{hops}[-1].\texttt{right} and expect output (\textsc{hosts
-          ready}, \texttt{host\_funder}) to \texttt{funder} by
-          \texttt{hops}[0].\texttt{left} \TODO{make this work with
-          \textsc{virt}} \TODO{use \texttt{left} similarly in \textsc{virt}}
+          \texttt{hops}[-1].\texttt{right} and expect output (\textsc{funded},
+          \texttt{host\_funder}) to \texttt{funder} by
+          \texttt{hops}[0].\texttt{left}
         \Else \: \Comment{real world}
           \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
           $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
@@ -186,8 +202,7 @@
       sig}$} \Comment{if opening virtual channel, we have received
       (\textsc{funded}, \texttt{host\_fundee}) by
       \texttt{hops}[-1].\texttt{right} (c.f. Fig~\ref{code:ln:bob},
-      line~\ref{code:ln:bob:host})} \TODO{do this exchange in last hop,
-      \textsc{virt}}
+      line~\ref{code:ln:bob:host})}
       \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
         \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$,
         output: $(c, \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}}
@@ -259,6 +274,7 @@
         \State ensure $\textit{State}^B = \textsc{waiting for funded}$
         \State store $\texttt{host}_P$ \Comment{we will talk directly to
         $\texttt{host}_P$}
+        \State $\textit{State}^B \gets \textsc{waiting for comm sig}$
         \State reply (\textsc{fund ack})
       \EndIndent
     \end{algorithmic}
@@ -303,7 +319,7 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- virtualise}
+  \begin{processbox}{\textsc{ln} -- virtualise start and end}
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, \texttt{fundee}, \texttt{hops},
       $c_{\mathrm{guest}}$, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
@@ -319,17 +335,41 @@
         $\pk{\bar{P}, F}'$)
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
+        \State $\textit{State}^P \gets \textsc{waiting for revocation}$
         \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
         $\texttt{host}_{\bar{P}}'$, $\texttt{host}_P$, $c_{\mathrm{guest}}$,
         $\pk{A, V}$, $\pk{B, V}$, ($\sk{P, F}'$, $\pk{P, F}'$), ($\sk{P, F}$,
         $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{\bar{P}, F}'$) to
-        $\texttt{host}_P'$ and expect reply (\textsc{hosts ready})
-        \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
-        host, use new host instead}
-        \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{funder}
+        $\texttt{host}_P'$
       \EndIndent
       \Statex
 
+      \State On output (\textsc{hosts ready}) by $\texttt{host}_P'$:
+      \Comment{real or ideal world}
+      \Indent
+        \State ensure $\textit{State}^P = \textsc{waiting for hosts ready}$
+        \State $\textit{State}^P \gets \textsc{open}$
+        \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
+        host, use new host instead}
+        \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
+          \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{fundee}
+          and expect reply (\textsc{fund ack})
+        \ElsIf{we have received input \textsc{fund me} just before we moved to
+        the \textsc{virtualising} state} \Comment{we are the first hop}
+          \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{funder}
+          \Comment{do not expect reply by \texttt{funder}}
+        \EndIf
+        \State reply (\textsc{host ack})
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:virtualise:start-end}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- virtualise hops}
+    \begin{algorithmic}[1]
       \State On (\textsc{virtualising}, $\texttt{host}_{\bar{P}}'$,
       $\pk{\bar{P}, F}'$, \texttt{hops}, \texttt{fundee}, $c_{\mathrm{guest}}$)
       by $\bar{P}$:
@@ -363,7 +403,7 @@
           $c_{\mathrm{guest}}$) to new \textsc{virt} ITI $\texttt{host}_P'$ and
           expect reply (\textsc{host init ok})
         \EndIf
-        \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
+        \State $\textit{State}^P \gets \textsc{waiting for revocation}$
         \State send (\textsc{virtualising ack}, $\texttt{host}_P'$, $\pk{P, F}'$)
         to $\bar{P}$
       \EndIndent
@@ -394,35 +434,19 @@
         $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
         ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $c_{\mathrm{guest}}$) to
         $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
-        \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
+        \State $\textit{State}^P \gets \textsc{waiting for revocation}$
         \State output (\textsc{virtualising ack}, $\texttt{host}_P'$,
         $\pk{\bar{P}, F}'$) to \texttt{sibling}
-      \EndIndent
-      \Statex
-
-      \State On output (\textsc{hosts ready}) by $\texttt{host}_P'$:
-      \Comment{real or ideal world}
-      \Indent
-        \State ensure $\textit{State}^P = \textsc{waiting for hosts ready}$
-        \State $\textit{State}^P \gets \textsc{waiting for comm sig}$
-        \TODO{update former base channel as well}
-        \label{code:ln:bob:host}
-        \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
-        host, use new host instead}
-        \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
-          \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{fundee}
-          and expect reply (\textsc{host ack})
-        \EndIf
-        \State reply (\textsc{host ack})
       \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}
-  \label{code:ln:open}
+  \label{code:ln:open:virtualise:hops}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):} \TODO{ask host if
+  this payment is OK -- also modify host}
     \begin{algorithmic}[1]
       \State ensure $\textit{State}^P = \textsc{open} \wedge c_P \geq x$
       \If{ideal world}

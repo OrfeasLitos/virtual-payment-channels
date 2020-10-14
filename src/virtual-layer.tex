@@ -20,13 +20,11 @@
       \mathrm{virt}}$), ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$),
       $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{rem}, \mathrm{virt}}$) by
       \texttt{guest}:
-      \State \TODO{ensure that we can handle being virtual ourselves}
       \Indent
         \State ensure \textsc{virt.circulateKeysAndCoins}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}() returns (\textsc{ok})
-        \State ensure \textsc{virt.circulateRevocations}(\texttt{hops}) returns
-        (\textsc{ok})
+        \State ensure \textsc{virt.circulateRevocations}() returns (\textsc{ok})
         \State output (\textsc{hosts ready}) to \texttt{guest}
       \EndIndent
       \Statex
@@ -64,11 +62,6 @@
             \State \Return (\texttt{right\_data}, $\pk{\mathrm{loc},
             \mathrm{virt}}$)
           \Else \: \Comment{we are \texttt{host\_fundee}}
-            \State \TODO{there is a problem with the base-virtual channel
-            semantics, as a base channel becomes virtual itself when it
-            facilitates another virtual. When it's solved, we may have to
-            reconsider the \texttt{fundee} below.}
-            \State \TODO{may need to notify guest(s)}
             \State \Return $\pk{\mathrm{loc}, \mathrm{virt}}$
           \EndIf
         \Else \: \Comment{we are \texttt{host\_funder}}
@@ -508,50 +501,42 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt.circulateRevocations}(\texttt{hops},
-  \texttt{revoc\_by\_prev})}
+  \begin{processbox}{\textsc{virt.circulateRevocations}(\texttt{revoc\_by\_prev})}
     \begin{algorithmic}[1]
     \If{\texttt{revoc\_by\_prev} is given as argument} \Comment{we are not
     \texttt{host\_funder}}
       \State ensure
-      \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_prev}) returns
-      (\textsc{ok})
+      \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_prev})
+      returns (\textsc{ok})
     \Else \: \Comment{we are \texttt{host\_funder}}
-      \State $\texttt{revoc\_for\_next} \gets \textsc{pcn.revokePrevious}()$
-      \State call \textsc{virt.circulateRevocations}(\texttt{hops},
-      \texttt{revoc\_for\_next}) of \texttt{hops}[0].\bob and assign output to
-      \texttt{revoc\_by\_next}
+      \State $\texttt{revoc\_for\_next} \gets
+      \texttt{guest}.\textsc{revokePrevious}()$
+      \State call \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next})
+      of $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
       \State ensure
-      \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_next}) returns
-      (\textsc{ok})
-      \State input (\textsc{virtual layer ready}) to \texttt{funder}
-      \State \trustedcode{$\textit{State} \gets \textsc{open}$} \TODO{recheck
-      state machine}
-      \State \trustedcode{reply (\textsc{ok})}
+      \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
+      returns (\textsc{ok})
       \State \Return (\textsc{ok})
     \EndIf
-    \If{len(\texttt{hops}) $> 1$} \Comment{we are not \texttt{host\_fundee} nor
-    \texttt{host\_funder}}
-      \State input (\textsc{virtual revocation forward}, \texttt{hops}[1:]) to
-      \texttt{hops}[1].\alice
+    \If{we have a \texttt{sibling}} \Comment{we are not \texttt{host\_fundee}
+    nor \texttt{host\_funder}}
+      \State input (\textsc{virtual revocation forward}) to \texttt{sibling}
       \State \trustedcode{$\texttt{revoc\_for\_next} \gets
-      \textsc{pcn.revokePrevious}()$}
-      \State \trustedcode{call \textsc{virt.circulateRevocations}(\texttt{hops},
-      \texttt{revoc\_for\_next}) of \texttt{hops}[0].\bob and assign output to
-      \texttt{revoc\_by\_next}}
+      \texttt{guest}.\textsc{revokePrevious}()$}
+      \State \trustedcode{call
+      \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next}) of $\bar{P}$
+      and assign output to \texttt{revoc\_by\_next}}
       \State \trustedcode{ensure
-      \textsc{pcn.processRemoteRevocation}(\texttt{revoc\_by\_next}) returns
-      (\textsc{ok})}
+      \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
+      returns (\textsc{ok})}
       \State \trustedcode{output (\textsc{virtual revocation back})}
     \EndIf
-    \State $\texttt{revoc\_for\_prev} \gets \textsc{pcn.revokePrevious}()$
-    \If{len(\texttt{hops}) = 1} \Comment{we are \texttt{host\_fundee}}
-      \State output (\textsc{hosts ready}) to \texttt{guest}
-      \State \trustedcode{$\textit{State} \gets \textsc{open}$} \TODO{recheck
-      state machine}
-      \State \trustedcode{reply (\textsc{ok})}
-    \EndIf
-    \State \Return \texttt{revoc\_for\_prev}
+    \State $\texttt{revoc\_for\_prev} \gets
+    \texttt{guest}.\textsc{revokePrevious}()$
+    \State output (\textsc{hosts ready}) to \texttt{guest} and expect reply
+    (\textsc{host ack})
+    \State \Return \texttt{revoc\_for\_prev} \Comment{we are not
+    \texttt{host\_fundee} nor \texttt{host\_funder}}
     \end{algorithmic}
   \end{processbox}
   \caption{}
