@@ -484,62 +484,140 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):} \TODO{ask host if
-  this payment is OK -- also modify host}
+  \begin{processbox}{\textsc{ln}.\textsc{signaturesRoundTrip}()}
+    \begin{algorithmic}[1]
+      \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$ coins moved from
+      $P$'s to $\bar{P}$'s output
+      \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1},
+      \sk{P, F})$ \Comment{kept by $\bar{P}$}
+      \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
+      \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
+      and remote code}
+      \If{\remotecode{$\texttt{host}_{\bar{P}} \neq \ledger \wedge \bar{P}$
+      has a \texttt{host\_sibling}}} \Comment{we are intermediary channel}
+        \State \remotecode{ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x
+        \wedge c_{\bar{P}} + x \geq c_{\mathrm{sib}}$} \Comment{avoid value
+        loss by griefing attack}
+      \EndIf
+      \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$
+      coins moved from $P$'s to $\bar{P}$'s output}
+      \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
+      $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}$) = True}
+      \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from
+      $P$'s to $\bar{P}$'s output}
+      \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
+      \textsc{sign}(C_{P, i+1}, \sk{\bar{P}, F})$} \Comment{kept by $P$}
+      \State \remotecode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
+      i}$.outputs.$P$, output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}}
+      \State \remotecode{$\mathrm{sig}_{\bar{P}, R, i} \gets
+      \textsc{sign}(R_{P, i}, \sk{\bar{P}, R})$}
+      \State \remotecode{reply (\textsc{commitment signed},
+      $\mathrm{sig}_{\bar{P}, C, i+1}$, $\mathrm{sig}_{\bar{P}, R, i}$)}
+      \State $C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from $P$'s to
+      $\bar{P}$'s output
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:pay:signatures}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln}.\textsc{revocationsTrip}()}
+    \begin{algorithmic}[1]
+      \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
+      i+1}$, $\pk{\bar{P}, F}$) = True
+      \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
+      output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}
+      \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
+      i}$, $\pk{\bar{P}, R}$) = True
+      \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$\bar{P}$,
+      output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
+      \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
+      \sk{P, R})$
+      \State add $x$ to \texttt{paid\_out}
+      \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
+      i + 1$
+      \If{$\texttt{host}_P \neq \ledger \wedge$ we have a
+      \texttt{host\_sibling}} \Comment{we are intermediary channel}
+        \State input (\textsc{ew balance}, $c_P$, $c_{\bar{P}}$) to
+        $\texttt{host}_P$
+        \State \trustedcode{relay message as input to \texttt{sibling}}
+        \Comment{run by \textsc{virt}}
+        \State \trustedcode{relay message as output to \texttt{guest}}
+        \Comment{run by \textsc{virt}}
+        \State \trustedcode{store new sibling balance and reply (\textsc{new
+        balance ok})}
+        \State \trustedcode{output (\textsc{new balance ok}) to
+        \texttt{sibling}}
+        \Comment{run by \textsc{virt}}
+        \State \trustedcode{output (\textsc{new balance ok}) to \texttt{guest}}
+        \Comment{run by \textsc{virt}}
+      \EndIf
+      \State send (\textsc{revoke and ack}, $\mathrm{sig}_{P, R, i}$) to
+      $\bar{P}$
+      \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
+      i}$.outputs.$\bar{P}$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
+      \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
+      $\mathrm{sig}_{P, R, i}$, $\pk{P, R}$) = True}
+      \State \remotecode{add $x$ to \texttt{paid\_in}}
+      \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
+      x$; $i \gets i + 1$}
+      \If{\remotecode{$\texttt{host}_P \neq \ledger \wedge \bar{P}$ has a
+      \texttt{host\_sibling}}} \Comment{we are intermediary channel}
+        \State \remotecode{input (\textsc{new balance}, $c_{\bar{P}}$, $c_P$)
+        to $\texttt{host}_{\bar{P}}$}
+        \State \remotecode{relay message as input to \texttt{sibling}}
+        \Comment{run by \textsc{virt}}
+        \State \remotecode{relay message as output to \texttt{guest}}
+        \Comment{run by \textsc{virt}}
+        \State \remotecode{store new sibling balance and reply (\textsc{new
+        balance ok})}
+        \State \remotecode{output (\textsc{new balance ok}) to \texttt{sibling}}
+        \Comment{run by \textsc{virt}}
+        \State \remotecode{output (\textsc{new balance ok}) to \texttt{guest}}
+        \Comment{run by \textsc{virt}}
+      \EndIf
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:pay:revocations}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
     \begin{algorithmic}[1]
       \State ensure $\textit{State}^P = \textsc{open} \wedge c_P \geq x$
+      \If{$\texttt{host}_P \neq \ledger \wedge P$ has a \texttt{host\_sibling}}
+      \Comment{we are intermediary channel}
+        \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x \wedge
+        c_{\bar{P}} + x \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by
+        griefing attack: one counterparty closes with old version, the other
+        does not close}
+      \EndIf
       \If{ideal world}
         \State send (\textsc{pay}, $x$) to \adversary and expect reply
         (\textsc{pay ok})
         \State ensure $\textit{State}^{\bar{P}} = \textsc{open}$
         \State $c_P \gets c_B - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
         i + 1$
+        \If{$\texttt{host}_P \neq \ledger \wedge P$ has a
+        \texttt{host\_sibling}} \Comment{we are intermediary channel}
+          \State input (\textsc{new balance}, $c_P$, $c_{\bar{P}}$) to
+          $\texttt{host}_P$
+          \State \trustedcode{relay message as input to \texttt{sibling}}
+          \Comment{run by \textsc{virt}}
+          \State \trustedcode{relay message as output to \texttt{guest}}
+          \Comment{run by \textsc{virt}}
+          \State \trustedcode{store new sibling balance and reply (\textsc{new
+          balance ok})}
+          \State \trustedcode{output (\textsc{new balance ok}) to
+          \texttt{sibling}} \Comment{run by \textsc{virt}}
+          \State \trustedcode{output (\textsc{new balance ok}) to
+          \texttt{guest}} \Comment{run by \textsc{virt}}
+        \EndIf
       \Else
-        \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$ coins moved from
-        $P$'s to $\bar{P}$'s output
-        \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1},
-        \sk{P, F})$ \Comment{kept by $\bar{P}$}
-        \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
-        \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
-        and remote code}
-        \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$
-        coins moved from $P$'s to $\bar{P}$'s output}
-        \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
-        $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}$) = True}
-        \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from
-        $P$'s to $\bar{P}$'s output}
-        \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
-        \textsc{sign}(C_{P, i+1}, \sk{\bar{P}, F})$} \Comment{kept by $P$}
-        \State \remotecode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
-        i}$.outputs.$P$, output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}}
-        \State \remotecode{$\mathrm{sig}_{\bar{P}, R, i} \gets
-        \textsc{sign}(R_{P, i}, \sk{\bar{P}, R})$}
-        \State \remotecode{reply (\textsc{commitment signed},
-        $\mathrm{sig}_{\bar{P}, C, i+1}$, $\mathrm{sig}_{\bar{P}, R, i}$)}
-        \State $C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from $P$'s to
-        $\bar{P}$'s output
-        \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
-        i+1}$, $\pk{\bar{P}, F}$) = True
-        \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
-        output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}
-        \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
-        i}$, $\pk{\bar{P}, R}$) = True
-        \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$\bar{P}$,
-        output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
-        \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
-        \sk{P, R})$
-        \State add $x$ to \texttt{paid\_out}
-        \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
-        i + 1$
-        \State send (\textsc{revoke and ack}, $\mathrm{sig}_{P, R, i}$) to
-        $\bar{P}$
-        \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
-        i}$.outputs.$\bar{P}$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
-        \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
-        $\mathrm{sig}_{P, R, i}$, $\pk{P, R}$) = True}
-        \State \remotecode{add $x$ to \texttt{paid\_in}}
-        \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
-        x$; $i \gets i + 1$}
+        \State \textsc{ln}.\textsc{signaturesRoundTrip}()
+        \State \textsc{ln}.\textsc{revocationsTrip}()
       \EndIf
       \State \Comment{No output is given to the caller, this is intentional}
     \end{algorithmic}
