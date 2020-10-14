@@ -386,6 +386,9 @@
         \State $\textit{State}^P \gets \textsc{open}$
         \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
         host, use new host instead}
+        \State move $\pk{P, F}$, $\pk{\bar{P}, F}$ to list of old funding keys
+        \State $(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P, F}')$;
+        $\pk{\bar{P}, F} \gets \pk{\bar{P}, F}'$
         \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
           \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{fundee}
           and expect reply (\textsc{fund ack})
