@@ -619,10 +619,46 @@
 \end{figure}
 
 \begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- On (\textsc{check chain for old comm}):}
+    \begin{algorithmic}[1]
+      \State ensure $\textit{State}^P \notin \{\bot, \textsc{init},
+      \textsc{topped up}\}$ \Comment{channel open}
+      \State send (\textsc{read}) to \ledger as $P$ and assign reply to $\Sigma$
+      \If{$\exists 0 \leq j < i : C_{\bar{P}, j} \in \Sigma$}
+      \Comment{counterparty has closed maliciously}
+        \State $\textit{State}^P \gets \textsc{closing}$
+        \State \textsc{ln}.\textsc{submitAndCheckRevocation}($j$)
+        \State $\textit{State}^P \gets \textsc{closed}$
+      \EndIf
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:poll}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln}.\textsc{submitAndCheckRevocation}($j$)}
+    \begin{algorithmic}[1]
+      \State $\mathrm{sig}_{P, R, j} \gets \textsc{sign}(R_{P, j}, \sk{P, R})$
+      \State input (\textsc{submit}, ($R_{P, j}$, $\mathrm{sig}_{P, R, j}$,
+      $\mathrm{sig}_{\bar{P}, R, j}$)) to \ledger as $P$
+      \While{$\nexists R_{P, j} \in \Sigma$}
+        \State wait for input (\textsc{check revocation}) \Comment{ignore
+        other messages}
+        \State input (\textsc{read}) to \ledger as $P$ and assign output to
+        $\Sigma$
+      \EndWhile
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:submit-revocation}
+\end{figure}
+
+\begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- On (\textsc{close}):}
     \begin{algorithmic}[1]
       \State ensure $\textit{State}^P \notin \{\bot, \textsc{init},
-      \textsc{topped up}\}$
+      \textsc{topped up}\}$ \Comment{channel open}
       \If{$\texttt{host}_P \neq \ledger$} \Comment{we have a virtual channel}
         \State $\textit{State}^P \gets \textsc{host closing}$
         \State input (\textsc{close}) to $\texttt{host}_P$ and
@@ -638,15 +674,7 @@
         \State no-op \Comment{do nothing}
       \ElsIf{$\exists 0 \leq j < i : C_{\bar{P}, j} \in \Sigma$}
       \Comment{counterparty has closed maliciously}
-        \State $\mathrm{sig}_{P, R, j} \gets \textsc{sign}(R_{P, j}, \sk{P, R})$
-        \State input (\textsc{submit}, ($R_{P, j}$, $\mathrm{sig}_{P, R, j}$,
-        $\mathrm{sig}_{\bar{P}, R, j}$)) to \ledger as $P$
-        \While{$\nexists R_{P, j} \in \Sigma$}
-          \State wait for input (\textsc{check revocation}) \Comment{ignore
-          other messages}
-          \State input (\textsc{read}) to \ledger as $P$ and assign output to
-          $\Sigma$
-        \EndWhile
+        \State \textsc{ln}.\textsc{submitAndCheckRevocation}($j$)
       \Else \: \Comment{counterparty is idle}
         \While{$\nexists$ unspent \texttt{output} $\in \Sigma$ that $C_{P, i}$
         can spend} \Comment{possibly due to an active timelock}
