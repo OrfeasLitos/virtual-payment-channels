@@ -160,11 +160,11 @@
         \If{ideal world}
           \State input (\textsc{fund me}, $\bar{P}$, \texttt{hops}, $c$, $\pk{A,
           F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect output
-          (\textsc{funded}, \texttt{host\_fundee}) to \texttt{fundee} by
+          (\textsc{funded}, $\texttt{host}_{\bar{P}}$) to \texttt{fundee} by
           \texttt{hops}[-1].\texttt{right} \Comment{ignore any other message}
           \State input (\textsc{fund ack}) as \texttt{fundee} to
           \texttt{hops}[-1].\texttt{right} and expect output (\textsc{funded},
-          \texttt{host\_funder}) to \texttt{funder} by
+          $\texttt{host}_P$) to \texttt{funder} by
           \texttt{hops}[0].\texttt{left}
         \Else \: \Comment{real world}
           \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
