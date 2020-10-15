@@ -57,24 +57,6 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- methods used by \textsc{virt}}
     \begin{algorithmic}[1]
-      \State \textsc{getCommTX}($c_A$, $c_B$, $\pk{A, F}$, $\pk{A,
-      \mathrm{out}}$, $\pk{A, R}$, $\pk{B, F}$, $\pk{B, \mathrm{out}}$, $\pk{B,
-      R}$, $P$):
-      \Indent
-        \State $C_{P, i+1} \gets$ TX \{input: ($c_A + c_B$, $\texttt{3} \wedge
-        2/\{\pk{A, F}, \pk{B, F}\}$), outputs: (($c_A$, $(\pk{A, \mathrm{out}} +
-        t) \vee 2/\{\pk{A, R}, \pk{B, R}\}$), ($c_B$, $\pk{B, \mathrm{out}}$))\}
-        \State \Return $C_{P, i+1}$
-      \EndIndent
-      \Statex
-
-      \State \textsc{getCommKeys}():
-      \Indent
-        \State \Return $(\pk{A, F}, \pk{A, \mathrm{out}}, \pk{A, R}), (\pk{B,
-        F}, \pk{B, \mathrm{out}}, \pk{B, R})$
-      \EndIndent
-      \Statex
-
       \State \textsc{revokePrevious}():
       \Indent
         \State ensure $\textit{State}^P \in \textsc{waiting for (outbound)
