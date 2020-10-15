@@ -448,8 +448,8 @@
         \State ensure $c_P - \texttt{locked}_P \geq c$
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P \wedge
         c_{\bar{P}} \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by griefing
-        attack: one counterparty closes with old version, the other does not
-        close}
+        attack: one counterparty closes with old version, the other stays idle
+        forever}
         \State $\textit{State}^P \gets \textsc{virtualising}$
         \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
@@ -584,7 +584,7 @@
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x \wedge
         c_{\bar{P}} + x \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by
         griefing attack: one counterparty closes with old version, the other
-        does not close}
+        stays idle forever}
       \EndIf
       \If{ideal world}
         \State send (\textsc{pay}, $x$) to \adversary and expect reply
