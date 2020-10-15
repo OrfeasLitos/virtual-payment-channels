@@ -38,6 +38,16 @@
         \State $\textit{State}^P \gets \textsc{topped up}$
         \State output (\textsc{top up ok}, $c_{P, \mathrm{chain}}$)
       \EndIndent
+      \Statex
+
+      \State On (\textsc{balance}):
+      \Indent
+        \State ensure $\mathit{State}^P = \textsc{open}$
+        \label{code:functionality:chan:skeleton:base:balance:start}
+        \State output (\textsc{balance}, $c_A, c_B, \texttt{locked}_A,
+        \texttt{locked}_B$)
+        \label{code:functionality:chan:skeleton:base:balance:end}
+      \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}

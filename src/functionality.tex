@@ -36,21 +36,3 @@ channel)}
   \caption{}
   \label{code:functionality:chan:skeleton:init}
 \end{figure}
-
-\begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- base}
-    \begin{algorithmic}[1]
-      \State On (\textsc{balance}) by $\dave \in \{\alice, \bob\}$:
-      \Indent
-        \State ensure $\mathit{State} \in \{\textsc{open base}, \textsc{open
-        virtual}\}$
-        \label{code:functionality:chan:skeleton:base:balance:start}
-        \State output (\textsc{balance}, $c_A, c_B, \mathrm{locked}(A),
-        \mathrm{locked}(B)$) to \dave
-        \label{code:functionality:chan:skeleton:base:balance:end}
-      \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:chan:skeleton:base}
-\end{figure}
