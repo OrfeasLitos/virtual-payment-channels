@@ -42,7 +42,7 @@
 
       \State On (\textsc{balance}):
       \Indent
-        \State ensure $\mathit{State}^P = \textsc{open}$
+        \State ensure $\mathit{State}^P \in \{\textsc{open}, \textsc{closed}\}$
         \label{code:functionality:chan:skeleton:base:balance:start}
         \State output (\textsc{balance}, $c_A, c_B, \texttt{locked}_A,
         \texttt{locked}_B$)
