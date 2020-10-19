@@ -1,3 +1,5 @@
+\TODO{if floating channel, setup on \textsc{open} and use on \textsc{close} the
+intermediary -AZall->O-AZ-> TX}
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- init}
     \begin{algorithmic}[1]
@@ -109,7 +111,7 @@
       \If{ideal world}
         \State ensure $\textit{State}^B = \textsc{init}$
         \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
-        $\pk{A, R}$, $\pk{A, \mathrm{out}}$ to \adversary and expect reply
+        $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \adversary and expect reply
         (\textsc{open channel ok})
         \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
         \pk{B, R}) \gets \textsc{keyGen}()$
