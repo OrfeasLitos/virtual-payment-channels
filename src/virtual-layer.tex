@@ -4,14 +4,15 @@
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State On input (\textsc{init}, $\texttt{host}_P$, $\bar{P}$,
-      \texttt{sibling}, ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-      \mathrm{virt}}$), $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{sib},
-      \mathrm{rem}, \mathrm{virt}}$, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc},
-      F}$), $\pk{\mathrm{rem}, F}$, $c_{\mathrm{guest}}$) by \texttt{guest}:
+      \texttt{sibling}, \texttt{fundee}, ($\sk{\mathrm{loc}, \mathrm{virt}}$,
+      $\pk{\mathrm{loc}, \mathrm{virt}}$), $\pk{\mathrm{rem}, \mathrm{virt}}$,
+      $\pk{\mathrm{sib}, \mathrm{rem}, \mathrm{virt}}$, ($\sk{\mathrm{loc}, F}$,
+      $\pk{\mathrm{loc}, F}$), $\pk{\mathrm{rem}, F}$, $c_{\mathrm{guest}}$) by
+      \texttt{guest}:
       \Indent
         \State store message contents and \texttt{guest}
         \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
-        for edge nodes}
+        for edge nodes, \texttt{fundee} is present only in last node}
         \State output (\textsc{host init ok}) to \texttt{guest}
       \EndIndent
       \Statex
@@ -64,12 +65,17 @@
             \State \Return (\texttt{right\_data}, $\pk{\mathrm{loc},
             \mathrm{virt}}$)
           \Else \: \Comment{we are \texttt{host\_fundee}}
+            \State extract ($\pk{\mathrm{left}, \mathrm{guest}}$,
+            $\pk{\mathrm{right}, \mathrm{guest}}$) from \texttt{left\_data}
+            \State output (\textsc{check keys}, ($\pk{\mathrm{left},
+            \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$)) to
+            \texttt{fundee} and expect reply (\textsc{keys ok})
             \State \Return $\pk{\mathrm{loc}, \mathrm{virt}}$
           \EndIf
         \Else \: \Comment{we are \texttt{host\_funder}}
           \State call \textsc{virt.circulateKeysAndCoins}($\pk{\mathrm{loc},
-          \mathrm{virt}}$) of $\bar{P}$ and assign returned value to
-          \texttt{right\_data}
+          \mathrm{virt}}$, ($\pk{A, V}$, $\pk{B, V}$)) of $\bar{P}$ and assign
+          returned value to \texttt{right\_data}
           \State \Return (\textsc{ok})
         \EndIf
       \EndIndent

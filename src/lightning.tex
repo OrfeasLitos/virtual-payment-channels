@@ -132,7 +132,7 @@ intermediary -AZall->O-AZ-> TX}
           sig}$}
         \Else \: \Comment{opening virtual channel}
           \State \remotecode{$\textit{State}^B \gets \textsc{waiting for
-          funded}$}
+          check keys}$}
         \EndIf
         \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
         $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
@@ -272,6 +272,16 @@ intermediary -AZall->O-AZ-> TX}
         $\texttt{host}_P$}
         \State $\textit{State}^B \gets \textsc{waiting for comm sig}$
         \State reply (\textsc{fund ack})
+      \EndIndent
+      \Statex
+
+      \State On output (\textsc{check keys}, ($\pk{1}$, $\pk{2}$)) by
+      \texttt{hops}[-1].\texttt{right}:
+      \Indent
+        \State ensure $\textit{State}^B = \textsc{waiting for check keys}$
+        \State ensure $\pk{1} = \pk{A, F} \wedge \pk{2} = \pk{B, F}$
+        \State $\textit{State}^B \gets \textsc{waiting for fudned}$
+        \State reply (\textsc{keys ok})
       \EndIndent
     \end{algorithmic}
   \end{processbox}
@@ -430,10 +440,10 @@ intermediary -AZall->O-AZ-> TX}
           to $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \Else \: \Comment{we are the last hop}
           \State input (\textsc{init}, $\texttt{host}_P$,
-          $\texttt{host}_{\bar{P}}'$, ($\sk{P, F}'$, $\pk{P, F}'$),
-          $\pk{\bar{P}, F}'$, ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$,
-          $c_{\mathrm{guest}}$) to new \textsc{virt} ITI $\texttt{host}_P'$ and
-          expect reply (\textsc{host init ok})
+          $\texttt{host}_{\bar{P}}'$, \texttt{fundee}=\texttt{fundee}, ($\sk{P,
+          F}'$, $\pk{P, F}'$), $\pk{\bar{P}, F}'$, ($\sk{P, F}$, $\pk{P, F}$),
+          $\pk{\bar{P}, F}$, $c_{\mathrm{guest}}$) to new \textsc{virt} ITI
+          $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \EndIf
         \State $\textit{State}^P \gets \textsc{waiting for revocation}$
         \State send (\textsc{virtualising ack}, $\texttt{host}_P'$, $\pk{P, F}'$)
