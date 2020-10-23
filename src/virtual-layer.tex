@@ -635,7 +635,8 @@ that a functionality is needed after all}
         \State ensure \textit{State} = \textsc{closing}
         \State send (\textsc{read}) to \ledger as $R$ and assign reply to
         $\Sigma$
-        \If{$\texttt{tx} \in \Sigma$}
+        \If{$\Sigma$ has an unspent output that only $R$ and its counterparty
+        can spend} \Comment{if there is a timelock, it must have expired}
           \State $\textit{State} \gets \textsc{closed}$
           \State output (\textsc{closed}) to $R$
         \EndIf
