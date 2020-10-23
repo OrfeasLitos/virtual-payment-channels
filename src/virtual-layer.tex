@@ -588,12 +588,12 @@ that a functionality is needed after all}
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt} -- close}
     \begin{algorithmic}[1]
-      \State On input (\textsc{close}) by $P \in \{\texttt{guest},
+      \State On input (\textsc{close}) by $R \in \{\texttt{guest},
       \texttt{funder}, \texttt{fundee}\}$: \Comment{At most one of
       \texttt{funder}, \texttt{fundee} is defined}
       \Indent
         \If{\textit{State} = \textsc{closed}}
-          \State output (\textsc{closed}) to $P$
+          \State output (\textsc{closed}) to $R$
         \EndIf
         \State ensure \textit{State} = \textsc{open}
         \If{$\texttt{host}_P \neq \ledger$} \Comment{\texttt{host} is a
@@ -605,7 +605,7 @@ that a functionality is needed after all}
         \EndIf
         \State \Comment{if we have a $\texttt{host}_P$, continue from here on
         output (\textsc{closed}) by it}
-        \State send (\textsc{read}) to \ledger as $P$ and assign reply to
+        \State send (\textsc{read}) to \ledger as $R$ and assign reply to
         $\Sigma$
         \State let \texttt{tx} be the unique valid TX for $\Sigma$ among
         ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
@@ -623,21 +623,21 @@ that a functionality is needed after all}
         transactions don't need a signature by both keys. This is not a
         problem.}
         \State ignore all messages except for (\textsc{check chain for closing})
-        by $P$
+        by $R$
         \State $\textit{State} \gets \textsc{closing}$
         \State send (\textsc{submit}, (\texttt{tx}, \texttt{sigs})) to \ledger
       \EndIndent
       \Statex
 
-      \State On (\textsc{check chain for closing}) by $P \in \{\texttt{guest},
+      \State On (\textsc{check chain for closing}) by $R \in \{\texttt{guest},
       \texttt{funder}, \texttt{fundee}\}$:
       \Indent
         \State ensure \textit{State} = \textsc{closing}
-        \State send (\textsc{read}) to \ledger as $P$ and assign reply to
+        \State send (\textsc{read}) to \ledger as $R$ and assign reply to
         $\Sigma$
         \If{$\texttt{tx} \in \Sigma$}
           \State $\textit{State} \gets \textsc{closed}$
-          \State output (\textsc{closed}) to $P$
+          \State output (\textsc{closed}) to $R$
         \EndIf
       \EndIndent
     \end{algorithmic}
