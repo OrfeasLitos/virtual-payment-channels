@@ -363,6 +363,102 @@ that a functionality is needed after all}
 \end{figure}
 
 \begin{figure}[H]
+  \begin{processbox}{\textsc{virt.hostFundeeSigs}()}
+    \begin{algorithmic}[1]
+      \State $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ $\gets$
+      \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
+      $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
+      \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$,
+      $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
+      \mathrm{guest}}$, False)
+      \For{each hop apart from the first and ours ($i \in [2, \dots, n-1]$)}
+      \Comment{hop data encoded in \texttt{left\_data}}
+        \State extract data needed for \textsc{getMidTXs}() from
+        \texttt{left\_data} and assign it to $\texttt{data}_i$ and
+        $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$
+        \Comment{$\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$ contains each
+        party's $\pk{i, \mathrm{virt}}$}
+        \State ($\mathrm{TX}_{i, \mathrm{none}}$, $\mathrm{TX}_{i,
+        \mathrm{left}}$, $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i,
+        \mathrm{both}}$) $\gets$ \textsc{virt.getMidTXs}($\texttt{data}_i$,
+        $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
+        \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{right}}$,
+        $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) and
+        \textsc{sign}($\mathrm{TX}_{i, \mathrm{both}}$, $\sk{\mathrm{loc},
+        \mathrm{virt}}$, \textsc{anyprevout}) to
+        $\mathrm{sigs}_{\mathrm{toLeft}}$ \Comment{if $i$-th hop is
+        adjacent, $2$ signatures will be produced by each \textsc{sign}()
+        invocation: one for the \texttt{guest\_all} and one for the
+        $\texttt{2} \wedge \texttt{right\_virt\_checked}$ input}
+        \State output (\textsc{sign TXs}, $\mathrm{TX}_{i, \mathrm{left}}$,
+        $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i, \mathrm{both}}$)
+        to \texttt{fundee} and expect reply (\textsc{TXs signed},
+        $\mathrm{sigs}_{\mathrm{guest}}$)
+        \State add $\mathrm{sigs}_{\mathrm{guest}}$ to
+        $\mathrm{sigs}_{\mathrm{toLeft}}$
+        \If{$i = n - 1$} \Comment{hop is our previous}
+          \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{left}}$,
+          $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) to
+          $\mathrm{sigs}_{\mathrm{toLeft}}$
+        \EndIf
+      \EndFor
+      \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:fundee-sigs}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt.hostFunderSigs}()}
+    \begin{algorithmic}[1]
+      \For{each hop apart from the last and ours ($i \in [2, \dots, n-1]$)}
+      \Comment{hop data encoded in \texttt{right\_data}}
+        \State extract data needed for \textsc{getMidTXs}() from
+        \texttt{right\_data} and assign it to $\texttt{data}_i$ and
+        $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$
+        \Comment{$\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$ contains each
+        party's $\pk{i, \mathrm{virt}}$}
+        \State ($\mathrm{TX}_{i, \mathrm{none}}$, $\mathrm{TX}_{i,
+        \mathrm{left}}$, $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i,
+        \mathrm{both}}$) $\gets$ \textsc{virt.getMidTXs}($\texttt{data}_i$,
+        $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
+        \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{right}}$,
+        $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) and
+        \textsc{sign}($\mathrm{TX}_{i, \mathrm{both}}$, $\sk{\mathrm{loc},
+        \mathrm{virt}}$, \textsc{anyprevout}) to
+        $\mathrm{sigs}_{\mathrm{toRight}}$ \Comment{if $i$-th hop is
+        adjacent, $2$ signatures will be produced by each \textsc{sign}()
+        invocation: one for the \texttt{guest\_all} and one for the
+        $\texttt{2} \wedge \texttt{right\_virt\_checked}$ input}
+        \State output (\textsc{sign TXs}, $\mathrm{TX}_{i, \mathrm{left}}$,
+        $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i, \mathrm{both}}$)
+        to \texttt{fundee} and expect reply (\textsc{TXs signed},
+        $\mathrm{sigs}_{\mathrm{guest}}$)
+        \State add $\mathrm{sigs}_{\mathrm{guest}}$ to
+        $\mathrm{sigs}_{\mathrm{toRight}}$
+        \If{$i = 2$} \Comment{hop is our next}
+          \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{left}}$,
+          $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) to
+          $\mathrm{sigs}_{\mathrm{toRight}}$
+        \EndIf
+      \EndFor
+      \State call
+      \textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
+      of $P$ and assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
+      \State $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ $\gets$
+      \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
+      $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
+      \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$, True)
+      \State \Return (\textsc{ok})
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:funder-sigs}
+\end{figure}
+
+\begin{figure}[H]
   \begin{processbox}{\textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{byLeft}}$)}
     \begin{algorithmic}[1]
       \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
@@ -371,74 +467,10 @@ that a functionality is needed after all}
         \texttt{host\_fundee}}
           \State \Return \textsc{virt.intermediarySigs}()
         \Else \: \Comment{we are \texttt{host\_fundee}}
-          \State $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ $\gets$
-          \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
-          $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
-          \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$,
-          $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
-          \mathrm{guest}}$, False)
-          \For{each hop apart from the first and ours ($i \in [2, \dots, n-1]$)}
-          \Comment{hop data encoded in \texttt{left\_data}}
-            \State extract data needed for \textsc{getMidTXs}() from
-            \texttt{left\_data} and assign it to $\texttt{data}_i$ and
-            $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$
-            \Comment{$\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$ contains each
-            party's $\pk{i, \mathrm{virt}}$}
-            \State ($\mathrm{TX}_{i, \mathrm{none}}$, $\mathrm{TX}_{i,
-            \mathrm{left}}$, $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i,
-            \mathrm{both}}$) $\gets$ \textsc{virt.getMidTXs}($\texttt{data}_i$,
-            $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
-            \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{right}}$,
-            $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) and
-            \textsc{sign}($\mathrm{TX}_{i, \mathrm{both}}$, $\sk{\mathrm{loc},
-            \mathrm{virt}}$, \textsc{anyprevout}) to
-            $\mathrm{sigs}_{\mathrm{toLeft}}$ \Comment{if $i$-th hop is
-            adjacent, $2$ signatures will be produced by each \textsc{sign}()
-            invocation: one for the \texttt{guest\_all} and one for the
-            $\texttt{2} \wedge \texttt{right\_virt\_checked}$ input}
-            \If{$i = n - 1$} \Comment{hop is our previous}
-              \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{left}}$,
-              $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) to
-              $\mathrm{sigs}_{\mathrm{toLeft}}$
-            \EndIf
-          \EndFor
-          \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
+          \State \Return \textsc{virt.hostFundeeSigs}()
         \EndIf
       \Else \: \Comment{we are \texttt{host\_funder}}
-        \For{each hop apart from the last and ours ($i \in [2, \dots, n-1]$)}
-        \Comment{hop data encoded in \texttt{right\_data}}
-          \State extract data needed for \textsc{getMidTXs}() from
-          \texttt{right\_data} and assign it to $\texttt{data}_i$ and
-          $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$
-          \Comment{$\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$ contains each
-          party's $\pk{i, \mathrm{virt}}$}
-          \State ($\mathrm{TX}_{i, \mathrm{none}}$, $\mathrm{TX}_{i,
-          \mathrm{left}}$, $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i,
-          \mathrm{both}}$) $\gets$ \textsc{virt.getMidTXs}($\texttt{data}_i$,
-          $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
-          \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{right}}$,
-          $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) and
-          \textsc{sign}($\mathrm{TX}_{i, \mathrm{both}}$, $\sk{\mathrm{loc},
-          \mathrm{virt}}$, \textsc{anyprevout}) to
-          $\mathrm{sigs}_{\mathrm{toRight}}$ \Comment{if $i$-th hop is
-          adjacent, $2$ signatures will be produced by each \textsc{sign}()
-          invocation: one for the \texttt{guest\_all} and one for the
-          $\texttt{2} \wedge \texttt{right\_virt\_checked}$ input}
-          \If{$i = 2$} \Comment{hop is our next}
-            \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{left}}$,
-            $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) to
-            $\mathrm{sigs}_{\mathrm{toRight}}$
-          \EndIf
-        \EndFor
-        \State call
-        \textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
-        of $P$ and assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
-        \State $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ $\gets$
-        \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
-        $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
-        \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
-        \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$, True)
-        \State \Return (\textsc{ok})
+        \State \Return \textsc{virt.hostFunderSigs}()
       \EndIf
     \end{algorithmic}
   \end{processbox}
