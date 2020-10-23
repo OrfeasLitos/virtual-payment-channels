@@ -19,11 +19,11 @@ that a functionality is needed after all}
       \Statex
 
       \State On input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
-      $\bar{P}$, $\texttt{host}_P$, $c_{\mathrm{guest}}$, $\pk{A, V}$, $\pk{B,
-      V}$, ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-      \mathrm{virt}}$), ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$),
-      $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{rem}, \mathrm{virt}}$) by
-      \texttt{guest}:
+      $\bar{P}$, $\texttt{host}_P$, $c_{\mathrm{guest}}$, $\pk{\mathrm{left},
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
+      ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$),
+      ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$), $\pk{\mathrm{rem}, F}$,
+      $\pk{\mathrm{rem}, \mathrm{virt}}$) by \texttt{guest}:
       \Indent
         \State ensure \textsc{virt.circulateKeysAndCoins}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
@@ -75,7 +75,8 @@ that a functionality is needed after all}
           \EndIf
         \Else \: \Comment{we are \texttt{host\_funder}}
           \State call \textsc{virt.circulateKeysAndCoins}($\pk{\mathrm{loc},
-          \mathrm{virt}}$, ($\pk{A, V}$, $\pk{B, V}$)) of $\bar{P}$ and assign
+          \mathrm{virt}}$, ($\pk{\mathrm{left}, \mathrm{guest}}$,
+          $\pk{\mathrm{right}, \mathrm{guest}}$)) of $\bar{P}$ and assign
           returned value to \texttt{right\_data}
           \State \Return (\textsc{ok})
         \EndIf
