@@ -328,15 +328,15 @@ that a functionality is needed after all}
     \begin{algorithmic}[1]
       \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$)
-      $\gets$ \textsc{virt.getMidTXs}($c$, $c_P$, $c_{\bar{P}}$,
+      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$) $\gets$
+      \textsc{virt.getMidTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
       $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{\mathrm{loc},
       F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{sib}, F}$, $\pk{\mathrm{sib},
-      \mathrm{rem} F}$, \texttt{left\_data}.$\pk{\mathrm{rem}, \mathrm{virt}}$,
-      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
-      \texttt{right\_data}.$\pk{\mathrm{sib}, \mathrm{rem}, \mathrm{virt}}$,
-      $\pk{A, V}$, $\pk{B, V}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
-      \texttt{comm\_keys\_loc}, \texttt{comm\_keys\_rem}, $\bar{P}$)
+      \mathrm{rem} F}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{loc},
+      \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{sib},
+      \mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left}, \mathrm{guest}}$,
+      $\pk{\mathrm{right}, \mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
+      $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
       \State \Comment{not verifying our signatures in
       $\mathrm{sigs}_{\mathrm{byLeft}}$, our (trusted) \texttt{sibling} will do
       that}
