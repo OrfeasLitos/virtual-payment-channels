@@ -643,6 +643,8 @@
     \begin{algorithmic}[1]
       \State ensure $\textit{State}^P \notin \{\bot, \textsc{init},
       \textsc{topped up}\}$ \Comment{channel open}
+      \State \Comment{even virtual channels check \ledger directly. This is
+      intentional}
       \State send (\textsc{read}) to \ledger as $P$ and assign reply to $\Sigma$
       \If{$\exists 0 \leq j < i : C_{\bar{P}, j} \in \Sigma$}
       \Comment{counterparty has closed maliciously}
