@@ -681,8 +681,16 @@ that a functionality is needed after all}
         \State ensure \textit{State} = \textsc{closing}
         \State send (\textsc{read}) to \ledger as $R$ and assign reply to
         $\Sigma$
-        \If{$\Sigma$ has an unspent output that only $R$ and its counterparty
-        can spend} \Comment{if there is a timelock, it must have expired}
+        \If{$R = \texttt{guest}$}
+          \State $\pk{1} \gets \pk{\mathrm{left}, \mathrm{guest}}$; $\pk{2}
+          \gets \pk{\mathrm{right}, \mathrm{guest}}$
+        \Else \: \Comment{$R \in \{\texttt{funder}, \texttt{fundee}\}$}
+          \State $\pk{1} \gets \pk{\mathrm{loc}, \mathrm{virt}}$; $\pk{2} \gets
+          \pk{\mathrm{rem}, \mathrm{virt}}$
+        \EndIf
+        \If{$\Sigma$ has an unspent output that can be spent exclusively by a
+        2-of-\{$\pk{1}$, $\pk{2}$\} multisig} \Comment{if there is a timelock,
+        it must have expired}
           \State $\textit{State} \gets \textsc{closed}$
           \State output (\textsc{closed}) to $R$
         \EndIf
