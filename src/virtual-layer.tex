@@ -1,4 +1,3 @@
-\TODO{add polling for virtual layer}
 \TODO{explicitly ensure that all hosts share the same sid -- only if we decide
 that a functionality is needed after all}
 \begin{figure}[H]
@@ -583,6 +582,53 @@ that a functionality is needed after all}
   \end{processbox}
   \caption{}
   \label{code:virtual-layer:revocation}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt} -- poll}
+    \begin{algorithmic}[1]
+      \State On input (\textsc{check for lateral close}) by $R \in$
+      \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}:
+      \Indent
+        \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
+        \State $\texttt{prev\_went\_on\_chain} \gets \mathrm{TX}_{\mathrm{prev},
+        \mathrm{left}} \in \Sigma \wedge \mathrm{TX}_{\mathrm{prev},
+        \mathrm{both}} \in \Sigma$
+        \State $\texttt{next\_went\_on\_chain} \gets \mathrm{TX}_{\mathrm{next},
+        \mathrm{right}} \in \Sigma \wedge \mathrm{TX}_{\mathrm{next},
+        \mathrm{both}} \in \Sigma$
+        \If{$\texttt{prev\_went\_on\_chain} \vee
+        \texttt{next\_went\_on\_chain}$}
+          \State ignore all messages except for (\textsc{check chain for
+          closing}) by $R$
+          \State $\textit{State} \gets \textsc{closing}$
+        \EndIf
+        \If{$\texttt{prev\_went\_on\_chain} \wedge
+        \texttt{next\_went\_on\_chain}$}
+          \State
+          \textsc{virt}.\textsc{signAndSubmit}($\mathrm{TX}_{\mathrm{loc},
+          \mathrm{both}}$, $\mathrm{sigs}_{\mathrm{loc}, \mathrm{both}}$)
+        \ElsIf{\texttt{prev\_went\_on\_chain}}
+          \State
+          \textsc{virt}.\textsc{signAndSubmit}($\mathrm{TX}_{\mathrm{loc},
+          \mathrm{left}}$, $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}}$)
+        \ElsIf{\texttt{next\_went\_on\_chain}}
+          \State
+          \textsc{virt}.\textsc{signAndSubmit}($\mathrm{TX}_{\mathrm{loc},
+          \mathrm{right}}$, $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}}$)
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State \textsc{virt}.\textsc{signAndSubmit}(tx, sigs):
+      \Indent
+        \State add \textsc{sign}(tx, $\sk{\mathrm{loc}, F}$) to sigs
+        \State input (\textsc{submit}, tx, sigs) to \ledger
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:poll}
 \end{figure}
 
 \begin{figure}[H]
