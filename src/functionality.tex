@@ -7,14 +7,18 @@ channel)}
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- relay rules}
     \begin{itemize}
       \item Every input by \environment is first handled according to the
-      corresponding rule in Fig~\ref{code:functionality:state-machine} (if any)
-      and subsequently is sent to \adversary.
+      corresponding rule in Fig~\ref{code:functionality:state-machine-1} or
+      Fig~\ref{code:functionality:state-machine-2} (if any) and subsequently is
+      sent to \adversary.
       \item Every message (\texttt{msg}, $P$, $R$, \texttt{mode}) by \adversary
       ($\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
-      \mathrm{message}\}$, $P \in \{A, B\}$) is first handled according to the
-      corresponding rule in Fig~\ref{code:functionality:state-machine} (if any).
-      Subsequently \texttt{msg} is relayed to $R$ as $P$ by means of
-      \texttt{mode}.
+      \mathrm{message}\}$, $P \in \{\alice, \bob\}$) is first handled according
+      to the corresponding rule in Fig~\ref{code:functionality:state-machine-1}
+      or Fig~\ref{code:functionality:state-machine-2} (if any).  Subsequently
+      \texttt{msg} is relayed to $R$ as $P$ by means of \texttt{mode}. If $R$
+      and/or \texttt{mode} are undefined, no relaying takes place.
+      \item If an ``ensure'' fails, the rest of the code is not run but the
+      relaying happens as usual.
     \end{itemize}
   \end{systembox}
   \caption{}
@@ -22,35 +26,149 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init, top up \& corruption}
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- state machine, Pt. 1}
     \begin{algorithmic}[1]
-      \State On (\textsc{corrupt}) by $P$, addressed to \alice:
+      \State On initalisation:
       \Indent
-        \State ensure $P \in \{\texttt{host\_alice}, \adversary\}$
-        \State $\texttt{virtual\_secrets} \gets \emptyset$
-        \ForAll{$(\_, \_, (\mathrm{fundee}, \_), (\alice, \_), \textit{vid}) \in
-        \mathtt{virtuals}$}
-          \State send (\textsc{corrupt}) to fundee and ensure reply is
-          (\textsc{corrupted}, \texttt{secrets})
-          \State append (\texttt{secrets}, \textit{vid}) to
-          \texttt{virtual\_secrets}
+        \State $\pk{A} \gets \bot$; $\pk{B} \gets \bot$
+        \State $\balance{A} \gets 0$; $\balance{B} \gets 0$
+        \State $\texttt{is\_corrupted}_A \gets$ False; $\texttt{is\_corrupted}_B
+        \gets$ False;
+        \State $\itistate \gets \bot$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{corrupt}, $P$) by \adversary:
+      \Indent
+        \State $\texttt{is\_corrupted}_P \gets$ True
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{init}, $\pk{}$) to $P$ by \environment:
+      \Indent
+        \IfThenElse{$P = \bob$}{$\bar{P} \gets \alice$}{$\bar{P} \gets \bob$}
+        \State ensure $\itistate \in \{\bot, \textsc{init}_{\bar{P}}\}$
+        \State $\pk{P} \gets \pk{}$
+        \IfThenElse{$\itistate = \bot$}{$\itistate \gets
+        \textsc{tentative-init}_P$}{$\itistate \gets \textsc{tentative-init}$}
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{init}, $P$, \_, \_) by \adversary: \Comment{``\_'' is
+      wildcard}
+      \Indent
+        \IfThen{$\itistate = \textsc{tentative-init}_P$}{$\itistate \gets
+        \textsc{init}_P$}
+        \IfThen{$\itistate = \textsc{tentative-init}$}{$\itistate \gets
+        \textsc{init}$}
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{open}, $x$, $y$) to $P$ by
+      \environment:
+      \Indent
+        \State ensure $\itistate = \textsc{init}$
+        \State $\balance{A} \gets x$; $\balance{B} \gets y$
+        \State $\itistate \gets \textsc{tentative-open}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{open}, \_, \_, \_) by \adversary:
+      \Indent
+        \State ensure $\itistate = \textsc{tentative-open}$
+        \State $\itistate \gets \textsc{open}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{pay}, $x$) to $P$ by \environment:
+      \Indent
+        \State ensure $\itistate = \textsc{open}$
+        \State $c \gets x$
+        \IfThenElse{$P = \alice$}{$S \gets \alice$; $\bar{S} \gets \bob$}{$S
+        \gets \bob$; $\bar{S} \gets \alice$}
+        \State $\itistate \gets \textsc{paying}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{pay ok}, \_, \_, \_) by \adversary:
+      \Indent
+        \State ensure $\itistate = \textsc{paying}$
+        \State $\balance{S} \gets \balance{S} - c$; $\balance{\bar{S}} \gets
+        \balance{\bar{S}} + c$
+        \State forget $c, S, \bar{S}$
+        \State $\itistate \gets \textsc{open}$
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:state-machine-1}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- state machine, Pt. 2}
+    \begin{algorithmic}[1]
+      \State On (\textsc{pay fail}, \_, \_, \_) by \adversary:
+      \Indent
+        \State ensure $\itistate = \textsc{paying}$
+        \State forget $c, S, \bar{S}$
+        \State $\itistate \gets \textsc{open}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{fund}, $x$) to $P$ by $R$:
+      \Indent
+        \State ensure $R$ is an $\mathcal{F}_{\mathrm{Chan}}$ party
+        \State ensure $\itistate = \textsc{open}$
+        \State $c \gets x$
+        \IfThenElse{$P = \alice$}{$S \gets \alice$}{$S \gets \bob$}
+        \State $\itistate \gets \textsc{funding}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{fund ok}, \_, \_, \_) by \adversary:
+      \Indent
+        \State ensure $\itistate = \textsc{funding}$
+        \State $\balance{S} \gets \balance{S} - c$
+        \State forget $c, S$
+        \State $\itistate \gets \textsc{open}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{fund fail}, \_, \_, \_) by \adversary:
+      \Indent
+        \State ensure $\itistate = \textsc{funding}$
+        \State forget $c, S$
+        \State $\itistate \gets \textsc{open}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{close}) by \environment:
+      \Indent
+        \State ensure $\itistate = \textsc{open}$
+        \State $\itistate \gets \textsc{closing}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{close}, \_, \_, \_) by \adversary:
+      \Indent
+        \State ensure $\itistate \in \{\textsc{open}, \textsc{closing}\}$
+        \For{$P \in \{A, B\}$}
+          \If{$\texttt{is\_corrupted}_P =$ False}
+            \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
+            $\Sigma_P$
+            \State $\coins{P} \gets$ sum of coins exclusively spendable by
+            $\pk{P}$ in $\Sigma_P$
+          \EndIf
         \EndFor
-        \State from now on, allow \adversary to handle all \alice's messages,
-        i.e. act as a relay
-        \If{\bob is not corrupted}
-          \State from now on, handle all messages by \bob as \pchan
-          (Fig.~\ref{code:protocol:chan:skeleton}-\ref{code:protocol:chan:skeleton:virtual})
-        \EndIf
-        \If{$P = \texttt{host\_alice}$}
-          \State output (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
-          \texttt{virtual\_secrets})) to \texttt{host\_alice}
-        \Else \: \Comment{$P = \adversary$}
-          \State send (\textsc{corrupted}, (\textsc{ln.secrets}(\alice),
-          \texttt{virtual\_secrets})) to \adversary
+        \If{($\texttt{is\_corrupted}_A \vee \coins{A} \geq \balance{A})$ $\wedge
+        (\texttt{is\_corrupted}_B \vee \coins{B} \geq \balance{B})$}
+          \State $\itistate \gets \textsc{closed}$
+        \Else \: \Comment{balance security is broken}
+          \State halt
         \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:chan:skeleton:init}
+  \label{code:functionality:state-machine-2}
 \end{figure}

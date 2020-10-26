@@ -195,4 +195,19 @@
 \newcommand{\environment}{\ensuremath{\mathcal{E}}\xspace}
 \NewDocumentCommand{\pk}{m}{\textit{pk}_{#1}}
 \NewDocumentCommand{\sk}{m}{\textit{sk}_{#1}}
-\newcommand*\phantomrel[1]{\mathrel{\phantom{#1}}}% https://tex.stackexchange.com/a/448386
+\NewDocumentCommand{\balance}{m}{\texttt{balance}_{#1}}
+\NewDocumentCommand{\coins}{m}{\texttt{coins}_{#1}}
+\NewDocumentCommand{\itistate}{o}{
+  \IfNoValueTF{#1}
+    {\ensuremath{\textit{State}}}
+    {\ensuremath{\textit{State}_{#1}}}%
+}
+
+% https://tex.stackexchange.com/a/448386
+\newcommand*\phantomrel[1]{\mathrel{\phantom{#1}}}
+
+% https://tex.stackexchange.com/a/336650
+\algnewcommand{\IfThenElse}[3]{% \IfThenElse{<if>}{<then>}{<else>}
+  \State \algorithmicif\ #1\ \algorithmicthen\ #2\ \algorithmicelse\ #3}
+\algnewcommand{\IfThen}[2]{% \IfThen{<if>}{<then>}
+  \State \algorithmicif\ #1\ \algorithmicthen\ #2}
