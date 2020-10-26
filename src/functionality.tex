@@ -4,6 +4,24 @@ channel)}
 \TODO{Add support for cooperative closing as future work}
 
 \begin{figure}[H]
+  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- relay rules}
+    \begin{itemize}
+      \item Every input by \environment is first handled according to the
+      corresponding rule in Fig~\ref{code:functionality:state-machine} (if any)
+      and subsequently is sent to \adversary.
+      \item Every message (\texttt{msg}, $P$, $R$, \texttt{mode}) by \adversary
+      ($\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
+      \mathrm{message}\}$, $P \in \{A, B\}$) is first handled according to the
+      corresponding rule in Fig~\ref{code:functionality:state-machine} (if any).
+      Subsequently \texttt{msg} is relayed to $R$ as $P$ by means of
+      \texttt{mode}.
+    \end{itemize}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:rules}
+\end{figure}
+
+\begin{figure}[H]
   \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- init, top up \& corruption}
     \begin{algorithmic}[1]
       \State On (\textsc{corrupt}) by $P$, addressed to \alice:
