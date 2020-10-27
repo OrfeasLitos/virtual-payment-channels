@@ -167,6 +167,14 @@ channel)}
           \State halt
         \EndIf
       \EndIndent
+      \Statex
+
+      \State On (\textsc{negligent close}, \_, \_, \_) by \adversary:
+      \Indent
+        \State ensure $\itistate \in \{\textsc{open}, \textsc{closing}\}$
+        \State $\balance{A} \gets \bot$; $\balance{B} \gets \bot$;
+        \State $\itistate \gets \textsc{closed}$
+      \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
