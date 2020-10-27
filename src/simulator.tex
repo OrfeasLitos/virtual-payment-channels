@@ -1,4 +1,26 @@
 \begin{figure}[H]
+  \begin{simulatorbox}{\simulator}
+    \begin{algorithmic}[1]
+      \State On receiving (\texttt{in\_msg}, $P$) by \fchan,
+      handle (\texttt{in\_msg}) with the simulated party $P$,
+      initialising it as an \textsc{ln} ITI if it does not exist yet. Any
+      resulting message \texttt{out\_msg} that should be provided to $R$ by
+      means of $\texttt{mode} \in$ \{input, output, network\} is relayed to
+      \fchan as (\texttt{out\_msg}, $P$, $R$, \texttt{mode}).
+      \Statex
+
+      \State On receiving by \fchan a message to be sent by $P$ to $R$ via the
+      network, carry on with this action (i.e. send this message via the
+      internal \adversary). \Comment{This message was previously designated to
+      be sent by our internally simulated $P$ to $R$ via the network.}
+    \end{algorithmic}
+
+    As \fchan relays all messages by \environment to us, our simulation is
+    trivially identical to what would happen in the real world.
+  \end{simulatorbox}
+\end{figure}
+
+\begin{figure}[H]
   \begin{simulatorbox}{\simulator -- Pt. 1}
     \begin{algorithmic}[1]
       \State On $(\textsc{open}, c_F, \pk{A, \mathrm{out}}, \pk{B,
