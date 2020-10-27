@@ -6,10 +6,11 @@ channel)}
 \begin{figure}[H]
   \begin{systembox}{\fchan -- relay rules}
     \begin{itemize}
-      \item Every input by \environment is first handled according to the
-      corresponding rule in Fig~\ref{code:functionality:state-machine-1} or
-      Fig~\ref{code:functionality:state-machine-2} (if any) and subsequently is
-      sent to \adversary.
+      \item Every input (\texttt{msg}) by \environment to $P \in \{\alice,
+      \bob\}$ is first handled according to the corresponding rule in
+      Fig~\ref{code:functionality:state-machine-1} or
+      Fig~\ref{code:functionality:state-machine-2} (if any) and subsequently
+      (\texttt{msg}, $P$) is sent to \adversary.
       \item Every message (\texttt{msg}, $P$, $R$, \texttt{mode}) by \adversary
       ($\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
       \mathrm{network}\}$, $P \in \{\alice, \bob\}$) is first handled according
