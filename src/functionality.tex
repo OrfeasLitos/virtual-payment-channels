@@ -4,7 +4,7 @@ channel)}
 \TODO{Add support for cooperative closing as future work}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- relay rules}
+  \begin{systembox}{\fchan -- relay rules}
     \begin{itemize}
       \item Every input by \environment is first handled according to the
       corresponding rule in Fig~\ref{code:functionality:state-machine-1} or
@@ -26,7 +26,7 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- state machine, Pt. 1}
+  \begin{systembox}{\fchan -- state machine, Pt. 1}
     \begin{algorithmic}[1]
       \State On initalisation:
       \Indent
@@ -105,7 +105,7 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{$\mathcal{F}_{\mathrm{Chan}}$ -- state machine, Pt. 2}
+  \begin{systembox}{\fchan -- state machine, Pt. 2}
     \begin{algorithmic}[1]
       \State On (\textsc{pay fail}, \_, \_, \_) by \adversary:
       \Indent
@@ -117,7 +117,7 @@ channel)}
 
       \State On (\textsc{fund}, $x$) to $P$ by $R$:
       \Indent
-        \State ensure $R$ is an $\mathcal{F}_{\mathrm{Chan}}$ party
+        \State ensure $R$ is an \fchan party
         \State ensure $\itistate = \textsc{open}$
         \State $c \gets x$
         \IfThenElse{$P = \alice$}{$S \gets \alice$}{$S \gets \bob$}
