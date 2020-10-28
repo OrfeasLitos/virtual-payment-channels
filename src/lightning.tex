@@ -583,7 +583,7 @@
   \begin{processbox}{\textsc{ln} -- On (\textsc{check for lateral close}):}
     \begin{algorithmic}[1]
       \If{$\texttt{host}_P \neq \ledger$}
-        State input (\textsc{check for lateral close}) to
+        \State input (\textsc{check for lateral close}) to
         $\texttt{host}_P$
       \EndIf
     \end{algorithmic}
@@ -599,7 +599,7 @@
       \textsc{topped up}\}$ \Comment{channel open}
       \State \Comment{even virtual channels check \ledger directly. This is
       intentional}
-      \State send (\textsc{read}) to \ledger and assign reply to $\Sigma$
+      \State input (\textsc{read}) to \ledger and assign reply to $\Sigma$
       \If{$\exists 0 \leq j < i : C_{\bar{P}, j} \in \Sigma$}
       \Comment{counterparty has closed maliciously}
         \State $\itistate \gets \textsc{closing}$
