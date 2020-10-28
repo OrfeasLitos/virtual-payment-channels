@@ -3,6 +3,17 @@ that a functionality is needed after all}
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
+      \State On every activation, before handling the message:
+      \Indent
+        \If{$\texttt{last\_poll} \neq \bot$} \Comment{virtual layer is ready}
+          \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
+          \If{$\texttt{last\_poll} + t < |\Sigma|$}
+            \State $\texttt{negligent} \gets$ True
+          \EndIf
+        \EndIf
+      \EndIndent
+      \Statex
+
       \State On input (\textsc{init}, $\texttt{host}_P$, $\bar{P}$,
       \texttt{sibling}, \texttt{fundee}, ($\sk{\mathrm{loc}, \mathrm{virt}}$,
       $\pk{\mathrm{loc}, \mathrm{virt}}$), $\pk{\mathrm{rem}, \mathrm{virt}}$,
@@ -13,6 +24,8 @@ that a functionality is needed after all}
         \State store message contents and \texttt{guest}
         \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
         for edge nodes, \texttt{fundee} is present only in last node}
+        \State $\texttt{negligent} \gets$ False
+        \State $\texttt{last\_poll} \gets \bot$
         \State output (\textsc{host init ok}) to \texttt{guest}
       \EndIndent
       \Statex
@@ -24,66 +37,73 @@ that a functionality is needed after all}
       ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$), $\pk{\mathrm{rem}, F}$,
       $\pk{\mathrm{rem}, \mathrm{virt}}$) by \texttt{guest}:
       \Indent
+        \State $\texttt{negligent} \gets$ False
+        \State $\texttt{last\_poll} \gets \bot$
         \State ensure \textsc{virt.circulateKeysAndCoins}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}() returns (\textsc{ok})
         \State output (\textsc{hosts ready}) to \texttt{guest}
       \EndIndent
-      \Statex
-
-      \State \textsc{circulateKeysAndCoins}(\texttt{left\_data}):
-      \Indent
-        \If{\texttt{left\_data} is given as argument} \Comment{we are not
-        \texttt{host\_funder}}
-          \If{we have a \texttt{sibling}} \Comment{we are not
-          \texttt{host\_fundee}}
-            \State input (\textsc{keys and coins forward}, (\texttt{left\_data},
-            $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
-            \mathrm{virt}})$, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$),
-            $\pk{\mathrm{rem}, F}$, $c_P$, $c_{\bar{P}}$) to \texttt{sibling}
-            \State \trustedcode{store input as \texttt{left\_data}}
-            \State \trustedcode{parse \texttt{left\_data} as
-            \texttt{far\_left\_data}, $(\sk{\mathrm{loc}, \mathrm{virt}},
-            \pk{\mathrm{loc}, \mathrm{virt}})$, ($\sk{\mathrm{sib}, F}$,
-            $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib}, \mathrm{rem}, F}$,
-            $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$}
-            \Comment{remove parentheses as necessary}
-            \State \trustedcode{call
-            \textsc{virt.circulateKeysAndCoins}(\texttt{left\_data}) of
-            $\bar{P}$ and assign returned value to \texttt{right\_data}}
-            \State \trustedcode{parse \texttt{right\_data} as
-            \texttt{far\_right\_data}, $\pk{\mathrm{rem}, \mathrm{virt}}$}
-            \State \trustedcode{output (\textsc{keys and coins back},
-            \texttt{right\_data}, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc},
-            F}$), $\pk{\mathrm{rem}, F}$, $c_P$, $c_{\bar{P}}$)}
-            \State store output as \texttt{right\_data}
-            \State parse \texttt{right\_data} as \texttt{far\_right\_data},
-            ($\sk{\mathrm{sib}, F}$, $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib},
-            \mathrm{rem}, F}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sib},
-            \mathrm{rem}}$
-            \State \Return (\texttt{right\_data}, $\pk{\mathrm{loc},
-            \mathrm{virt}}$)
-          \Else \: \Comment{we are \texttt{host\_fundee}}
-            \State extract ($\pk{\mathrm{left}, \mathrm{guest}}$,
-            $\pk{\mathrm{right}, \mathrm{guest}}$) from \texttt{left\_data}
-            \State output (\textsc{check keys}, ($\pk{\mathrm{left},
-            \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$)) to
-            \texttt{fundee} and expect reply (\textsc{keys ok})
-            \State \Return $\pk{\mathrm{loc}, \mathrm{virt}}$
-          \EndIf
-        \Else \: \Comment{we are \texttt{host\_funder}}
-          \State call \textsc{virt.circulateKeysAndCoins}($\pk{\mathrm{loc},
-          \mathrm{virt}}$, ($\pk{\mathrm{left}, \mathrm{guest}}$,
-          $\pk{\mathrm{right}, \mathrm{guest}}$)) of $\bar{P}$ and assign
-          returned value to \texttt{right\_data}
-          \State \Return (\textsc{ok})
-        \EndIf
-      \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}
   \label{code:virtual-layer:keys}
+\end{figure}
+
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt}.\textsc{circulateKeysAndCoins}(\texttt{left\_data}):}
+    \begin{algorithmic}[1]
+      \If{\texttt{left\_data} is given as argument} \Comment{we are not
+      \texttt{host\_funder}}
+        \If{we have a \texttt{sibling}} \Comment{we are not
+        \texttt{host\_fundee}}
+          \State input (\textsc{keys and coins forward}, (\texttt{left\_data},
+          $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
+          \mathrm{virt}})$, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$),
+          $\pk{\mathrm{rem}, F}$, $c_P$, $c_{\bar{P}}$) to \texttt{sibling}
+          \State \trustedcode{store input as \texttt{left\_data}}
+          \State \trustedcode{parse \texttt{left\_data} as
+          \texttt{far\_left\_data}, $(\sk{\mathrm{loc}, \mathrm{virt}},
+          \pk{\mathrm{loc}, \mathrm{virt}})$, ($\sk{\mathrm{sib}, F}$,
+          $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib}, \mathrm{rem}, F}$,
+          $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$}
+          \Comment{remove parentheses as necessary}
+          \State \trustedcode{call
+          \textsc{virt.circulateKeysAndCoins}(\texttt{left\_data}) of
+          $\bar{P}$ and assign returned value to \texttt{right\_data}}
+          \State \trustedcode{parse \texttt{right\_data} as
+          \texttt{far\_right\_data}, $\pk{\mathrm{rem}, \mathrm{virt}}$}
+          \State \trustedcode{output (\textsc{keys and coins back},
+          \texttt{right\_data}, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc},
+          F}$), $\pk{\mathrm{rem}, F}$, $c_P$, $c_{\bar{P}}$)}
+          \State store output as \texttt{right\_data}
+          \State parse \texttt{right\_data} as \texttt{far\_right\_data},
+          ($\sk{\mathrm{sib}, F}$, $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib},
+          \mathrm{rem}, F}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sib},
+          \mathrm{rem}}$
+          \State \Return (\texttt{right\_data}, $\pk{\mathrm{loc},
+          \mathrm{virt}}$)
+        \Else \: \Comment{we are \texttt{host\_fundee}}
+          \State extract ($\pk{\mathrm{left}, \mathrm{guest}}$,
+          $\pk{\mathrm{right}, \mathrm{guest}}$) from \texttt{left\_data}
+          \State output (\textsc{check keys}, ($\pk{\mathrm{left},
+          \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$)) to
+          \texttt{fundee} and expect reply (\textsc{keys ok})
+          \State \Return $\pk{\mathrm{loc}, \mathrm{virt}}$
+        \EndIf
+      \Else \: \Comment{we are \texttt{host\_funder}}
+        \State call \textsc{virt.circulateKeysAndCoins}($\pk{\mathrm{loc},
+        \mathrm{virt}}$, ($\pk{\mathrm{left}, \mathrm{guest}}$,
+        $\pk{\mathrm{right}, \mathrm{guest}}$)) of $\bar{P}$ and assign
+        returned value to \texttt{right\_data}
+        \State \Return (\textsc{ok})
+      \EndIf
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:circulate-keys-and-coins}
 \end{figure}
 
 \begin{figure}[H]
@@ -552,6 +572,8 @@ that a functionality is needed after all}
     \Else \: \Comment{we are \texttt{host\_funder}}
       \State $\texttt{revoc\_for\_next} \gets
       \texttt{guest}.\textsc{revokePrevious}()$
+e     \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
+      \State $\texttt{last\_poll} \gets |\Sigma|$
       \State call \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next})
       of $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
       \State ensure
@@ -564,6 +586,8 @@ that a functionality is needed after all}
       \State input (\textsc{virtual revocation forward}) to \texttt{sibling}
       \State \trustedcode{$\texttt{revoc\_for\_next} \gets
       \texttt{guest}.\textsc{revokePrevious}()$}
+      \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
+      \State $\texttt{last\_poll} \gets |\Sigma|$
       \State \trustedcode{call
       \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next}) of $\bar{P}$
       and assign output to \texttt{revoc\_by\_next}}
@@ -597,6 +621,7 @@ that a functionality is needed after all}
         \State $\texttt{next\_went\_on\_chain} \gets \mathrm{TX}_{\mathrm{next},
         \mathrm{right}} \in \Sigma \wedge \mathrm{TX}_{\mathrm{next},
         \mathrm{both}} \in \Sigma$
+        \State $\texttt{last\_poll} \gets |\Sigma|$
         \If{$\texttt{prev\_went\_on\_chain} \vee
         \texttt{next\_went\_on\_chain}$}
           \State ignore all messages except for (\textsc{check chain for

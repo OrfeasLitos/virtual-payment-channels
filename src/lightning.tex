@@ -5,6 +5,17 @@
       \environment.}
       \State \Comment{The ITI knows whether it is \alice (funder) or \bob
       (fundee). The activated party is $P$ and the counterparty is $\bar{P}$.}
+      \State On every activation, before handling the message:
+      \Indent
+        \If{$\texttt{last\_poll} \neq \bot$} \Comment{channel has opened}
+          \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
+          \If{$\texttt{last\_poll} + t < |\Sigma|$}
+            \State $\texttt{negligent} \gets$ True
+          \EndIf
+        \EndIf
+      \EndIndent
+      \Statex
+
       \State On (\textsc{init}, $\pk{P, \mathrm{out}}$):
       \Indent
         \State ensure $\itistate = \bot$
@@ -14,6 +25,8 @@
         0)$
         \State $(\texttt{paid\_out}, \texttt{paid\_in}) \gets (\emptyset,
         \emptyset)$
+        \State $\texttt{negligent} \gets$ False
+        \State $\texttt{last\_poll} \gets \bot$
         \State output (\textsc{init ok})
       \EndIndent
       \Statex
@@ -278,6 +291,8 @@
       \If{\texttt{hops} = \ledger}
         \State \textsc{ln.commitBase}()
       \EndIf
+      \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
+      \State $\texttt{last\_poll} \gets |\Sigma|$
       \State $c_A \gets c$; $c_B \gets 0$; $i \gets 0$
       \State $\itistate \gets \textsc{open}$
       \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
@@ -600,6 +615,7 @@
       \State \Comment{even virtual channels check \ledger directly. This is
       intentional}
       \State input (\textsc{read}) to \ledger and assign reply to $\Sigma$
+      \State $\texttt{last\_poll} \gets |\Sigma|$
       \If{$\exists 0 \leq j < i : C_{\bar{P}, j} \in \Sigma$}
       \Comment{counterparty has closed maliciously}
         \State $\itistate \gets \textsc{closing}$
