@@ -1,22 +1,30 @@
 \begin{figure}[H]
   \begin{simulatorbox}{\simulator}
-    \begin{algorithmic}[1]
-      \State On receiving (\texttt{in\_msg}, $P$) by \fchan,
-      handle (\texttt{in\_msg}) with the simulated party $P$,
-      initialising it as an \textsc{ln} ITI if it does not exist yet. Any
-      resulting message \texttt{out\_msg} that should be provided to $R$ by
-      means of $\texttt{mode} \in$ \{input, output, network\} is relayed to
-      \fchan as (\texttt{out\_msg}, $P$, $R$, \texttt{mode}).
-      \Statex
-
-      \State On receiving by \fchan a message to be sent by $P$ to $R$ via the
+    \begin{itemize}
+      \item On receiving (\textsc{relay}, \texttt{in\_msg}, $P$, $R$,
+      \texttt{in\_mode}) by \fchan (\texttt{in\_mode} $\in$ \{input, output,
+      network\}, $P \in \{\alice, \bob\}$), handle (\texttt{in\_msg}) with the
+      simulated party $P$ as if it was received from $R$ by means of
+      \texttt{in\_mode}. In case simulated $P$ does not exist yet, initialise it
+      as an \textsc{ln} ITI. If there is a resulting message \texttt{out\_msg}
+      that is to be sent by simulated $P$ to $R'$ by means of
+      $\texttt{out\_mode} \in$ \{input, output, network\}, send (\textsc{relay},
+      \texttt{out\_msg}, $P$, $R'$, \texttt{out\_mode}) to \fchan.
+      \item On receiving by \fchan a message to be sent by $P$ to $R$ via the
       network, carry on with this action (i.e. send this message via the
-      internal \adversary). \Comment{This message was previously designated to
-      be sent by our internally simulated $P$ to $R$ via the network.}
-    \end{algorithmic}
+      internal \adversary).
+      \item Relay any other incoming message to the internal \adversary
+      unmodified.
+      \item On receiving a message (\texttt{msg}) by the internal \adversary, if it is
+      addressed to one of the parties that correspond to \fchan, handle the
+      message internally with the corresponding simulated party. Otherwise relay
+      the message to its intended recipient unmodified. \Comment{Other
+      recipients are \environment, \ledger or parties unrelated to \fchan}
+    \end{itemize}
 
-    As \fchan relays all messages by \environment to us, our simulation is
-    trivially identical to what would happen in the real world.
+    Given that \fchan relays all messages and that we simulate the real-world
+    machines that correspond to \fchan, the simulation is perfectly
+    indistinguishable from the real world.
   \end{simulatorbox}
 \end{figure}
 
