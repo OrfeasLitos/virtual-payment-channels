@@ -4,22 +4,32 @@ channel)}
 \TODO{Add support for cooperative closing as future work}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan -- relay rules}
+  \begin{systembox}{\fchan -- general message handling rules}
     \begin{itemize}
-      \item Every input (\texttt{msg}) by \environment to $P \in \{\alice,
-      \bob\}$ is first handled according to the corresponding rule in
+      \item On receiving input (\texttt{msg}) by \environment to $P \in
+      \{\alice, \bob\}$, handle it according to the corresponding rule in
       Fig~\ref{code:functionality:state-machine-1} or
       Fig~\ref{code:functionality:state-machine-2} (if any) and subsequently
-      (\texttt{msg}, $P$) is sent to \adversary.
-      \item Every message (\texttt{msg}, $P$, $R$, \texttt{mode}) by \adversary
-      ($\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
-      \mathrm{network}\}$, $P \in \{\alice, \bob\}$) is first handled according
-      to the corresponding rule in Fig~\ref{code:functionality:state-machine-1}
-      or Fig~\ref{code:functionality:state-machine-2} (if any).  Subsequently
-      \texttt{msg} is relayed to $R$ as $P$ by means of \texttt{mode}. If $R$
-      and/or \texttt{mode} are undefined, no relaying takes place.
-      \item If an ``ensure'' fails, the rest of the code is not run but the
-      relaying happens as usual.
+      send (\textsc{relay}, \texttt{msg}, $P$, \environment, input) \adversary.
+      \Comment{all messages by \environment are relayed to \adversary}
+      \item On receiving (\texttt{msg}) by $R \neq \environment$ to $P \in
+      \{\alice, \bob\}$ by means of $\texttt{mode} \in \{\mathrm{input},
+      \mathrm{output}, \mathrm{network}\}$, send (\textsc{relay}, \texttt{msg},
+      $P$, $R$, \texttt{mode}) to \adversary.  \Comment{all messages by machines
+      other than \environment are relayed to \adversary}
+      \item On receiving (\textsc{relay}, \texttt{msg}, $P$, $R$, \texttt{mode})
+      by \adversary ($\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
+      \mathrm{network}\}$, $P \in \{\alice, \bob\}$), relay \texttt{msg} to $R$
+      as $P$ by means of \texttt{mode}. \Comment{\adversary fully controls
+      outgoing messages by \fchan}
+      \item On receiving (\textsc{info}, \texttt{msg}) by \adversary, handle
+      (\texttt{msg}) according to the corresponding rule in
+      Fig~\ref{code:functionality:state-machine-1} or
+      Fig~\ref{code:functionality:state-machine-2} (if any). After handling the
+      message or after an ``ensure'' fails, send (\textsc{handled},
+      \texttt{msg}) to \adversary. \Comment{(\textsc{info}, \texttt{msg})
+      messages by \simulator always return control to \simulator without any
+      side-effect to any other ITI, except if \fchan halts}
     \end{itemize}
   \end{systembox}
   \caption{}
@@ -55,8 +65,7 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{init}, $P$, \_, \_) by \adversary: \Comment{``\_'' is
-      wildcard}
+      \State On (\textsc{init}, $P$) by \adversary:
       \Indent
         \IfThen{$\itistate = \textsc{tentative-init}_P$}{$\itistate \gets
         \textsc{init}_P$}
@@ -74,7 +83,7 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, \_, \_, \_) by \adversary:
+      \State On (\textsc{open}) by \adversary:
       \Indent
         \State ensure $\itistate = \textsc{tentative-open}$
         \State $\itistate \gets \textsc{open}$
@@ -91,7 +100,7 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{pay ok}, \_, \_, \_) by \adversary:
+      \State On (\textsc{pay ok}) by \adversary:
       \Indent
         \State ensure $\itistate = \textsc{paying}$
         \State $\balance{S} \gets \balance{S} - c$; $\balance{\bar{S}} \gets
@@ -108,7 +117,7 @@ channel)}
 \begin{figure}[H]
   \begin{systembox}{\fchan -- state machine, Pt. 2}
     \begin{algorithmic}[1]
-      \State On (\textsc{pay fail}, \_, \_, \_) by \adversary:
+      \State On (\textsc{pay fail}) by \adversary:
       \Indent
         \State ensure $\itistate = \textsc{paying}$
         \State forget $c, S, \bar{S}$
@@ -126,7 +135,7 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund ok}, \_, \_, \_) by \adversary:
+      \State On (\textsc{fund ok}) by \adversary:
       \Indent
         \State ensure $\itistate = \textsc{funding}$
         \State $\balance{S} \gets \balance{S} - c$
@@ -135,7 +144,7 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund fail}, \_, \_, \_) by \adversary:
+      \State On (\textsc{fund fail}) by \adversary:
       \Indent
         \State ensure $\itistate = \textsc{funding}$
         \State forget $c, S$
@@ -150,7 +159,7 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{close}, \_, \_, \_) by \adversary:
+      \State On (\textsc{close}) by \adversary:
       \Indent
         \State ensure $\itistate \in \{\textsc{open}, \textsc{closing}\}$
         \For{$P \in \{A, B\}$}
