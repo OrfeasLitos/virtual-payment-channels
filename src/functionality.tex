@@ -33,15 +33,15 @@ channel)}
       \Indent
         \State $\pk{A} \gets \bot$; $\pk{B} \gets \bot$
         \State $\balance{A} \gets 0$; $\balance{B} \gets 0$
-        \State $\texttt{is\_corrupted}_A \gets$ False; $\texttt{is\_corrupted}_B
-        \gets$ False;
+        \State $\texttt{is\_corrupted\_or\_negligent}_A \gets$ False;
+        $\texttt{is\_corrupted\_or\_negligent}_B \gets$ False;
         \State $\itistate \gets \bot$
       \EndIndent
       \Statex
 
-      \State On (\textsc{corrupt}, $P$) by \adversary:
+      \State On (\textsc{became corrupted or negligent}, $P$) by \adversary:
       \Indent
-        \State $\texttt{is\_corrupted}_P \gets$ True
+        \State $\texttt{is\_corrupted\_or\_negligent}_P \gets$ True
       \EndIndent
       \Statex
 
@@ -154,27 +154,20 @@ channel)}
       \Indent
         \State ensure $\itistate \in \{\textsc{open}, \textsc{closing}\}$
         \For{$P \in \{A, B\}$}
-          \If{$\texttt{is\_corrupted}_P =$ False}
+          \If{$\texttt{is\_corrupted\_or\_negligent}_P =$ False}
             \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
             $\Sigma_P$
             \State $\coins{P} \gets$ sum of coins exclusively spendable by
             $\pk{P}$ in $\Sigma_P$
           \EndIf
         \EndFor
-        \If{($\texttt{is\_corrupted}_A \vee \coins{A} \geq \balance{A})$ $\wedge
-        (\texttt{is\_corrupted}_B \vee \coins{B} \geq \balance{B})$}
+        \If{($\texttt{is\_corrupted\_or\_negligent}_A \vee \coins{A} \geq
+        \balance{A})$ $\wedge (\texttt{is\_corrupted\_or\_negligent}_B \vee
+        \coins{B} \geq \balance{B})$}
           \State $\itistate \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}
           \State halt
         \EndIf
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{negligent close}, \_, \_, \_) by \adversary:
-      \Indent
-        \State ensure $\itistate \in \{\textsc{open}, \textsc{closing}\}$
-        \State $\balance{A} \gets \bot$; $\balance{B} \gets \bot$;
-        \State $\itistate \gets \textsc{closed}$
       \EndIndent
     \end{algorithmic}
   \end{systembox}
