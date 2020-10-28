@@ -2,14 +2,13 @@
   \begin{processbox}{\textsc{ln} -- init}
     \begin{algorithmic}[1]
       \State \Comment{When not specified, input comes from and output goes to
-      \environment in the real or $P \in \{\alice, \bob\}$ in the ideal world.}
-      \State \Comment{In the real world, the player knows whether it is \alice
-      (funder) or \bob (fundee). The activated party is $P$ and the counterparty
-      is $\bar{P}$.}
+      \environment.}
+      \State \Comment{The ITI knows whether it is \alice (funder) or \bob
+      (fundee). The activated party is $P$ and the counterparty is $\bar{P}$.}
       \State On (\textsc{init}, $\pk{P, \mathrm{out}}$):
       \Indent
-        \State ensure $\textit{State}^P = \bot$
-        \State $\textit{State}^P \gets \textsc{init}$
+        \State ensure $\itistate = \bot$
+        \State $\itistate \gets \textsc{init}$
         \State store $\pk{P, \mathrm{out}}$
         \State $(c_A, c_B, \texttt{locked}_A, \texttt{locked}_B) \gets (0, 0, 0,
         0)$
@@ -22,20 +21,18 @@
       \State On (\textsc{top up}):
       \Indent
         \State ensure $P = \alice$ \Comment{activated party is the funder}
-        \State ensure $\textit{State}^P = \textsc{init}$
+        \State ensure $\itistate = \textsc{init}$
         \State $(\sk{P, \mathrm{chain}}, \pk{P, \mathrm{chain}}) \gets
         \textsc{keyGen}()$
-        \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
-        $\Sigma$
+        \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
         \State output (\textsc{top up to}, $\pk{P, \mathrm{chain}}$)
         \While{$\nexists \mathrm{tx} \in \Sigma, c_{P, \mathrm{chain}}: (c_{P,
         \mathrm{chain}}, \pk{P, \mathrm{chain}}) \in \mathrm{tx.outputs}$}
           \State \Comment{while waiting, all other messages by $P$ are ignored}
           \State wait for input (\textsc{check top up})
-          \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
-          $\Sigma$
+          \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
         \EndWhile
-        \State $\textit{State}^P \gets \textsc{topped up}$
+        \State $\itistate \gets \textsc{topped up}$
         \State output (\textsc{top up ok}, $c_{P, \mathrm{chain}}$)
       \EndIndent
       \Statex
@@ -59,18 +56,18 @@
     \begin{algorithmic}[1]
       \State \textsc{revokePrevious}():
       \Indent
-        \State ensure $\textit{State}^P \in \textsc{waiting for (outbound)
+        \State ensure $\itistate \in \textsc{waiting for (outbound)
         revocation}$
         \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$P$,
         output: ($C_{P, i}$.outputs.$P$.value, $pk_{\bar{P}, \mathrm{out}}$)\}
         \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
         \sk{P, R})$
-        \If{$\textit{State}^P = \textsc{waiting for revocation}$}
-          \State $\textit{State}^P \gets \textsc{waiting for inbound revocation}$
-        \Else \: \Comment{$\textit{State}^P = \textsc{waiting for outbound
+        \If{$\itistate = \textsc{waiting for revocation}$}
+          \State $\itistate \gets \textsc{waiting for inbound revocation}$
+        \Else \: \Comment{$\itistate = \textsc{waiting for outbound
         revocation}$}
           \State $i \gets i + 1$
-          \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
+          \State $\itistate \gets \textsc{waiting for hosts ready}$
         \EndIf
         \State \Return $\mathrm{sig}_{P, R, i}$
       \EndIndent
@@ -78,20 +75,20 @@
 
       \State \textsc{processRemoteRevocation}($\mathrm{sig}_{\bar{P}, R, i}$):
       \Indent
-        \State ensure $\textit{State}^P = \textsc{waiting for (inbound)
+        \State ensure $\itistate = \textsc{waiting for (inbound)
         revocation}$
         \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
         output: ($C_{\bar{P}, i}$.outputs.$\bar{P}$.value, $pk_{P,
         \mathrm{out}}$)\}
         \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
         i}$, $\pk{\bar{P}, R}$) = True
-        \If{$\textit{State}^P = \textsc{waiting for revocation}$}
-          \State $\textit{State}^P \gets \textsc{waiting for outbound
+        \If{$\itistate = \textsc{waiting for revocation}$}
+          \State $\itistate \gets \textsc{waiting for outbound
           revocation}$
-        \Else \: \Comment{$\textit{State}^P = \textsc{waiting for inbound
+        \Else \: \Comment{$\itistate = \textsc{waiting for inbound
         revocation}$}
           \State $i \gets i + 1$
-          \State $\textit{State}^P \gets \textsc{waiting for hosts ready}$
+          \State $\itistate \gets \textsc{waiting for hosts ready}$
         \EndIf
         \State \Return (\textsc{ok})
       \EndIndent
@@ -106,38 +103,29 @@
     \begin{algorithmic}[1]
       \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
       $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
-      \If{ideal world}
-        \State ensure $\textit{State}^B = \textsc{init}$
-        \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
-        $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \adversary and expect reply
-        (\textsc{open channel ok})
-        \State $(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$; $(\sk{B, R},
-        \pk{B, R}) \gets \textsc{keyGen}()$
-      \Else \: \Comment{real world}
-        \State $\textit{State}^A \gets \textsc{waiting for opening keys}$
-        \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
-        $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
-        \State \Comment{colored code is run by honest \texttt{fundee}.
-        Validation is implicit}
-        \State \remotecode{ensure $\textit{State}^B = \textsc{init}$}
-        \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
-        \mathrm{out}}$}
-        \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
-        $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
-        \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
-        channel}
-          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for comm
-          sig}$}
-        \Else \: \Comment{opening virtual channel}
-          \State \remotecode{$\textit{State}^B \gets \textsc{waiting for
-          check keys}$}
-        \EndIf
-        \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
-        $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
-        \State ensure $\textit{State}^A = \textsc{waiting for opening keys}$
-        \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
-        \State $\textit{State}^A \gets \textsc{opening keys ok}$
+      \State $\itistate \gets \textsc{waiting for opening keys}$
+      \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
+      $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
+      \State \Comment{colored code is run by honest \texttt{fundee}.
+      Validation is implicit}
+      \State \remotecode{ensure $\itistate = \textsc{init}$}
+      \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
+      \mathrm{out}}$}
+      \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
+      $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
+      \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
+      channel}
+        \State \remotecode{$\itistate \gets \textsc{waiting for comm
+        sig}$}
+      \Else \: \Comment{opening virtual channel}
+        \State \remotecode{$\itistate \gets \textsc{waiting for
+        check keys}$}
       \EndIf
+      \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
+      $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
+      \State ensure $\itistate = \textsc{waiting for opening keys}$
+      \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
+      \State $\itistate \gets \textsc{opening keys ok}$
     \end{algorithmic}
   \end{processbox}
   \caption{}
@@ -152,26 +140,11 @@
         \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
         \State $\texttt{host}_A \gets \ledger$
-        \If{ideal world}
-          \State $\texttt{host}_B \gets \ledger$
-          \State $\textit{State}^B \gets \textsc{waiting to check funding}$
-        \EndIf
       \Else \: \Comment{opening virtual channel}
-        \If{ideal world}
-          \State input (\textsc{fund me}, $\bar{P}$, \texttt{hops}, $c$, $\pk{A,
-          F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect output
-          (\textsc{funded}, $\texttt{host}_{\bar{P}}$) to \texttt{fundee} by
-          \texttt{hops}[-1].\texttt{right} \Comment{ignore any other message}
-          \State input (\textsc{fund ack}) as \texttt{fundee} to
-          \texttt{hops}[-1].\texttt{right} and expect output (\textsc{funded},
-          $\texttt{host}_P$) to \texttt{funder} by
-          \texttt{hops}[0].\texttt{left}
-        \Else \: \Comment{real world}
-          \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
-          $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-          output (\textsc{funded}, $\texttt{host}_P$) \Comment{ignore any
-          other message}
-        \EndIf
+        \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
+        $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
+        output (\textsc{funded}, $\texttt{host}_P$) \Comment{ignore any other
+        message}
       \EndIf
     \end{algorithmic}
   \end{processbox}
@@ -189,10 +162,10 @@
       \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
       \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
       \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A, F})$
-      \State $\textit{State}^A \gets \textsc{waiting for comm sig}$
+      \State $\itistate \gets \textsc{waiting for comm sig}$
       \State send (\textsc{funding created}, $(c, \pk{A, \mathrm{chain}})$,
       $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
-      \State \remotecode{ensure $\textit{State}^B = \textsc{waiting for comm
+      \State \remotecode{ensure $\itistate = \textsc{waiting for comm
       sig}$} \Comment{if opening virtual channel, we have received
       (\textsc{funded}, \texttt{host\_fundee}) by
       \texttt{hops}[-1].\texttt{right} (c.f. Fig~\ref{code:ln:bob},
@@ -212,15 +185,15 @@
       \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A, 0},
       \sk{B, F})$}
       \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
-        \State \remotecode{$\textit{State}^B \gets \textsc{waiting to check
+        \State \remotecode{$\itistate \gets \textsc{waiting to check
         funding}$}
       \Else \: \Comment{opening virtual channel}
         \State \remotecode{$c_A \gets c$; $c_B \gets 0$; $i \gets 0$}
-        \State \remotecode{$\textit{State}^B \gets \textsc{open}$}
+        \State \remotecode{$\itistate \gets \textsc{open}$}
       \EndIf
       \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B, C,
       0}$)}
-      \State ensure $\textit{State}^A = \textsc{waiting for comm sig}$
+      \State ensure $\itistate = \textsc{waiting for comm sig}$
       \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
       $\pk{B, F}$) = True
     \end{algorithmic}
@@ -239,8 +212,7 @@
       \While{$F \notin \Sigma$}
         \State wait for input (\textsc{check funding}) \Comment{ignore all other
         messages}
-        \State input (\textsc{read}) to \ledger as $P$ and assign output to
-        $\Sigma$
+        \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
       \EndWhile
     \end{algorithmic}
   \end{processbox}
@@ -251,24 +223,24 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- external open messages for \bob}
     \begin{algorithmic}[1]
-      \State On input (\textsc{check funding}): \Comment{real or ideal world}
+      \State On input (\textsc{check funding}):
       \Indent
-        \State ensure $\textit{State}^B = \textsc{waiting to check funding}$
+        \State ensure $\itistate = \textsc{waiting to check funding}$
         \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
         \If{$F \in \Sigma$}
-          \State $\textit{State}^B \gets \textsc{open}$
+          \State $\itistate \gets \textsc{open}$
           \State reply (\textsc{open ok})
         \EndIf
       \EndIndent
       \Statex
 
       \State On output (\textsc{funded}, $\texttt{host}_P$) by
-      \texttt{hops}[-1].\texttt{right}: \Comment{real world}
+      \texttt{hops}[-1].\texttt{right}:
       \Indent
-        \State ensure $\textit{State}^B = \textsc{waiting for funded}$
+        \State ensure $\itistate = \textsc{waiting for funded}$
         \State store $\texttt{host}_P$ \Comment{we will talk directly to
         $\texttt{host}_P$}
-        \State $\textit{State}^B \gets \textsc{waiting for comm sig}$
+        \State $\itistate \gets \textsc{waiting for comm sig}$
         \State reply (\textsc{fund ack})
       \EndIndent
       \Statex
@@ -276,9 +248,9 @@
       \State On output (\textsc{check keys}, ($\pk{1}$, $\pk{2}$)) by
       \texttt{hops}[-1].\texttt{right}:
       \Indent
-        \State ensure $\textit{State}^B = \textsc{waiting for check keys}$
+        \State ensure $\itistate = \textsc{waiting for check keys}$
         \State ensure $\pk{1} = \pk{A, F} \wedge \pk{2} = \pk{B, F}$
-        \State $\textit{State}^B \gets \textsc{waiting for fudned}$
+        \State $\itistate \gets \textsc{waiting for fudned}$
         \State reply (\textsc{keys ok})
       \EndIndent
     \end{algorithmic}
@@ -294,7 +266,7 @@
       \State \Comment{\texttt{fundee} is \bob}
       \State ensure $P = \alice$ \Comment{activated party is the funder}
       \If{\texttt{hops} = \ledger} \Comment{opening base channel}
-        \State ensure $\textit{State}^A = \textsc{topped up}$
+        \State ensure $\itistate = \textsc{topped up}$
         \State ensure $c = c_{A, \mathrm{chain}}$
       \Else \: \Comment{opening virtual channel}
         \State ensure $\mathrm{len}(\texttt{hops}) \geq 2$ \Comment{cannot open
@@ -302,19 +274,12 @@
       \EndIf
       \State \textsc{ln.exchangeOpenKeys}()
       \State \textsc{ln.prepareBase}()
-      \If{real world}
-        \State \textsc{ln.exchangeOpenSigs}()
-      \Else \: \Comment{ideal world}
-        \State send (\textsc{funding created}, ($c$, $\pk{A, \mathrm{chain}}$))
-        to \adversary and expect reply (\textsc{funding created ok})
-      \EndIf
+      \State \textsc{ln.exchangeOpenSigs}()
       \If{\texttt{hops} = \ledger}
         \State \textsc{ln.commitBase}()
-      \ElsIf{ideal world} \Comment{opening virtual channel in ideal world}
-        \State $\textit{State}^B \gets \textsc{open}$
       \EndIf
       \State $c_A \gets c$; $c_B \gets 0$; $i \gets 0$
-      \State $\textit{State}^A \gets \textsc{open}$
+      \State $\itistate \gets \textsc{open}$
       \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
     \end{algorithmic}
   \end{processbox}
@@ -360,9 +325,9 @@
       \State On input (\textsc{fund me}, \texttt{fundee}, \texttt{hops},
       $c_{\mathrm{guest}}$, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
       \Indent
-        \State ensure $\textit{State}^P = \textsc{open}$
+        \State ensure $\itistate = \textsc{open}$
         \State ensure $c_P - \texttt{locked}_P \geq c$
-        \State $\textit{State}^P \gets \textsc{virtualising}$
+        \State $\itistate \gets \textsc{virtualising}$
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
         \State send (\textsc{virtualising}, $\texttt{host}_P'$, $\pk{P, F}'$,
@@ -372,7 +337,7 @@
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
         \State \textsc{ln}.\textsc{updateForVirtual}()
-        \State $\textit{State}^P \gets \textsc{waiting for revocation}$
+        \State $\itistate \gets \textsc{waiting for revocation}$
         \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
         $\texttt{host}_{\bar{P}}'$, $\texttt{host}_P$, $c_{\mathrm{guest}}$,
         $\pk{A, V}$, $\pk{B, V}$, ($\sk{P, F}'$, $\pk{P, F}'$), ($\sk{P, F}$,
@@ -382,10 +347,9 @@
       \Statex
 
       \State On output (\textsc{hosts ready}) by $\texttt{host}_P'$:
-      \Comment{real or ideal world}
       \Indent
-        \State ensure $\textit{State}^P = \textsc{waiting for hosts ready}$
-        \State $\textit{State}^P \gets \textsc{open}$
+        \State ensure $\itistate = \textsc{waiting for hosts ready}$
+        \State $\itistate \gets \textsc{open}$
         \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
         host, use new host instead}
         \State move $\pk{P, F}$, $\pk{\bar{P}, F}$ to list of old funding keys
@@ -424,11 +388,11 @@
       $\pk{\bar{P}, F}'$, \texttt{hops}, \texttt{fundee}, $c_{\mathrm{guest}}$)
       by $\bar{P}$:
       \Indent
-        \State ensure $\textit{State}^P = \textsc{open}$
+        \State ensure $\itistate = \textsc{open}$
         \State ensure $c_{\bar{P}} - \texttt{locked}_{\bar{P}} \geq c$
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
-        \State $\textit{State}^P \gets \textsc{virtualising}$
+        \State $\itistate \gets \textsc{virtualising}$
         \State $\texttt{locked}_{\bar{P}} \gets \texttt{locked}_{\bar{P}} + c$
         \Comment{if $\bar{P}$ is hosting the \texttt{funder}, $\bar{P}$ will
         transfer $c_{\mathrm{guest}}$ coins instead of locking them, but the end
@@ -453,7 +417,7 @@
           $\pk{\bar{P}, F}$, $c_{\mathrm{guest}}$) to new \textsc{virt} ITI
           $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \EndIf
-        \State $\textit{State}^P \gets \textsc{waiting for revocation}$
+        \State $\itistate \gets \textsc{waiting for revocation}$
         \State send (\textsc{virtualising ack}, $\texttt{host}_P'$, $\pk{P, F}'$)
         to $\bar{P}$
       \EndIndent
@@ -464,13 +428,13 @@
       \texttt{fundee}, $c_{\mathrm{guest}}$, $c_{\mathrm{sib}, \mathrm{rem}}$,
       $_{\mathrm{sib}}$) by \texttt{sibling}:
       \Indent
-        \State ensure $\textit{State}^P = \textsc{open}$
+        \State ensure $\itistate = \textsc{open}$
         \State ensure $c_P - \texttt{locked}_P \geq c$
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P \wedge
         c_{\bar{P}} \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by griefing
         attack: one counterparty closes with old version, the other stays idle
         forever}
-        \State $\textit{State}^P \gets \textsc{virtualising}$
+        \State $\itistate \gets \textsc{virtualising}$
         \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
         \State send (\textsc{virtualising}, $\texttt{host}_P'$, $\pk{P, F}'$,
@@ -485,7 +449,7 @@
         $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
         ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $c_{\mathrm{guest}}$) to
         $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
-        \State $\textit{State}^P \gets \textsc{waiting for revocation}$
+        \State $\itistate \gets \textsc{waiting for revocation}$
         \State output (\textsc{virtualising ack}, $\texttt{host}_P'$,
         $\pk{\bar{P}, F}'$) to \texttt{sibling}
       \EndIndent
@@ -598,7 +562,7 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
     \begin{algorithmic}[1]
-      \State ensure $\textit{State}^P = \textsc{open} \wedge c_P \geq x$
+      \State ensure $\itistate = \textsc{open} \wedge c_P \geq x$
       \If{$\texttt{host}_P \neq \ledger \wedge P$ has a \texttt{host\_sibling}}
       \Comment{we are intermediary channel}
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x \wedge
@@ -606,31 +570,8 @@
         griefing attack: one counterparty closes with old version, the other
         stays idle forever}
       \EndIf
-      \If{ideal world}
-        \State send (\textsc{pay}, $x$) to \adversary and expect reply
-        (\textsc{pay ok})
-        \State ensure $\textit{State}^{\bar{P}} = \textsc{open}$
-        \State $c_P \gets c_B - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
-        i + 1$
-        \If{$\texttt{host}_P \neq \ledger \wedge P$ has a
-        \texttt{host\_sibling}} \Comment{we are intermediary channel}
-          \State input (\textsc{new balance}, $c_P$, $c_{\bar{P}}$) to
-          $\texttt{host}_P$
-          \State \trustedcode{relay message as input to \texttt{sibling}}
-          \Comment{run by \textsc{virt}}
-          \State \trustedcode{relay message as output to \texttt{guest}}
-          \Comment{run by \textsc{virt}}
-          \State \trustedcode{store new sibling balance and reply (\textsc{new
-          balance ok})}
-          \State \trustedcode{output (\textsc{new balance ok}) to
-          \texttt{sibling}} \Comment{run by \textsc{virt}}
-          \State \trustedcode{output (\textsc{new balance ok}) to
-          \texttt{guest}} \Comment{run by \textsc{virt}}
-        \EndIf
-      \Else
-        \State \textsc{ln}.\textsc{signaturesRoundTrip}()
-        \State \textsc{ln}.\textsc{revocationsTrip}()
-      \EndIf
+      \State \textsc{ln}.\textsc{signaturesRoundTrip}()
+      \State \textsc{ln}.\textsc{revocationsTrip}()
       \State \Comment{No output is given to the caller, this is intentional}
     \end{algorithmic}
   \end{processbox}
@@ -654,16 +595,16 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- On (\textsc{check chain for old comm}):}
     \begin{algorithmic}[1]
-      \State ensure $\textit{State}^P \notin \{\bot, \textsc{init},
+      \State ensure $\itistate \notin \{\bot, \textsc{init},
       \textsc{topped up}\}$ \Comment{channel open}
       \State \Comment{even virtual channels check \ledger directly. This is
       intentional}
-      \State send (\textsc{read}) to \ledger as $P$ and assign reply to $\Sigma$
+      \State send (\textsc{read}) to \ledger and assign reply to $\Sigma$
       \If{$\exists 0 \leq j < i : C_{\bar{P}, j} \in \Sigma$}
       \Comment{counterparty has closed maliciously}
-        \State $\textit{State}^P \gets \textsc{closing}$
+        \State $\itistate \gets \textsc{closing}$
         \State \textsc{ln}.\textsc{submitAndCheckRevocation}($j$)
-        \State $\textit{State}^P \gets \textsc{closed}$
+        \State $\itistate \gets \textsc{closed}$
       \EndIf
     \end{algorithmic}
   \end{processbox}
@@ -676,12 +617,11 @@
     \begin{algorithmic}[1]
       \State $\mathrm{sig}_{P, R, j} \gets \textsc{sign}(R_{P, j}, \sk{P, R})$
       \State input (\textsc{submit}, ($R_{P, j}$, $\mathrm{sig}_{P, R, j}$,
-      $\mathrm{sig}_{\bar{P}, R, j}$)) to \ledger as $P$
+      $\mathrm{sig}_{\bar{P}, R, j}$)) to \ledger
       \While{$\nexists R_{P, j} \in \Sigma$}
         \State wait for input (\textsc{check revocation}) \Comment{ignore
         other messages}
-        \State input (\textsc{read}) to \ledger as $P$ and assign output to
-        $\Sigma$
+        \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
       \EndWhile
     \end{algorithmic}
   \end{processbox}
@@ -692,18 +632,17 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- On (\textsc{close}):}
     \begin{algorithmic}[1]
-      \State ensure $\textit{State}^P \notin \{\bot, \textsc{init},
+      \State ensure $\itistate \notin \{\bot, \textsc{init},
       \textsc{topped up}\}$ \Comment{channel open}
       \If{$\texttt{host}_P \neq \ledger$} \Comment{we have a virtual channel}
-        \State $\textit{State}^P \gets \textsc{host closing}$
+        \State $\itistate \gets \textsc{host closing}$
         \State input (\textsc{close}) to $\texttt{host}_P$ and
         keep relaying inputs (\textsc{check chain for closing}) to
         $\texttt{host}_P$ until receiving output (\textsc{closed}) by
         $\texttt{host}_P$
       \EndIf
-      \State $\textit{State}^P \gets \textsc{closing}$
-      \State input (\textsc{read}) to \ledger as $P$ and assign output to
-      $\Sigma$
+      \State $\itistate \gets \textsc{closing}$
+      \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
       \If{$C_{\bar{P}, i} \in \Sigma$} \Comment{counterparty has closed
       honestly}
         \State no-op \Comment{do nothing}
@@ -715,23 +654,21 @@
         can spend} \Comment{possibly due to an active timelock}
           \State wait for input (\textsc{check virtual}) \Comment{ignore other
           messages}
-          \State input (\textsc{read}) to \ledger as $P$ and assign output to
-          $\Sigma$
+          \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
         \EndWhile
         \State \Comment{provably reachable -- c.f.~\TODO{ref}}
         \State $\mathrm{sig}_{P, C, i}' \gets \textsc{sign}(C_{P, i}, \sk{P,
         F})$
         \State input (\textsc{submit}, $(C_{P, i}, \mathrm{sig}_{P, C, i},
-        \mathrm{sig}_{P, C, i}')$) to \ledger as $P$
+        \mathrm{sig}_{P, C, i}')$) to \ledger
         \While{$C_{P, i} \notin \Sigma$}
           \State wait for input (\textsc{check closed}) \Comment{ignore other
           messages}
-          \State input (\textsc{read}) to \ledger as $P$ and assign output to
-          $\Sigma$
+          \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
         \EndWhile
         \State \Comment{provably reachable -- c.f.~\TODO{ref}}
       \EndIf
-      \State $\textit{State}^P \gets \textsc{closed}$
+      \State $\itistate \gets \textsc{closed}$
       \State output (\textsc{closed})
     \end{algorithmic}
   \end{processbox}
