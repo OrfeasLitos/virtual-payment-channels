@@ -127,7 +127,7 @@ channel)}
 
       \State On (\textsc{fund}, $x$) to $P$ by $R$:
       \Indent
-        \State ensure $R$ is an \fchan party
+        \State ensure $R$ is an ITI that runs \fchan or \pchan code
         \State ensure $\itistate = \textsc{open}$
         \State $c \gets x$
         \IfThenElse{$P = \alice$}{$S \gets \alice$}{$S \gets \bob$}
