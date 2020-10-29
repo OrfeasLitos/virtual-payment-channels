@@ -578,7 +578,9 @@ that a functionality is needed after all}
       of $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
       \State ensure
       \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
-      returns (\textsc{ok})
+      returns (\textsc{ok}) \Comment{If the ``ensure'' fails, the opening
+      process freezes, this is intentional. The channel can still close via
+      (\textsc{close})}
       \State \Return (\textsc{ok})
     \EndIf
     \If{we have a \texttt{sibling}} \Comment{we are not \texttt{host\_fundee}

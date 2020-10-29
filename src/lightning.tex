@@ -82,6 +82,9 @@
           \State $i \gets i + 1$
           \State $\itistate \gets \textsc{waiting for hosts ready}$
         \EndIf
+        \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
+        host, use new host instead}
+        \label{code:ln:methods-for-virt:host-update}
         \State \Return $\mathrm{sig}_{P, R, i}$
       \EndIndent
       \Statex
@@ -361,12 +364,13 @@
       \EndIndent
       \Statex
 
-      \State On output (\textsc{hosts ready}) by $\texttt{host}_P'$:
+      \State On output (\textsc{hosts ready}) by $\texttt{host}_P$:
+      \Comment{$\texttt{host}_P$ is the new host, renamed in
+      Fig.~\ref{code:ln:methods-for-virt},
+      l.~\ref{code:ln:methods-for-virt:host-update}}
       \Indent
         \State ensure $\itistate = \textsc{waiting for hosts ready}$
         \State $\itistate \gets \textsc{open}$
-        \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
-        host, use new host instead}
         \State move $\pk{P, F}$, $\pk{\bar{P}, F}$ to list of old funding keys
         \State $(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P, F}')$;
         $\pk{\bar{P}, F} \gets \pk{\bar{P}, F}'$
