@@ -12,6 +12,8 @@
       \EndIndent
       \Statex
 
+      \State \Comment {\texttt{guest} is trusted to give sane inputs, therefore
+      a state machine and input verification is redundant}
       \State On input (\textsc{init}, $\texttt{host}_P$, $\bar{P}$,
       \texttt{sibling}, \texttt{fundee}, ($\sk{\mathrm{loc}, \mathrm{virt}}$,
       $\pk{\mathrm{loc}, \mathrm{virt}}$), $\pk{\mathrm{rem}, \mathrm{virt}}$,
