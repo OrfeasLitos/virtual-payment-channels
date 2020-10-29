@@ -31,127 +31,101 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{simulatorbox}{\simulator -- Pt. 1}
+  \begin{simulatorbox}{\simulator{} -- notifications to \fchan}
+    \begin{itemize}
+      \item When referring to a player $P$, it must be one of the parties that
+      correspond to \fchan.
+      \item When an action in the current Figure interrupts the simulation of a
+      party, the latter is continued from the interruption location after
+      control is handed back by \fchan.
+    \end{itemize} \ \\
     \begin{algorithmic}[1]
-      \State On $(\textsc{open}, c_F, \pk{A, \mathrm{out}}, \pk{B,
-      \mathrm{out}}, F, \mathrm{sig}_F \alice)$ by \fchan: \Comment{both honest}
+      \State On (\textsc{corrupt}) by \adversary, addresed to $P$:
       \Indent
-        \State simulate \alice receiving input $(\textsc{open}, c_F, \pk{A,
-        \mathrm{out}}, \pk{B, \mathrm{out}})$ by \environment
-        \State ensure simulated \alice inputs (\textsc{submit}, $(F',
-        \mathrm{sig}_{F'})$) to \ledger
-        \State input (\textsc{submit}, $(F, \mathrm{sig}_F)$) to \ledger
+        \State \Comment{After executing this code, deliver (\textsc{corrupt}) to
+        simulated $P$ as detailed in Fig.~\ref{code:simulator:flow}.  Given that
+        \fchan returns control directly to us after it handles this message, we
+        will always deliver (\textsc{corrupt}) successfully.}
+        \State send (\textsc{info}, \textsc{became corrupted or negligent}, $P$)
+        to \fchan
       \EndIndent
       \Statex
 
-      \State On $(\textsc{open}, c_F, \pk{A, \mathrm{out}}, \pk{B,
-      \mathrm{out}}, \pk{B, F}, \bob)$ by \fchan: \Comment{\alice corrupted}
+      \State When simulated $P$ sets its internal variable \texttt{negligent} to
+      True (Fig.~\ref{code:ln:methods-for-virt},
+      l.~\ref{code:ln:methods-for-virt:negligent}/Fig.~\ref{code:ln:init},
+      l.~\ref{code:ln:init:negligent}):
       \Indent
-        \State send LN message (\textsc{open}, $\pk{B, F}$) to \alice and relay
-        reply to \fchan \TODO{change msg to fit LN, ensure \alice doesn't see a
-        difference from real world}
+        \State send (\textsc{info}, \textsc{became corrupted or negligent}, $P$)
+        to \fchan
       \EndIndent
       \Statex
 
-      \State On (\textsc{pay}, $x$, \dave) by \fchan:
+      \State When simulated $P$ moves to the \textsc{init} state
+      (Fig.~\ref{code:ln:init}, l.~\ref{code:ln:init:change-state}):
       \Indent
-        \If{both channel parties are honest}
-          \State simulate \dave receiving input (\textsc{pay}, $x$) by
-          \environment
-          \State ensure simulated \dave outputs (\textsc{ok})
-          \State send (\textsc{ok}) to \fchan
-        \ElsIf{only \dave's counterparty is corrupted} \Comment{else just relay
-        to \adversary}
-          \State simulate \dave receiving input (\textsc{pay}, $x$) by
-          \environment
-          \State ensure simulated \dave outputs (\textsc{ok})
-          \State extract the latest commitment transaction $C$ and its signature
-          by \dave's counterparty $\mathrm{sig}_{\bar{D}, C}$ from simulated
-          \dave's state
-          \State send $(C, \mathrm{sig}_{\bar{D}, C})$ to \fchan
-        \EndIf
+        \State send (\textsc{info}, \textsc{init}, $P$) to \fchan
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund you}, $c$, \bob, \charlie, \alice) by \fchan:
+      \State When the last of the honest simulated \fchan's parties moves to the
+      \textsc{open} state for the first time
+      (Fig.~\ref{code:ln:exchange-open-sigs},
+      l.~\ref{code:ln:exchange-open-sigs:state-open}/Fig.~\ref{code:ln:bob},
+      l.~\ref{code:ln:bob:state-open}/Fig.~\ref{code:ln:open},
+      l.~\ref{code:ln:open:state-open}):
       \Indent
-        \State simulate \alice receiving input (\textsc{fund you}, $c$, \bob) by
-        \charlie
-        \State ensure simulated \alice outputs (\textsc{ok}) to \charlie
-        \State send (\textsc{ok}) to \fchan
+        \State send (\textsc{info}, \textsc{open}) to \fchan
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund} $c$, hops, \texttt{sub\_parties} = (fundee,
-      counterparty), \texttt{outer\_parties} = (\charlie, \dave),
-      \texttt{funder} = \alice, id) by \fchan:
-      \label{code:simulator:fund}
+      \State When (both \fchan's simulated parties are honest and one party
+      completes sending a payment (Fig.~\ref{code:ln:pay:revocations},
+      l.~\ref{code:ln:pay:revocations:paid-out}) and the counterparty completes
+      receiving that payment (Fig.~\ref{code:ln:pay:revocations},
+      l.~\ref{code:ln:pay:revocations:paid-in})), or (when only one of the two
+      is honest and (completes either receiving or sending a payment)):
+      \Comment{also send this message if both parties are honest when
+      Fig.~\ref{code:ln:pay:revocations},
+      l.~\ref{code:ln:pay:revocations:paid-out} is executed by one party, but
+      its counterparty is corrupted before executing
+      Fig.~\ref{code:ln:pay:revocations},
+      l.~\ref{code:ln:pay:revocations:paid-in}}
       \Indent
-        \State add the message data to \texttt{virtual\_opening}
-        \State simulate execution of
-        line~\ref{code:functionality:chan:skeleton:virtual:fund:init} of
-        Fig.~\ref{code:functionality:chan:skeleton:virtual} with \alice
-        \Comment{\simulator knows \bob (\alice's counterparty) through opening
-        procedure}
-        \State send (\textsc{ok}) to \fchan
-        \label{code:simulator:fund:ok}
+        \State send (\textsc{info}, \textsc{pay ok}) to \fchan
       \EndIndent
       \Statex
 
-      \State On (\textsc{allow fund}, $c$, \texttt{sub\_parties},
-      \texttt{local\_funder} = $L_i$, id, $i \overset{?}{=} |\mathrm{hops}|$) by
-      \fchan's \alice to \charlie:
+      \State \TODO{}
       \Indent
-        \State simulate receiving message with \charlie by \alice and all
-        subsequent communication
-        \State ensure the simulated \charlie sends (\textsc{ok}) to the
-        simulated \alice
-        \State intercept this message and send it to \fchan's \alice
-      \EndIndent
-    \end{algorithmic}
-  \end{simulatorbox}
-  \caption{}
-  \label{code:simulator:pt1}
-\end{figure}
-
-\begin{figure}[H]
-  \begin{simulatorbox}{\simulator -- Pt. 2}
-    \begin{algorithmic}[1]
-      \State On (\textsc{is open successful}, id) by \fchan:
-      \Indent
-        \State retrieve and remove from \texttt{virtual\_opening} the data
-        marked with id
-        \State simulate line~\ref{code:protocol:chan:skeleton:vchan} of
-        Fig.~\ref{code:protocol:chan:skeleton:virtual} with \alice using this
-        data
-        \State ensure \alice completes execution of VChan() successfully
-        \State send (\textsc{ok}) to \fchan
+        \State send (\textsc{info}, \textsc{pay fail}) to \fchan
       \EndIndent
       \Statex
 
-      \State On (\textsc{update to virtual} ) by \fchan:
+      \State When (both \fchan's simulated parties are honest and they both
+      complete changing to a new host (Fig.~\ref{code:ln:methods-for-virt},
+      l.~\ref{code:ln:methods-for-virt:host-update})), or (when only one of the
+      two is honest and it completes changing to a new host): \Comment{also send
+      this message if both parties are honest when the change of host is
+      executed by one party, but its counterparty is corrupted before changing
+      host}
       \Indent
-        \State retrieve and remove from \texttt{virtual\_opening} the data
-        marked with id
-        \State simulate line~\ref{code:protocol:chan:skeleton:vchan} of
-        Fig.~\ref{code:protocol:chan:skeleton:virtual} with \alice using this
-        data
-        \State ensure \alice completes execution of VChan() successfully
-        \State extract from \alice's state the new virtual funding TX $V$ for
-        pre-existing channel
-        \State extract from \alice's state the new commitment TX $C$ that spends
-        the on-chain funding TX
-        \State send ($V$, $C$) to \fchan
+        \State send (\textsc{info}, \textsc{fund ok}) to \fchan
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund done}, id) by \fchan's \alice to \charlie:
+      \State \TODO{}
       \Indent
-        \State simulate receiving message with \charlie by \alice and all
-        subsequent communication
-        \State ensure the simulated \charlie sends (\textsc{ok}) to the
-        simulated \alice
-        \State intercept this message and send it to \fchan's \alice
+        \State send (\textsc{info}, \textsc{fund fail}) to \fchan
+      \EndIndent
+      \Statex
+
+      \State When one of the honest simulated \fchan's parties moves to the
+      \textsc{closed} state (Fig.~\ref{code:ln:poll},
+      l.~\ref{code:ln:poll:state-closed}/Fig.~\ref{code:ln:close},
+      l.~\ref{code:ln:close:state-closed}):
+      \Indent
+        \State send (\textsc{info}, \textsc{close}) to \fchan
       \EndIndent
     \end{algorithmic}
   \end{simulatorbox}
