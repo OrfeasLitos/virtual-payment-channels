@@ -572,7 +572,7 @@ that a functionality is needed after all}
     \Else \: \Comment{we are \texttt{host\_funder}}
       \State $\texttt{revoc\_for\_next} \gets
       \texttt{guest}.\textsc{revokePrevious}()$
-e     \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
+      \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
       \State $\texttt{last\_poll} \gets |\Sigma|$
       \State call \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next})
       of $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
