@@ -11,6 +11,7 @@
           \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
           \If{$\texttt{last\_poll} + t < |\Sigma|$}
             \State $\texttt{negligent} \gets$ True
+            \label{code:ln:init:negligent}
           \EndIf
         \EndIf
       \EndIndent
@@ -35,6 +36,7 @@
       \Indent
         \State ensure $P = \alice$ \Comment{activated party is the funder}
         \State ensure $\itistate = \textsc{init}$
+        \label{code:ln:init:change-state}
         \State $(\sk{P, \mathrm{chain}}, \pk{P, \mathrm{chain}}) \gets
         \textsc{keyGen}()$
         \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
@@ -113,6 +115,7 @@
       \State \textsc{negligent}():
       \Indent
         \State $\texttt{negligent} \gets$ True
+        \label{code:ln:methods-for-virt:negligent}
         \State \Return (\textsc{ok})
       \EndIndent
     \end{algorithmic}
@@ -213,6 +216,7 @@
       \Else \: \Comment{opening virtual channel}
         \State \remotecode{$c_A \gets c$; $c_B \gets 0$; $i \gets 0$}
         \State \remotecode{$\itistate \gets \textsc{open}$}
+        \label{code:ln:exchange-open-sigs:state-open}
       \EndIf
       \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B, C,
       0}$)}
@@ -252,6 +256,7 @@
         \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
         \If{$F \in \Sigma$}
           \State $\itistate \gets \textsc{open}$
+          \label{code:ln:bob:state-open}
           \State reply (\textsc{open ok})
         \EndIf
       \EndIndent
@@ -263,6 +268,7 @@
         \State ensure $\itistate = \textsc{waiting for funded}$
         \State store $\texttt{host}_P$ \Comment{we will talk directly to
         $\texttt{host}_P$}
+        \label{code:ln:bob:host}
         \State $\itistate \gets \textsc{waiting for comm sig}$
         \State reply (\textsc{fund ack})
       \EndIndent
@@ -305,6 +311,7 @@
       \State $\texttt{last\_poll} \gets |\Sigma|$
       \State $c_A \gets c$; $c_B \gets 0$; $i \gets 0$
       \State $\itistate \gets \textsc{open}$
+      \label{code:ln:open:state-open}
       \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
     \end{algorithmic}
   \end{processbox}
@@ -537,6 +544,7 @@
       \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
       \sk{P, R})$
       \State add $x$ to \texttt{paid\_out}
+      \label{code:ln:pay:revocations:paid-out}
       \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
       i + 1$
       \If{$\texttt{host}_P \neq \ledger \wedge$ we have a
@@ -562,6 +570,7 @@
       \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
       $\mathrm{sig}_{P, R, i}$, $\pk{P, R}$) = True}
       \State \remotecode{add $x$ to \texttt{paid\_in}}
+      \label{code:ln:pay:revocations:paid-in}
       \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
       x$; $i \gets i + 1$}
       \If{\remotecode{$\texttt{host}_P \neq \ledger \wedge \bar{P}$ has a
@@ -632,6 +641,7 @@
         \State $\itistate \gets \textsc{closing}$
         \State \textsc{ln}.\textsc{submitAndCheckRevocation}($j$)
         \State $\itistate \gets \textsc{closed}$
+        \label{code:ln:poll:state-closed}
       \EndIf
     \end{algorithmic}
   \end{processbox}
@@ -696,9 +706,10 @@
         \State \Comment{provably reachable -- c.f.~\TODO{ref}}
       \EndIf
       \State $\itistate \gets \textsc{closed}$
+      \label{code:ln:close:state-closed}
       \State output (\textsc{closed})
     \end{algorithmic}
   \end{processbox}
   \caption{}
-  \label{code:ln:virtual}
+  \label{code:ln:close}
 \end{figure}
