@@ -4,7 +4,7 @@ channel)}
 \TODO{Add support for cooperative closing as future work}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan -- general message handling rules}
+  \begin{systembox}{\fchan{} -- general message handling rules}
     \begin{itemize}
       \item On receiving input (\texttt{msg}) by \environment to $P \in
       \{\alice, \bob\}$, handle it according to the corresponding rule in
@@ -37,7 +37,7 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan -- state machine, Pt. 1}
+  \begin{systembox}{\fchan{} -- state machine, Pt. 1}
     \begin{algorithmic}[1]
       \State On initalisation:
       \Indent
@@ -115,7 +115,7 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan -- state machine, Pt. 2}
+  \begin{systembox}{\fchan{} -- state machine, Pt. 2}
     \begin{algorithmic}[1]
       \State On (\textsc{pay fail}) by \adversary:
       \Indent
