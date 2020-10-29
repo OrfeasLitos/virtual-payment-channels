@@ -6,7 +6,10 @@
         \If{$\texttt{last\_poll} \neq \bot$} \Comment{virtual layer is ready}
           \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
           \If{$\texttt{last\_poll} + t < |\Sigma|$}
-            \State $\texttt{negligent} \gets$ True
+            \For{$P \in \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}$}
+            \Comment{at most 1 of \texttt{funder}, \texttt{fundee} is defined}
+              \State ensure $P$.\textsc{negligent}() returns (\textsc{ok})
+            \EndFor
           \EndIf
         \EndIf
       \EndIndent
@@ -24,7 +27,6 @@
         \State store message contents and \texttt{guest}
         \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
         for edge nodes, \texttt{fundee} is present only in last node}
-        \State $\texttt{negligent} \gets$ False
         \State $\texttt{last\_poll} \gets \bot$
         \State output (\textsc{host init ok}) to \texttt{guest}
       \EndIndent
@@ -37,7 +39,6 @@
       ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$), $\pk{\mathrm{rem}, F}$,
       $\pk{\mathrm{rem}, \mathrm{virt}}$) by \texttt{guest}:
       \Indent
-        \State $\texttt{negligent} \gets$ False
         \State $\texttt{last\_poll} \gets \bot$
         \State ensure \textsc{virt.circulateKeysAndCoins}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
