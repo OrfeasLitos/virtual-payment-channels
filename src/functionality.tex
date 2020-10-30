@@ -117,14 +117,6 @@ channel)}
 \begin{figure}[H]
   \begin{systembox}{\fchan{} -- state machine, Pt. 2}
     \begin{algorithmic}[1]
-      \State On (\textsc{pay fail}) by \adversary:
-      \Indent
-        \State ensure $\itistate = \textsc{paying}$
-        \State forget $c, S, \bar{S}$
-        \State $\itistate \gets \textsc{open}$
-      \EndIndent
-      \Statex
-
       \State On (\textsc{fund}, $x$) to $P$ by $R$:
       \Indent
         \State ensure $R$ is an ITI that runs \fchan or \pchan code
@@ -144,14 +136,6 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund fail}) by \adversary:
-      \Indent
-        \State ensure $\itistate = \textsc{funding}$
-        \State forget $c, S$
-        \State $\itistate \gets \textsc{open}$
-      \EndIndent
-      \Statex
-
       \State On (\textsc{close}) by \environment:
       \Indent
         \State ensure $\itistate = \textsc{open}$
@@ -161,7 +145,8 @@ channel)}
 
       \State On (\textsc{close}) by \adversary:
       \Indent
-        \State ensure $\itistate \in \{\textsc{open}, \textsc{closing}\}$
+        \State ensure $\itistate \in \{\textsc{open}, \textsc{closing},
+        \textsc{paying}, \textsc{funding}\}$
         \For{$P \in \{A, B\}$}
           \If{$\texttt{is\_corrupted\_or\_negligent}_P =$ False}
             \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
