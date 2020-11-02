@@ -363,8 +363,8 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- virtualise start and end}
     \begin{algorithmic}[1]
-      \State On input (\textsc{fund me}, \texttt{fundee}, \texttt{hops},
-      $c_{\mathrm{guest}}$, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
+      \State On input (\textsc{fund me}, $c_{\mathrm{guest}}$, \texttt{fundee},
+      \texttt{hops}, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
       \Indent
         \State ensure $\itistate = \textsc{open}$
         \State ensure $c_P - \texttt{locked}_P \geq c$

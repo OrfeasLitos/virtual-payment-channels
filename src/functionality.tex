@@ -74,11 +74,10 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $x$, $y$) to $P$ by
-      \environment:
+      \State On (\textsc{open}, $x$, $\dots$) to \alice by \environment:
       \Indent
         \State ensure $\itistate = \textsc{init}$
-        \State $\balance{A} \gets x$; $\balance{B} \gets y$
+        \State $\balance{A} \gets x$; $\balance{B} \gets 0$
         \State $\itistate \gets \textsc{tentative-open}$
       \EndIndent
       \Statex
@@ -117,7 +116,7 @@ channel)}
 \begin{figure}[H]
   \begin{systembox}{\fchan{} -- state machine, Pt. 2}
     \begin{algorithmic}[1]
-      \State On (\textsc{fund}, $x$) to $P$ by $R$:
+      \State On (\textsc{fund me}, $x$, $\dots$) to $P$ by $R$:
       \Indent
         \State ensure $R$ is an ITI that runs \fchan or \pchan code
         \State ensure $\itistate = \textsc{open}$
