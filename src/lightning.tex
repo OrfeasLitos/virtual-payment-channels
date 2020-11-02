@@ -178,15 +178,22 @@
   \label{code:ln:prepare-base}
 \end{figure}
 
+
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln.exchangeOpenSigs}()}
     \begin{algorithmic}[1]
+      \State \Comment{$s = (2 + \lceil \texttt{maxTime}_{\texttt{window}} +
+      \frac{\texttt{Delay}}{2} /
+      \texttt{minTime}_{\texttt{window}}\rceil)\texttt{windowSize}$, where
+      $\texttt{maxTime}_{\texttt{window}}$, \texttt{Delay},
+      $\texttt{minTime}_{\texttt{window}}$ and \texttt{windowSize} are defined
+      in Proposition~\ref{ledger:delay}} \TODO{recheck and include proposition}
       \State $C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
-      \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + t$) $\vee$
+      \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (t + s)$) $\vee$
       $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
       \State $C_{B, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
       \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
-      \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
+      \mathrm{out}} + (t + s)$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
       \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A, F})$
       \State $\itistate \gets \textsc{waiting for comm sig}$
       \State send (\textsc{funding created}, $(c, \pk{A, \mathrm{chain}})$,
@@ -202,11 +209,13 @@
       \EndIf
       \State \remotecode{$C_{B, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge
       2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$),
-      ($0$, ($\pk{B, \mathrm{out}} + t$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}}
+      ($0$, ($\pk{B, \mathrm{out}} + (t + s)$) $\vee$ $2/\{\pk{A, R}, \pk{B,
+      R}\}$)\}}
       \State \remotecode{ensure \textsc{verify}($C_{B, 0}$, $\mathrm{sig}_{A, C,
       0}$, $\pk{A, F}$) = True}
       \State \remotecode{$C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge
-      2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + t$)
+      2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (t +
+      s)$)
       $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
       \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A, 0},
       \sk{B, F})$}
