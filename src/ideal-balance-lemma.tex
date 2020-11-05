@@ -1,0 +1,29 @@
+\TODO{generalise both this and real world version to not demand opening}
+\begin{lemma}[Ideal world balance]
+\label{lemma:ideal-balance}
+  Consider an ideal execution with functionality \fchan and simulator
+  \simulator.
+  Let $P \in \{\alice, \bob\}$ one of the two parties of \fchan and $\bar{P}$
+  the other party. Assume that all of the following are true:
+  \begin{itemize}
+    \item the internal variable $\texttt{is\_corrupted\_or\_negligent}_P$ of
+    \fchan has the value ``False'',
+    \item If $P = \alice$, $P$ has received $(\textsc{open}, c, \dots)$ by
+    \environment,
+    \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
+    \fchan or \pchan ITI while \textit{State} was \textsc{open} and subsequently
+    \fchan transitioned to \textsc{open} \textit{State}] $n$ times,
+    \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
+    \textit{State} was \textsc{open} and \fchan subsequently transitioned to
+    \textsc{open} \textit{State}] $m$ times,
+    \item $\bar{P}$ [has received $(\textsc{pay}, e_i)$ by \environment while
+    \textit{State} was \textsc{open} and \fchan subsequently transitioned to
+    \textsc{open} \textit{State}] $l$ times.
+  \end{itemize}
+  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ or
+  $\bar{P}$ receives $(\textsc{close})$ by \simulator, then
+  \begin{equation}
+    \texttt{balance}_B = \phi \cdot c - \sum\limits_{i=1}^n f_i -
+    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+  \end{equation}
+\end{lemma}
