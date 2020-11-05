@@ -516,6 +516,7 @@
       \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
       \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
       and remote code}
+      \State \remotecode{ensure \texttt{State} = \textsc{open}}
       \If{\remotecode{$\texttt{host}_{\bar{P}} \neq \ledger \wedge \bar{P}$
       has a \texttt{host\_sibling}}} \Comment{we are intermediary channel}
         \State \remotecode{ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x
