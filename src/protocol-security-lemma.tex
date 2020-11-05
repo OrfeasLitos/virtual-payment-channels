@@ -1,0 +1,32 @@
+\begin{lemma}[Real world balance security]
+  Let $P$ honest \textsc{ln} ITI such that all of the following are true:
+  \begin{itemize}
+    \item the internal variable \texttt{negligent} of $P$ has value ``False'',
+    \item $P$ has received $(\textsc{open}, c, \texttt{hops}, \dots)$ by either:
+    \begin{itemize}
+      \item \environment with \texttt{hops} = \ledger while \textit{State} was
+      \textsc{topped up} (let $\phi = 1$) or
+      \item \environment with $\texttt{hops} \neq \ledger$ while \textit{State}
+      was \textsc{init} (let $\phi = 1$) or
+      \item another \textsc{ln} ITI $\bar{P}$ while \textit{State} was
+      \textsc{init} (let $\phi = 0$)
+    \end{itemize}
+    and subsequently transitioned to the \textsc{open} \textit{State},
+    \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
+    \textsc{ln} ITI while \textit{State} was \textsc{open} and subsequently $P$
+    transitioned to \textsc{open} \textit{State}] $n$ times,
+    \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
+    \textit{State} was \textsc{open} and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $m$ times,
+    \item $P$ [has received $(\textsc{pay}, e_i)$ by $\bar{P}$ while
+    \textit{State} was \textsc{open} and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $l$ times.
+  \end{itemize}
+  If $P$ receives $(\textsc{close})$ by \environment, then eventually the state
+  obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$ $(c_i,
+  \pk{P, \mathrm{out}})$ outputs such that
+  \begin{equation}
+    \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
+    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace.
+  \end{equation}
+\end{lemma}
