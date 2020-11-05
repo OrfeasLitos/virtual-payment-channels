@@ -131,8 +131,8 @@
       \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
       $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
       \State $\itistate \gets \textsc{waiting for opening keys}$
-      \State send (\textsc{open channel}, $c$, \texttt{hops}, $\pk{A, F}$,
-      $\pk{A, R}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
+      \State send (\textsc{open}, $c$, \texttt{hops}, $\pk{A, F}$, $\pk{A, R}$,
+      $\pk{A, \mathrm{out}}$) to \texttt{fundee}
       \State \Comment{colored code is run by honest \texttt{fundee}.
       Validation is implicit}
       \State \remotecode{ensure $\itistate = \textsc{init}$}
@@ -303,8 +303,8 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- On (\textsc{open}, $c$, \texttt{fundee},
-  \texttt{hops}):}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{open}, $c$, \texttt{hops},
+  \texttt{fundee}):}
     \begin{algorithmic}[1]
       \State \Comment{\texttt{fundee} is \bob}
       \State ensure $P = \alice$ \Comment{activated party is the funder}
