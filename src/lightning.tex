@@ -141,6 +141,7 @@
       $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
       \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
       channel}
+        \State \remotecode{$\texttt{layer} \gets 0$}
         \State \remotecode{$\itistate \gets \textsc{waiting for comm
         sig}$}
       \Else \: \Comment{opening virtual channel}
@@ -166,11 +167,13 @@
         \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
         \State $\texttt{host}_A \gets \ledger$
+        \State $\texttt{layer} \gets 0$
       \Else \: \Comment{opening virtual channel}
         \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
         $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-        output (\textsc{funded}, $\texttt{host}_P$) \Comment{ignore any other
-        message}
+        output (\textsc{funded}, $\texttt{host}_P$, \texttt{funder\_layer})
+        \Comment{ignore any other message}
+        \State $\texttt{layer} \gets \texttt{funder\_layer}$
       \EndIf
     \end{algorithmic}
   \end{processbox}
@@ -271,13 +274,14 @@
       \EndIndent
       \Statex
 
-      \State On output (\textsc{funded}, $\texttt{host}_P$) by
-      \texttt{hops}[-1].\texttt{right}:
+      \State On output (\textsc{funded}, $\texttt{host}_P$,
+      \texttt{funder\_layer}) by \texttt{hops}[-1].\texttt{right}:
       \Indent
         \State ensure $\itistate = \textsc{waiting for funded}$
         \State store $\texttt{host}_P$ \Comment{we will talk directly to
         $\texttt{host}_P$}
         \label{code:ln:bob:host}
+        \State $\texttt{layer} \gets \texttt{funder\_layer}$
         \State $\itistate \gets \textsc{waiting for comm sig}$
         \State reply (\textsc{fund ack})
       \EndIndent
@@ -394,16 +398,17 @@
       \Indent
         \State ensure $\itistate = \textsc{waiting for hosts ready}$
         \State $\itistate \gets \textsc{open}$
+        \State $\texttt{layer} \gets \texttt{layer} + 1$
         \State move $\pk{P, F}$, $\pk{\bar{P}, F}$ to list of old funding keys
         \State $(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P, F}')$;
         $\pk{\bar{P}, F} \gets \pk{\bar{P}, F}'$
         \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
-          \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{fundee}
-          and expect reply (\textsc{fund ack})
+          \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$)
+          to \texttt{fundee} and expect reply (\textsc{fund ack})
         \ElsIf{we have received input \textsc{fund me} just before we moved to
         the \textsc{virtualising} state} \Comment{we are the first hop}
-          \State output (\textsc{funded}, $\texttt{host}_P$) to \texttt{funder}
-          \Comment{do not expect reply by \texttt{funder}}
+          \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$)
+          to \texttt{funder} \Comment{do not expect reply by \texttt{funder}}
         \EndIf
         \State reply (\textsc{host ack})
       \EndIndent
