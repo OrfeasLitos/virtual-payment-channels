@@ -135,6 +135,7 @@
       $\pk{A, \mathrm{out}}$) to \texttt{fundee}
       \State \Comment{colored code is run by honest \texttt{fundee}.
       Validation is implicit}
+      \State \remotecode{ensure we run the code of \bob}
       \State \remotecode{ensure $\itistate = \textsc{init}$}
       \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
       \mathrm{out}}$}
@@ -307,7 +308,8 @@
   \texttt{fundee}):}
     \begin{algorithmic}[1]
       \State \Comment{\texttt{fundee} is \bob}
-      \State ensure $P = \alice$ \Comment{activated party is the funder}
+      \State ensure we run the code of \alice{} \Comment{activated party is the
+      funder}
       \If{\texttt{hops} = \ledger} \Comment{opening base channel}
         \State ensure $\itistate = \textsc{topped up}$
         \State ensure $c = c_{A, \mathrm{chain}}$
