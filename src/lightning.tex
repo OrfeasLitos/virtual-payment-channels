@@ -86,6 +86,7 @@
         \EndIf
         \State $\texttt{host}_P \gets \texttt{host}_P'$ \Comment{forget old
         host, use new host instead}
+        \State $\texttt{layer} \gets \texttt{layer} + 1$
         \label{code:ln:methods-for-virt:host-update}
         \State \Return $\mathrm{sig}_{P, R, i}$
       \EndIndent
@@ -398,7 +399,6 @@
       \Indent
         \State ensure $\itistate = \textsc{waiting for hosts ready}$
         \State $\itistate \gets \textsc{open}$
-        \State $\texttt{layer} \gets \texttt{layer} + 1$
         \State move $\pk{P, F}$, $\pk{\bar{P}, F}$ to list of old funding keys
         \State $(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P, F}')$;
         $\pk{\bar{P}, F} \gets \pk{\bar{P}, F}'$
