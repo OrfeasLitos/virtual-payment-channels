@@ -7,11 +7,29 @@ with the check succeeding)}
 \end{lemma}
 
 \begin{proof}
-  This Lemma is a direct consequence of applying
-  Lemmas~\ref{lemma:real-balance-security} and~\ref{lemma:ideal-balance} to both
-  parties of \fchan, along with the fact that the description of \fchan and
-  \simulator ensure that \simulator simulates internally an exact replica of the
-  execution of the machines that would run in the real world, therefore
-  Lemma~\ref{lemma:real-balance-security} applies to the simulated parties and
-  by extension to the transactions that appear in \ledger in the ideal world.
+  The only way for \fchan to halt is if either $\texttt{check}_A$ or
+  $\texttt{check}_B$ fails. For these checks to be run, \fchan must have
+  received (\textsc{close}) by \simulator and must have been in the
+  \textsc{open} \textit{State} (as any other state of
+  Fig.~\ref{code:functionality:state-machine-2},
+  l.~\ref{code:functionality:state-machine-2:close:ensure} can only be reached
+  after \fchan has been in the \textsc{open} \textit{State}). Additionally,
+  \fchan can only reach the \textsc{open} \textit{State} if all honest simulated
+  parties transition to the \textsc{open} \textit{State} as well
+  (Fig.~\ref{code:simulator}, l.~\ref{code:simulator:open}), which in turn
+  happens for simulated \alice only if she has received (\textsc{open}, \dots)
+  by \environment. Observe further that \simulator notifies \fchan right away
+  when either simulated party becomes corrupted or negligent
+  (Fig.~\ref{code:simulator}, ll.~\ref{code:simulator:corrupted}
+  and~\ref{code:simulator:negligent} respectively) and the balance of each party
+  is checked by \fchan only if this party is not corrupted nor negligent. These
+  facts in combination mean that for each party, whenever the prerequisites for
+  Lemma~\ref{lemma:ideal-balance} are true the prerequisites for
+  Lemma~\ref{lemma:real-balance-security} are also true and therefore the check
+  for this party will succeed (c.f.
+  Fig~\ref{code:functionality:state-machine-2},
+  l.~\ref{code:functionality:state-machine-2:close:coins}). Furthermore, when
+  the prerequisites for Lemma~\ref{lemma:ideal-balance} do not hold, the check
+  for the respective party will be true. On aggregate, when an ideal execution
+  of \fchan and \simulator take place, in no case will \fchan halt.
 \end{proof}
