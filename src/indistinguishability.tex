@@ -1,0 +1,22 @@
+\begin{theorem}[Recursive Virtual Payment Channel Security]
+  The protocol $\textsc{LN}$ realises $\fchan$ with simulator \simulator given a
+  global functionality $\ledger$ and assuming the security of the underlying
+  digital signature. Specifically,
+  \begin{gather*}
+    \forall \text{ PPT } \adversary, \environment \text{ it is }
+    \textsc{exec}^{\ledger}_{\textsc{LN}, \adversary, \environment} =
+    \textsc{exec}^{\fchan, \ledger}_{\simulator_{\adversary}, \environment}
+  \end{gather*}
+\end{theorem}
+
+\begin{proof}
+  By inspection of Figs.~\ref{code:functionality:rules}
+  and~\ref{code:simulator:flow} we can deduce that for a particular
+  \environment, in the ideal world execution $\textsc{exec}^{\fchan,
+  \ledger}_{\simulator_{\adversary}, \environment}$, $\simulator_{\adversary}$
+  simulates internally the two \textsc{ln} parties exactly as they would execute
+  in the real world execution, $\textsc{exec}^{\ledger}_{\textsc{LN},
+  \adversary, \environment}$ in case \fchan never halts. The latter is true
+  according to Lemma~\ref{lemma:no-halt}, therefore the two executions are
+  information-theoretically indistinguishable.
+\end{proof}
