@@ -48,6 +48,7 @@
         will always deliver (\textsc{corrupt}) successfully.}
         \State send (\textsc{info}, \textsc{became corrupted or negligent}, $P$)
         to \fchan
+        \label{code:simulator:corrupted}
       \EndIndent
       \Statex
 
@@ -58,6 +59,7 @@
       \Indent
         \State send (\textsc{info}, \textsc{became corrupted or negligent}, $P$)
         to \fchan
+        \label{code:simulator:negligent}
       \EndIndent
       \Statex
 
@@ -76,6 +78,7 @@
       l.~\ref{code:ln:open:state-open}):
       \Indent
         \State send (\textsc{info}, \textsc{open}) to \fchan
+        \label{code:simulator:open}
       \EndIndent
       \Statex
 

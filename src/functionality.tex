@@ -146,12 +146,14 @@ channel)}
       \Indent
         \State ensure $\itistate \in \{\textsc{open}, \textsc{closing},
         \textsc{paying}, \textsc{funding}\}$
+        \label{code:functionality:state-machine-2:close:ensure}
         \For{$P \in \{A, B\}$}
           \If{$\texttt{is\_corrupted\_or\_negligent}_P =$ False}
             \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
             $\Sigma_P$
             \State $\coins{P} \gets$ sum of coins exclusively spendable by
             $\pk{P}$ in $\Sigma_P$
+            \label{code:functionality:state-machine-2:close:coins}
           \EndIf
         \EndFor
         \State $\texttt{check}_A \gets \texttt{is\_corrupted\_or\_negligent}_A
