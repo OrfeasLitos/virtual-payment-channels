@@ -154,9 +154,11 @@ channel)}
             $\pk{P}$ in $\Sigma_P$
           \EndIf
         \EndFor
-        \If{($\texttt{is\_corrupted\_or\_negligent}_A \vee \coins{A} \geq
-        \balance{A})$ $\wedge (\texttt{is\_corrupted\_or\_negligent}_B \vee
-        \coins{B} \geq \balance{B})$}
+        \State $\texttt{check}_A \gets \texttt{is\_corrupted\_or\_negligent}_A
+        \vee \coins{A} \geq \balance{A}$
+        \State $\texttt{check}_B \gets \texttt{is\_corrupted\_or\_negligent}_B
+        \vee \coins{B} \geq \balance{B}$
+        \If{$\texttt{check}_A \wedge \texttt{check}_B$}
           \State $\itistate \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}
           \State halt
