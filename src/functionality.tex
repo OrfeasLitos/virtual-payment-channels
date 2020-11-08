@@ -52,6 +52,14 @@ channel)}
       \State On (\textsc{became corrupted or negligent}, $P$) by \adversary:
       \Indent
         \State $\texttt{ignore}_P \gets$ True
+        \If{$\texttt{ignore}_{\bar{P}} = \mathrm{True}$}
+          \State replace all actions in
+          Fig.~\ref{code:functionality:state-machine-1}
+          and~\ref{code:functionality:state-machine-2} with no-op \Comment{if
+          both parties are corrupted, \fchan deactivates its state machine and
+          does not do the balance check -- it becomes a simple relay between
+          \environment and \simulator}
+        \EndIf
       \EndIndent
       \Statex
 
