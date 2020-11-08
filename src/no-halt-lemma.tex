@@ -1,8 +1,9 @@
 \begin{lemma}[No halt]
 \label{lemma:no-halt}
-  In an ideal execution with \fchan and \simulator, the functionality never
-  halts (i.e. l.~\ref{code:functionality:state-machine-2:halt} of
-  Fig.~\ref{code:functionality:state-machine-2} is never executed).
+  In an ideal execution with \fchan and \simulator, the functionality halts with
+  negligible probability in the security parameter (i.e.
+  l.~\ref{code:functionality:state-machine-2:halt} of
+  Fig.~\ref{code:functionality:state-machine-2} is executed negligibly often).
 \end{lemma}
 
 \begin{proof}
@@ -30,5 +31,6 @@
   l.~\ref{code:functionality:state-machine-2:close:coins}). Furthermore, when
   the prerequisites for Lemma~\ref{lemma:ideal-balance} do not hold, the check
   for the respective party will be true. On aggregate, when an ideal execution
-  of \fchan and \simulator take place, in no case will \fchan halt.
+  of \fchan and \simulator take place, \fchan will halt with negligible
+  probability in the security parameter.
 \end{proof}

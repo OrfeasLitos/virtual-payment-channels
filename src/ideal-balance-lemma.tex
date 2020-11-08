@@ -20,7 +20,8 @@
     \textsc{open} \textit{State}] $l$ times.
   \end{itemize}
   Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ or
-  $\bar{P}$ receives $(\textsc{close})$ by \simulator, then
+  $\bar{P}$ receives $(\textsc{close})$ by \simulator, then the following holds
+  with overwhelming probability on the security parameter:
   \begin{equation}
     \texttt{balance}_B = \phi \cdot c - \sum\limits_{i=1}^n f_i -
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
