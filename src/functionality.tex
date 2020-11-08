@@ -43,15 +43,15 @@ channel)}
       \Indent
         \State $\pk{A} \gets \bot$; $\pk{B} \gets \bot$
         \State $\balance{A} \gets 0$; $\balance{B} \gets 0$
-        \State $\texttt{is\_corrupted\_or\_negligent}_A \gets$ False;
-        $\texttt{is\_corrupted\_or\_negligent}_B \gets$ False;
+        \State $\texttt{ignore}_A \gets$ False;
+        $\texttt{ignore}_B \gets$ False;
         \State $\itistate \gets \bot$
       \EndIndent
       \Statex
 
       \State On (\textsc{became corrupted or negligent}, $P$) by \adversary:
       \Indent
-        \State $\texttt{is\_corrupted\_or\_negligent}_P \gets$ True
+        \State $\texttt{ignore}_P \gets$ True
       \EndIndent
       \Statex
 
@@ -148,7 +148,7 @@ channel)}
         \textsc{paying}, \textsc{funding}\}$
         \label{code:functionality:state-machine-2:close:ensure}
         \For{$P \in \{A, B\}$}
-          \If{$\texttt{is\_corrupted\_or\_negligent}_P =$ False}
+          \If{$\texttt{ignore}_P =$ False}
             \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
             $\Sigma_P$
             \State $\coins{P} \gets$ sum of coins exclusively spendable by
@@ -156,10 +156,10 @@ channel)}
             \label{code:functionality:state-machine-2:close:coins}
           \EndIf
         \EndFor
-        \State $\texttt{check}_A \gets \texttt{is\_corrupted\_or\_negligent}_A
-        \vee \coins{A} \geq \balance{A}$
-        \State $\texttt{check}_B \gets \texttt{is\_corrupted\_or\_negligent}_B
-        \vee \coins{B} \geq \balance{B}$
+        \State $\texttt{check}_A \gets \texttt{ignore}_A \vee \coins{A} \geq
+        \balance{A}$
+        \State $\texttt{check}_B \gets \texttt{ignore}_B \vee \coins{B} \geq
+        \balance{B}$
         \If{$\texttt{check}_A \wedge \texttt{check}_B$}
           \State $\itistate \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}
