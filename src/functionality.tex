@@ -92,7 +92,18 @@ channel)}
 
       \State On (\textsc{open}) by \adversary:
       \Indent
-        \State ensure $\itistate = \textsc{tentative-open}$
+        \If{$\texttt{ignore}_A =
+        \texttt{ignore}_B = \mathrm{False}$}
+          \State ensure $\itistate = \textsc{tentative-open}$
+        \ElsIf{$\texttt{ignore}_A = \text{True} \wedge \texttt{ignore}_B =
+        \text{False}$}
+          \State ensure $\itistate \in \{\textsc{init}_B,
+          \textsc{tentative-open}\}$
+        \ElsIf{$\texttt{ignore}_A = \text{False} \wedge \texttt{ignore}_B =
+        \text{True}$}
+          \State ensure $\itistate \in \{\textsc{init}_A,
+          \textsc{tentative-open}\}$
+        \EndIf
         \State $\itistate \gets \textsc{open}$
       \EndIndent
       \Statex
