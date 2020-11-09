@@ -577,6 +577,7 @@
       \State $\texttt{last\_poll} \gets |\Sigma|$
       \State call \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next})
       of $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
+      \label{code:virtual-layer:revocation:revoc-by-next}
       \State ensure
       \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
       returns (\textsc{ok}) \Comment{If the ``ensure'' fails, the opening
@@ -603,6 +604,7 @@
     \texttt{guest}.\textsc{revokePrevious}()$
     \State output (\textsc{hosts ready}) to \texttt{guest} and expect reply
     (\textsc{host ack})
+    \label{code:virtual-layer:revocation:hosts-ready}
     \State \Return \texttt{revoc\_for\_prev} \Comment{we are not
     \texttt{host\_fundee} nor \texttt{host\_funder}}
     \end{algorithmic}

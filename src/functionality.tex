@@ -8,9 +8,8 @@ channel)}
     \begin{itemize}
       \item On receiving input (\texttt{msg}) by \environment to $P \in
       \{\alice, \bob\}$, handle it according to the corresponding rule in
-      Fig~\ref{code:functionality:state-machine-1} or
-      Fig~\ref{code:functionality:state-machine-2} (if any) and subsequently
-      send (\textsc{relay}, \texttt{msg}, $P$, \environment, input) \adversary.
+      Fig~\ref{code:functionality:state-machine} (if any) and subsequently send
+      (\textsc{relay}, \texttt{msg}, $P$, \environment, input) \adversary.
       \Comment{all messages by \environment are relayed to \adversary}
       \item On receiving (\texttt{msg}) by $R \neq \environment$ to $P \in
       \{\alice, \bob\}$ by means of $\texttt{mode} \in \{\mathrm{input},
@@ -24,8 +23,7 @@ channel)}
       outgoing messages by \fchan}
       \item On receiving (\textsc{info}, \texttt{msg}) by \adversary, handle
       (\texttt{msg}) according to the corresponding rule in
-      Fig~\ref{code:functionality:state-machine-1} or
-      Fig~\ref{code:functionality:state-machine-2} (if any). After handling the
+      Fig~\ref{code:functionality:state-machine} (if any). After handling the
       message or after an ``ensure'' fails, send (\textsc{handled},
       \texttt{msg}) to \adversary. \Comment{(\textsc{info}, \texttt{msg})
       messages by \simulator always return control to \simulator without any
@@ -37,7 +35,7 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan{} -- state machine, Pt. 1}
+  \begin{systembox}{\fchan{} -- state machine}
     \begin{algorithmic}[1]
       \State On initalisation:
       \Indent
@@ -45,149 +43,77 @@ channel)}
         \State $\balance{A} \gets 0$; $\balance{B} \gets 0$
         \State $\texttt{ignore}_A \gets$ False;
         $\texttt{ignore}_B \gets$ False;
-        \State $\itistate \gets \bot$
+        \State $\itistate \gets \textsc{uninit}$
       \EndIndent
       \Statex
 
       \State On (\textsc{became corrupted or negligent}, $P$) by \adversary:
+      \Comment{when in any \itistate}
       \Indent
         \State $\texttt{ignore}_P \gets$ True
-        \If{$\texttt{ignore}_{\bar{P}} = \mathrm{True}$}
-          \State replace all actions in
-          Fig.~\ref{code:functionality:state-machine-1}
-          and~\ref{code:functionality:state-machine-2} with no-op \Comment{if
-          both parties are corrupted, \fchan deactivates its state machine and
-          does not do the balance check -- it becomes a simple relay between
-          \environment and \simulator}
-        \EndIf
+        \IfThen{$\texttt{ignore}_{\bar{P}} = \mathrm{True}$}{$\itistate \gets
+        \textsc{both corrupted}$} \Comment{sink state}
       \EndIndent
       \Statex
 
-      \State On (\textsc{init}, $\pk{}$) to $P$ by \environment:
+      \State On (\textsc{init}, $\pk{}$) to $P$ by \environment when $\itistate
+      = \textsc{uninit}$:
       \Indent
-        \IfThenElse{$P = \bob$}{$\bar{P} \gets \alice$}{$\bar{P} \gets \bob$}
-        \State ensure $\itistate \in \{\bot, \textsc{init}_{\bar{P}}\}$
-        \State $\pk{P} \gets \pk{}$
-        \IfThenElse{$\itistate = \bot$}{$\itistate \gets
-        \textsc{tentative-init}_P$}{$\itistate \gets \textsc{tentative-init}$}
+        \IfThen{$\pk{P} = \bot$}{$\pk{P} \gets \pk{}$}
+        \IfThen{$\bigwedge\limits_{P \in \{A, B\}} (\pk{P} \neq \bot \vee
+        \texttt{ignore}_P = \mathrm{True}$)}{$\itistate \gets \textsc{init}$}
       \EndIndent
       \Statex
 
-      \State On (\textsc{init}, $P$) by \adversary:
+      \State On (\textsc{open}, $x$) by \adversary when $\itistate =
+      \textsc{init}$:
       \Indent
-        \IfThen{$\itistate = \textsc{tentative-init}_P$}{$\itistate \gets
-        \textsc{init}_P$}
-        \IfThen{$\itistate = \textsc{tentative-init}$}{$\itistate \gets
-        \textsc{init}$}
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{open}, $x$, $\dots$) to \alice by \environment:
-      \Indent
-        \State ensure $\itistate = \textsc{init}$
-        \State $\balance{A} \gets x$; $\balance{B} \gets 0$
-        \State $\itistate \gets \textsc{tentative-open}$
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{open}) by \adversary:
-      \Indent
-        \If{$\texttt{ignore}_A =
-        \texttt{ignore}_B = \mathrm{False}$}
-          \State ensure $\itistate = \textsc{tentative-open}$
-        \ElsIf{$\texttt{ignore}_A = \text{True} \wedge \texttt{ignore}_B =
-        \text{False}$}
-          \State ensure $\itistate \in \{\textsc{init}_B,
-          \textsc{tentative-open}\}$
-        \ElsIf{$\texttt{ignore}_A = \text{False} \wedge \texttt{ignore}_B =
-        \text{True}$}
-          \State ensure $\itistate \in \{\textsc{init}_A,
-          \textsc{tentative-open}\}$
-        \EndIf
+        \State $\pk{A} \gets x$
         \State $\itistate \gets \textsc{open}$
       \EndIndent
       \Statex
 
-      \State On (\textsc{pay}, $x$) to $P$ by \environment:
+      \State On (\textsc{pay}, $x$, $P$, $\bar{P}$) by \adversary when
+      $\itistate = \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
       \Indent
-        \State ensure $\itistate = \textsc{open}$
-        \State $c \gets x$
-        \IfThenElse{$P = \alice$}{$S \gets \alice$; $\bar{S} \gets \bob$}{$S
-        \gets \bob$; $\bar{S} \gets \alice$}
-        \State $\itistate \gets \textsc{paying}$
+        \State $\pk{P} \gets \pk{P} - x$; $\pk{\bar{P}} \gets \pk{\bar{P}} + x$
       \EndIndent
       \Statex
 
-      \State On (\textsc{pay ok}) by \adversary:
+      \State On (\textsc{fund}, $x$, $P$) by \adversary when $\itistate =
+      \textsc{open}$:
       \Indent
-        \State ensure $\itistate = \textsc{paying}$
-        \State $\balance{S} \gets \balance{S} - c$; $\balance{\bar{S}} \gets
-        \balance{\bar{S}} + c$
-        \State forget $c, S, \bar{S}$
-        \State $\itistate \gets \textsc{open}$
-      \EndIndent
-    \end{algorithmic}
-  \end{systembox}
-  \caption{}
-  \label{code:functionality:state-machine-1}
-\end{figure}
-
-\begin{figure}[H]
-  \begin{systembox}{\fchan{} -- state machine, Pt. 2}
-    \begin{algorithmic}[1]
-      \State On (\textsc{fund me}, $x$, $\dots$) to $P$ by $R$:
-      \Indent
-        \State ensure $R$ is an ITI that runs \fchan or \pchan code
-        \State ensure $\itistate = \textsc{open}$
-        \State $c \gets x$
-        \IfThenElse{$P = \alice$}{$S \gets \alice$}{$S \gets \bob$}
-        \State $\itistate \gets \textsc{funding}$
+        \State $\pk{P} \gets \pk{P} - x$
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund ok}) by \adversary:
+      \State On (\textsc{close}, $P$) by \adversary when $\itistate =
+      \textsc{open}$:
+      \label{code:functionality:state-machine:close:prev-state}
       \Indent
-        \State ensure $\itistate = \textsc{funding}$
-        \State $\balance{S} \gets \balance{S} - c$
-        \State forget $c, S$
-        \State $\itistate \gets \textsc{open}$
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{close}) by \environment:
-      \Indent
-        \State ensure $\itistate = \textsc{open}$
-        \State $\itistate \gets \textsc{closing}$
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{close}) by \adversary:
-      \Indent
-        \State ensure $\itistate \in \{\textsc{open}, \textsc{closing},
-        \textsc{paying}, \textsc{funding}\}$
-        \label{code:functionality:state-machine-2:close:ensure}
-        \For{$P \in \{A, B\}$}
-          \If{$\texttt{ignore}_P =$ False}
-            \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
-            $\Sigma_P$
-            \State $\coins{P} \gets$ sum of coins exclusively spendable by
-            $\pk{P}$ in $\Sigma_P$
-            \label{code:functionality:state-machine-2:close:coins}
+        \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
+        $\Sigma$
+        \State \Comment{$P$'s state surely contains correct balances, so use it
+        for both parties. This is secure as, given how \ledger works, eventually
+        $\bar{P}$'s state will catch up}
+        \For{$S \in \{A, B\}$}
+          \If{$\texttt{ignore}_S =$ False}
+            \State $\coins{S} \gets$ sum of coins exclusively spendable by
+            $\pk{S}$ in $\Sigma$
+            \label{code:functionality:state-machine:close:coins}
           \EndIf
+          \State $\texttt{check}_S \gets \texttt{ignore}_S \vee \coins{S} \geq
+          \balance{S}$
         \EndFor
-        \State $\texttt{check}_A \gets \texttt{ignore}_A \vee \coins{A} \geq
-        \balance{A}$
-        \State $\texttt{check}_B \gets \texttt{ignore}_B \vee \coins{B} \geq
-        \balance{B}$
         \If{$\texttt{check}_A \wedge \texttt{check}_B$}
           \State $\itistate \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}
           \State halt
-          \label{code:functionality:state-machine-2:halt}
+          \label{code:functionality:state-machine:halt}
         \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:state-machine-2}
+  \label{code:functionality:state-machine}
 \end{figure}

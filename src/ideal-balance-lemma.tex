@@ -7,23 +7,24 @@
   \begin{itemize}
     \item the internal variable $\texttt{ignore}_P$ of \fchan has the value
     ``False'',
-    \item If $P = \alice$, $P$ has received $(\textsc{open}, c, \dots)$ by
-    \environment,
-    \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
-    \fchan or \pchan ITI while \textit{State} was \textsc{open} and subsequently
-    \fchan transitioned to \textsc{open} \textit{State}] $n$ times,
-    \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
-    \textit{State} was \textsc{open} and \fchan subsequently transitioned to
-    \textsc{open} \textit{State}] $m$ times,
-    \item $\bar{P}$ [has received $(\textsc{pay}, e_i)$ by \environment while
-    \textit{State} was \textsc{open} and \fchan subsequently transitioned to
-    \textsc{open} \textit{State}] $l$ times.
+    \item \fchan has received $(\textsc{open}, c)$ by \simulator,
+    \item \fchan has received $(\textsc{fund}, f_i, P)$ by \simulator while
+    \textit{State} was \textsc{open} $n \geq 0$ times,
+    \item \fchan has received $(\textsc{pay}, d_i, P, \bar{P})$ by \simulator
+    while \textit{State} was \textsc{open} $m \geq 0$ times,
+    \item \fchan has received $(\textsc{pay}, e_i, \bar{P}, P)$ by \simulator
+    while \textit{State} was \textsc{open} $l \geq 0$ times.
   \end{itemize}
-  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ or
-  $\bar{P}$ receives $(\textsc{close})$ by \simulator, then the following holds
-  with overwhelming probability on the security parameter:
+  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If \fchan
+  receives $(\textsc{close}, P)$ or $(\textsc{close}, \bar{P})$ by \simulator,
+  then the following holds with overwhelming probability on the security
+  parameter:
   \begin{equation}
-    \texttt{balance}_B = \phi \cdot c - \sum\limits_{i=1}^n f_i -
+    \texttt{balance}_P = \phi \cdot c - \sum\limits_{i=1}^n f_i -
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
   \end{equation}
 \end{lemma}
+
+\begin{proof}
+  \TODO{continue}
+\end{proof}

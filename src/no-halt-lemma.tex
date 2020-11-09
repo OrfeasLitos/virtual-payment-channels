@@ -2,35 +2,39 @@
 \label{lemma:no-halt}
   In an ideal execution with \fchan and \simulator, the functionality halts with
   negligible probability in the security parameter (i.e.
-  l.~\ref{code:functionality:state-machine-2:halt} of
-  Fig.~\ref{code:functionality:state-machine-2} is executed negligibly often).
+  l.~\ref{code:functionality:state-machine:halt} of
+  Fig.~\ref{code:functionality:state-machine} is executed negligibly often).
 \end{lemma}
 
 \begin{proof}
   The only way for \fchan to halt is if either $\texttt{check}_A$ or
-  $\texttt{check}_B$ fails. For these checks to be run, \fchan must have
-  received (\textsc{close}) by \simulator and must have been in the
-  \textsc{open} \textit{State} (as any other state of
-  Fig.~\ref{code:functionality:state-machine-2},
-  l.~\ref{code:functionality:state-machine-2:close:ensure} can only be reached
-  after \fchan has been in the \textsc{open} \textit{State}). Additionally,
+  $\texttt{check}_B$ fails. For these checks to take place, \fchan must have
+  received (\textsc{close}, \alice) or (\textsc{close}, \bob) by \simulator
+  while in the \textsc{open} \textit{State} (c.f.
+  Fig.~\ref{code:functionality:state-machine},
+  l.~\ref{code:functionality:state-machine:close:prev-state}). Additionally,
   \fchan can only reach the \textsc{open} \textit{State} if all honest simulated
   parties transition to the \textsc{open} \textit{State} as well
   (Fig.~\ref{code:simulator}, l.~\ref{code:simulator:open}), which in turn
-  happens for simulated \alice only if she has received (\textsc{open}, \dots)
-  by \environment. Observe further that \simulator notifies \fchan right away
-  when either simulated party becomes corrupted or negligent
-  (Fig.~\ref{code:simulator}, ll.~\ref{code:simulator:corrupted}
-  and~\ref{code:simulator:negligent} respectively) and the balance of each party
-  is checked by \fchan only if this party is not corrupted nor negligent. These
-  facts in combination mean that for each party, whenever the prerequisites for
-  Lemma~\ref{lemma:ideal-balance} are true the prerequisites for
-  Lemma~\ref{lemma:real-balance-security} are also true and therefore the check
-  for this party will succeed (c.f.
-  Fig~\ref{code:functionality:state-machine-2},
-  l.~\ref{code:functionality:state-machine-2:close:coins}). Furthermore, when
-  the prerequisites for Lemma~\ref{lemma:ideal-balance} do not hold, the check
-  for the respective party will be true. On aggregate, when an ideal execution
-  of \fchan and \simulator take place, \fchan will halt with negligible
-  probability in the security parameter.
+  happens for honest simulated \alice only if she has received (\textsc{open},
+  \dots) by \environment (c.f. Fig~\ref{code:ln:open}). Observe further that
+  \simulator notifies \fchan right away when either simulated party becomes
+  corrupted or negligent (Fig.~\ref{code:simulator},
+  ll.~\ref{code:simulator:corrupted} and~\ref{code:simulator:negligent}
+  respectively) and the balance of each party is checked by \fchan only if this
+  party is not corrupted nor negligent. These facts in combination mean that for
+  each party, whenever the prerequisites for Lemma~\ref{lemma:ideal-balance} are
+  true the prerequisites for Lemma~\ref{lemma:real-balance-security} are also
+  true and therefore the check for this party will succeed (c.f.
+  Fig~\ref{code:functionality:state-machine},
+  l.~\ref{code:functionality:state-machine:close:coins}). Furthermore, when the
+  first prerequisite for Lemma~\ref{lemma:ideal-balance} does not hold (i.e.
+  $\texttt{ignore}_P = \mathrm{False}$), the check for the respective party will
+  be true, when the second prerequisite does not hold (i.e.  $\textit{State}
+  \neq \textsc{open}$ when (\textsc{close}, \alice/\bob) is received) the check
+  will not take place at all and the other three prerequisites hold always,
+  therefore the check cannot fail if the prerequisites for
+  Lemma~\ref{lemma:ideal-balance} do not hold. On aggregate, when an ideal
+  execution of \fchan and \simulator take place, \fchan will halt with
+  negligible probability in the security parameter.
 \end{proof}

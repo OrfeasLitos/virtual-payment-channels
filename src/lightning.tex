@@ -374,7 +374,7 @@
       \texttt{hops}, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
       \Indent
         \State ensure $\itistate = \textsc{open}$
-        \State ensure $c_P - \texttt{locked}_P \geq c$
+        \State ensure $c_P - \texttt{locked}_P \geq c_{\mathrm{guest}}$
         \State $\itistate \gets \textsc{virtualising}$
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
@@ -409,6 +409,8 @@
           to \texttt{fundee} and expect reply (\textsc{fund ack})
         \ElsIf{we have received input \textsc{fund me} just before we moved to
         the \textsc{virtualising} state} \Comment{we are the first hop}
+          \State $c_P \gets c_P - c_{\mathrm{guest}}$
+          \label{code:ln:virtualise:start-end:reduce-coins}
           \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$)
           to \texttt{funder} \Comment{do not expect reply by \texttt{funder}}
         \EndIf

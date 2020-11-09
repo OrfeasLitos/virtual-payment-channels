@@ -33,11 +33,10 @@
 \begin{figure}[H]
   \begin{simulatorbox}{\simulator{} -- notifications to \fchan}
     \begin{itemize}
-      \item When referring to a player $P$, it must be one of the parties that
-      correspond to \fchan.
-      \item When an action in the current Figure interrupts the simulation of a
-      party, the latter is continued from the interruption location after
-      control is handed back by \fchan.
+      \item ``$P$'' refers one of the parties that correspond to \fchan.
+      \item When an action in this Figure interrupts an ITI simulation, continue
+      simulating from the interruption location once action is over/\fchan hands
+      control back.
     \end{itemize} \ \\
     \begin{algorithmic}[1]
       \State On (\textsc{corrupt}) by \adversary, addresed to $P$:
@@ -63,10 +62,11 @@
       \EndIndent
       \Statex
 
-      \State When simulated $P$ moves to the \textsc{init} state
-      (Fig.~\ref{code:ln:init}, l.~\ref{code:ln:init:change-state}):
+      \State When simulated honest \alice receives (\textsc{open}, $x$, $\dots$)
+      by \environment:
       \Indent
-        \State send (\textsc{info}, \textsc{init}, $P$) to \fchan
+        \State store $x$ \Comment{will be used to inform \fchan once the channel
+        is open}
       \EndIndent
       \Statex
 
@@ -77,17 +77,20 @@
       l.~\ref{code:ln:bob:state-open}/Fig.~\ref{code:ln:open},
       l.~\ref{code:ln:open:state-open}):
       \Indent
-        \State send (\textsc{info}, \textsc{open}) to \fchan
+        \IfThen{$x$ is undefined}{$x \gets 0$} \Comment{$x$ is already defined
+        if \alice is honest}
+        \State send (\textsc{info}, \textsc{open}, $x$) to \fchan
         \label{code:simulator:open}
       \EndIndent
       \Statex
 
-      \State When (both \fchan's simulated parties are honest and one party
-      completes sending a payment (Fig.~\ref{code:ln:pay:revocations},
-      l.~\ref{code:ln:pay:revocations:paid-out}) and the counterparty completes
+      \State When (both \fchan's simulated parties are honest and $P$ completes
+      sending a payment of value $c$ (Fig.~\ref{code:ln:pay:revocations},
+      l.~\ref{code:ln:pay:revocations:paid-out}) and $\bar{P}$ completes
       receiving that payment (Fig.~\ref{code:ln:pay:revocations},
-      l.~\ref{code:ln:pay:revocations:paid-in})), or (when only one of the two
-      is honest and (completes either receiving or sending a payment)):
+      l.~\ref{code:ln:pay:revocations:paid-in})), or (when only $S$ is honest
+      and (completes either receiving ($\bar{P} \gets S$, $P \gets \bar{S}$) or
+      sending ($P \gets S$, $\bar{P} \gets \bar{S}$) a payment of value $c$)):
       \Comment{also send this message if both parties are honest when
       Fig.~\ref{code:ln:pay:revocations},
       l.~\ref{code:ln:pay:revocations:paid-out} is executed by one party, but
@@ -95,28 +98,33 @@
       Fig.~\ref{code:ln:pay:revocations},
       l.~\ref{code:ln:pay:revocations:paid-in}}
       \Indent
-        \State send (\textsc{info}, \textsc{pay ok}) to \fchan
+        \State send (\textsc{info}, \textsc{pay}, $c$, $P$, $\bar{P}$) to \fchan
       \EndIndent
       \Statex
 
-      \State When (both \fchan's simulated parties are honest and they both
-      complete changing to a new host (Fig.~\ref{code:ln:methods-for-virt},
-      l.~\ref{code:ln:methods-for-virt:host-update})), or (when only one of the
-      two is honest and it completes changing to a new host): \Comment{also send
-      this message if both parties are honest when the change of host is
-      executed by one party, but its counterparty is corrupted before changing
-      host}
+      \State When honest simulated $P$ executes
+      Fig.~\ref{code:ln:virtualise:start-end},
+      l.~\ref{code:ln:virtualise:start-end:reduce-coins}: \Comment{if $\bar{P}$
+      is honest, it has already moved to the new host, c.f.
+      Fig~\ref{code:virtual-layer:revocation},
+      l.~\ref{code:virtual-layer:revocation:revoc-by-next}
+      and~\ref{code:virtual-layer:revocation:hosts-ready}, so lifting to next
+      layer is complete}
       \Indent
-        \State send (\textsc{info}, \textsc{fund ok}) to \fchan
+        \State extract $c_{\mathrm{guest}}$ from executed
+        Fig.~\ref{code:ln:virtualise:start-end},
+        l.~\ref{code:ln:virtualise:start-end:reduce-coins}
+        \State send (\textsc{info}, \textsc{fund}, $c_{\mathrm{guest}}$, $P$) to
+        \fchan
       \EndIndent
       \Statex
 
-      \State When one of the honest simulated \fchan's parties moves to the
+      \State When one of the honest simulated \fchan's parties $P$ moves to the
       \textsc{closed} state (Fig.~\ref{code:ln:poll},
       l.~\ref{code:ln:poll:state-closed}/Fig.~\ref{code:ln:close},
       l.~\ref{code:ln:close:state-closed}):
       \Indent
-        \State send (\textsc{info}, \textsc{close}) to \fchan
+        \State send (\textsc{info}, \textsc{close}, $P$) to \fchan
       \EndIndent
     \end{algorithmic}
   \end{simulatorbox}
