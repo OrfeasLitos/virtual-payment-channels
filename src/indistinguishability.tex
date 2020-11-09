@@ -16,7 +16,7 @@
   \ledger}_{\simulator_{\adversary}, \environment}$, $\simulator_{\adversary}$
   simulates internally the two \textsc{ln} parties exactly as they would execute
   in the real world execution, $\textsc{exec}^{\ledger}_{\textsc{LN},
-  \adversary, \environment}$ in case \fchan does not halt. The latter is true
-  with overwhelming probability according to Lemma~\ref{lemma:no-halt},
+  \adversary, \environment}$ in case \fchan does not halt. Indeed, \fchan only
+  halts with negligible probability according to Lemma~\ref{lemma:no-halt},
   therefore the two executions are computationally indistinguishable.
 \end{proof}
