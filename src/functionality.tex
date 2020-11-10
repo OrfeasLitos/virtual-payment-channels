@@ -38,6 +38,7 @@ channel)}
   \begin{systembox}{\fchan{} -- state machine}
     \begin{algorithmic}[1]
       \State On initalisation:
+      \label{code:functionality:state-machine:boot}
       \Indent
         \State $\pk{A} \gets \bot$; $\pk{B} \gets \bot$
         \State $\balance{A} \gets 0$; $\balance{B} \gets 0$
@@ -67,6 +68,7 @@ channel)}
 
       \State On (\textsc{open}, $x$) by \adversary when $\itistate =
       \textsc{init}$:
+      \label{code:functionality:state-machine:when-open}
       \Indent
         \State $\balance{A} \gets x$
         \State $\itistate \gets \textsc{open}$
@@ -75,6 +77,7 @@ channel)}
 
       \State On (\textsc{pay}, $x$, $P$, $\bar{P}$) by \adversary when
       $\itistate = \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
+      \label{code:functionality:state-machine:when-pay}
       \Indent
         \State $\balance{P} \gets \balance{P} - x$; $\balance{\bar{P}} \gets
         \balance{\bar{P}} + x$
@@ -83,6 +86,7 @@ channel)}
 
       \State On (\textsc{fund}, $x$, $P$) by \adversary when $\itistate =
       \textsc{open}$:
+      \label{code:functionality:state-machine:when-fund}
       \Indent
         \State $\balance{P} \gets \balance{P} - x$
       \EndIndent

@@ -26,5 +26,43 @@
 \end{lemma}
 
 \begin{proof}
-  \TODO{continue}
+  \ \\
+  \begin{itemize}
+    \item When \fchan is initialised, it sets $\balance{A} \gets 0$ and
+    $\balance{B} \gets 0$ (Fig.~\ref{code:functionality:state-machine},
+    l.~\ref{code:functionality:state-machine:boot}).
+    \item When \fchan receives $(\textsc{open}, c)$ by \simulator when the
+    former is in the \textsc{init} \textit{State}, it transitions away from this
+    state for the remainder of the execution and sets $\balance{A} \gets c$
+    (Fig.~\ref{code:functionality:state-machine},
+    l.~\ref{code:functionality:state-machine:when-open}). This happens at most
+    once during the entire execution and is necessary to transition to the
+    \textsc{open} \textit{State}.
+    \item Every time \fchan receives $(\textsc{fund}, f_i, P)$ by \simulator
+    while the former is in the \textsc{open} \textit{State}, it decrements
+    $\balance{P}$ by $f_i$ (Fig.~\ref{code:functionality:state-machine},
+    l.~\ref{code:functionality:state-machine:when-fund}). If $(\textsc{fund},
+    f_i, P)$ is received $n \geq 0$ times, $\balance{P}$ will be decremented by
+    $\sum\limits_{i=1}^n f_i$ in total.
+    \item Every time \fchan receives $(\textsc{pay}, d_i, P, \bar{P})$ by
+    \simulator while the former is in the \textsc{open} \textit{State}, it
+    decrements $\balance{P}$ by $d_i$
+    (Fig.~\ref{code:functionality:state-machine},
+    l.~\ref{code:functionality:state-machine:when-pay}). If $(\textsc{pay}, d_i,
+    P, \bar{P})$ is received $m \geq 0$ times, $\balance{P}$ will be decremented
+    by $\sum\limits_{i=1}^m d_i$ in total.
+    \item Every time \fchan receives $(\textsc{pay}, e_i, \bar{P}, P)$ by
+    \simulator while the former is in the \textsc{open} \textit{State}, it
+    increments $\balance{P}$ by $e_i$
+    (Fig.~\ref{code:functionality:state-machine},
+    l.~\ref{code:functionality:state-machine:when-pay}). If $(\textsc{pay}, e_i,
+    \bar{P}, P)$ is received $l \geq 0$ times, $\balance{P}$ will be incremented
+    by $\sum\limits_{i=1}^l e_i$ in total.
+  \end{itemize}
+  On aggregate, after the above are completed and when \fchan receives
+  (\textsc{close}, $P$) or (\textsc{close}, $\bar{P}$) by \simulator and
+  assuming $\texttt{ignore}_P = \mathrm{False}$, $\balance{P} = c -
+  \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$
+  if $P = \alice$, or else if $P = \bob$, $\balance{P} = - \sum\limits_{i=1}^n
+  f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$.
 \end{proof}
