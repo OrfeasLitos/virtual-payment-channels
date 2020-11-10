@@ -98,6 +98,7 @@
       its counterparty is corrupted before executing
       Fig.~\ref{code:ln:pay:revocations},
       l.~\ref{code:ln:pay:revocations:paid-in}}
+      \label{code:simulator:when-pay}
       \Indent
         \State send (\textsc{info}, \textsc{pay}, $c$, $P$, $\bar{P}$) to \fchan
       \EndIndent
@@ -111,6 +112,7 @@
       l.~\ref{code:virtual-layer:revocation:revoc-by-next}
       and~\ref{code:virtual-layer:revocation:hosts-ready}), so lifting to next
       layer is complete}
+      \label{code:simulator:when-fund}
       \Indent
         \State extract $c_{\mathrm{guest}}$ from executed
         Fig.~\ref{code:ln:virtualise:start-end},

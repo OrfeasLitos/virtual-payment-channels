@@ -22,10 +22,13 @@
   corrupted or negligent (Fig.~\ref{code:simulator},
   ll.~\ref{code:simulator:corrupted} and~\ref{code:simulator:negligent}
   respectively) and the balance of each party is checked by \fchan only if this
-  party is not corrupted nor negligent. These facts in combination mean that for
-  each party, whenever the prerequisites for Lemma~\ref{lemma:ideal-balance} are
-  true the prerequisites for Lemma~\ref{lemma:real-balance-security} are also
-  true and therefore the check for this party will succeed
+  party is not corrupted nor negligent. What is more, \simulator informs \fchan
+  of all successful \textsc{fund}s and \textsc{pay}s (Fig.~\ref{code:simulator},
+  ll.~\ref{code:simulator:when-fund} and~\ref{code:simulator:when-pay}
+  respectively). These facts in combination mean that for each party, whenever
+  the prerequisites for Lemma~\ref{lemma:ideal-balance} are true the
+  prerequisites for Lemma~\ref{lemma:real-balance-security} are also true (with
+  the same $n, m, l$ values) and therefore the check for this party will succeed
   (Fig~\ref{code:functionality:state-machine},
   l.~\ref{code:functionality:state-machine:close:coins}). Furthermore, when the
   first prerequisite for Lemma~\ref{lemma:ideal-balance} does not hold (i.e.
