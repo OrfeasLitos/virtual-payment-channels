@@ -621,11 +621,11 @@
       \Indent
         \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
         \State $\texttt{prev\_went\_on\_chain} \gets \mathrm{TX}_{\mathrm{prev},
-        \mathrm{left}} \in \Sigma \wedge \mathrm{TX}_{\mathrm{prev},
-        \mathrm{both}} \in \Sigma$
+        \mathrm{left}} \in \Sigma \vee \mathrm{TX}_{\mathrm{prev},
+        \mathrm{none}} \in \Sigma$
         \State $\texttt{next\_went\_on\_chain} \gets \mathrm{TX}_{\mathrm{next},
-        \mathrm{right}} \in \Sigma \wedge \mathrm{TX}_{\mathrm{next},
-        \mathrm{both}} \in \Sigma$
+        \mathrm{right}} \in \Sigma \vee \mathrm{TX}_{\mathrm{next},
+        \mathrm{none}} \in \Sigma$
         \State $\texttt{last\_poll} \gets |\Sigma|$
         \If{$\texttt{prev\_went\_on\_chain} \vee
         \texttt{next\_went\_on\_chain}$}
