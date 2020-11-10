@@ -68,7 +68,7 @@ channel)}
       \State On (\textsc{open}, $x$) by \adversary when $\itistate =
       \textsc{init}$:
       \Indent
-        \State $\pk{A} \gets x$
+        \State $\balance{A} \gets x$
         \State $\itistate \gets \textsc{open}$
       \EndIndent
       \Statex
@@ -76,14 +76,15 @@ channel)}
       \State On (\textsc{pay}, $x$, $P$, $\bar{P}$) by \adversary when
       $\itistate = \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
       \Indent
-        \State $\pk{P} \gets \pk{P} - x$; $\pk{\bar{P}} \gets \pk{\bar{P}} + x$
+        \State $\balance{P} \gets \balance{P} - x$; $\balance{\bar{P}} \gets
+        \balance{\bar{P}} + x$
       \EndIndent
       \Statex
 
       \State On (\textsc{fund}, $x$, $P$) by \adversary when $\itistate =
       \textsc{open}$:
       \Indent
-        \State $\pk{P} \gets \pk{P} - x$
+        \State $\balance{P} \gets \balance{P} - x$
       \EndIndent
       \Statex
 
