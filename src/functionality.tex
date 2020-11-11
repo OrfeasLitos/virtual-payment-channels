@@ -48,12 +48,13 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{became corrupted or negligent}, $P$) by \adversary:
-      \Comment{when in any \itistate}
+      \State On (\textsc{became corrupted or negligent}, $P$) by \adversary when
+      in any $\itistate$ or on output (\textsc{used revocation}) by
+      $\texttt{host}_P$ when $\itistate = \textsc{open}$:
       \Indent
         \State $\texttt{ignore}_P \gets$ True
         \IfThen{$\texttt{ignore}_{\bar{P}} = \mathrm{True}$}{$\itistate \gets
-        \textsc{both corrupted}$} \Comment{sink state}
+        \textsc{both ignored}$} \Comment{sink state}
       \EndIndent
       \Statex
 
@@ -66,11 +67,11 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $x$) by \adversary when $\itistate =
-      \textsc{init}$:
+      \State On (\textsc{open}, $x$, $\texttt{host}_A$, $\texttt{host}_B$) by
+      \adversary when $\itistate = \textsc{init}$:
       \label{code:functionality:state-machine:when-open}
       \Indent
-        \State $\balance{A} \gets x$
+        \State $\balance{A} \gets x$; store $\texttt{host}_A, \texttt{host}_B$
         \State $\itistate \gets \textsc{open}$
       \EndIndent
       \Statex
@@ -84,11 +85,12 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund}, $x$, $P$) by \adversary when $\itistate =
-      \textsc{open}$:
+      \State On (\textsc{fund}, $x$, $P$, $\texttt{host}_A$, $\texttt{host}_B$)
+      by \adversary when $\itistate = \textsc{open}$:
       \label{code:functionality:state-machine:when-fund}
       \Indent
-        \State $\balance{P} \gets \balance{P} - x$
+        \State $\balance{P} \gets \balance{P} - x$; update $\texttt{host}_A,
+        \texttt{host}_B$
       \EndIndent
       \Statex
 
