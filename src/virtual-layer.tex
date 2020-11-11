@@ -570,6 +570,7 @@
       \State ensure
       \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_prev})
       returns (\textsc{ok})
+      \label{code:virtual-layer:revocation:non-funder:proc-remote}
     \Else \: \Comment{we are \texttt{host\_funder}}
       \State $\texttt{revoc\_for\_next} \gets
       \texttt{guest}.\textsc{revokePrevious}()$
@@ -583,6 +584,7 @@
       returns (\textsc{ok}) \Comment{If the ``ensure'' fails, the opening
       process freezes, this is intentional. The channel can still close via
       (\textsc{close})}
+      \label{code:virtual-layer:revocation:funder:proc-remote}
       \State \Return (\textsc{ok})
     \EndIf
     \If{we have a \texttt{sibling}} \Comment{we are not \texttt{host\_fundee}

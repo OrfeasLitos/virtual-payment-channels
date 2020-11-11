@@ -133,6 +133,7 @@
       \State $\itistate \gets \textsc{waiting for opening keys}$
       \State send (\textsc{open}, $c$, \texttt{hops}, $\pk{A, F}$, $\pk{A, R}$,
       $\pk{A, \mathrm{out}}$) to \texttt{fundee}
+      \label{code:ln:exchange-open-keys:bob-open}
       \State \Comment{colored code is run by honest \texttt{fundee}.
       Validation is implicit}
       \State \remotecode{ensure we run the code of \bob}
@@ -175,6 +176,7 @@
         $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
         output (\textsc{funded}, $\texttt{host}_P$, \texttt{funder\_layer})
         \Comment{ignore any other message}
+        \label{code:ln:prepare-base:fund-me}
         \State $\texttt{layer} \gets \texttt{funder\_layer}$
       \EndIf
     \end{algorithmic}
@@ -218,6 +220,7 @@
       R}\}$)\}}
       \State \remotecode{ensure \textsc{verify}($C_{B, 0}$, $\mathrm{sig}_{A, C,
       0}$, $\pk{A, F}$) = True}
+      \label{code:ln:exchange-open-sigs:b-verify}
       \State \remotecode{$C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge
       2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (t +
       s)$)
@@ -237,6 +240,7 @@
       \State ensure $\itistate = \textsc{waiting for comm sig}$
       \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
       $\pk{B, F}$) = True
+      \label{code:ln:exchange-open-sigs:a-verify}
     \end{algorithmic}
   \end{processbox}
   \caption{}
@@ -251,6 +255,7 @@
       \State send $(\textsc{open}, c, \pk{A, \mathrm{out}}, \pk{B,
       \mathrm{out}}, F, \mathrm{sig}_F, \alice, \bob)$ to \adversary
       \While{$F \notin \Sigma$}
+      \label{code:ln:commit-base:f-in-state}
         \State wait for input (\textsc{check funding}) \Comment{ignore all other
         messages}
         \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
@@ -278,6 +283,7 @@
 
       \State On output (\textsc{funded}, $\texttt{host}_P$,
       \texttt{funder\_layer}) by \texttt{hops}[-1].\texttt{right}:
+      \label{code:ln:bob:funded}
       \Indent
         \State ensure $\itistate = \textsc{waiting for funded}$
         \State store $\texttt{host}_P$ \Comment{we will talk directly to
@@ -308,6 +314,7 @@
   \texttt{fundee}):}
     \begin{algorithmic}[1]
       \State \Comment{\texttt{fundee} is \bob}
+      \label{code:ln:open:alice-open}
       \State ensure we run the code of \alice{} \Comment{activated party is the
       funder}
       \If{\texttt{hops} = \ledger} \Comment{opening base channel}
@@ -398,6 +405,7 @@
       \Comment{$\texttt{host}_P$ is the new host, renamed in
       Fig.~\ref{code:ln:methods-for-virt},
       l.~\ref{code:ln:methods-for-virt:host-update}}
+      \label{code:ln:virtualise:start-end:hosts-ready}
       \Indent
         \State ensure $\itistate = \textsc{waiting for hosts ready}$
         \State $\itistate \gets \textsc{open}$
