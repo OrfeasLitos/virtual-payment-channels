@@ -668,9 +668,10 @@
       \texttt{funder}, \texttt{fundee}\}$: \Comment{At most one of
       \texttt{funder}, \texttt{fundee} is defined}
       \Indent
-        \If{\textit{State} = \textsc{closed}}
-          \State output (\textsc{closed}) to $R$
-        \EndIf
+        \IfThen{\textit{State} = \textsc{closed}}{output (\textsc{closed}) to
+        $R$}
+        \IfThen{\textit{State} = \textsc{guest punished}}{output (\textsc{guest
+        punished}) to $R$}
         \State ensure \textit{State} = \textsc{open}
         \If{$\texttt{host}_P \neq \ledger$} \Comment{$\texttt{host}_P$ is a
         \textsc{virt}}
@@ -724,6 +725,15 @@
           \State $\textit{State} \gets \textsc{closed}$
           \State output (\textsc{closed}) to $R$
         \EndIf
+      \EndIndent
+      \Statex
+
+      \State On input (\textsc{used revocation}) by \texttt{guest}:
+      \Comment{(\textsc{used revocation}) by \texttt{funder}/\texttt{fundee} is
+      ignored}
+      \Indent
+        \State $\textit{State} \gets \textsc{guest punished}$
+        \State input (\textsc{used revocation}) to $\texttt{host}_P$
       \EndIndent
     \end{algorithmic}
   \end{processbox}

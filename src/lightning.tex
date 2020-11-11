@@ -679,6 +679,10 @@
         other messages}
         \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
       \EndWhile
+      \State $c_P \gets c_P + c_{\bar{P}}$
+      \If{$\texttt{host}_P \neq \ledger$}
+        \State send (\textsc{used revocation}) to $\texttt{host}_P$
+      \EndIf
     \end{algorithmic}
   \end{processbox}
   \caption{}
@@ -692,10 +696,17 @@
       \textsc{topped up}\}$ \Comment{channel open}
       \If{$\texttt{host}_P \neq \ledger$} \Comment{we have a virtual channel}
         \State $\itistate \gets \textsc{host closing}$
-        \State input (\textsc{close}) to $\texttt{host}_P$ and
-        keep relaying inputs (\textsc{check chain for closing}) to
-        $\texttt{host}_P$ until receiving output (\textsc{closed}) by
-        $\texttt{host}_P$
+        \State input (\textsc{close}) to $\texttt{host}_P$ and keep relaying
+        inputs (\textsc{check chain for closing}) to $\texttt{host}_P$ until
+        receiving by $\texttt{host}_P$ output (\textsc{closed}) or
+        (\textsc{guest punished})
+        \If{output is (\textsc{guest punished})}
+          \State $c_P \gets 0$ \Comment{the party that funded our channel
+          avoided an attempted malicious closure and punised its counterparty,
+          thus gained our coins. This is secure, as the funding party is local}
+          \State give up token of execution
+        \EndIf
+        \State $\texttt{host}_P \gets \ledger$
       \EndIf
       \State $\itistate \gets \textsc{closing}$
       \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
