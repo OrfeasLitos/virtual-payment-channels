@@ -19,12 +19,52 @@
     \textsc{open} \textit{State}] $l$ times.
   \end{itemize}
   Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ receives
-  $(\textsc{close})$ by \environment, then eventually the state obtained when
-  $P$ inputs $(\textsc{read})$ to \ledger will contain $h$ $(c_i, \pk{P,
-  \mathrm{out}})$ outputs such that
+  $(\textsc{close})$ by \environment and, if $\texttt{host}_P \neq \ledger$
+  the output of $\texttt{host}_P$ is (\textsc{closed}), then eventually the
+  state obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$
+  $(c_i, \pk{P, \mathrm{out}})$ outputs such that
   \begin{equation}
     \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace
   \end{equation}
   with overwhelming probability in the security parameter.
 \end{lemma}
+
+\begin{proof}
+  $P$ can transition to the \textsc{open} \textit{State} for the first time only
+  if it:
+  \begin{itemize}
+    \item has received (\textsc{open}, $c$, $\dots$) while in the \textsc{init}
+    \textit{State} by either \environment if ($P = \alice$,
+    Fig.~\ref{code:ln:open}, l.~\ref{code:ln:open:alice-open}) or $\bar{P}$ (if
+    $P = \bob$, Fig.~\ref{code:ln:exchange-open-keys:bob-open},
+    l.~\ref{code:ln:exchange-open-keys:bob-open}),
+    \item it internally holds a signature on the commitment transaction $C_{P,
+    0}$ that is valid by $\pk{\bar{P}, F}$
+    (Fig.~\ref{code:ln:exchange-open-sigs},
+    ll.~\ref{code:ln:exchange-open-sigs:b-verify}
+    and~\ref{code:ln:exchange-open-sigs:a-verify}),
+    \item it either has the transaction $F$ in the \ledger state if
+    $\texttt{host} = \ledger$ (Fig.~\ref{code:ln:commit-base},
+    l.~\ref{code:ln:commit-base:f-in-state}), or is able to cause an eventual
+    inclusion of a $(c, 2/\{\pk{A, F}, \pk{B, F}\})$ output in the \ledger state
+    by passing input (\textsc{close}) to \texttt{host}. The latter is true if
+    \texttt{hops}[0].\texttt{left} (when $P = \alice$,
+    Fig.~\ref{code:ln:prepare-base}, l.~\ref{code:ln:prepare-base:fund-me}) or
+    \texttt{hops}[-1].\texttt{right} (when $P = \bob$, Fig.~\ref{code:ln:bob},
+    l.~\ref{code:ln:bob:funded}) has passed output (\textsc{funded}, $\dots$) to
+    $P$, as the outputting party is trusted (as it executes locally) and has
+    itself been passed output (\textsc{hosts ready}) by its (also trusted)
+    $\texttt{host}$ \textsc{virt} ITI (Fig.~\ref{code:ln:virtualise:start-end},
+    l.~\ref{code:ln:virtualise:start-end:hosts-ready}). The \texttt{host}
+    only outputs (\textsc{hosts ready}) when its \texttt{guest} (which is the
+    aforementioned party that output (\textsc{funded}, $\dots$)) verifies that
+    the remote revocation has happened correctly
+    (Fig.~\ref{code:virtual-layer:revocation},
+    ll.~\ref{code:virtual-layer:revocation:non-funder:proc-remote}
+    or~\ref{code:virtual-layer:revocation:funder:proc-remote}). As we will see
+    later, this verification ensures that either the aforementioned output will
+    end up in the \ledger state, or the \texttt{guest}'s counterparty will lose
+    all their funds to the \texttt{guest}.
+  \end{itemize}
+\end{proof}
