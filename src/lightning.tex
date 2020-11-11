@@ -689,7 +689,7 @@
       \EndWhile
       \State $c_P \gets c_P + c_{\bar{P}}$
       \If{$\texttt{host}_P \neq \ledger$}
-        \State send (\textsc{used revocation}) to $\texttt{host}_P$
+        \State input (\textsc{used revocation}) to $\texttt{host}_P$
       \EndIf
     \end{algorithmic}
   \end{processbox}
@@ -700,20 +700,13 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- On (\textsc{close}):}
     \begin{algorithmic}[1]
-      \State ensure $\itistate \notin \{\bot, \textsc{init},
-      \textsc{topped up}\}$ \Comment{channel open}
+      \State ensure $\itistate \notin \{\bot, \textsc{init}, \textsc{topped up},
+      \textsc{closed}, \textsc{base punished}\}$ \Comment{channel open}
       \If{$\texttt{host}_P \neq \ledger$} \Comment{we have a virtual channel}
         \State $\itistate \gets \textsc{host closing}$
         \State input (\textsc{close}) to $\texttt{host}_P$ and keep relaying
         inputs (\textsc{check chain for closing}) to $\texttt{host}_P$ until
-        receiving by $\texttt{host}_P$ output (\textsc{closed}) or
-        (\textsc{guest punished})
-        \If{output is (\textsc{guest punished})}
-          \State $c_P \gets 0$ \Comment{the party that funded our channel
-          avoided an attempted malicious closure and punised its counterparty,
-          thus gained our coins. This is secure, as the funding party is local}
-          \State give up token of execution
-        \EndIf
+        receiving output (\textsc{closed}) by $\texttt{host}_P$
         \State $\texttt{host}_P \gets \ledger$
       \EndIf
       \State $\itistate \gets \textsc{closing}$
@@ -746,6 +739,17 @@
       \State $\itistate \gets \textsc{closed}$
       \label{code:ln:close:state-closed}
       \State output (\textsc{closed})
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:close}
+\end{figure}
+
+\begin{figure}
+  \begin{processbox}{\textsc{ln} -- On output (\textsc{used revocation}) by
+  $\texttt{host}_P$:}
+    \begin{algorithmic}[1]
+      \State $\itistate \gets \textsc{base punished}$
     \end{algorithmic}
   \end{processbox}
   \caption{}
