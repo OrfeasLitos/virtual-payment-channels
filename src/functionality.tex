@@ -8,7 +8,8 @@ channel)}
     \begin{itemize}
       \item On receiving input (\texttt{msg}) by \environment to $P \in
       \{\alice, \bob\}$, handle it according to the corresponding rule in
-      Fig~\ref{code:functionality:state-machine} (if any) and subsequently send
+      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay-close},
+      or~\ref{code:functionality:fund} (if any) and subsequently send
       (\textsc{relay}, \texttt{msg}, $P$, \environment, input) \adversary.
       \Comment{all messages by \environment are relayed to \adversary}
       \item On receiving (\texttt{msg}) by $R \neq \environment$ to $P \in
@@ -23,11 +24,12 @@ channel)}
       outgoing messages by \fchan}
       \item On receiving (\textsc{info}, \texttt{msg}) by \adversary, handle
       (\texttt{msg}) according to the corresponding rule in
-      Fig~\ref{code:functionality:state-machine} (if any). After handling the
-      message or after an ``ensure'' fails, send (\textsc{handled},
-      \texttt{msg}) to \adversary. \Comment{(\textsc{info}, \texttt{msg})
-      messages by \simulator always return control to \simulator without any
-      side-effect to any other ITI, except if \fchan halts}
+      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay-close},
+      or~\ref{code:functionality:fund} (if any). After handling the message or
+      after an ``ensure'' fails, send (\textsc{handled}, \texttt{msg}) to
+      \adversary. \Comment{(\textsc{info}, \texttt{msg}) messages by \simulator
+      always return control to \simulator without any side-effect to any other
+      ITI, except if \fchan halts}
     \end{itemize}
   \end{systembox}
   \caption{}
@@ -35,92 +37,265 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan{} -- state machine}
+  \begin{systembox}{\fchan{} -- state machine up to \textsc{open} for $P \in
+  \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On initalisation:
       \label{code:functionality:state-machine:boot}
       \Indent
-        \State $\pk{A} \gets \bot$; $\pk{B} \gets \bot$
-        \State $\balance{A} \gets 0$; $\balance{B} \gets 0$
-        \State $\texttt{ignore}_A \gets$ False;
-        $\texttt{ignore}_B \gets$ False;
-        \State $\itistate \gets \textsc{uninit}$
+        \State $\pk{P} \gets \bot$; $\texttt{host}_P \gets \bot$;
+        $\texttt{enabler}_P \gets \bot$; $\balance{P} \gets 0$;
+        \State $\itistate_P \gets \textsc{uninit}$
       \EndIndent
       \Statex
 
-      \State On (\textsc{became corrupted or negligent}, $P$) by \adversary when
-      in any $\itistate$ or on output (\textsc{used revocation}) by
-      $\texttt{host}_P$ when $\itistate = \textsc{open}$:
+      \State On (\textsc{became corrupted or negligent}, $P$) by \adversary or
+      on output (\textsc{enabler used revocation}) by $\texttt{host}_P$ when in
+      any state:
       \Indent
-        \State $\texttt{ignore}_P \gets$ True
-        \IfThen{$\texttt{ignore}_{\bar{P}} = \mathrm{True}$}{$\itistate \gets
-        \textsc{both ignored}$} \Comment{sink state}
+        \State $\itistate_P \gets \textsc{ignored}$
       \EndIndent
       \Statex
 
-      \State On (\textsc{init}, $\pk{}$) to $P$ by \environment when $\itistate
-      = \textsc{uninit}$:
+      \State On (\textsc{init}, $\pk{}$) to $P$ by \environment when
+      $\itistate_P = \textsc{uninit}$:
       \Indent
-        \IfThen{$\pk{P} = \bot$}{$\pk{P} \gets \pk{}$}
-        \IfThen{$\bigwedge\limits_{P \in \{A, B\}} (\pk{P} \neq \bot \vee
-        \texttt{ignore}_P = \mathrm{True}$)}{$\itistate \gets \textsc{init}$}
+        \State $\pk{P} \gets \pk{}$
+        \State $\itistate_P \gets \textsc{init}$
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $x$, $\texttt{host}_A$, $\texttt{host}_B$) by
-      \adversary when $\itistate = \textsc{init}$:
-      \label{code:functionality:state-machine:when-open}
+      \State On (\textsc{open}, $x$, $\ledger$, $\dots$) to \alice by
+      \environment when $\itistate_A = \textsc{init}$:
       \Indent
-        \State $\balance{A} \gets x$; store $\texttt{host}_A, \texttt{host}_B$
-        \State $\itistate \gets \textsc{open}$
+        \State store $x$
+        \State $\itistate_A \gets \textsc{tentative base open}$
       \EndIndent
       \Statex
 
-      \State On (\textsc{pay}, $x$, $P$, $\bar{P}$) by \adversary when
-      $\itistate = \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
-      \label{code:functionality:state-machine:when-pay}
+      \State On (\textsc{base open}) by \adversary when $\itistate_A =
+      \textsc{tentative base open}$:
       \Indent
-        \State $\balance{P} \gets \balance{P} - x$; $\balance{\bar{P}} \gets
-        \balance{\bar{P}} + x$
+        \State $\balance{A} \gets x$
+        \State $\itistate_A \gets \textsc{open}$
       \EndIndent
       \Statex
 
-      \State On (\textsc{fund}, $x$, $P$, $\texttt{host}_A$, $\texttt{host}_B$)
-      by \adversary when $\itistate = \textsc{open}$:
-      \label{code:functionality:state-machine:when-fund}
+      \State On (\textsc{base open}) by \adversary when $\itistate_B =
+      \textsc{init}$:
+      \label{code:functionality:state-machine:when-open-bob}
       \Indent
-        \State $\balance{P} \gets \balance{P} - x$; update $\texttt{host}_A,
-        \texttt{host}_B$
+        \State $\itistate_B \gets \textsc{open}$
       \EndIndent
       \Statex
 
-      \State On (\textsc{close}, $P$) by \adversary when $\itistate =
+      \State On (\textsc{open}, $x$, $\texttt{hops} \neq \ledger$, $\dots$) to
+      \alice by \environment when $\itistate_A = \textsc{init}$:
+      \Indent
+        \State store $x$
+        \State $\texttt{enabler}_A \gets \texttt{hops}[0].\texttt{left}$
+        \State $\itistate_A \gets \textsc{pending virtual open}$
+      \EndIndent
+      \Statex
+
+      \State On output (\textsc{funded}, \texttt{host}, $\dots$) to \alice by
+      $\texttt{enabler}_A$ when $\itistate_A = \textsc{pending virtual open}$:
+      \Indent
+        \State $\texttt{host}_A \gets \texttt{host}[0].\texttt{left}$
+        \State $\itistate_A \gets \textsc{tentative virtual open}$
+      \EndIndent
+      \Statex
+
+      \State On output (\textsc{funded}, \texttt{host}, $\dots$) to \bob by ITI
+      $R \in \{\fchan, \textsc{ln}\}$ when $\itistate_B = \textsc{init}$:
+      \Indent
+        \State $\texttt{enabler}_B \gets R$
+        \State $\texttt{host}_B \gets \texttt{host}$
+        \State $\itistate_B \gets \textsc{tentative virtual open}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{virt open}) by \adversary when $\itistate_P =
+      \textsc{tentative virtual open}$:
+      \Indent
+        \IfThen{$P = \alice$}{$\balance{P} \gets x$}
+        \State $\itistate_P \gets \textsc{open}$
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:open}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{systembox}{\fchan{} -- payments/closing state machine for $P \in
+  \{\alice, \bob\}$}
+    \begin{algorithmic}[1]
+      \State On (\textsc{pay}, $x$) by \environment when $\itistate_P =
+      \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
+      \label{code:functionality:pay-close:when-tent-pay}
+      \Indent
+        \State store $x$
+        \State $\itistate_P \gets \textsc{tentative pay}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{pay}) by \adversary when $\itistate_P =
+      \textsc{tentative pay}$: \Comment{$P$ pays $\bar{P}$}
+      \label{code:functionality:pay-close:when-sync-pay}
+      \Indent
+        \State $\itistate_P \gets (\textsc{sync pay}, x)$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{get paid}, $x$) by \environment when $\itistate_P =
+      \textsc{open}$: \Comment{$\bar{P}$ pays $P$}
+      \label{code:functionality:pay-close:when-tent-get-paid}
+      \Indent
+        \State store $x$
+        \State $\itistate_P \gets \textsc{tentative get paid}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{pay}) by \adversary when $\itistate_P =
+      \textsc{tentative get paid}$: \Comment{$\bar{P}$ pays $P$}
+      \label{code:functionality:pay-close:when-sync-get-paid}
+      \Indent
+        \State $\itistate_P \gets (\textsc{sync get paid}, x)$
+      \EndIndent
+      \Statex
+
+      \State When $\itistate_P = (\textsc{sync pay}, x)$:
+      \Indent
+        \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync get
+        paid}, x)\}$}
+          \State $\balance{P} \gets \balance{P} - x$
+          \State \Comment{if $\bar{P}$ honest, this state transition happens
+          simultaneously with
+          l.~\ref{code:functionality:pay-close:get-paid-end}}
+          \State $\itistate_P \gets \textsc{open}$
+          \label{code:functionality:pay-close:pay-end}
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State When $\itistate_P = (\textsc{sync get paid}, x)$:
+      \Indent
+        \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync pay},
+        x)\}$}
+          \State $\balance{P} \gets \balance{P} + x$
+          \State \Comment{if $\bar{P}$ honest, this state transition happens
+          simultaneously with l.~\ref{code:functionality:pay-close:pay-end}}
+          \State $\itistate_P \gets \textsc{open}$
+          \label{code:functionality:pay-close:get-paid-end}
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{close}) by \environment when $\itistate_P =
       \textsc{open}$:
-      \label{code:functionality:state-machine:close:prev-state}
+      \Indent
+        \State $\itistate_P \gets \textsc{closing}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{close}, $P$) by \adversary when $\itistate \in
+      \{\textsc{open}, \textsc{closing}\}$:
+      \label{code:functionality:pay-close:check}
       \Indent
         \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
         $\Sigma$
-        \State \Comment{$P$'s state surely contains correct balances, so use it
-        for both parties. This is secure as, given how \ledger works, eventually
-        $\bar{P}$'s state will catch up}
-        \For{$S \in \{A, B\}$}
-          \If{$\texttt{ignore}_S =$ False}
-            \State $\coins{S} \gets$ sum of coins exclusively spendable by
-            $\pk{S}$ in $\Sigma$
-            \label{code:functionality:state-machine:close:coins}
-          \EndIf
-          \State $\texttt{check}_S \gets \texttt{ignore}_S \vee \coins{S} \geq
-          \balance{S}$
-        \EndFor
-        \If{$\texttt{check}_A \wedge \texttt{check}_B$}
-          \State $\itistate \gets \textsc{closed}$
+        \State $\coins{P} \gets$ sum of coins exclusively spendable by
+        $\pk{P}$ in $\Sigma$
+        \label{code:functionality:pay-close:coins}
+        \If{$\coins{P} \geq \balance{P}$}
+          \State $\itistate_P \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}
           \State halt
-          \label{code:functionality:state-machine:halt}
+          \label{code:functionality:pay-close:halt}
         \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:state-machine}
+  \label{code:functionality:pay-close}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{systembox}{\fchan{} -- fundings state machine for $P \in \{\alice,
+  \bob\}$}
+    \begin{algorithmic}[1]
+      \State On input (\textsc{fund me}, $x$, $\dots$) to \bob by ITI
+      $R \in \{\fchan, \textsc{ln}\}$ when $\itistate_P = \textsc{open}$:
+      \label{code:functionality:state-machine:when-fund}
+      \Indent
+        \State store $x$
+        \State $\itistate_P \gets \textsc{pending fund}$
+      \EndIndent
+      \Statex
+
+      \State When $\itistate_P = \textsc{pending fund}$:
+      \Indent
+        \If{we intercept the command ``define new \textsc{virt} ITI
+        \texttt{host}'' by \adversary}
+          \State store \texttt{host}
+          \State $\itistate_P \gets \textsc{tentative fund}$
+          \State continue executing \adversary's command
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{fund}) by \adversary when $\itistate_P =
+      \textsc{tentative fund}$:
+      \Indent
+        \State $\itistate_P \gets \textsc{sync fund}$
+      \EndIndent
+      \Statex
+
+      \State When $\itistate_P = \textsc{open}$:
+      \Indent
+        \If{we intercept the command ``define new \textsc{virt} ITI
+        \texttt{host}'' by \adversary}
+          \State store \texttt{host}
+          \State $\itistate_P \gets \textsc{tentative help fund}$
+          \State continue executing \adversary's command
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{fund}) by \adversary when $\itistate_P =
+      \textsc{tentative help fund}$:
+      \Indent
+        \State $\itistate_P \gets \textsc{sync help fund}$
+      \EndIndent
+      \Statex
+
+      \State When $\itistate_P = \textsc{sync fund}$:
+      \Indent
+        \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, \textsc{sync help
+        fund}\}$}
+          \State $\balance{P} \gets \balance{P} - x$
+          \State $\texttt{host}_P \gets \texttt{host}$
+          \State \Comment{if $\bar{P}$ honest, this state transition happens
+          simultaneously with l.~\ref{code:functionality:fund:help-fund-end}}
+          \State $\itistate_P \gets \textsc{open}$
+          \label{code:functionality:fund:fund-end}
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State When $\itistate_P = \textsc{sync help fund}$:
+      \Indent
+        \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, \textsc{sync fund}\}$}
+          \State $\texttt{host}_P \gets \texttt{host}$
+          \State \Comment{if $\bar{P}$ honest, this state transition happens
+          simultaneously with l.~\ref{code:functionality:fund:fund-end}}
+          \State $\itistate_P \gets \textsc{open}$
+          \label{code:functionality:fund:help-fund-end}
+        \EndIf
+      \EndIndent
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:fund}
 \end{figure}
