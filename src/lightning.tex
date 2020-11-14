@@ -528,7 +528,8 @@
       \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
       \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
       and remote code}
-      \State \remotecode{ensure \texttt{State} = \textsc{open}}
+      \State \remotecode{ensure $\itistate = \textsc{waiting to get paid} \wedge
+      x = y$}
       \If{\remotecode{$\texttt{host}_{\bar{P}} \neq \ledger \wedge \bar{P}$
       has a \texttt{host\_sibling}}} \Comment{we are intermediary channel}
         \State \remotecode{ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x
@@ -547,6 +548,7 @@
       i}$.outputs.$P$, output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, R, i} \gets
       \textsc{sign}(R_{P, i}, \sk{\bar{P}, R})$}
+      \State \remotecode{$\itistate \gets \textsc{waiting for pay revocation}$}
       \State \remotecode{reply (\textsc{commitment signed},
       $\mathrm{sig}_{\bar{P}, C, i+1}$, $\mathrm{sig}_{\bar{P}, R, i}$)}
       \State $C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from $P$'s to
@@ -592,6 +594,8 @@
       \EndIf
       \State send (\textsc{revoke and ack}, $\mathrm{sig}_{P, R, i}$) to
       $\bar{P}$
+      \State \remotecode{ensure $\itistate = \textsc{waiting for pay
+      revocation}$}
       \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
       i}$.outputs.$\bar{P}$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
       \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
@@ -600,6 +604,7 @@
       \label{code:ln:pay:revocations:paid-in}
       \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
       x$; $i \gets i + 1$}
+      \State \remotecode{$\itistate \gets \textsc{open}$}
       \If{\remotecode{$\texttt{host}_P \neq \ledger \wedge \bar{P}$ has a
       \texttt{host\_sibling}}} \Comment{we are intermediary channel}
         \State \remotecode{input (\textsc{new balance}, $c_{\bar{P}}$, $c_P$)
@@ -639,6 +644,18 @@
   \end{processbox}
   \caption{}
   \label{code:ln:pay}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{ln} -- On (\textsc{get paid}, $y$):}
+    \begin{algorithmic}[1]
+      \State ensure $\itistate = \textsc{open} \wedge c_{\bar{P}} \geq x$
+      \State store $y$
+      \State $\itistate \gets \textsc{waiting to get paid}$
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:ln:get-paid}
 \end{figure}
 
 \begin{figure}[H]
