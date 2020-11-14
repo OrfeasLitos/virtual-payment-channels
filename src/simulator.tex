@@ -41,10 +41,10 @@
     \begin{algorithmic}[1]
       \State On (\textsc{corrupt}) by \adversary, addresed to $P$:
       \Indent
-        \State \Comment{After executing this code, deliver (\textsc{corrupt}) to
-        simulated $P$ as detailed in Fig.~\ref{code:simulator:flow}.  Given that
-        \fchan returns control directly to us after it handles this message, we
-        will always deliver (\textsc{corrupt}) successfully.}
+        \State \Comment{After executing this code and getting control back from
+        \fchan (which always happens, c.f. Fig.~\ref{code:functionality:rules}),
+        deliver (\textsc{corrupt}) to simulated $P$ (c.f.
+        Fig.~\ref{code:simulator:flow}.}
         \State send (\textsc{info}, \textsc{became corrupted or negligent}, $P$)
         to \fchan
         \label{code:simulator:corrupted}
@@ -62,11 +62,20 @@
       \EndIndent
       \Statex
 
-      \State When simulated honest \alice receives (\textsc{open}, $x$, $\dots$)
-      by \environment:
+      \State When simulated honest \alice receives (\textsc{open}, $x$,
+      \texttt{hops}, $\dots$) by \environment:
       \Indent
-        \State store $x$ \Comment{will be used to inform \fchan once the channel
-        is open}
+        \State store \texttt{hops} \Comment{will be used to inform \fchan once
+        the channel is open}
+      \EndIndent
+      \Statex
+
+      \State When simulated honest \bob receives (\textsc{open}, $x$,
+      \texttt{hops}, $\dots$) by \alice:
+      \Indent
+        \IfThen{\alice is corrupted}{store \texttt{hops}} \Comment{if \alice is
+        honest, we already have \texttt{hops}. If \alice became corrupted after
+        receiving (\textsc{open}, $\dots$), overwrite \texttt{hops}}
       \EndIndent
       \Statex
 
@@ -78,20 +87,21 @@
       l.~\ref{code:ln:open:state-open}):
       \label{code:simulator:when-open}
       \Indent
-        \IfThen{$x$ is undefined}{$x \gets 0$} \Comment{$x$ is already defined
-        if \alice is honest}
-        \State send (\textsc{info}, \textsc{open}, $x$) to \fchan
-        \label{code:simulator:open}
+        \If{$\texttt{hops} = \ledger$}
+          \State send (\textsc{info}, \textsc{base open}) to \fchan
+          \label{code:simulator:base-open}
+        \Else
+          \State send (\textsc{info}, \textsc{virtual open}) to \fchan
+          \label{code:simulator:virtual-open}
+        \EndIf
       \EndIndent
       \Statex
 
-      \State When (both \fchan's simulated parties are honest and $P$ completes
-      sending a payment of value $c$ (Fig.~\ref{code:ln:pay:revocations},
-      l.~\ref{code:ln:pay:revocations:paid-out}) and $\bar{P}$ completes
-      receiving that payment (Fig.~\ref{code:ln:pay:revocations},
-      l.~\ref{code:ln:pay:revocations:paid-in})), or (when only $S$ is honest
-      and (completes either receiving ($\bar{P} \gets S$, $P \gets \bar{S}$) or
-      sending ($P \gets S$, $\bar{P} \gets \bar{S}$) a payment of value $c$)):
+      \State When (both \fchan's simulated parties are honest and complete
+      sending and receiving a payment (Fig.~\ref{code:ln:pay:revocations},
+      ll.~\ref{code:ln:pay:revocations:paid-out}
+      and~\ref{code:ln:pay:revocations:paid-in} respectively), or (when only one
+      party is honest and (completes either receiving or sending a payment)):
       \Comment{also send this message if both parties are honest when
       Fig.~\ref{code:ln:pay:revocations},
       l.~\ref{code:ln:pay:revocations:paid-out} is executed by one party, but
@@ -100,7 +110,7 @@
       l.~\ref{code:ln:pay:revocations:paid-in}}
       \label{code:simulator:when-pay}
       \Indent
-        \State send (\textsc{info}, \textsc{pay}, $c$, $P$, $\bar{P}$) to \fchan
+        \State send (\textsc{info}, \textsc{pay}) to \fchan
       \EndIndent
       \Statex
 
@@ -109,16 +119,11 @@
       l.~\ref{code:ln:virtualise:start-end:reduce-coins}: \Comment{if $\bar{P}$
       is honest, it has already moved to the new host,
       (Fig~\ref{code:virtual-layer:revocation},
-      l.~\ref{code:virtual-layer:revocation:revoc-by-next}
-      and~\ref{code:virtual-layer:revocation:hosts-ready}), so lifting to next
-      layer is complete}
+      ll.~\ref{code:virtual-layer:revocation:revoc-by-next},~\ref{code:virtual-layer:revocation:hosts-ready}):
+      lifting to next layer is done}
       \label{code:simulator:when-fund}
       \Indent
-        \State extract $c_{\mathrm{guest}}$ from executed
-        Fig.~\ref{code:ln:virtualise:start-end},
-        l.~\ref{code:ln:virtualise:start-end:reduce-coins}
-        \State send (\textsc{info}, \textsc{fund}, $c_{\mathrm{guest}}$, $P$) to
-        \fchan
+        \State send (\textsc{info}, \textsc{fund}) to \fchan
       \EndIndent
       \Statex
 
