@@ -6,17 +6,13 @@ channel)}
 \begin{figure}[H]
   \begin{systembox}{\fchan{} -- general message handling rules}
     \begin{itemize}
-      \item On receiving input (\texttt{msg}) by \environment to $P \in
-      \{\alice, \bob\}$, handle it according to the corresponding rule in
+      \item On receiving (\texttt{msg}) by party $R$ to $P \in \{\alice, \bob\}$
+      by means of $\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
+      \mathrm{network}\}$, handle it according to the corresponding rule in
       Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay-close},
       or~\ref{code:functionality:fund} (if any) and subsequently send
       (\textsc{relay}, \texttt{msg}, $P$, \environment, input) \adversary.
-      \Comment{all messages by \environment are relayed to \adversary}
-      \item On receiving (\texttt{msg}) by $R \neq \environment$ to $P \in
-      \{\alice, \bob\}$ by means of $\texttt{mode} \in \{\mathrm{input},
-      \mathrm{output}, \mathrm{network}\}$, send (\textsc{relay}, \texttt{msg},
-      $P$, $R$, \texttt{mode}) to \adversary.  \Comment{all messages by machines
-      other than \environment are relayed to \adversary}
+      \Comment{all messages are relayed to \adversary}
       \item On receiving (\textsc{relay}, \texttt{msg}, $P$, $R$, \texttt{mode})
       by \adversary ($\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
       \mathrm{network}\}$, $P \in \{\alice, \bob\}$), relay \texttt{msg} to $R$
@@ -30,6 +26,11 @@ channel)}
       \adversary. \Comment{(\textsc{info}, \texttt{msg}) messages by \simulator
       always return control to \simulator without any side-effect to any other
       ITI, except if \fchan halts}
+      \item \fchan keeps track of two state machines, one for each of \alice,
+      \bob. If there are more than one suitable rules for a particular message,
+      or if a rule matches the message for both parties, then both rule versions
+      are executed. \Comment{the two rules act on different state machines, so
+      the order of execution does not matter}
     \end{itemize}
   \end{systembox}
   \caption{}
@@ -40,7 +41,7 @@ channel)}
   \begin{systembox}{\fchan{} -- state machine up to \textsc{open} for $P \in
   \{\alice, \bob\}$}
     \begin{algorithmic}[1]
-      \State On initalisation:
+      \State On first activation:
       \label{code:functionality:state-machine:boot}
       \Indent
         \State $\pk{P} \gets \bot$; $\texttt{host}_P \gets \bot$;
@@ -148,11 +149,11 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{get paid}, $x$) by \environment when $\itistate_P =
+      \State On (\textsc{get paid}, $y$) by \environment when $\itistate_P =
       \textsc{open}$: \Comment{$\bar{P}$ pays $P$}
       \label{code:functionality:pay-close:when-tent-get-paid}
       \Indent
-        \State store $x$
+        \State store $y$
         \State $\itistate_P \gets \textsc{tentative get paid}$
       \EndIndent
       \Statex
@@ -199,8 +200,10 @@ channel)}
       \EndIndent
       \Statex
 
-      \State On (\textsc{close}, $P$) by \adversary when $\itistate \in
-      \{\textsc{open}, \textsc{closing}\}$:
+      \State On (\textsc{close}, $P$) by \adversary when $\itistate \notin$
+      \{$\textsc{uninit}$, $\textsc{init}$, $\textsc{pending virtual open}$,
+      $\textsc{tentative virtual open}$, $\textsc{tentative base open}$,
+      $\textsc{ignored}$\}:
       \label{code:functionality:pay-close:check}
       \Indent
         \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
@@ -225,8 +228,8 @@ channel)}
   \begin{systembox}{\fchan{} -- fundings state machine for $P \in \{\alice,
   \bob\}$}
     \begin{algorithmic}[1]
-      \State On input (\textsc{fund me}, $x$, $\dots$) to \bob by ITI
-      $R \in \{\fchan, \textsc{ln}\}$ when $\itistate_P = \textsc{open}$:
+      \State On input (\textsc{fund me}, $x$, $\dots$) by ITI $R \in \{\fchan,
+      \textsc{ln}\}$ when $\itistate_P = \textsc{open}$:
       \label{code:functionality:state-machine:when-fund}
       \Indent
         \State store $x$
