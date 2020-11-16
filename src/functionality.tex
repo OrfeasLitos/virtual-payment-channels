@@ -42,7 +42,7 @@ channel)}
   \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On first activation:
-      \label{code:functionality:state-machine:boot}
+      \label{code:functionality:open:boot}
       \Indent
         \State $\pk{P} \gets \bot$; $\texttt{host}_P \gets \bot$;
         $\texttt{enabler}_P \gets \bot$; $\balance{P} \gets 0$;
@@ -70,6 +70,7 @@ channel)}
       \environment when $\itistate_A = \textsc{init}$:
       \Indent
         \State store $x$
+        \label{code:functionality:open:store}
         \State $\itistate_A \gets \textsc{tentative base open}$
       \EndIndent
       \Statex
@@ -78,13 +79,14 @@ channel)}
       \textsc{tentative base open}$:
       \Indent
         \State $\balance{A} \gets x$
+        \label{code:functionality:open:base-balance}
         \State $\itistate_A \gets \textsc{open}$
       \EndIndent
       \Statex
 
       \State On (\textsc{base open}) by \adversary when $\itistate_B =
       \textsc{init}$:
-      \label{code:functionality:state-machine:when-open-bob}
+      \label{code:functionality:open:when-open-bob}
       \Indent
         \State $\itistate_B \gets \textsc{open}$
       \EndIndent
@@ -120,6 +122,7 @@ channel)}
       \textsc{tentative virtual open}$:
       \Indent
         \IfThen{$P = \alice$}{$\balance{P} \gets x$}
+        \label{code:functionality:open:virtual-balance}
         \State $\itistate_P \gets \textsc{open}$
       \EndIndent
     \end{algorithmic}
@@ -137,6 +140,7 @@ channel)}
       \label{code:functionality:pay-close:when-tent-pay}
       \Indent
         \State store $x$
+        \label{code:functionality:pay-close:store-pay}
         \State $\itistate_P \gets \textsc{tentative pay}$
       \EndIndent
       \Statex
@@ -154,6 +158,7 @@ channel)}
       \label{code:functionality:pay-close:when-tent-get-paid}
       \Indent
         \State store $y$
+        \label{code:functionality:pay-close:store-get-paid}
         \State $\itistate_P \gets \textsc{tentative get paid}$
       \EndIndent
       \Statex
@@ -171,6 +176,7 @@ channel)}
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync get
         paid}, x)\}$}
           \State $\balance{P} \gets \balance{P} - x$
+          \label{code:functionality:pay-close:decrement}
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with
           l.~\ref{code:functionality:pay-close:get-paid-end}}
@@ -185,6 +191,7 @@ channel)}
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync pay},
         x)\}$}
           \State $\balance{P} \gets \balance{P} + x$
+          \label{code:functionality:pay-close:increment}
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with l.~\ref{code:functionality:pay-close:pay-end}}
           \State $\itistate_P \gets \textsc{open}$
@@ -212,6 +219,7 @@ channel)}
         $\pk{P}$ in $\Sigma$
         \label{code:functionality:pay-close:coins}
         \If{$\coins{P} \geq \balance{P}$}
+        \label{code:functionality:pay-close:check:if}
           \State $\itistate_P \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}
           \State halt
@@ -230,7 +238,7 @@ channel)}
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, $x$, $\dots$) by ITI $R \in \{\fchan,
       \textsc{ln}\}$ when $\itistate_P = \textsc{open}$:
-      \label{code:functionality:state-machine:when-fund}
+      \label{code:functionality:fund:when-fund}
       \Indent
         \State store $x$
         \State $\itistate_P \gets \textsc{pending fund}$
@@ -278,6 +286,7 @@ channel)}
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, \textsc{sync help
         fund}\}$}
           \State $\balance{P} \gets \balance{P} - x$
+          \label{code:functionality:fund:complete-fund}
           \State $\texttt{host}_P \gets \texttt{host}$
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with l.~\ref{code:functionality:fund:help-fund-end}}
