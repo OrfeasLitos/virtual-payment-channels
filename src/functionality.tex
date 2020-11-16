@@ -9,7 +9,7 @@ channel)}
       \item On receiving (\texttt{msg}) by party $R$ to $P \in \{\alice, \bob\}$
       by means of $\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
       \mathrm{network}\}$, handle it according to the corresponding rule in
-      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay-close},
+      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:close},
       or~\ref{code:functionality:fund} (if any) and subsequently send
       (\textsc{relay}, \texttt{msg}, $P$, \environment, input) \adversary.
       \Comment{all messages are relayed to \adversary}
@@ -20,7 +20,7 @@ channel)}
       outgoing messages by \fchan}
       \item On receiving (\textsc{info}, \texttt{msg}) by \adversary, handle
       (\texttt{msg}) according to the corresponding rule in
-      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay-close},
+      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:close},
       or~\ref{code:functionality:fund} (if any). After handling the message or
       after an ``ensure'' fails, send (\textsc{handled}, \texttt{msg}) to
       \adversary. \Comment{(\textsc{info}, \texttt{msg}) messages by \simulator
@@ -132,22 +132,22 @@ channel)}
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan{} -- payments/closing state machine for $P \in
-  \{\alice, \bob\}$}
+  \begin{systembox}{\fchan{} -- payments state machine for $P \in \{\alice,
+  \bob\}$}
     \begin{algorithmic}[1]
       \State On (\textsc{pay}, $x$) by \environment when $\itistate_P =
       \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
-      \label{code:functionality:pay-close:when-tent-pay}
+      \label{code:functionality:pay:when-tent-pay}
       \Indent
         \State store $x$
-        \label{code:functionality:pay-close:store-pay}
+        \label{code:functionality:pay:store-pay}
         \State $\itistate_P \gets \textsc{tentative pay}$
       \EndIndent
       \Statex
 
       \State On (\textsc{pay}) by \adversary when $\itistate_P =
       \textsc{tentative pay}$: \Comment{$P$ pays $\bar{P}$}
-      \label{code:functionality:pay-close:when-sync-pay}
+      \label{code:functionality:pay:when-sync-pay}
       \Indent
         \State $\itistate_P \gets (\textsc{sync pay}, x)$
       \EndIndent
@@ -155,17 +155,17 @@ channel)}
 
       \State On (\textsc{get paid}, $y$) by \environment when $\itistate_P =
       \textsc{open}$: \Comment{$\bar{P}$ pays $P$}
-      \label{code:functionality:pay-close:when-tent-get-paid}
+      \label{code:functionality:pay:when-tent-get-paid}
       \Indent
         \State store $y$
-        \label{code:functionality:pay-close:store-get-paid}
+        \label{code:functionality:pay:store-get-paid}
         \State $\itistate_P \gets \textsc{tentative get paid}$
       \EndIndent
       \Statex
 
       \State On (\textsc{pay}) by \adversary when $\itistate_P =
       \textsc{tentative get paid}$: \Comment{$\bar{P}$ pays $P$}
-      \label{code:functionality:pay-close:when-sync-get-paid}
+      \label{code:functionality:pay:when-sync-get-paid}
       \Indent
         \State $\itistate_P \gets (\textsc{sync get paid}, x)$
       \EndIndent
@@ -176,12 +176,12 @@ channel)}
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync get
         paid}, x)\}$}
           \State $\balance{P} \gets \balance{P} - x$
-          \label{code:functionality:pay-close:decrement}
+          \label{code:functionality:pay:decrement}
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with
-          l.~\ref{code:functionality:pay-close:get-paid-end}}
+          l.~\ref{code:functionality:pay:get-paid-end}}
           \State $\itistate_P \gets \textsc{open}$
-          \label{code:functionality:pay-close:pay-end}
+          \label{code:functionality:pay:pay-end}
         \EndIf
       \EndIndent
       \Statex
@@ -191,15 +191,23 @@ channel)}
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync pay},
         x)\}$}
           \State $\balance{P} \gets \balance{P} + x$
-          \label{code:functionality:pay-close:increment}
+          \label{code:functionality:pay:increment}
           \State \Comment{if $\bar{P}$ honest, this state transition happens
-          simultaneously with l.~\ref{code:functionality:pay-close:pay-end}}
+          simultaneously with l.~\ref{code:functionality:pay:pay-end}}
           \State $\itistate_P \gets \textsc{open}$
-          \label{code:functionality:pay-close:get-paid-end}
+          \label{code:functionality:pay:get-paid-end}
         \EndIf
       \EndIndent
-      \Statex
+    \end{algorithmic}
+  \end{systembox}
+  \caption{}
+  \label{code:functionality:pay}
+\end{figure}
 
+\begin{figure}[H]
+  \begin{systembox}{\fchan{} -- closure state machine for $P \in \{\alice,
+  \bob\}$}
+    \begin{algorithmic}[1]
       \State On (\textsc{close}) by \environment when $\itistate_P =
       \textsc{open}$:
       \Indent
@@ -211,25 +219,25 @@ channel)}
       \{$\textsc{uninit}$, $\textsc{init}$, $\textsc{pending virtual open}$,
       $\textsc{tentative virtual open}$, $\textsc{tentative base open}$,
       $\textsc{ignored}$\}:
-      \label{code:functionality:pay-close:check}
+      \label{code:functionality:close:check}
       \Indent
         \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
         $\Sigma$
         \State $\coins{P} \gets$ sum of coins exclusively spendable by
         $\pk{P}$ in $\Sigma$
-        \label{code:functionality:pay-close:coins}
+        \label{code:functionality:close:coins}
         \If{$\coins{P} \geq \balance{P}$}
-        \label{code:functionality:pay-close:check:if}
+        \label{code:functionality:close:check:if}
           \State $\itistate_P \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}
           \State halt
-          \label{code:functionality:pay-close:halt}
+          \label{code:functionality:close:halt}
         \EndIf
       \EndIndent
     \end{algorithmic}
   \end{systembox}
   \caption{}
-  \label{code:functionality:pay-close}
+  \label{code:functionality:close}
 \end{figure}
 
 \begin{figure}[H]

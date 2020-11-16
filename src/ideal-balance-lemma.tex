@@ -55,22 +55,22 @@
     $\sum\limits_{i=1}^n f_i$ in total.
     \item Every time $P$ receives input $(\textsc{pay}, d_i)$ by \environment
     while $\itistate_P = \textsc{open}$, $d_i$ is stored
-    (Fig.~\ref{code:functionality:pay-close},
-    l.~\ref{code:functionality:pay-close:store-pay}). The next time
+    (Fig.~\ref{code:functionality:pay},
+    l.~\ref{code:functionality:pay:store-pay}). The next time
     $\itistate_P$ transitions to \textsc{open} (if such a transition happens),
     $\balance{P}$ is decremented by $d_i$
-    (Fig.~\ref{code:functionality:pay-close},
-    l.~\ref{code:functionality:pay-close:decrement}). Therefore, if this cycle
+    (Fig.~\ref{code:functionality:pay},
+    l.~\ref{code:functionality:pay:decrement}). Therefore, if this cycle
     happens $m \geq 0$ times, $\balance{P}$ will be decremented by
     $\sum\limits_{i=1}^m d_i$ in total.
     \item Every time $P$ receives input $(\textsc{get paid}, e_i)$ by
     \environment while $\itistate_P = \textsc{open}$, $e_i$ is stored
-    (Fig.~\ref{code:functionality:pay-close},
-    l.~\ref{code:functionality:pay-close:store-get-paid}). The next time
+    (Fig.~\ref{code:functionality:pay},
+    l.~\ref{code:functionality:pay:store-get-paid}). The next time
     $\itistate_P$ transitions to \textsc{open} (if such a transition happens)
     $\balance{P}$ is incremented by $e_i$
-    (Fig.~\ref{code:functionality:pay-close},
-    l.~\ref{code:functionality:pay-close:increment}). Therefore, if this cycle
+    (Fig.~\ref{code:functionality:pay},
+    l.~\ref{code:functionality:pay:increment}). Therefore, if this cycle
     happens $l \geq 0$ times, $\balance{P}$ will be incremented by
     $\sum\limits_{i=1}^l e_i$ in total.
   \end{itemize}
