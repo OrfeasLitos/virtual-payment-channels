@@ -199,8 +199,8 @@
 \NewDocumentCommand{\coins}{m}{\texttt{coins}_{#1}}
 \NewDocumentCommand{\itistate}{o}{
   \IfNoValueTF{#1}
-    {\ensuremath{\textit{State}}}
-    {\ensuremath{\textit{State}_{#1}}}%
+    {\ensuremath{\textit{State}}\xspace}
+    {\ensuremath{\textit{State}_{#1}}\xspace}%
 }
 
 % https://tex.stackexchange.com/a/448386
