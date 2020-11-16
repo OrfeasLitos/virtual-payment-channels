@@ -1,23 +1,27 @@
 \begin{lemma}[Ideal world balance]
 \label{lemma:ideal-balance}
   Consider an ideal world execution with functionality \fchan and simulator
-  \simulator. Let $P \in \{\alice, \bob\}$ one of the two parties of \fchan and
-  $\bar{P}$ the other party. Assume that all of the following are true:
+  \simulator. Let $P \in \{\alice, \bob\}$ one of the two parties of \fchan.
+  Assume that all of the following are true:
   \begin{itemize}
-    \item the internal variable $\texttt{ignore}_P$ of \fchan has the value
-    ``False'',
-    \item \fchan has received $(\textsc{open}, c)$ by \simulator,
-    \item \fchan has received $(\textsc{fund}, f_i, P)$ by \simulator while
-    \textit{State} was \textsc{open} $n \geq 0$ times,
-    \item \fchan has received $(\textsc{pay}, d_i, P, \bar{P})$ by \simulator
-    while \textit{State} was \textsc{open} $m \geq 0$ times,
-    \item \fchan has received $(\textsc{pay}, e_i, \bar{P}, P)$ by \simulator
-    while \textit{State} was \textsc{open} $l \geq 0$ times.
+    \item $\itistate_P \neq \textsc{ignored}$,
+    \item $P$ has transitioned to the \textsc{open} \textit{State} at least
+    once. Additionally, if $P = \alice$, it has received $(\textsc{open}, c,
+    \dots)$ by \environment prior to transitioning to the \textsc{open}
+    \textit{State},
+    \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
+    \fchan/\textsc{ln} ITI while $\itistate_P = \textsc{open}$ and $P$
+    subsequently transitioned to \textsc{open} \textit{State}] $n \geq 0$ times,
+    \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
+    $\itistate_P = \textsc{open}$ and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $m \geq 0$ times,
+    \item $P$ [has received $(\textsc{get paid}, e_i)$ by \environment while
+    $\itistate_P = \textsc{open}$ and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $l \geq 0$ times.
   \end{itemize}
   Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If \fchan
-  receives $(\textsc{close}, P)$ or $(\textsc{close}, \bar{P})$ by \simulator,
-  then the following holds with overwhelming probability on the security
-  parameter:
+  receives $(\textsc{close}, P)$ by \simulator, then the following holds with
+  overwhelming probability on the security parameter:
   \begin{equation}
     \texttt{balance}_P = \phi \cdot c - \sum\limits_{i=1}^n f_i -
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
@@ -28,40 +32,50 @@
   We will prove the Lemma by following the evolution of the $\balance{P}$
   variable.
   \begin{itemize}
-    \item When \fchan is initialised, it sets $\balance{A} \gets 0$ and
-    $\balance{B} \gets 0$ (Fig.~\ref{code:functionality:state-machine},
-    l.~\ref{code:functionality:state-machine:boot}).
-    \item When \fchan receives $(\textsc{open}, c)$ by \simulator when the
-    former is in the \textsc{init} \textit{State}, it transitions away from this
-    state for the remainder of the execution and sets $\balance{A} \gets c$
-    (Fig.~\ref{code:functionality:state-machine},
-    l.~\ref{code:functionality:state-machine:when-open}). This happens at most
-    once during the entire execution and is necessary to transition to the
-    \textsc{open} \textit{State}.
-    \item Every time \fchan receives $(\textsc{fund}, f_i, P)$ by \simulator
-    while the former is in the \textsc{open} \textit{State}, it decrements
-    $\balance{P}$ by $f_i$ (Fig.~\ref{code:functionality:state-machine},
-    l.~\ref{code:functionality:state-machine:when-fund}). If $(\textsc{fund},
-    f_i, P)$ is received $n \geq 0$ times, $\balance{P}$ will be decremented by
+    \item When \fchan is activated for the first time, it sets $\balance{P}
+    \gets 0$ (Fig.~\ref{code:functionality:open},
+    l.~\ref{code:functionality:open:boot}). \item If $P = \alice$ and it
+    receives (\textsc{open}, $c$, $\dots$) by \environment, it stores $c$
+    (Fig.~\ref{code:functionality:open},
+    l.~\ref{code:functionality:open:store}). If later $\itistate_P$ becomes
+    \textsc{open}, \fchan sets $\balance{P} \gets c$
+    (Fig.~\ref{code:functionality:open},
+    ll.~\ref{code:functionality:open:base-balance}
+    or~\ref{code:functionality:open:virtual-balance}). In contrast, if $P =
+    \bob$, it is $\balance{P} = 0$ until at least the first transition of
+    $\itistate_P$ to \textsc{open} (Fig.~\ref{code:functionality:open}).
+    \item Every time $P$ receives input $(\textsc{fund me}, f_i, \dots)$ by
+    another party while $\itistate_P = \textsc{open}$, $P$ stores $f_i$
+    (Fig.~\ref{code:functionality:fund},
+    l.~\ref{code:functionality:fund:when-fund}). The next time $\itistate_P$
+    transitions to \textsc{open} (if such a transition happens), $\balance{P}$
+    is decremented by $f_i$ (Fig.~\ref{code:functionality:fund},
+    l.~\ref{code:functionality:fund:complete-fund}). Therefore, if this cycle
+    happens $n \geq 0$ times, $\balance{P}$ will be decremented by
     $\sum\limits_{i=1}^n f_i$ in total.
-    \item Every time \fchan receives $(\textsc{pay}, d_i, P, \bar{P})$ by
-    \simulator while the former is in the \textsc{open} \textit{State}, it
-    decrements $\balance{P}$ by $d_i$
-    (Fig.~\ref{code:functionality:state-machine},
-    l.~\ref{code:functionality:state-machine:when-pay}). If $(\textsc{pay}, d_i,
-    P, \bar{P})$ is received $m \geq 0$ times, $\balance{P}$ will be decremented
-    by $\sum\limits_{i=1}^m d_i$ in total.
-    \item Every time \fchan receives $(\textsc{pay}, e_i, \bar{P}, P)$ by
-    \simulator while the former is in the \textsc{open} \textit{State}, it
-    increments $\balance{P}$ by $e_i$
-    (Fig.~\ref{code:functionality:state-machine},
-    l.~\ref{code:functionality:state-machine:when-pay}). If $(\textsc{pay}, e_i,
-    \bar{P}, P)$ is received $l \geq 0$ times, $\balance{P}$ will be incremented
-    by $\sum\limits_{i=1}^l e_i$ in total.
+    \item Every time $P$ receives input $(\textsc{pay}, d_i)$ by \environment
+    while $\itistate_P = \textsc{open}$, $d_i$ is stored
+    (Fig.~\ref{code:functionality:pay-close},
+    l.~\ref{code:functionality:pay-close:store-pay}). The next time
+    $\itistate_P$ transitions to \textsc{open} (if such a transition happens),
+    $\balance{P}$ is decremented by $d_i$
+    (Fig.~\ref{code:functionality:pay-close},
+    l.~\ref{code:functionality:pay-close:decrement}). Therefore, if this cycle
+    happens $m \geq 0$ times, $\balance{P}$ will be decremented by
+    $\sum\limits_{i=1}^m d_i$ in total.
+    \item Every time $P$ receives input $(\textsc{get paid}, e_i)$ by
+    \environment while $\itistate_P = \textsc{open}$, $e_i$ is stored
+    (Fig.~\ref{code:functionality:pay-close},
+    l.~\ref{code:functionality:pay-close:store-get-paid}). The next time
+    $\itistate_P$ transitions to \textsc{open} (if such a transition happens)
+    $\balance{P}$ is incremented by $e_i$
+    (Fig.~\ref{code:functionality:pay-close},
+    l.~\ref{code:functionality:pay-close:increment}). Therefore, if this cycle
+    happens $l \geq 0$ times, $\balance{P}$ will be incremented by
+    $\sum\limits_{i=1}^l e_i$ in total.
   \end{itemize}
-  On aggregate, after the above are completed and when \fchan receives
-  (\textsc{close}, $P$) or (\textsc{close}, $\bar{P}$) by \simulator and
-  assuming $\texttt{ignore}_P = \mathrm{False}$, $\balance{P} = c -
+  On aggregate, after the above are completed and then \fchan receives
+  (\textsc{close}, $P$) by \simulator, it is $\balance{P} = c -
   \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$
   if $P = \alice$, or else if $P = \bob$, $\balance{P} = - \sum\limits_{i=1}^n
   f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$.
