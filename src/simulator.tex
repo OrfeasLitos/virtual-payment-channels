@@ -115,11 +115,12 @@
       \EndIndent
       \Statex
 
-      \State When honest simulated $P$ executes
-      Fig.~\ref{code:ln:virtualise:start-end},
-      l.~\ref{code:ln:virtualise:start-end:reduce-coins}: \Comment{if $\bar{P}$
-      is honest, it has already moved to the new host,
-      (Fig~\ref{code:virtual-layer:revocation},
+      \State When honest $P$ executes Fig.~\ref{code:ln:virtualise:start-end},
+      l.~\ref{code:ln:virtualise:start-end:reduce-coins} or (when honest $P$
+      executes Fig.~\ref{code:ln:virtualise:start-end},
+      l.~\ref{code:ln:virtualise:start-end:helper-output-funded} and $\bar{P}$
+      is corrupted): \Comment{in the first case if $\bar{P}$ is honest, it has
+      already moved to the new host, (Fig~\ref{code:virtual-layer:revocation},
       ll.~\ref{code:virtual-layer:revocation:revoc-by-next},~\ref{code:virtual-layer:revocation:hosts-ready}):
       lifting to next layer is done}
       \label{code:simulator:when-fund}
