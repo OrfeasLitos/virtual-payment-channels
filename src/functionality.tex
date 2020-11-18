@@ -41,7 +41,7 @@ channel)}
   \begin{systembox}{\fchan{} -- state machine up to \textsc{open} for $P \in
   \{\alice, \bob\}$}
     \begin{algorithmic}[1]
-      \State On first activation:
+      \State On first activation: \Comment{before handing the message}
       \label{code:functionality:open:boot}
       \Indent
         \State $\pk{P} \gets \bot$; $\texttt{host}_P \gets \bot$;
@@ -256,7 +256,7 @@ channel)}
       \State When $\itistate_P = \textsc{pending fund}$:
       \Indent
         \If{we intercept the command ``define new \textsc{virt} ITI
-        \texttt{host}'' by \adversary}
+        \texttt{host}'' by \adversary, routed through $P$}
           \State store \texttt{host}
           \State $\itistate_P \gets \textsc{tentative fund}$
           \State continue executing \adversary's command
@@ -274,7 +274,7 @@ channel)}
       \State When $\itistate_P = \textsc{open}$:
       \Indent
         \If{we intercept the command ``define new \textsc{virt} ITI
-        \texttt{host}'' by \adversary}
+        \texttt{host}'' by \adversary, routed through $P$}
           \State store \texttt{host}
           \State $\itistate_P \gets \textsc{tentative help fund}$
           \State continue executing \adversary's command
