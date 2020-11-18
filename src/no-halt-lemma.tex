@@ -2,42 +2,162 @@
 \label{lemma:no-halt}
   In an ideal execution with \fchan and \simulator, the functionality halts with
   negligible probability in the security parameter (i.e.
-  l.~\ref{code:functionality:state-machine:halt} of
-  Fig.~\ref{code:functionality:state-machine} is executed negligibly often).
+  l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}
+  is executed negligibly often).
 \end{lemma}
 
 \begin{proof}
-  The only way for \fchan to halt is if either $\texttt{check}_A$ or
-  $\texttt{check}_B$ fails. For these checks to take place, \fchan must have
-  received (\textsc{close}, \alice) or (\textsc{close}, \bob) by \simulator
-  while in the \textsc{open} \textit{State}
-  (Fig.~\ref{code:functionality:state-machine},
-  l.~\ref{code:functionality:state-machine:close:prev-state}). Additionally,
-  \fchan can only reach the \textsc{open} \textit{State} if all honest simulated
-  parties transition to the \textsc{open} \textit{State} as well
-  (Fig.~\ref{code:simulator}, l.~\ref{code:simulator:open}), which in turn, if
-  simulated \alice is honest, happens only if she has received (\textsc{open},
-  \dots) by \environment (Fig.~\ref{code:ln:open}). Observe further that
-  \simulator notifies \fchan right away when either simulated party becomes
-  corrupted or negligent (Fig.~\ref{code:simulator},
-  ll.~\ref{code:simulator:corrupted} and~\ref{code:simulator:negligent}
-  respectively) and the balance of each party is checked by \fchan only if this
-  party is not corrupted nor negligent. What is more, \simulator informs \fchan
-  of all successful \textsc{fund}s and \textsc{pay}s (Fig.~\ref{code:simulator},
-  ll.~\ref{code:simulator:when-fund} and~\ref{code:simulator:when-pay}
-  respectively). These facts in combination mean that for each party, whenever
-  the prerequisites for Lemma~\ref{lemma:ideal-balance} are true the
-  prerequisites for Lemma~\ref{lemma:real-balance-security} are also true (with
-  the same $n, m, l$ values) and therefore the check for this party will succeed
-  (Fig~\ref{code:functionality:state-machine},
-  l.~\ref{code:functionality:state-machine:close:coins}). Furthermore, when the
-  first prerequisite for Lemma~\ref{lemma:ideal-balance} does not hold (i.e.
-  $\texttt{ignore}_P = \mathrm{False}$), the check for the respective party will
-  be true, when the second prerequisite does not hold (i.e. $\textit{State} \neq
-  \textsc{open}$ when (\textsc{close}, \alice/\bob) is received) the check will
-  not take place at all and the other three prerequisites hold always, therefore
-  the check cannot fail if the prerequisites for Lemma~\ref{lemma:ideal-balance}
-  do not hold. On aggregate, when an ideal execution of \fchan and \simulator
-  take place, \fchan will halt with negligible probability in the security
+  We prove the Lemma in two steps. We first show that if the conditions of
+  Lemma~\ref{lemma:ideal-balance} hold, then the conditions of
+  Lemma~\ref{lemma:real-balance-security} for the real world execution with
+  protocol \textsc{ln} and the same \environment and \adversary hold as well for
+  the same $m, n$ and $l$ values.
+
+  For $\itistate_P$ to become $\textsc{ignored}$, either \simulator has to send
+  (\textsc{became corrupted or negligent}, $P$) or $\texttt{host}_P$ must output
+  (\textsc{enabler used revocation}) to \fchan
+  (Fig.~\ref{code:functionality:open},
+  l.~\ref{code:functionality:open:when-ignored}). The first case only happens
+  when either $P$ receives (\textsc{corrupt}) by \adversary
+  (Fig.~\ref{code:simulator}, l.~\ref{code:simulator:when-corrupted}), which
+  means that the simulated $P$ is not honest anymore, or when $P$ becomes
+  \texttt{negligent} (Fig.~\ref{code:simulator},
+  l.~\ref{code:simulator:when-negligent}), which means that the first condition
+  of Lemma~\ref{lemma:real-balance-security} is violated. In the second case, it
+  is $\texttt{host}_P \neq \ledger$ and the state of $\texttt{host}_P$ is
+  \textsc{guest punished} (Fig.~\ref{code:virtual-layer:close},
+  ll.~\ref{code:virtual-layer:close:when-punished-1}
+  or~\ref{code:virtual-layer:close:when-punished-2}), so in case $P$ receives
+  (\textsc{close}) by \environment the output of $\texttt{host}_P$ will be
+  (\textsc{guest punished}) (Fig.~\ref{code:virtual-layer:close},
+  l.~\ref{code:virtual-layer:close:output-guest-punished}). In all cases, some
+  condition of Lemma~\ref{lemma:real-balance-security} is violated.
+
+  For $\itistate_P$ to become \textsc{open} at least once, the following
+  sequence of events must take place (Fig.~\ref{code:functionality:open}): If $P
+  = \alice$, it must receive (\textsc{init}, $\pk{}$) by \environment when
+  $\itistate_P = \textsc{uninit}$, then either receive (\textsc{open}, $c$,
+  \ledger, $\dots$) by \environment and (\textsc{base open}) by \simulator or
+  (\textsc{open}, $c$, \texttt{hops} ($\neq \ledger$), $\dots$) by \environment,
+  (\textsc{funded}, \textsc{host}, $\dots$) by \texttt{hops}[0].\texttt{left}
+  and (\textsc{virtual open}) by \simulator. In either case, \simulator only
+  sends its message only if all its simulated honest parties move to the
+  \textsc{open} state (Fig.~\ref{code:simulator},
+  l.~\ref{code:simulator:when-open}), therefore if the second condition of
+  Lemma~\ref{lemma:ideal-balance} holds and $P = \alice$, then the second
+  condition of Lemma~\ref{lemma:real-balance-security} holds as well. The same
+  line of reasoning can be used to deduce that if $P = \bob$, then $\itistate_P$
+  will become \textsc{open} for the first time only if all honest simulated
+  parties move to the \textsc{open} \textit{state}, therefore once more the
+  second condition of Lemma~\ref{lemma:ideal-balance} holds only if the second
+  condition of Lemma~\ref{lemma:real-balance-security} holds as well. We also
+  observe that, if both parties are honest, they will transition to the
+  \textsc{open} state simultaneously.
+
+  Regarding the third Lemma~\ref{lemma:ideal-balance} condition, we assume (and
+  will later show) that if both parties are honest and the state of one is
+  \textsc{open}, then the state of the other is also \textsc{open}. Each time
+  $P$ receives input (\textsc{fund me}, $f$, $\dots$) by $R \in \{\fchan,
+  \textsc{ln}\}$, $\itistate_P$ transitions to \textsc{pending fund},
+  subsequently when a command to define a new \textsc{virt} ITI through $P$ is
+  intercepted by \fchan, $\itistate_P$ transitions to \textsc{tentative fund}
+  and afterwards when \simulator sends (\textsc{fund}) to \fchan, $\itistate_P$
+  transitions to \textsc{sync fund}. In parallel, if $\itistate_{\bar{P}} =
+  \textsc{ignored}$, then $\itistate_P$ transitions directly back to
+  \textsc{open}. If on the other hand $\itistate_{\bar{P}} = \textsc{open}$ and
+  \fchan intercepts a similar \textsc{virt} ITI definition command through
+  $\bar{P}$, $\itistate_{\bar{P}}$ transitions to \textsc{tentative help fund}.
+  On receiving the aforementioned (\textsc{fund}) message by \simulator and
+  given that $\itistate_{\bar{P}} = \textsc{tentative help fund}$, \fchan also
+  sets $\itistate_{\bar{P}}$ to \textsc{sync help fund}. Then both
+  $\itistate_{\bar{P}}$ and $\itistate_P$ transition simultaneously to
+  \textsc{open} (Fig.~\ref{code:functionality:fund}). This sequence of events
+  may repeat any $n \geq 0$ times. We observe that throughout these steps,
+  honest simulated $P$ has received (\textsc{fund me}, $f$, $\dots$) and that
+  \simulator only sends (\textsc{fund}) when all honest simulated parties have
+  transitioned to the \textsc{open} state (Fig.~\ref{code:simulator},
+  l.~\ref{code:simulator:when-fund} and Fig.~\ref{code:ln:virtualise:start-end},
+  l.~\ref{code:ln:virtualise:start-end:hosts-ready}), so the third condition of
+  Lemma~\ref{lemma:real-balance-security} holds with the same $n$ as that of
+  Lemma~\ref{lemma:ideal-balance}.
+
+  Regarding the fourth Lemma~\ref{lemma:ideal-balance} condition, we again
+  assume that if both parties are honest and the state of one is \textsc{open},
+  then the state of the other is also \textsc{open}. Each time $P$ receives
+  input (\textsc{pay}, $d$) by \environment, $\itistate_P$ tranisitions to
+  \textsc{tentative pay} and subsequently when \simulator sends (\textsc{pay})
+  to \fchan, $\itistate_P$ transitions to (\textsc{sync pay}, $d$). In parallel,
+  if $\itistate_{\bar{P}} = \textsc{ignored}$, then $\itistate_P$ transitions
+  directly back to \textsc{open}. If on the other hand $\itistate_{\bar{P}} =
+  \textsc{open}$ and \fchan receives (\textsc{get paid}, $d$) by \environment
+  addressed to $\bar{P}$, $\itistate_{\bar{P}}$ transitions to \textsc{tentative
+  get paid}. On receiving the aforementioned (\textsc{pay}) message by
+  \simulator and given that $\itistate_{\bar{P}} = \textsc{tentative get paid}$,
+  \fchan also sets $\itistate_{\bar{P}}$ to \textsc{sync get paid}. Then both
+  $\itistate_P$ and $\itistate_{\bar{P}}$ transition simultaneously to
+  \textsc{open} (Fig.~\ref{code:functionality:pay}). This sequence of events may
+  repeat any $m \geq 0$ times. We observe that throughout these steps, honest
+  simulated $P$ has received (\textsc{pay}, $d$) and that \simulator only sends
+  (\textsc{pay}) when all honest simulated parties have transitioned to the
+  \textsc{open} state (Fig.~\ref{code:simulator},
+  l.~\ref{code:simulator:when-pay}), so the fourth condition of
+  Lemma~\ref{lemma:real-balance-security} holds with the same $m$ as that of
+  Lemma~\ref{lemma:ideal-balance}. As far as the fifth condition of
+  Lemma~\ref{lemma:ideal-balance} goes, we observe that this case is symmetric
+  to the one discussed for its fourth condition above if we swap $P$ and
+  $\bar{P}$, therefore we deduce that if Lemma~\ref{lemma:ideal-balance} holds
+  with some $l$, then Lemma~\ref{lemma:real-balance-security} holds with the
+  same $l$.
+
+  As promised, we here argue that if both parties are honest and one party moves
+  to the \textsc{open} state, then the other party will move to the
+  \textsc{open} state as well. We already saw that the first time one party
+  moves to the \textsc{open} state, it will happen simultaneously with the same
+  transition for the other party. We also saw that, when a party transitions
+  from the \textsc{sync help fund} or the \textsc{sync fund} state to the
+  \textsc{open} state, then the other party will also transition to the
+  \textsc{open} state simultaneously. Furthermore, we saw that if one party
+  transitions from the \textsc{sync pay} or the \textsc{sync get paid} state to
+  the \textsc{open} state, the other party will also transition to the
+  \textsc{open} state simultaneously. Lastly we notice that we have exhausted
+  all manners in which a party can transition to the \textsc{open} state,
+  therefore we have proven that transitions of honest parties to the
+  \textsc{open} state happen simultaneously.
+
+  Now, given that \simulator internally simulates faithfully both \textsc{ln}
+  parties and that \fchan relinquishes to \simulator complete control of the
+  external communication of the parties as long as it does not halt, we deduce
+  that \simulator replicates the behaviour of the aforementioned real world. By
+  combining these facts with the consequences of the two Lemmas and the check
+  that leads \fchan to halt if it fails (Fig.~\ref{code:functionality:close},
+  l.~\ref{code:functionality:close:check:if}), we deduce that if the conditions
+  of Lemma~\ref{lemma:ideal-balance} hold, then the functionality halts only
+  with negligible probability.
+
+  In the second proof step, we show that if the conditions of
+  Lemma~\ref{lemma:ideal-balance} do not hold, then the check of
+  Fig.~\ref{code:functionality:close},
+  l.~\ref{code:functionality:close:check:if} never takes place. We first discuss
+  the $\itistate_P = \textsc{ignored}$ case. We observe that the
+  \textsc{ignored} \textit{State} is a sink state, as there is no way to leave
+  it once in. Additionally, for the balance check to happen, \fchan must receive
+  (\textsc{closed}, $P$) by \simulator when $\itistate_P \neq \textsc{ignored}$
+  (Fig.~\ref{code:functionality:close},
+  l.~\ref{code:functionality:close:check}). We deduce that, once $\itistate_P =
+  \textsc{ignored}$, the balance check will not happen. Moving to the case where
+  $\itistate_P$ has never been \textsc{open}, we observe that it is impossible
+  to move to any of the states required by
+  l.~\ref{code:functionality:close:check} of Fig.~\ref{code:functionality:close}
+  without first having been in the \textsc{open} state. Moreover if $P =
+  \alice$, it is impossible to reach the \textsc{open} state without receiving
+  input (\textsc{open}, $c$, $\dots$) by \environment. Lastly, as we have
+  observed already, the three last conditions of Lemma~\ref{lemma:ideal-balance}
+  are always satisfied. We conclude that if the conditions to
+  Lemma~\ref{lemma:ideal-balance} do not hold, then the check of
+  Fig.~\ref{code:functionality:close},
+  l.~\ref{code:functionality:close:check:if} does not happen and therefore
+  \fchan does not halt.
+
+  On aggregate, \fchan may only halt with negligible probability in the security
   parameter.
 \end{proof}
