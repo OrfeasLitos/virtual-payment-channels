@@ -51,10 +51,11 @@
       \EndIndent
       \Statex
 
-      \State When simulated $P$ sets its internal variable \texttt{negligent} to
-      True (Fig.~\ref{code:ln:methods-for-virt},
-      l.~\ref{code:ln:methods-for-virt:negligent}/Fig.~\ref{code:ln:init},
-      l.~\ref{code:ln:init:negligent}):
+      \State When simulated $P$ sets variable \texttt{negligent} to True
+      (Fig.~\ref{code:ln:init},
+      l.~\ref{code:ln:init:negligent}/Fig.~\ref{code:ln:methods-for-virt},
+      l.~\ref{code:ln:methods-for-virt:negligent}):
+      \label{code:simulator:when-negligent}
       \Indent
         \State send (\textsc{info}, \textsc{became corrupted or negligent}, $P$)
         to \fchan
