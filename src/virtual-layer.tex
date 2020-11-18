@@ -737,16 +737,16 @@
         \State $\textit{State} \gets \textsc{guest punished}$
         \State input (\textsc{used revocation}) to $\texttt{host}_P$, expect
         reply (\textsc{used revocation ok})
-        \IfThen{\texttt{funder} it \texttt{fundee} is defined}{output
-        \textsc{used revocation} to it}
+        \IfThen{\texttt{funder} or \texttt{fundee} is defined}{output
+        (\textsc{enabler used revocation}) to it}
       \EndIndent
       \Statex
 
       \State On output (\textsc{used revocation}) by $\texttt{host}_P$:
       \Indent
         \State $\itistate \gets \textsc{guest punished}$
-        \IfThen{\texttt{funder} it \texttt{fundee} is defined}{output
-        \textsc{used revocation} to it}
+        \IfThen{\texttt{funder} or \texttt{fundee} is defined}{output
+        (\textsc{enabler used revocation}) to it}
       \EndIndent
     \end{algorithmic}
   \end{processbox}
