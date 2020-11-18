@@ -674,6 +674,7 @@
         $R$}
         \IfThen{\textit{State} = \textsc{guest punished}}{output (\textsc{guest
         punished}) to $R$}
+        \label{code:virtual-layer:close:output-guest-punished}
         \State ensure \textit{State} = \textsc{open}
         \If{$\texttt{host}_P \neq \ledger$} \Comment{$\texttt{host}_P$ is a
         \textsc{virt}}
@@ -733,6 +734,7 @@
       \State On input (\textsc{used revocation}) by \texttt{guest}:
       \Comment{(\textsc{used revocation}) by \texttt{funder}/\texttt{fundee} is
       ignored}
+      \label{code:virtual-layer:close:when-punished-1}
       \Indent
         \State $\textit{State} \gets \textsc{guest punished}$
         \State input (\textsc{used revocation}) to $\texttt{host}_P$, expect
@@ -743,6 +745,7 @@
       \Statex
 
       \State On output (\textsc{used revocation}) by $\texttt{host}_P$:
+      \label{code:virtual-layer:close:when-punished-2}
       \Indent
         \State $\itistate \gets \textsc{guest punished}$
         \IfThen{\texttt{funder} or \texttt{fundee} is defined}{output

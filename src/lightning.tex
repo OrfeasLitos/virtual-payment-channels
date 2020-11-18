@@ -415,6 +415,7 @@
         \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
           \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$)
           to \texttt{fundee} and expect reply (\textsc{fund ack})
+          \label{code:ln:virtualise:start-end:helper-output-funded}
         \ElsIf{we have received input \textsc{fund me} just before we moved to
         the \textsc{virtualising} state} \Comment{we are the first hop}
           \State $c_P \gets c_P - c_{\mathrm{guest}}$
