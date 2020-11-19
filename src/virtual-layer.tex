@@ -729,30 +729,50 @@
           \State output (\textsc{closed}) to $R$
         \EndIf
       \EndIndent
-      \Statex
-
-      \State On input (\textsc{used revocation}) by \texttt{guest}:
-      \Comment{(\textsc{used revocation}) by \texttt{funder}/\texttt{fundee} is
-      ignored}
-      \label{code:virtual-layer:close:when-punished-1}
-      \Indent
-        \State $\textit{State} \gets \textsc{guest punished}$
-        \State input (\textsc{used revocation}) to $\texttt{host}_P$, expect
-        reply (\textsc{used revocation ok})
-        \IfThen{\texttt{funder} or \texttt{fundee} is defined}{output
-        (\textsc{enabler used revocation}) to it}
-      \EndIndent
-      \Statex
-
-      \State On output (\textsc{used revocation}) by $\texttt{host}_P$:
-      \label{code:virtual-layer:close:when-punished-2}
-      \Indent
-        \State $\itistate \gets \textsc{guest punished}$
-        \IfThen{\texttt{funder} or \texttt{fundee} is defined}{output
-        (\textsc{enabler used revocation}) to it}
-      \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}
   \label{code:virtual-layer:close}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt} -- punishment handling}
+    \begin{algorithmic}[1]
+      \State On input (\textsc{used revocation}) by \texttt{guest}:
+      \Comment{(\textsc{used revocation}) by \texttt{funder}/\texttt{fundee} is
+      ignored}
+      \label{code:virtual-layer:punishment:when-punished-1}
+      \Indent
+        \State $\textit{State} \gets \textsc{guest punished}$
+        \State input (\textsc{used revocation}) to $\texttt{host}_P$, expect
+        reply (\textsc{used revocation ok})
+        \If{\texttt{funder} or \texttt{fundee} is defined}
+          \State output (\textsc{enabler used revocation}) to it
+        \Else \: \Comment{\texttt{sibling} is defined}
+          \State output (\textsc{enabler used revocation}) to \texttt{sibling}
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State On input (\textsc{enabler used revocation}) by \texttt{sibling}:
+      \Indent
+        \State $\textit{State} \gets \textsc{guest punished}$
+        \State output (\textsc{enabler used revocation}) to \texttt{guest}
+      \EndIndent
+      \Statex
+
+      \State On output (\textsc{used revocation}) by $\texttt{host}_P$:
+      \label{code:virtual-layer:punishment:when-punished-2}
+      \Indent
+        \State $\itistate \gets \textsc{guest punished}$
+        \If{\texttt{funder} or \texttt{fundee} is defined}
+          \State output (\textsc{enabler used revocation}) to it
+        \Else \: \Comment{\texttt{sibling} is defined}
+          \State output (\textsc{enabler used revocation}) to \texttt{sibling}
+        \EndIf
+      \EndIndent
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:punishment}
 \end{figure}
