@@ -24,6 +24,7 @@
   state obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$
   $(c_i, \pk{P, \mathrm{out}})$ outputs such that
   \begin{equation}
+  \label{lemma:real-balance-security:ineq}
     \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace
   \end{equation}
@@ -32,39 +33,117 @@
 
 \begin{proof}
   $P$ can transition to the \textsc{open} \textit{State} for the first time only
-  if it:
+  if all of the following have taken place:
   \begin{itemize}
-    \item has received (\textsc{open}, $c$, $\dots$) while in the \textsc{init}
-    \textit{State} by either \environment if ($P = \alice$,
-    Fig.~\ref{code:ln:open}, l.~\ref{code:ln:open:alice-open}) or $\bar{P}$ (if
-    $P = \bob$, Fig.~\ref{code:ln:exchange-open-keys:bob-open},
-    l.~\ref{code:ln:exchange-open-keys:bob-open}),
-    \item it internally holds a signature on the commitment transaction $C_{P,
-    0}$ that is valid by $\pk{\bar{P}, F}$
+    \item It has received (\textsc{open}, $c$, $\dots$) while in the
+    \textsc{init} \textit{State}. In case $P = \alice$, this message must have
+    been received as input by \environment (Fig.~\ref{code:ln:open},
+    l.~\ref{code:ln:open:alice-open}), or in case $P = \bob$, this message must
+    have been received via the network by $\bar{P}$
+    (Fig.~\ref{code:ln:exchange-open-keys},
+    l.~\ref{code:ln:exchange-open-keys:bob-open}).
+    \item It has received $\pk{\bar{P}, F}$. In case $P = \bob$, $\pk{\bar{P},
+    F}$ must have been contained in the (\textsc{open}, $\dots$) message by
+    $\bar{P}$ (Fig.~\ref{code:ln:exchange-open-keys},
+    l.~\ref{code:ln:exchange-open-keys:bob-open}), otherwise if $P = \alice$
+    $\pk{\bar{P}, F}$ must have been contained in the (\textsc{accept channel},
+    $\dots$) message by $\bar{P}$ (Fig.~\ref{code:ln:exchange-open-keys},
+    l.~\ref{code:ln:exchange-open-keys:accept-channel}).
+    \item It internally holds a signature on the commitment transaction $C_{P,
+    0}$ that is valid when verified with public key $\pk{\bar{P}, F}$
     (Fig.~\ref{code:ln:exchange-open-sigs},
     ll.~\ref{code:ln:exchange-open-sigs:b-verify}
-    and~\ref{code:ln:exchange-open-sigs:a-verify}),
-    \item it either has the transaction $F$ in the \ledger state if
-    $\texttt{host} = \ledger$ (Fig.~\ref{code:ln:commit-base},
-    l.~\ref{code:ln:commit-base:f-in-state}), or is able to cause an eventual
-    inclusion of a $(c, 2/\{\pk{A, F}, \pk{B, F}\})$ output in the \ledger state
-    by passing input (\textsc{close}) to \texttt{host}. The latter is true if
+    and~\ref{code:ln:exchange-open-sigs:a-verify}).
+    \item If $\texttt{hops} = \ledger$, (according to the (\textsc{open},
+    $\dots$) message) it has the transaction $F$ in the \ledger state
+    (Fig.~\ref{code:ln:commit-base}, l.~\ref{code:ln:commit-base:f-in-state} or
+    Fig.~\ref{code:ln:bob}, l.~\ref{code:ln:bob:state-open}).
+
+    Else if $\texttt{hops} \neq \ledger$, $P$ is able to cause an eventual
+    inclusion of a transaction with output $(c, 2/\{\pk{P, F}, \pk{\bar{P} ,
+    F}\})$ in the \ledger state by passing input (\textsc{close}) to
+    $\texttt{host}_P$ that results in $\texttt{host}_P$ outputting
+    (\textsc{closed}) -- we only examine the case where this output is indeed
+    given, as stipulated in the Lemma conditions.  The eventual transaction
+    output inclusion in \ledger is guaranteed due to the following:
     \texttt{hops}[0].\texttt{left} (when $P = \alice$,
     Fig.~\ref{code:ln:prepare-base}, l.~\ref{code:ln:prepare-base:fund-me}) or
     \texttt{hops}[-1].\texttt{right} (when $P = \bob$, Fig.~\ref{code:ln:bob},
     l.~\ref{code:ln:bob:funded}) has passed output (\textsc{funded}, $\dots$) to
-    $P$, as the outputting party is trusted (as it executes locally) and has
-    itself been passed output (\textsc{hosts ready}) by its (also trusted)
-    $\texttt{host}$ \textsc{virt} ITI (Fig.~\ref{code:ln:virtualise:start-end},
-    l.~\ref{code:ln:virtualise:start-end:hosts-ready}). The \texttt{host}
-    only outputs (\textsc{hosts ready}) when its \texttt{guest} (which is the
-    aforementioned party that output (\textsc{funded}, $\dots$)) verifies that
-    the remote revocation has happened correctly
-    (Fig.~\ref{code:virtual-layer:revocation},
+    $P$, as this party is trusted (as it executes locally) and has itself been
+    passed output (\textsc{hosts ready}) by its (also trusted) $\texttt{host}$
+    \textsc{virt} ITI (Fig.~\ref{code:ln:virtualise:start-end},
+    l.~\ref{code:ln:virtualise:start-end:hosts-ready}). The \texttt{host} only
+    outputs (\textsc{hosts ready}) when its \texttt{guest} (which is the
+    aforementioned party that outputs (\textsc{funded}, $\dots$)) verifies that
+    the remote revocation of the previous commitment transaction has happened
+    correctly (Fig.~\ref{code:virtual-layer:revocation},
     ll.~\ref{code:virtual-layer:revocation:non-funder:proc-remote}
-    or~\ref{code:virtual-layer:revocation:funder:proc-remote}). As we will see
-    later, this verification ensures that either the aforementioned output will
-    end up in the \ledger state, or the \texttt{guest}'s counterparty will lose
-    all their funds to the \texttt{guest}.
+    or~\ref{code:virtual-layer:revocation:funder:proc-remote}). Furthermore,
+    $\texttt{host}_P$ only outputs (\textsc{closed}) if there exists a suitable
+    transation output in \ledger (Fig.~\ref{code:virtual-layer:close},
+    l.~\ref{code:virtual-layer:close:when-closed}). If $\texttt{host}_P$ was
+    prompted to closure by $P$, then this transaction output is the desired one.
+    If $\texttt{host}_P$ hosts a party of another channel and that party
+    prompted a closure the desired transaction output will end up in \ledger as
+    well. The reason for that is because the only way any of the aforementioned
+    party can close honestly its channel is by publishing its copy of the only
+    valid transaction as per Fig.~\ref{code:virtual-layer:close},
+    l.~\ref{code:virtual-layer:close:tx}, which is the exact same transaction
+    that would be published had $P$ closed first. Since $P$ belongs to a newly
+    opened channel, there exist five different valid transactions that include
+    the desired output: $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ held by
+    $\texttt{host}_P$ (Fig.~\ref{code:virtual-layer:fundee-sigs},
+    l.~\ref{code:virtual-layer:fundee-sigs:tx-none} if $P$ is fundee,
+    Fig.~\ref{code:virtual-layer:funder-sigs},
+    l.~\ref{code:virtual-layer:funder-sigs:tx-none} if $P$ is funder) and
+    $\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$, $\mathrm{TX}_{\mathrm{prev},
+    \mathrm{left}}$, $\mathrm{TX}_{\mathrm{prev}, \mathrm{right}}$,
+    $\mathrm{TX}_{\mathrm{prev}, \mathrm{both}}$ if $P$ is fundee or
+    $\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$, $\mathrm{TX}_{\mathrm{next},
+    \mathrm{left}}$, $\mathrm{TX}_{\mathrm{next}, \mathrm{right}}$,
+    $\mathrm{TX}_{\mathrm{next}, \mathrm{both}}$ if $P$ is funder, held by
+    $\texttt{host}_{\bar{P}}$ (Fig.~\ref{code:virtual-layer:intermediary-sigs}).
+    We will here refer to the subscripts ``prev''/``next'' as ``other'' for
+    simplicity.  All valid combinations of these transactions in \ledger (only
+    $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$, only
+    $\mathrm{TX}_{\mathrm{other}, \mathrm{none}}$, only
+    $\mathrm{TX}_{\mathrm{other}, \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc},
+    \mathrm{none}}$ and $\mathrm{TX}_{\mathrm{other}, \mathrm{left}}$, or
+    $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ and
+    $\mathrm{TX}_{\mathrm{other}, \mathrm{both}}$) eventually result in exactly
+    one output of interest in \ledger. Any other transaction that has the same
+    input as $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ is revoked before the
+    output (\textsc{funded}, $\dots$) to $P$ and therefore having any of these
+    transactions published instead would violate the aforementioned Lemma
+    condition.
   \end{itemize}
+  Given that all of the aforementioned are true, before transitioning to the
+  \textsc{open} \textit{State}, $P$ has produced only one valid signature for
+  the $(c, 2/\{\pk{P, F}, \pk{\bar{P}, F}\})$ output with $\sk{P, F}$, namely
+  for $C_{\bar{P}, 0}$ (Fig.~\ref{code:ln:exchange-open-sigs},
+  ll.~\ref{code:ln:exchange-open-sigs:a-sign}
+  or~\ref{code:ln:exchange-open-sigs:b-sign}), and sent it to $\bar{P}$
+  (Fig.~\ref{code:ln:exchange-open-sigs},
+  ll.~\ref{code:ln:exchange-open-sigs:a-send}
+  or~\ref{code:ln:exchange-open-sigs:b-send}), therefore the unique two ways to
+  spend $(c, 2/\{\pk{P, F}, \pk{\bar{P}, F}\})$ are by either publishing $C_{P,
+  0}$ or $C_{\bar{P}, 0}$. We observe that $C_{P, 0}$ has a ($g$, ($\pk{P,
+  \mathrm{out}} + (t + s)$) $\vee$ $2/\{\pk{P, R}, \pk{\bar{P}, R}\}$) output,
+  where $g = c$ if $P = \alice$ and $g = 0$ if $P = \bob$
+  (Fig.~\ref{code:ln:exchange-open-sigs},
+  l.~\ref{code:ln:exchange-open-sigs:a-tx}
+  or~\ref{code:ln:exchange-open-sigs:b-tx}). Since we assume $P$ is honest, it
+  will never give the opportunity for the spending method $2/\{\pk{P, R},
+  \pk{\bar{P}, R}\}$ to be used (as this corresponds to publishing a revoked
+  transaction), therefore the alternative spending method, $\pk{P, \mathrm{out}}
+  + (t + s)$, is the only one that will be spendable if $C_{P, 0}$ is included
+  in \ledger, therefore contributing $g$ to the sum of outputs that contribute
+  to inequality~\ref{lemma:real-balance-security:ineq}.  Likewise, if
+  $C_{\bar{P}, 0}$ is included in \ledger, it will contribute at least one ($g$,
+  $\pk{P, \mathrm{out}}$) output to this inequality, as $C_{\bar{P}, 0}$ has a
+  ($g$, $\pk{P, \mathrm{out}}$) output (Fig.~\ref{code:ln:exchange-open-sigs},
+  l.~\ref{code:ln:exchange-open-sigs:a-tx}
+  or~\ref{code:ln:exchange-open-sigs:b-tx}). We also observe that, if $n = m = l
+  = 0$, then the Lemma holds.
 \end{proof}
