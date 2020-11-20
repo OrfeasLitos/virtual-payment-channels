@@ -153,6 +153,7 @@
       \EndIf
       \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
       $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
+      \label{code:ln:exchange-open-keys:accept-channel}
       \State ensure $\itistate = \textsc{waiting for opening keys}$
       \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
       \State $\itistate \gets \textsc{opening keys ok}$
@@ -198,13 +199,17 @@
       \State $C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
       \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (t + s)$) $\vee$
       $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
+      \label{code:ln:exchange-open-sigs:a-tx}
       \State $C_{B, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
       \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
       \mathrm{out}} + (t + s)$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
+      \label{code:ln:exchange-open-sigs:b-tx}
       \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A, F})$
+      \label{code:ln:exchange-open-sigs:a-sign}
       \State $\itistate \gets \textsc{waiting for comm sig}$
       \State send (\textsc{funding created}, $(c, \pk{A, \mathrm{chain}})$,
       $\mathrm{sig}_{A, C, 0}$) to \texttt{fundee}
+      \label{code:ln:exchange-open-sigs:a-send}
       \State \remotecode{ensure $\itistate = \textsc{waiting for comm
       sig}$} \Comment{if opening virtual channel, we have received
       (\textsc{funded}, \texttt{host\_fundee}) by
@@ -227,6 +232,7 @@
       $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
       \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A, 0},
       \sk{B, F})$}
+      \label{code:ln:exchange-open-sigs:b-sign}
       \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
         \State \remotecode{$\itistate \gets \textsc{waiting to check
         funding}$}
@@ -237,6 +243,7 @@
       \EndIf
       \State \remotecode{reply (\textsc{funding signed}, $\mathrm{sig}_{B, C,
       0}$)}
+      \label{code:ln:exchange-open-sigs:b-send}
       \State ensure $\itistate = \textsc{waiting for comm sig}$
       \State ensure \textsc{verify}($C_{A, 0}$, $\mathrm{sig}_{B, C, 0}$,
       $\pk{B, F}$) = True

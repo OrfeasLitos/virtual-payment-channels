@@ -391,6 +391,7 @@
       \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$,
       $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
       \mathrm{guest}}$, False)
+      \label{code:virtual-layer:fundee-sigs:tx-none}
       \For{each hop apart from the first and ours ($i \in [2, \dots, n-1]$)}
       \Comment{hop data encoded in \texttt{left\_data}}
         \State extract data needed for \textsc{getMidTXs}() from
@@ -471,6 +472,7 @@
       $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
       \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
       \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$, True)
+      \label{code:virtual-layer:funder-sigs:tx-none}
       \State \Return (\textsc{ok})
     \end{algorithmic}
   \end{processbox}
@@ -694,6 +696,7 @@
         $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
         \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$)
         \Comment{if we are not an intermediary, only the first exists}
+        \label{code:virtual-layer:close:tx}
         \State let \texttt{sigs} be the corresponding set of signatures among
         ($\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$,
         $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}}$,
@@ -727,6 +730,7 @@
         \If{$\Sigma$ has an unspent output that can be spent exclusively by a
         2-of-\{$\pk{1}$, $\pk{2}$\} multisig} \Comment{if there is a timelock,
         it must have expired}
+        \label{code:virtual-layer:close:when-closed}
           \State $\textit{State} \gets \textsc{closed}$
           \State output (\textsc{closed}) to $R$
         \EndIf
