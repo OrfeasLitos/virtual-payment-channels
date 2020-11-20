@@ -600,6 +600,8 @@
       \State \trustedcode{ensure
       \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
       returns (\textsc{ok})}
+      \State \trustedcode{output (\textsc{hosts ready}) to \texttt{guest} and
+      expect reply (\textsc{host ack})}
       \State \trustedcode{output (\textsc{virtual revocation back})}
     \EndIf
     \State $\texttt{revoc\_for\_prev} \gets
