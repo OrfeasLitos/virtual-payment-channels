@@ -98,8 +98,8 @@
   \textsc{open} (Fig.~\ref{code:functionality:pay}). This sequence of events may
   repeat any $m \geq 0$ times. We observe that throughout these steps, honest
   simulated $P$ has received (\textsc{pay}, $d$) and that \simulator only sends
-  (\textsc{pay}) when all honest simulated parties have transitioned to the
-  \textsc{open} state (Fig.~\ref{code:simulator},
+  (\textsc{pay}) when all honest simulated parties have completed sending or
+  receiving the payment (Fig.~\ref{code:simulator},
   l.~\ref{code:simulator:when-pay}), so the fourth condition of
   Lemma~\ref{lemma:real-balance-security} holds with the same $m$ as that of
   Lemma~\ref{lemma:ideal-balance}. As far as the fifth condition of
