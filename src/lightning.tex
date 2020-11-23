@@ -684,7 +684,7 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- On (\textsc{check chain for old comm}):}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{check chain for closed}):}
     \begin{algorithmic}[1]
       \State ensure $\itistate \notin \{\bot, \textsc{init},
       \textsc{topped up}\}$ \Comment{channel open}
@@ -697,7 +697,12 @@
         \State $\itistate \gets \textsc{closing}$
         \State \textsc{ln}.\textsc{submitAndCheckRevocation}($j$)
         \State $\itistate \gets \textsc{closed}$
-        \label{code:ln:poll:state-closed}
+        \label{code:ln:poll:state-closed-punished}
+        \State output (\textsc{closed})
+      \ElsIf{$C_{P, j} \in \Sigma \wedge C_{\bar{P}, j} \in \Sigma$}
+        \State $\itistate \gets \textsc{closed}$
+        \label{code:ln:poll:state-closed-honestly}
+        \State output (\textsc{closed})
       \EndIf
     \end{algorithmic}
   \end{processbox}
@@ -758,15 +763,7 @@
         \State input (\textsc{submit}, $(C_{P, i}, \mathrm{sig}_{P, C, i},
         \mathrm{sig}_{P, C, i}')$) to \ledger
         \label{code:ln:close:submit}
-        \While{$C_{P, i} \notin \Sigma$}
-          \State wait for input (\textsc{check closed}) \Comment{ignore other
-          messages}
-          \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
-        \EndWhile
       \EndIf
-      \State $\itistate \gets \textsc{closed}$
-      \label{code:ln:close:state-closed}
-      \State output (\textsc{closed})
     \end{algorithmic}
   \end{processbox}
   \caption{}
