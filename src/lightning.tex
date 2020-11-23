@@ -533,6 +533,7 @@
       $P$'s to $\bar{P}$'s output
       \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1},
       \sk{P, F})$ \Comment{kept by $\bar{P}$}
+      \State $\itistate \gets \textsc{waiting for commitment signed}$
       \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
       \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
       and remote code}
@@ -559,6 +560,7 @@
       \State \remotecode{$\itistate \gets \textsc{waiting for pay revocation}$}
       \State \remotecode{reply (\textsc{commitment signed},
       $\mathrm{sig}_{\bar{P}, C, i+1}$, $\mathrm{sig}_{\bar{P}, R, i}$)}
+      \State ensure $\itistate = \textsc{waiting for commitment signed}$
       \State $C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from $P$'s to
       $\bar{P}$'s output
     \end{algorithmic}
@@ -584,6 +586,7 @@
       \label{code:ln:pay:revocations:paid-out}
       \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
       i + 1$
+      \State $\itistate \gets \textsc{open}$
       \If{$\texttt{host}_P \neq \ledger \wedge$ we have a
       \texttt{host\_sibling}} \Comment{we are intermediary channel}
         \State input (\textsc{new balance}, $c_P$, $c_{\bar{P}}$) to
