@@ -431,6 +431,7 @@
           to \texttt{funder} \Comment{do not expect reply by \texttt{funder}}
         \EndIf
         \State reply (\textsc{host ack})
+        \label{code:ln:virtualise:start-end:reply}
       \EndIndent
       \Statex
 
@@ -752,17 +753,16 @@
           messages}
           \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
         \EndWhile
-        \State \Comment{provably reachable -- \TODO{ref}}
         \State $\mathrm{sig}_{P, C, i}' \gets \textsc{sign}(C_{P, i}, \sk{P,
         F})$
         \State input (\textsc{submit}, $(C_{P, i}, \mathrm{sig}_{P, C, i},
         \mathrm{sig}_{P, C, i}')$) to \ledger
+        \label{code:ln:close:submit}
         \While{$C_{P, i} \notin \Sigma$}
           \State wait for input (\textsc{check closed}) \Comment{ignore other
           messages}
           \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
         \EndWhile
-        \State \Comment{provably reachable -- \TODO{ref}}
       \EndIf
       \State $\itistate \gets \textsc{closed}$
       \label{code:ln:close:state-closed}
