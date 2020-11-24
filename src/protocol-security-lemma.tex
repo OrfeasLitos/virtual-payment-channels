@@ -59,7 +59,11 @@
   with the opening of a new virutal channel, but does not fund it), $[0]$ is
   appended to $C$. Therefore $C$ consists of one list of integers for each
   sequence of inbound and outbound payments that have not been interrupted by a
-  virtualisation step and a new list is added for every new virtual layer.
+  virtualisation step and a new list is added for every new virtual layer. We
+  also observe that a non-negligent party with history $(F, C)$ satisfies the
+  Lemma conditions and that the value of the right hand side of the
+  inequality~\ref{lemma:real-balance-security:ineq} is equal to
+  $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{i \in s} i$.
 
   Let party $P$ with a particular history. We will inductively prove that $P$
   satisfies the Lemma. The base case is when a channel is opened with
