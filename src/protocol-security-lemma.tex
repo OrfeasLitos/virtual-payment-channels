@@ -129,6 +129,71 @@
   contains at least one $(g, \pk{P, \mathrm{out}})$ output with overwhelming
   probability (as a signature forgery may happen only with negligible
   probability), therefore satisfying the Lemma consequence.
+
+  Let $P$ with history $H = (F, C)$. The induction hypothesis is that the Lemma
+  holds for $P$. In order to perform the induction step, assume that $P$ is in
+  the \textsc{open} state. We will prove all the following (the facts to be
+  proven are shown with emphasis for clarity):
+  \begin{itemize}
+    \item If $P$ receives (\textsc{fund me}, $f$, $\dots$) by a (local, trusted)
+    \textsc{ln} ITI $R$, subsequently transitions back to the \textsc{open}
+    state (therefore moving to history $(F, C')$ where $C'$ is $C + [-f]$) and
+    finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
+    $\texttt{host}_P$ before any further change to its history, then
+    \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
+    \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C} \sum\limits_{x \in s} x$}. Furthermore, given that $P$
+    moves to the \textsc{open} state after the (\textsc{fund me}, $\dots$)
+    message, it also sends (\textsc{funded}, $\dots$) to  $R$
+    (Fig.~\ref{code:ln:virtualise:start-end},
+    l.~\ref{code:ln:virtualise:start-end:funder-funded}). If subsequently the
+    state of $R$ transitions to \textsc{open} (therefore obtaining history
+    $(F_R, C_R)$ where $F_R = F + C$ and $C_R = [[f]]$), and finally receives
+    (\textsc{close}) by \environment and (\textsc{closed}) by $\texttt{host}_R$
+    ($\texttt{host}_R = \texttt{host}_P$ -- Fig.~\ref{code:ln:bob},
+    l.~\ref{code:ln:bob:host}) before any further change to its history, then
+    \emph{eventually $R$'s \ledger state will contain $k$ $(c^R_i, \pk{R,
+    \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^k c^R_i
+    \geq \sum\limits_{s \in C_R} \sum\limits_{x \in s} x$}.
+    \item If $P$ receives (\textsc{virtualise}, $\dots$) by an \textsc{ln} ITI
+    $R$, subsequently transitions back to \textsc{open} (therefore moving to
+    history $(F, C')$ where $C'$ is $C + [0]$) and finally receives
+    \textsc{close} by \environment and (\textsc{closed}) by $\texttt{host}_P$
+    before any further change to its history, then \emph{eventually $P$'s
+    \ledger state will contain $h$ $(c_i, \pk{P, \mathrm{out}})$ transaction
+    outputs such that $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C}
+    \sum\limits_{i \in s} i$}. Furthermore, given that $P$ moves to the
+    \textsc{open} state after the (\textsc{virtualise}, $\dots$) message and in
+    case it sends (\textsc{funded}, $\dots$) to some party $R$
+    (Fig.~\ref{code:ln:virtualise:start-end},
+    l.~\ref{code:ln:virtualise:start-end:helper-output-funded}), the latter
+    party is the (local, trusted) \texttt{fundee} of a new virtual channel. If
+    subsequently the state of $R$ transitions to \textsc{open} (therefore
+    obtaining history $(F_R, C_R)$ where $F_R = F + C$ and $C_R = [[0]]$), and
+    finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
+    $\texttt{host}_R$ ($\texttt{host}_R = \texttt{host}_P$ --
+    Fig.~\ref{code:ln:bob}, l.~\ref{code:ln:bob:host}) before any further change
+    to its history, then \emph{eventually $R$'s \ledger state will contain $k$
+    $(c^R_i, \pk{R, \mathrm{out}})$ transaction outputs such that
+    $\sum\limits_{i=1}^k c^R_i \geq \sum\limits_{s \in C_R} \sum\limits_{x \in
+    s} x$}.
+    \item If $P$ receives (\textsc{pay}, $d$) by \environment, subsequently
+    transitions back to \textsc{open} (therefore moving to history $(F, C')$
+    where $C'$ is $C$ with $-d$ appended to the last list of $C$) and finally
+    receives \textsc{close} by \environment and (\textsc{closed}) by
+    $\texttt{host}_P$ before any further change to its history, then
+    \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
+    \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C} \sum\limits_{i \in s} i$}. \item If $P$ receives
+    (\textsc{get paid}, $e$) by \environment, subsequently transitions back to
+    \textsc{open} (therefore moving to history $(F, C')$ where $C'$ is $C$ with
+    $e$ appended to the last list of $C$) and finally receives \textsc{close} by
+    \environment and (\textsc{closed}) by $\texttt{host}_P$ before any further
+    change to its history, then \emph{eventually $P$'s \ledger state will
+    contain $h$ $(c_i, \pk{P, \mathrm{out}})$ transaction outputs such that
+    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{i \in s}
+    i$}.
+  \end{itemize}
 \end{proof}
 
 %\begin{proof}
