@@ -32,38 +32,40 @@
 \end{lemma}
 
 \begin{proof}
-  Define the \emph{history} of a channel as follows: $H = (F, C)$, where each of
-  $F, C$ is a list of lists of integers. A party $P$ which satisfies the Lemma
+  Define the \emph{history} of a channel as $H = (F, C)$, where each of $F, C$
+  is a list of lists of integers. A party $P$ which satisfies the Lemma
   conditions has a unique, unambiguously and recursively defined history: If the
-  value \texttt{hops} in the (\textsc{open}, $c$, $\dots$) message was equal to
-  \ledger, then $F$ is the empty list, otherwise $F$ is the concatenation of the
-  $F$ and $C$ lists of the party that sent (\textsc{funded}, $\dots$) to $P$, as
-  they were at the moment the latter message was sent. After initialised, $F$
-  remains immutable. Observe that both aforementioned messages must have been
-  received before $P$ transitions to the \textsc{open} state.
+  value \texttt{hops} in the (\textsc{open}, $c$, $\texttt{hops}$, $\dots$)
+  message was equal to \ledger, then $F$ is the empty list, otherwise $F$ is the
+  concatenation of the $F$ and $C$ lists of the party that sent
+  (\textsc{funded}, $\dots$) to $P$, as they were at the moment the latter
+  message was sent. After initialised, $F$ remains immutable. Observe that both
+  aforementioned messages must have been received before $P$ transitions to the
+  \textsc{open} state.
 
   The list $C$ of party $P$ is initialised to $[[g]]$ when $P$'s $\itistate$
   transitions for the first time to \textsc{open}, where $g = c$ if $P =
   \alice$, or $g = 0$ if $P = \bob$; this represents the initial channel
-  balance. The value $x$ or $-x$ is appended to the last list in $C$ when
-  l.~\ref{code:ln:pay:revocations:paid-in} or
-  l.~\ref{code:ln:pay:revocations:paid-out} of
-  Fig.~\ref{code:ln:pay:revocations} respectively is executed by $P$; this
-  represents the balance change after each payment. Moving on to the funding of
-  new virtual channels, whenever $P$ executes
-  l.~\ref{code:ln:virtualise:start-end:reduce-coins} of
-  Fig.~\ref{code:ln:virtualise:start-end} (therefore funding a new virtual
-  channel), $[-c_{\mathrm{guest}}]$ is appended to $C$ and whenever
-  l.~\ref{code:ln:virtualise:start-end:reply} of
-  Fig.~\ref{code:ln:virtualise:start-end} is executed (in which case $P$ helps
-  with the opening of a new virutal channel, but does not fund it), $[0]$ is
-  appended to $C$. Therefore $C$ consists of one list of integers for each
-  sequence of inbound and outbound payments that have not been interrupted by a
-  virtualisation step and a new list is added for every new virtual layer. We
-  also observe that a non-negligent party with history $(F, C)$ satisfies the
-  Lemma conditions and that the value of the right hand side of the
-  inequality~\ref{lemma:real-balance-security:ineq} is equal to
-  $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{i \in s} i$.
+  balance. The value $x$ or $-x$ is appended to the last list in $C$ when a
+  payment is received (Fig.~\ref{code:ln:pay:revocations},
+  l.~\ref{code:ln:pay:revocations:paid-in}) or sent
+  (Fig.~\ref{code:ln:pay:revocations},
+  l.~\ref{code:ln:pay:revocations:paid-out}) respectively by $P$. Moving on to
+  the funding of new virtual channels, whenever $P$ funds a new virtual channel
+  (Fig.~\ref{code:ln:virtualise:start-end},
+  l.~\ref{code:ln:virtualise:start-end:reduce-coins}), $[-c_{\mathrm{guest}}]$
+  is appended to $C$ and whenever $P$ helps with the opening of a new virutal
+  channel, but does not fund it (Fig.~\ref{code:ln:virtualise:start-end},
+  l.~\ref{code:ln:virtualise:start-end:reply}), $[0]$ is appended to $C$.
+  Therefore $C$ consists of one list of integers for each sequence of inbound
+  and outbound payments that have not been interrupted by a virtualisation step
+  and a new list is added for every new virtual layer. We also observe that a
+  non-negligent party with history $(F, C)$ satisfies the Lemma conditions and
+  that the value of the right hand side of the
+  inequality~\ref{lemma:real-balance-security:ineq} is equal to $\sum\limits_{s
+  \in C} \sum\limits_{x \in s} x$, as all inbound and outbound payment values
+  and new channel funding values that appear in the Lemma conditions are
+  recorded in $C$.
 
   Let party $P$ with a particular history. We will inductively prove that $P$
   satisfies the Lemma. The base case is when a channel is opened with
