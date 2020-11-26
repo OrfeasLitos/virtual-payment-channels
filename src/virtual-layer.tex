@@ -725,6 +725,14 @@
         output (\textsc{closed}) by it}
         \State send (\textsc{read}) to \ledger as $R$ and assign reply to
         $\Sigma$
+        \If{\texttt{funder} or \texttt{fundee} is defined and
+        $\mathrm{TX}_{\mathrm{none}, \mathrm{loc}}$ is not valid in $\Sigma$}
+        \Comment{we are an edge node and our counterparty has closed}
+          \State ignore all messages except for (\textsc{check chain for
+          closing}) by $R$
+          \State $\textit{State} \gets \textsc{closing}$
+          \State give up execution token \Comment{control goes to \environment}
+        \EndIf
         \State let \texttt{tx} be the unique valid TX for $\Sigma$ among
         ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
         $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
