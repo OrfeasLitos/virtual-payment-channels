@@ -502,17 +502,23 @@
 
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.circulateFundingSigs}($\mathrm{sig}_{\mathrm{loc},
-  \mathrm{none}}$)}
+  \mathrm{none}}, \mathrm{sig}_{\mathrm{loc}, \mathrm{right}}$)}
     \begin{algorithmic}[1]
       \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
       \Comment{we are not \texttt{host\_funder}}
         \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-        $\pk{\mathrm{prev}, F}$) = True \Comment{$\pk{\mathrm{prev}, F}$, found
+        $\pk{\mathrm{prev}, F}$) = True \Comment{$\pk{\mathrm{prev}, F}$ found
         in \texttt{left\_data}}
         \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
         \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
-        \If{we have a \texttt{sibling}} \Comment{we are not \texttt{host\_fundee}}
+        \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{right}}$ is given as argument}
+        \Comment{we are not \texttt{host\_fundee}}
+          \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+          \mathrm{right}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{right}}$,
+          $\pk{\mathrm{prev}, F}$) = True
+          \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}} \gets \{
+          \mathrm{sig}_{\mathrm{loc}, \mathrm{right}} \}$
           \State input (\textsc{virtual base sig forward},
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to \texttt{sibling}
           \Comment{\texttt{sibling} needs $\mathrm{sig}_{\mathrm{loc},
@@ -522,16 +528,31 @@
           \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
           \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
           \sk{\mathrm{loc}, F})$}
+          \State \trustedcode{$\texttt{args} \gets \{\mathrm{sig}_{\mathrm{next},
+          \mathrm{none}}$\}}
+          \If{\trustedcode{\texttt{right\_data} contains data from a second-next
+          hop}} \Comment{next hop is not \texttt{host\_fundee}}
+            \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{right}}
+            \gets \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{right}},
+            \sk{\mathrm{loc}, F})$}
+            \State \trustedcode{add $\mathrm{sig}_{\mathrm{next},
+            \mathrm{right}}$ to \texttt{args}}
+          \EndIf
           \State \trustedcode{call
-          \textsc{virt.circulateVirtualSigs}($\mathrm{sig}_{\mathrm{next},
-          \mathrm{none}}$) of $\bar{P}$ and assign returned value to
-          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$}
+          \textsc{virt.circulateFundingSigs}(\texttt{args}) of $\bar{P}$ and
+          assign returned values to ($\mathrm{sig}_{\mathrm{loc},
+          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{left}}$)}
           \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
           \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
           $\pk{\mathrm{next}, F}$) = True} \Comment{$\pk{\mathrm{next}, F}$,
           found in \texttt{right\_data}}
+          \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
+          \mathrm{left}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{left}}$,
+          $\pk{\mathrm{next}, F}$) = True}
           \State \trustedcode{add $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
-          to $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$}
+          to $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$;
+          $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}} \gets \{
+          \mathrm{sig}_{\mathrm{loc}, \mathrm{left}} \}$}
           \State \trustedcode{output (\textsc{virtual base sig back},
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
           $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
@@ -541,15 +562,28 @@
         \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}} \gets
         \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{none}},
         \sk{\mathrm{loc}, F})$
-        \State \Return $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$
+        \If{\texttt{left\_data} contains data from a second-previous hop}
+        \Comment{previous hop not is \texttt{host\_funder}}
+          \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{left}} \gets
+          \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{left}},
+          \sk{\mathrm{loc}, F})$
+          \State \Return ($\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$,
+          $\mathrm{sig}_{\mathrm{prev}, \mathrm{left}}$)
+        \Else \: \Comment{previous hop is \texttt{host\_funder}}
+          \State \Return $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$
+        \EndIf
       \Else \: \Comment{we are \texttt{host\_funder}}
         \State $\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
         \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
         \sk{\mathrm{loc}, F})$
+        \State $\mathrm{sig}_{\mathrm{next}, \mathrm{right}} \gets
+        \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{right}},
+        \sk{\mathrm{loc}, F})$
         \State call
         \textsc{virt.circulateFundingSigs}($\mathrm{sig}_{\mathrm{next},
-        \mathrm{none}}$) of $\bar{P}$ and assign returned value to
-        $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
+        \mathrm{none}}$, $\mathrm{sig}_{\mathrm{next}, \mathrm{right}}$) of
+        $\bar{P}$ and assign returned value to $\mathrm{sig}_{\mathrm{loc},
+        \mathrm{none}}$
         \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
         $\pk{\mathrm{next}, F}$) = True \Comment{$\pk{\mathrm{next}, F}$ found
