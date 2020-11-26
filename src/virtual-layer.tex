@@ -222,6 +222,7 @@
         \If{\texttt{is\_funder} = True}
           \State $\texttt{out} \gets (\texttt{1} \wedge \texttt{virt\_checked})
           \vee (\texttt{3} \wedge \texttt{virt} + (t + s))$
+          \label{code:virtual-layer:edge-txs:funder-out}
         \Else \: \Comment{TXs belong to \texttt{fundee}}
           \State $\texttt{out} \gets (\texttt{2} \wedge \texttt{virt\_checked})
           \vee (\texttt{3} \wedge \texttt{virt} + (t + s))$
@@ -576,9 +577,11 @@
         \State $\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
         \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
         \sk{\mathrm{loc}, F})$
+        \label{code:virtual-layer:funding-sigs:funder-sign-none}
         \State $\mathrm{sig}_{\mathrm{next}, \mathrm{right}} \gets
         \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{right}},
         \sk{\mathrm{loc}, F})$
+        \label{code:virtual-layer:funding-sigs:funder-sign-right}
         \State call
         \textsc{virt.circulateFundingSigs}($\mathrm{sig}_{\mathrm{next},
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{next}, \mathrm{right}}$) of
@@ -588,6 +591,7 @@
         \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
         $\pk{\mathrm{next}, F}$) = True \Comment{$\pk{\mathrm{next}, F}$ found
         in \texttt{right\_data}}
+        \label{code:virtual-layer:funding-sigs:funder-verify}
         \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
         \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
         \State \Return (\textsc{ok})
@@ -716,6 +720,7 @@
         \State ensure \textit{State} = \textsc{open}
         \If{$\texttt{host}_P \neq \ledger$} \Comment{$\texttt{host}_P$ is a
         \textsc{virt}}
+        \label{code:virtual-layer:close:if-nested-host}
           \State ignore all messages except for output (\textsc{closed}) by
           $\texttt{host}_P$. Also relay to $\texttt{host}_P$ any (\textsc{check
           chain for closing}) input received
