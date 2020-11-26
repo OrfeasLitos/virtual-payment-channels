@@ -354,7 +354,7 @@
     \begin{algorithmic}[1]
       \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, F}'$ and
       $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
-      respectively
+      respectively, reducing the input and $P$'s output by $c_{\mathrm{guest}}$
       \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1})$
       \Comment{kept by $\bar{P}$}
       \State send (\textsc{update forward}, $\mathrm{sig}_{P, C, i+1}$) to
@@ -362,17 +362,19 @@
       in local and remote code}
       \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P,
       F}'$ and $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
-      respectively}
+      respectively, reducing the input and $P$'s output by $c_{\mathrm{guest}}$}
       \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
       $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}'$) = True}
       \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and
-      $\pk{P, F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively}
+      $\pk{P, F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively,
+      reducing the input and $P$'s output by $c_{\mathrm{guest}}$}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
       \textsc{sign}(C_{P, i+1}, sk_{\bar{P}, F}')$} \Comment{kept by $P$}
       \State \remotecode{reply (\textsc{update back}, $\mathrm{sig}_{\bar{P}, C,
       i+1}$)}
       \State $C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and $\pk{P,
-      F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively
+      F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively, reducing
+      the input and $P$'s output by $c_{\mathrm{guest}}$
       \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
       i+1}$, $\pk{\bar{P}, F}'$) = True
     \end{algorithmic}
