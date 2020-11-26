@@ -133,9 +133,11 @@
   probability), therefore satisfying the Lemma consequence.
 
   Let $P$ with history $H = (F, C)$. The induction hypothesis is that the Lemma
-  holds for $P$. In order to perform the induction step, assume that $P$ is in
-  the \textsc{open} state. We will prove all the following (the facts to be
-  proven are shown with emphasis for clarity):
+  holds for $P$. Let $c_P$ the sum in the right hand side of
+  inequality~\ref{lemma:real-balance-security:ineq}. In order to perform the
+  induction step, assume that $P$ is in the \textsc{open} state. We will prove
+  all the following (the facts to be proven are shown with emphasis for
+  clarity):
   \begin{itemize}
     \item If $P$ receives (\textsc{fund me}, $f$, $\dots$) by a (local, trusted)
     \textsc{ln} ITI $R$, subsequently transitions back to the \textsc{open}
@@ -198,6 +200,87 @@
     \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
     \sum\limits_{s \in C} \sum\limits_{i \in s} i$}.
   \end{itemize}
+
+  When $P$ is in the \textsc{open} state and receives (\textsc{fund me}, $f$,
+  $\dots$), it can only move again to the \textsc{open} state after doing the
+  following state transitions: \textsc{open} $\rightarrow$ \textsc{virtualising}
+  $\rightarrow$ \textsc{waiting for revocation} $\rightarrow$ \textsc{waiting
+  for inbound revocation} $\rightarrow$ \textsc{waiting for hosts ready}
+  $\rightarrow$ \textsc{open}. During this sequence of events, a new
+  $\textsc{host}_P$ is defined (Fig.~\ref{code:ln:virtualise:start-end},
+  l.~\ref{code:ln:virtualise:start-end:define}), new commitment transactions are
+  negotiated with $\bar{P}$ (Fig.~\ref{code:ln:virtualise:start-end},
+  l.~\ref{code:ln:virtualise:start-end:virtual-update}), control of the old
+  funding output is handed over to $\textsc{host}_P$
+  (Fig.~\ref{code:ln:virtualise:start-end},
+  l.~\ref{code:ln:virtualise:start-end:host-me}), $\texttt{host}_P$ negotiates
+  with its counterparty a new set of transactions and signatures that spend the
+  aforementioned funding output and make available a new funding output with the
+  keys that $P$ instructed (Fig.~\ref{code:virtual-layer:funder-sigs}
+  and~\ref{code:virtual-layer:funding-sigs}) and the previous valid commitment
+  transactions of both $P$ and $\bar{P}$ are invalidated
+  (Fig.~\ref{code:ln:methods-for-virt},
+  l.~\ref{code:ln:methods-for-virt:revoke-previous} and
+  l.~\ref{code:ln:methods-for-virt:process-remote-revocation} respectively).
+  When $P$ receives (\textsc{close}) by \environment, it inputs (\textsc{close})
+  to $\texttt{host}_P$ (Fig.~\ref{code:ln:close}, l.~\ref{code:ln:close:relay}).
+  If the \texttt{host} of $\texttt{host}_P$ is \ledger, then $\texttt{host}_P$
+  either is able to publish its $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$
+  (since it has necessarily received a valid $\mathrm{sig}_{\mathrm{loc},
+  \mathrm{none}}$ (Fig.~\ref{code:virtual-layer:funding-sigs},
+  l.~\ref{code:virtual-layer:funding-sigs:funder-verify}) by its counterparty
+  before it moved to the \textsc{open} state for the first time), or the output
+  needed to spend $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ has already been
+  spent. The only other transactions that can spend it are $\mathrm{TX}_{2,
+  \mathrm{none}}$ and $\mathrm{TX}_{2, \mathrm{right}}$, since these are the
+  only transactions that spend the aforementioned output and that
+  $\texttt{host}_P$ has signed (Fig.~\ref{code:virtual-layer:funding-sigs},
+  ll.~\ref{code:virtual-layer:funding-sigs:funder-sign-none}
+  and~\ref{code:virtual-layer:funding-sigs:funder-sign-right}). The output can
+  be also spent by old, revoked commitment transactions, but in that case
+  $\texttt{host}_P$ would not have output (\textsc{closed}). If
+  $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ ends up in \ledger, its
+  \texttt{out} output (Fig.~\ref{code:virtual-layer:edge-txs},
+  l.~\ref{code:virtual-layer:edge-txs:funder-out}) carries $c_P + c_{\bar{P}} -
+  f$ coins and can be spent either by a timelocked $\texttt{3} \wedge 2/\{\pk{P,
+  F}', \pk{\bar{P}, F}'\}$ spending method or by a non-timelocked $\texttt{1}
+  \wedge 4/\{\pk{P, F}', \pk{\bar{P}, F}', \pk{R, F}, \pk{\bar{R}, F}\}$
+  spending method. The only transactions with an input having the latter
+  spending method that $\texttt{host}_P$ has signed with $\sk{P, F}'$ are
+  $\mathrm{TX}_{2, \mathrm{left}}$ and $\mathrm{TX}_{2, \mathrm{both}}$
+  (Fig.~\ref{code:virtual-layer:funder-sigs}) and they both have a ($c_P +
+  c_{\bar{P}} - f$, $\texttt{3} \wedge 2/\{\pk{P,F}', \pk{\bar{P},F}'\}$)
+  output. Similarly, both $\mathrm{TX}_{2, \mathrm{none}}$ and $\mathrm{TX}_{2,
+  \mathrm{right}}$ have an output with $c_P + c_{\bar{P}} - f$ coins that can be
+  spent either by a timelocked $\texttt{3} \wedge 2/\{\pk{P,F}',
+  \pk{\bar{P},F}'\}$ spending method or by a non-timelocked $\texttt{2} \wedge
+  4/\{\pk{P, F}', \pk{\bar{P}, F}', \pk{R, F}, \pk{\bar{R}, F}\}$ spending
+  method.  $\texttt{host}_P$ has never signed any transaction that can use the
+  latter spending method, therefore the timelock will eventually expire. To sum
+  up, in all cases a ($c_P + c_{\bar{P}} - f$, $\texttt{3} \wedge 2/\{\pk{P,F}',
+  \pk{\bar{P},F}'\}$) output will end up in \ledger. This output can be spent
+  either by $C_{P, i}$ or $C_{\bar{P}, i}$.  Both these transactions have a
+  $(c_P - f, \pk{P, \mathrm{out}})$ output. This output of $C_{P, i}$ is
+  timelocked, but the alternative spending method cannot be used as $P$ never
+  signed a transaction that uses it (as it is reserved for revocation, which has
+  not taken place yet in this virtualisation layer).  By the induction
+  hypothesis, before the funding procedure started $P$ could close the channel
+  for an ($c_P$, $\pk{P, \mathrm{out}}$) output. We have now proven that if $P$
+  completes the funding of a new channel and it has $F = []$, then it can close
+  its channel for a ($c_P - f$, $\pk{P, \mathrm{out}}$) output. Regarding the
+  case that $F \neq []$, this means that before the funding procedure started
+  $\texttt{host}_P \neq \ledger$. By the inductive hypothesis, $P$ could then
+  close the channel for an ($c_P$, $\pk{P, \mathrm{out}}$) output. After the
+  funding procedure is complete, the new $\texttt{host}_P$ will have as its
+  \texttt{host} the old $\texttt{host}_P$ of $P$. If the (\textsc{close})
+  sequence is initiated, the new $\texttt{host}_P$ will follow the same steps as
+  before once the old $\texttt{host}_P$ succeeds in closing the lower layer
+  (Fig.~\ref{code:virtual-layer:close},
+  l.~\ref{code:virtual-layer:close:if-nested-host}). The old $\texttt{host}_P$
+  however will see no difference in its intrerface than before, therefore it
+  will successfully close by the induction hypothesis. Thereafter the process is
+  identical to the one when the old $\texttt{host}_P = \ledger$. We have
+  therefore proven the first claim of the first bullet.
 \end{proof}
 
 %\begin{proof}
