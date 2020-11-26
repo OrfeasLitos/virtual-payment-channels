@@ -183,7 +183,8 @@
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $-d$ appended to the last list of $C$) and finally
     receives \textsc{close} by \environment and (\textsc{closed}) by
-    $\texttt{host}_P$ before any further change to its history, then
+    $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
+    equivalently $F = []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
     \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
     \sum\limits_{s \in C} \sum\limits_{i \in s} i$}.
@@ -191,7 +192,8 @@
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $e$ appended to the last list of $C$) and finally
     receives \textsc{close} by \environment and (\textsc{closed}) by
-    $\texttt{host}_P$ before any further change to its history, then
+    $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
+    equivalently $F = []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
     \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
     \sum\limits_{s \in C} \sum\limits_{i \in s} i$}.
