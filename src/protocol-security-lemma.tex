@@ -238,7 +238,12 @@
   ll.~\ref{code:virtual-layer:funding-sigs:funder-sign-none}
   and~\ref{code:virtual-layer:funding-sigs:funder-sign-right}). The output can
   be also spent by old, revoked commitment transactions, but in that case
-  $\texttt{host}_P$ would not have output (\textsc{closed}). If
+  $\texttt{host}_P$ would not have output (\textsc{closed}); $P$ would have
+  instead detected this triggered by a \textsc{check chain for closed} message
+  by \environment (Fig.~\ref{code:ln:poll}) and would have moved to the
+  \textsc{closed} state on its own accord (lack of such a message by
+  \environment would lead $P$ to become \texttt{negligent}, something that
+  cannot happen according to the Lemma conditions). If
   $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ ends up in \ledger, its
   \texttt{out} output (Fig.~\ref{code:virtual-layer:edge-txs},
   l.~\ref{code:virtual-layer:edge-txs:funder-out}) carries $c_P + c_{\bar{P}} -
