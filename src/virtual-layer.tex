@@ -767,20 +767,19 @@
         \State ensure \textit{State} = \textsc{closing}
         \State send (\textsc{read}) to \ledger as $R$ and assign reply to
         $\Sigma$
-        \If{$R = \texttt{guest}$}
-          \State $\pk{1} \gets \pk{\mathrm{left}, \mathrm{guest}}$; $\pk{2}
-          \gets \pk{\mathrm{right}, \mathrm{guest}}$
-        \Else \: \Comment{$R \in \{\texttt{funder}, \texttt{fundee}\}$}
-          \State $\pk{1} \gets \pk{\mathrm{loc}, \mathrm{virt}}$; $\pk{2} \gets
-          \pk{\mathrm{rem}, \mathrm{virt}}$
+        \State $\texttt{keys} \gets \{(\pk{\mathrm{left}, \mathrm{guest}},
+        \pk{\mathrm{right}, \mathrm{guest}})\}$
+        \If{\texttt{funder} or \texttt{fundee} is defined}
+          \State add $(\pk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{rem},
+          \mathrm{virt}})$ to \texttt{keys}
         \EndIf
-        \If{$\Sigma$ has an unspent output that can be spent exclusively by a
-        2-of-\{$\pk{1}$, $\pk{2}$\} multisig} \Comment{if there is a timelock,
-        it must have expired}
-        \label{code:virtual-layer:close:when-closed}
-          \State $\textit{State} \gets \textsc{closed}$
-          \State output (\textsc{closed}) to $R$
-        \EndIf
+        \For{$(\pk{1}, \pk{2})$ in \texttt{keys}}
+          \State ensure that $\Sigma$ has an unspent output that can be spent
+          exclusively by a 2-of-\{$\pk{1}$, $\pk{2}$\} multisig \Comment{if
+          there is a timelock, it must have expired}
+        \EndFor
+        \State $\textit{State} \gets \textsc{closed}$
+        \State output (\textsc{closed}) to $R$
       \EndIndent
     \end{algorithmic}
   \end{processbox}
