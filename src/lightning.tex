@@ -409,8 +409,8 @@
         \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
         $\texttt{host}_{\bar{P}}'$, $\texttt{host}_P$, $c_{\mathrm{guest}}$,
         $\pk{A, V}$, $\pk{B, V}$, ($\sk{P, F}'$, $\pk{P, F}'$), ($\sk{P, F}$,
-        $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{\bar{P}, F}'$) to
-        $\texttt{host}_P'$
+        $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{\bar{P}, F}'$, $\pk{P,
+        \mathrm{out}}$) to $\texttt{host}_P'$
         \label{code:ln:virtualise:start-end:host-me}
       \EndIndent
       \Statex
@@ -484,14 +484,16 @@
           \State input (\textsc{init}, $\texttt{host}_P$,
           $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
           $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
-          ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $c_{\mathrm{guest}}$)
-          to $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
+          ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$,
+          $c_{\mathrm{guest}}$) to $\texttt{host}_P'$ and expect reply
+          (\textsc{host init ok})
         \Else \: \Comment{we are the last hop}
           \State input (\textsc{init}, $\texttt{host}_P$,
           $\texttt{host}_{\bar{P}}'$, \texttt{fundee}=\texttt{fundee}, ($\sk{P,
           F}'$, $\pk{P, F}'$), $\pk{\bar{P}, F}'$, ($\sk{P, F}$, $\pk{P, F}$),
-          $\pk{\bar{P}, F}$, $c_{\mathrm{guest}}$) to new \textsc{virt} ITI
-          $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
+          $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$, $c_{\mathrm{guest}}$) to
+          new \textsc{virt} ITI $\texttt{host}_P'$ and expect reply
+          (\textsc{host init ok})
         \EndIf
         \State $\itistate \gets \textsc{waiting for revocation}$
         \State send (\textsc{virtualising ack}, $\texttt{host}_P'$, $\pk{P, F}'$)
@@ -523,8 +525,9 @@
         \State input (\textsc{init}, $\texttt{host}_P$,
         $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
         $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
-        ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $c_{\mathrm{guest}}$) to
-        $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
+        ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$,
+        $c_{\mathrm{guest}}$) to $\texttt{host}_P'$ and expect reply
+        (\textsc{host init ok})
         \State $\itistate \gets \textsc{waiting for revocation}$
         \State output (\textsc{virtualising ack}, $\texttt{host}_P'$,
         $\pk{\bar{P}, F}'$) to \texttt{sibling}
