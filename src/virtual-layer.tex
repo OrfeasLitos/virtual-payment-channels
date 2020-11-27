@@ -326,7 +326,8 @@
         \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
         $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
         \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
-        \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$, False)
+        \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
+        $\{\pk{\mathrm{sec}, i}\}_{1 \dots n}$, False)
       \EndIf
       \State call
       $\bar{P}$.\textsc{circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
@@ -383,7 +384,8 @@
         $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem},
         \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
         \mathrm{virt}}$, $\pk{\mathrm{left}, \mathrm{guest}}$,
-        $\pk{\mathrm{right}, \mathrm{guest}}$, True)
+        $\pk{\mathrm{right}, \mathrm{guest}}$, $\{\pk{\mathrm{sec}, i}\}_{1
+        \dots n}$, True)
       \EndIf
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
@@ -400,7 +402,7 @@
       $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
       \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$,
       $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
-      \mathrm{guest}}$, False)
+      \mathrm{guest}}$, $\{\pk{\mathrm{sec}, i}\}_{1 \dots n}$, False)
       \label{code:virtual-layer:fundee-sigs:tx-none}
       \For{each hop apart from the first and ours ($i \in [2, \dots, n-1]$)}
       \Comment{hop data encoded in \texttt{left\_data}}
@@ -481,7 +483,8 @@
       \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
       $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
       \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
-      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$, True)
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
+      $\{\pk{\mathrm{sec}, i}\}_{1 \dots n}$, True)
       \label{code:virtual-layer:funder-sigs:tx-none}
       \State \Return (\textsc{ok})
     \end{algorithmic}
