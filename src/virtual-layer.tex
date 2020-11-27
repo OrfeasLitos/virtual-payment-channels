@@ -682,8 +682,8 @@
         \State $\texttt{last\_poll} \gets |\Sigma|$
         \If{$\texttt{prev\_went\_on\_chain} \vee
         \texttt{next\_went\_on\_chain}$}
-          \State ignore all messages except for (\textsc{check chain for
-          closing}) by $R$
+          \State ignore all messages except for (\textsc{check if closing}) by
+          $R$
           \State $\textit{State} \gets \textsc{closing}$
         \EndIf
         \If{$\texttt{prev\_went\_on\_chain} \wedge
@@ -715,104 +715,103 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt} -- close}
+  \begin{processbox}{\textsc{virt} -- On input (\textsc{close}) by $R \in
+  \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}$:}
     \begin{algorithmic}[1]
-      \State On input (\textsc{close}) by $R \in \{\texttt{guest},
-      \texttt{funder}, \texttt{fundee}\}$: \Comment{At most one of
-      \texttt{funder}, \texttt{fundee} is defined}
-      \Indent
-        \IfThen{\textit{State} = \textsc{closed}}{output (\textsc{closed}) to
-        $R$}
-        \IfThen{\textit{State} = \textsc{guest punished}}{output (\textsc{guest
-        punished}) to $R$}
-        \label{code:virtual-layer:close:output-guest-punished}
-        \State ensure \textit{State} = \textsc{open}
-        \If{$\texttt{host}_P \neq \ledger$} \Comment{$\texttt{host}_P$ is a
-        \textsc{virt}}
-        \label{code:virtual-layer:close:if-nested-host}
-          \State ignore all messages except for output (\textsc{closed}) by
-          $\texttt{host}_P$. Also relay to $\texttt{host}_P$ any (\textsc{check
-          chain for closing}) input received
-          \State input (\textsc{close}) to $\texttt{host}_P$
-        \EndIf
-        \State \Comment{if we have a $\texttt{host}_P$, continue from here on
-        output (\textsc{closed}) by it}
-        \State send (\textsc{read}) to \ledger as $R$ and assign reply to
-        $\Sigma$
-        \If{\texttt{funder} or \texttt{fundee} is defined and
-        $\mathrm{TX}_{\mathrm{none}, \mathrm{loc}}$ is not valid in $\Sigma$}
-        \Comment{we are an edge node and our counterparty has closed}
-          \State ignore all messages except for (\textsc{check chain for
-          closing}) by $R$
-          \State $\textit{State} \gets \textsc{closing}$
-          \State give up execution token \Comment{control goes to \environment}
-        \EndIf
-        \State let \texttt{tx} be the unique valid TX for $\Sigma$ among
-        ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-        $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-        \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$)
-        \Comment{if we are not an intermediary, only the first exists}
-        \label{code:virtual-layer:close:tx}
-        \State let \texttt{sigs} be the corresponding set of signatures among
-        ($\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$,
-        $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}}$,
-        $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}}$,
-        $\mathrm{sigs}_{\mathrm{loc}, \mathrm{both}}$)
-        \State add \textsc{sign}(\texttt{tx}, $\sk{A, F}$) and
-        \textsc{sign}(\texttt{tx}, $\sk{\mathrm{loc}, \mathrm{virt}}$) to
-        \texttt{sigs} \Comment{one of the two signatures may be empty, as some
-        transactions don't need a signature by both keys. This is not a
-        problem.}
-        \State ignore all messages except for (\textsc{check chain for closing})
-        by $R$
+      \State \Comment{At most one of \texttt{funder}, \texttt{fundee} is
+      defined}
+      \IfThen{\textit{State} = \textsc{closed}}{output (\textsc{closed}) to
+      $R$}
+      \IfThen{\textit{State} = \textsc{guest punished}}{output (\textsc{guest
+      punished}) to $R$}
+      \label{code:virtual-layer:close:output-guest-punished}
+      \State ensure \textit{State} = \textsc{open}
+      \If{$\texttt{host}_P \neq \ledger$} \Comment{$\texttt{host}_P$ is a
+      \textsc{virt}}
+      \label{code:virtual-layer:close:if-nested-host}
+        \State ignore all messages except for output (\textsc{closed}) by
+        $\texttt{host}_P$. Also relay to $\texttt{host}_P$ any (\textsc{check if
+        closing}) input received
+        \State input (\textsc{close}) to $\texttt{host}_P$
+      \EndIf
+      \State \Comment{if we have a $\texttt{host}_P$, continue from here on
+      output (\textsc{closed}) by it}
+      \State send (\textsc{read}) to \ledger as $R$ and assign reply to
+      $\Sigma$
+      \If{\texttt{funder} or \texttt{fundee} is defined and
+      $\mathrm{TX}_{\mathrm{none}, \mathrm{loc}}$ is not valid in $\Sigma$}
+      \Comment{we are an edge node and our counterparty has closed}
+        \State ignore all messages except for (\textsc{check if closing}) by $R$
         \State $\textit{State} \gets \textsc{closing}$
-        \State send (\textsc{submit}, (\texttt{tx}, \texttt{sigs})) to \ledger
-      \EndIndent
-      \Statex
-
-      \State On (\textsc{check chain for closing}) by $R \in \{\texttt{guest},
-      \texttt{funder}, \texttt{fundee}\}$:
-      \Indent
-        \State ensure \textit{State} = \textsc{closing}
-        \State send (\textsc{read}) to \ledger as $R$ and assign reply to
-        $\Sigma$
-        \If{\texttt{funder} is defined}
-          \State ensure that there exists an output with $c_P + c_{\bar{P}} -
-          c_{\mathrm{guest}}$ coins and a $2/\{\pk{\mathrm{loc}, \mathrm{virt}},
-          \pk{\mathrm{rem}, \mathrm{virt}}\}$ spending method with
-          expired/non-existent timelock in $\Sigma$ \Comment{\texttt{guest}'s
-          output}
-          \State ensure that there exists an output with $c_{\mathrm{guest}}$
-          coins and a $2/\{\pk{\mathrm{left}, \mathrm{guest}},
-          \pk{\mathrm{right}, \mathrm{guest}}\}$ spending method with
-          expired/non-existent timelock in $\Sigma$ \Comment{\texttt{funder}'s
-          output}
-        \ElsIf{\texttt{fundee} is defined}
-          \State ensure that there exists an output with $c_P + c_{\bar{P}} -
-          c_{\mathrm{guest}}$ coins and a $2/\{\pk{\mathrm{loc},
-          \mathrm{virt}}, \pk{\mathrm{rem}, \mathrm{virt}}\}$ spending method
-          with expired/non-existent timelock in $\Sigma$
-          \Comment{\texttt{guest}'s output}
-          \State ensure that there exists an output with $c_{\mathrm{guest}}$
-          coins and a $2/\{\pk{\mathrm{left}, \mathrm{guest}},
-          \pk{\mathrm{right}, \mathrm{guest}}\}$ spending method with
-          expired/non-existent timelock in $\Sigma$ \Comment{\texttt{fundee}'s
-          output}
-        \Else \: \Comment{we are intermediary}
-          \State ensure that there exists an output with $c_P + c_{\bar{P}} -
-          c_{\mathrm{guest}}$ coins and a $2/\{\pk{\mathrm{loc}, \mathrm{virt}},
-          \pk{\mathrm{rem}, \mathrm{virt}}\}$ spending method with
-          expired/non-existent timelock and an output with $c_{\mathrm{guest}}$
-          coins and a $\pk{\mathrm{loc}, \mathrm{out}}$ spending method with
-          expired/non-existent timelock in $\Sigma$
-        \EndIf
-        \State $\textit{State} \gets \textsc{closed}$
-        \State output (\textsc{closed}) to $R$
-      \EndIndent
+        \State give up execution token \Comment{control goes to \environment}
+      \EndIf
+      \State let \texttt{tx} be the unique valid TX for $\Sigma$ among
+      ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
+      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
+      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$)
+      \Comment{if we are not an intermediary, only the first exists}
+      \label{code:virtual-layer:close:tx}
+      \State let \texttt{sigs} be the corresponding set of signatures among
+      ($\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$,
+      $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}}$,
+      $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}}$,
+      $\mathrm{sigs}_{\mathrm{loc}, \mathrm{both}}$)
+      \State add \textsc{sign}(\texttt{tx}, $\sk{A, F}$) and
+      \textsc{sign}(\texttt{tx}, $\sk{\mathrm{loc}, \mathrm{virt}}$) to
+      \texttt{sigs} \Comment{one of the two signatures may be empty, as some
+      transactions don't need a signature by both keys. This is not a
+      problem.}
+      \State ignore all messages except for (\textsc{check if closing}) by $R$
+      \State $\textit{State} \gets \textsc{closing}$
+      \State send (\textsc{submit}, (\texttt{tx}, \texttt{sigs})) to \ledger
     \end{algorithmic}
   \end{processbox}
   \caption{}
   \label{code:virtual-layer:close}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{processbox}{\textsc{virt} -- On input (\textsc{check if closing}) by
+  $R \in \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}$:}
+    \begin{algorithmic}[1]
+      \State ensure \textit{State} = \textsc{closing}
+      \State send (\textsc{read}) to \ledger as $R$ and assign reply to $\Sigma$
+      \If{\texttt{funder} is defined}
+        \State ensure that there exists an output with $c_P + c_{\bar{P}} -
+        c_{\mathrm{guest}}$ coins and a $2/\{\pk{\mathrm{loc}, \mathrm{virt}},
+        \pk{\mathrm{rem}, \mathrm{virt}}\}$ spending method with
+        expired/non-existent timelock in $\Sigma$ \Comment{\texttt{guest}'s
+        output}
+        \label{code:virtual-layer:check-chain-close:funder:output-guest}
+        \State ensure that there exists an output with $c_{\mathrm{guest}}$
+        coins and a $2/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
+        \mathrm{guest}}\}$ spending method with expired/non-existent timelock in
+        $\Sigma$ \Comment{\texttt{funder}'s output}
+        \label{code:virtual-layer:check-chain-close:funder:output-funder}
+      \ElsIf{\texttt{fundee} is defined}
+        \State ensure that there exists an output with $c_P + c_{\bar{P}} -
+        c_{\mathrm{guest}}$ coins and a $2/\{\pk{\mathrm{loc}, \mathrm{virt}},
+        \pk{\mathrm{rem}, \mathrm{virt}}\}$ spending method with
+        expired/non-existent timelock in $\Sigma$ \Comment{\texttt{guest}'s
+        output}
+        \State ensure that there exists an output with $c_{\mathrm{guest}}$
+        coins and a $2/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
+        \mathrm{guest}}\}$ spending method with expired/non-existent timelock in
+        $\Sigma$ \Comment{\texttt{fundee}'s output}
+      \Else \: \Comment{we are intermediary}
+        \State ensure that there exists an output with $c_P + c_{\bar{P}} -
+        c_{\mathrm{guest}}$ coins and a $2/\{\pk{\mathrm{loc}, \mathrm{virt}},
+        \pk{\mathrm{rem}, \mathrm{virt}}\}$ spending method with
+        expired/non-existent timelock and an output with $c_{\mathrm{guest}}$
+        coins and a $\pk{\mathrm{loc}, \mathrm{out}}$ spending method with
+        expired/non-existent timelock in $\Sigma$
+      \EndIf
+      \State $\textit{State} \gets \textsc{closed}$
+      \State output (\textsc{closed}) to $R$
+    \end{algorithmic}
+  \end{processbox}
+  \caption{}
+  \label{code:virtual-layer:check-chain-close}
 \end{figure}
 
 \begin{figure}[H]
