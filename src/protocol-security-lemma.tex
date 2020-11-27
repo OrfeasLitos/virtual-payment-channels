@@ -242,40 +242,40 @@
   $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ ends up in \ledger, its
   \texttt{out} output (Fig.~\ref{code:virtual-layer:edge-txs},
   l.~\ref{code:virtual-layer:edge-txs:funder-out}) carries $c_P + c_{\bar{P}} -
-  f$ coins and can be spent either by a timelocked $\texttt{3} \wedge 2/\{\pk{P,
-  F}', \pk{\bar{P}, F}'\}$ spending method or by a non-timelocked $\texttt{1}
-  \wedge 4/\{\pk{P, F}', \pk{\bar{P}, F}', \pk{R, F}, \pk{\bar{R}, F}\}$
-  spending method. The only transactions with an input having the latter
+  f$ coins and can be spent either by a timelocked $\texttt{"3"} \wedge
+  2/\{\pk{P, F}', \pk{\bar{P}, F}'\}$ spending method or by a non-timelocked
+  $\texttt{"1"} \wedge 4/\{\pk{P, F}', \pk{\bar{P}, F}', \pk{R, F}, \pk{\bar{R},
+  F}\}$ spending method. The only transactions with an input having the latter
   spending method that $\texttt{host}_P$ has signed with $\sk{P, F}'$ are
   $\mathrm{TX}_{2, \mathrm{left}}$ and $\mathrm{TX}_{2, \mathrm{both}}$
   (Fig.~\ref{code:virtual-layer:funder-sigs}) and they both have a ($c_P +
-  c_{\bar{P}} - f$, $\texttt{3} \wedge 2/\{\pk{P,F}', \pk{\bar{P},F}'\}$)
+  c_{\bar{P}} - f$, $\texttt{"3"} \wedge 2/\{\pk{P,F}', \pk{\bar{P},F}'\}$)
   output. Similarly, both $\mathrm{TX}_{2, \mathrm{none}}$ and $\mathrm{TX}_{2,
   \mathrm{right}}$ have an output with $c_P + c_{\bar{P}} - f$ coins that can be
-  spent either by a timelocked $\texttt{3} \wedge 2/\{\pk{P,F}',
-  \pk{\bar{P},F}'\}$ spending method or by a non-timelocked $\texttt{2} \wedge
+  spent either by a timelocked $\texttt{"3"} \wedge 2/\{\pk{P,F}',
+  \pk{\bar{P},F}'\}$ spending method or by a non-timelocked $\texttt{"2"} \wedge
   4/\{\pk{P, F}', \pk{\bar{P}, F}', \pk{R, F}, \pk{\bar{R}, F}\}$ spending
   method.  $\texttt{host}_P$ has never signed any transaction that can use the
   latter spending method, therefore the timelock will eventually expire. To sum
-  up, in all cases a ($c_P + c_{\bar{P}} - f$, $\texttt{3} \wedge 2/\{\pk{P,F}',
-  \pk{\bar{P},F}'\}$) output will end up in \ledger. This output can be spent
-  either by $C_{P, i}$ or $C_{\bar{P}, i}$.  Both these transactions have a
-  $(c_P - f, \pk{P, \mathrm{out}})$ output. This output of $C_{P, i}$ is
-  timelocked, but the alternative spending method cannot be used as $P$ never
-  signed a transaction that uses it (as it is reserved for revocation, which has
-  not taken place yet in this virtualisation layer).  By the induction
-  hypothesis, before the funding procedure started $P$ could close the channel
-  for an ($c_P$, $\pk{P, \mathrm{out}}$) output. We have now proven that if $P$
-  completes the funding of a new channel and it has $F = []$, then it can close
-  its channel for a ($c_P - f$, $\pk{P, \mathrm{out}}$) output. Regarding the
-  case that $F \neq []$, this means that before the funding procedure started
-  $\texttt{host}_P \neq \ledger$. By the inductive hypothesis, $P$ could then
-  close the channel for an ($c_P$, $\pk{P, \mathrm{out}}$) output. After the
-  funding procedure is complete, the new $\texttt{host}_P$ will have as its
-  \texttt{host} the old $\texttt{host}_P$ of $P$. If the (\textsc{close})
-  sequence is initiated, the new $\texttt{host}_P$ will follow the same steps as
-  before once the old $\texttt{host}_P$ succeeds in closing the lower layer
-  (Fig.~\ref{code:virtual-layer:close},
+  up, in all cases a ($c_P + c_{\bar{P}} - f$, $\texttt{"3"} \wedge
+  2/\{\pk{P,F}', \pk{\bar{P},F}'\}$) output will end up in \ledger. This output
+  can be spent either by $C_{P, i}$ or $C_{\bar{P}, i}$.  Both these
+  transactions have a $(c_P - f, \pk{P, \mathrm{out}})$ output. This output of
+  $C_{P, i}$ is timelocked, but the alternative spending method cannot be used
+  as $P$ never signed a transaction that uses it (as it is reserved for
+  revocation, which has not taken place yet in this virtualisation layer).  By
+  the induction hypothesis, before the funding procedure started $P$ could close
+  the channel for an ($c_P$, $\pk{P, \mathrm{out}}$) output. We have now proven
+  that if $P$ completes the funding of a new channel and it has $F = []$, then
+  it can close its channel for a ($c_P - f$, $\pk{P, \mathrm{out}}$) output.
+  Regarding the case that $F \neq []$, this means that before the funding
+  procedure started $\texttt{host}_P \neq \ledger$. By the inductive hypothesis,
+  $P$ could then close the channel for an ($c_P$, $\pk{P, \mathrm{out}}$)
+  output. After the funding procedure is complete, the new $\texttt{host}_P$
+  will have as its \texttt{host} the old $\texttt{host}_P$ of $P$. If the
+  (\textsc{close}) sequence is initiated, the new $\texttt{host}_P$ will follow
+  the same steps as before once the old $\texttt{host}_P$ succeeds in closing
+  the lower layer (Fig.~\ref{code:virtual-layer:close},
   l.~\ref{code:virtual-layer:close:if-nested-host}). The old $\texttt{host}_P$
   however will see no difference in its intrerface than before, therefore it
   will successfully close by the induction hypothesis. Thereafter the process is

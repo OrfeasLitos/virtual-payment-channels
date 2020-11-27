@@ -137,19 +137,19 @@
         \State $\texttt{right\_virt\_checked} \gets 4/\{\pk{\mathrm{sib},
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}, \pk{\mathrm{left},
         \mathrm{guest}}, \pk{\mathrm{right}, \mathrm{guest}}\}$
-        \State $\texttt{left\_out\_checked} \gets (\texttt{2} \wedge
-        \texttt{left\_virt\_checked}) \vee (\texttt{3} \wedge
+        \State $\texttt{left\_out\_checked} \gets (\texttt{"2"} \wedge
+        \texttt{left\_virt\_checked}) \vee (\texttt{"3"} \wedge
         \texttt{left\_virt} + (t + s))$
-        \State $\texttt{right\_out} \gets (\texttt{1} \wedge
-        \texttt{right\_virt}) \vee (\texttt{3} \wedge \texttt{right\_virt} + (t
-        + s))$
-        \State $\texttt{right\_out\_checked} \gets (\texttt{1} \wedge
-        \texttt{right\_virt\_checked}) \vee (\texttt{3} \wedge
+        \State $\texttt{right\_out} \gets (\texttt{"1"} \wedge
+        \texttt{right\_virt}) \vee (\texttt{"3"} \wedge \texttt{right\_virt} +
+        (t + s))$
+        \State $\texttt{right\_out\_checked} \gets (\texttt{"1"} \wedge
+        \texttt{right\_virt\_checked}) \vee (\texttt{"3"} \wedge
         \texttt{right\_virt} + (t + s))$
-        \State $\texttt{guest\_all} \gets \texttt{5} \wedge
+        \State $\texttt{guest\_all} \gets \texttt{"5"} \wedge
         n/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
         \mathrm{guest}}, \{\pk{\mathrm{sec}, 1 \dots n}\}\}$
-        \State $\texttt{guest\_out} \gets \texttt{4} \wedge
+        \State $\texttt{guest\_out} \gets \texttt{"4"} \wedge
         2/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
         \mathrm{guest}}\}$
         \State $\texttt{guest} \gets (\texttt{guest\_out} + (t + s)) \vee
@@ -162,29 +162,30 @@
         ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
         ($c_{\mathrm{guest}}$, \texttt{guest}))\}
         \State $\mathrm{TX}_{\mathrm{left}} \gets$ TX \{inputs:
-        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{1} $\wedge$
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{"1"} $\wedge$
         \texttt{left\_virt\_checked}), ($c_{\mathrm{right}}$,
         \texttt{right\_fund})), outputs: (($c_{\mathrm{left}} -
-        c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{left\_virt}),
+        c_{\mathrm{guest}}$, \texttt{"3"} $\wedge$ \texttt{left\_virt}),
         ($c_{\mathrm{right}} - c_{\mathrm{guest}}$,
         \texttt{right\_out\_checked}), ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc},
         \mathrm{out}}$))\}
         \State $\mathrm{TX}_{\mathrm{right}} \gets$ TX \{inputs:
         (($c_{\mathrm{left}}$, \texttt{left\_fund}), ($c_{\mathrm{right}} -
-        c_{\mathrm{guest}}$, \texttt{2} $\wedge$ \texttt{right\_virt\_checked}),
-        ($c_{\mathrm{guest}}$, \texttt{guest\_all})), outputs:
-        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$,
-        \texttt{left\_out\_checked}), ($c_{\mathrm{right}} -
-        c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{right\_virt}),
-        ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
-        ($c_{\mathrm{guest}}$, \texttt{guest}))\} \State
-        $\mathrm{TX}_{\mathrm{both}} \gets$ TX \{inputs: (($c_{\mathrm{left}} -
-        c_{\mathrm{guest}}$, \texttt{1} $\wedge$ \texttt{left\_virt\_checked}),
-        ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{2} $\wedge$
+        c_{\mathrm{guest}}$, \texttt{"2"} $\wedge$
         \texttt{right\_virt\_checked}), ($c_{\mathrm{guest}}$,
         \texttt{guest\_all})), outputs: (($c_{\mathrm{left}} -
-        c_{\mathrm{guest}}$, \texttt{3} $\wedge$ \texttt{left\_virt}),
-        ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{3} $\wedge$
+        c_{\mathrm{guest}}$, \texttt{left\_out\_checked}), ($c_{\mathrm{right}}
+        - c_{\mathrm{guest}}$, \texttt{"3"} $\wedge$ \texttt{right\_virt}),
+        ($c_{\mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+        ($c_{\mathrm{guest}}$, \texttt{guest}))\}
+        \State $\mathrm{TX}_{\mathrm{both}} \gets$ TX \{inputs:
+        (($c_{\mathrm{left}} - c_{\mathrm{guest}}$, \texttt{"1"} $\wedge$
+        \texttt{left\_virt\_checked}), ($c_{\mathrm{right}} -
+        c_{\mathrm{guest}}$, \texttt{"2"} $\wedge$
+        \texttt{right\_virt\_checked}), ($c_{\mathrm{guest}}$,
+        \texttt{guest\_all})), outputs: (($c_{\mathrm{left}} -
+        c_{\mathrm{guest}}$, \texttt{"3"} $\wedge$ \texttt{left\_virt}),
+        ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{"3"} $\wedge$
         \texttt{right\_virt}), ($c_{\mathrm{guest}}, \pk{\mathrm{loc},
         \mathrm{out}}$)\}
         \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
@@ -220,17 +221,19 @@
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}, \pk{\mathrm{left},
         \mathrm{guest}}, \pk{\mathrm{right}, \mathrm{guest}}\}$
         \If{\texttt{is\_funder} = True}
-          \State $\texttt{out} \gets (\texttt{1} \wedge \texttt{virt\_checked})
-          \vee (\texttt{3} \wedge \texttt{virt} + (t + s))$
+          \State $\texttt{out} \gets (\texttt{"1"} \wedge
+          \texttt{virt\_checked}) \vee (\texttt{"3"} \wedge \texttt{virt} + (t +
+          s))$
           \label{code:virtual-layer:edge-txs:funder-out}
         \Else \: \Comment{TXs belong to \texttt{fundee}}
-          \State $\texttt{out} \gets (\texttt{2} \wedge \texttt{virt\_checked})
-          \vee (\texttt{3} \wedge \texttt{virt} + (t + s))$
+          \State $\texttt{out} \gets (\texttt{"2"} \wedge
+          \texttt{virt\_checked}) \vee (\texttt{"3"} \wedge \texttt{virt} + (t +
+          s))$
         \EndIf
-        \State $\texttt{guest\_all} \gets \texttt{5} \wedge
+        \State $\texttt{guest\_all} \gets \texttt{"5"} \wedge
         n/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
         \mathrm{guest}}, \{\pk{\mathrm{sec}, 1 \dots n}\}\}$
-        \State $\texttt{guest\_out} \gets \texttt{4} \wedge
+        \State $\texttt{guest\_out} \gets \texttt{"4"} \wedge
         2/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
         \mathrm{guest}}\}$
         \State $\texttt{guest} \gets (\texttt{guest\_out} + (t + s)) \vee
@@ -272,7 +275,7 @@
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ which sign the
       \texttt{guest\_all} input by each one of the previous $j-1$ hops
       \State ensure that there are exactly $4$ more valid signatures in the
-      stored signatures, which sign the $\texttt{1} \wedge
+      stored signatures, which sign the $\texttt{"1"} \wedge
       \texttt{left\_virt\_checked}$ inputs of $\mathrm{TX}_{\mathrm{loc},
       \mathrm{left}}$ and $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ with
       $\pk{\mathrm{sib}, \mathrm{rem}, \mathrm{virt}}$ and $\pk{\mathrm{left},
@@ -299,8 +302,8 @@
         $\mathrm{sigs}_{\mathrm{toLeft}}$ if $i < j$, or
         $\mathrm{sigs}_{\mathrm{toRight}}$ if $i > j$ \Comment{if $i$-th hop is
         adjacent, $2$ signatures will be produced by each \textsc{sign}()
-        invocation: one for the \texttt{guest\_all} and one for the $\texttt{2}
-        \wedge \texttt{right\_virt\_checked}$ input}
+        invocation: one for the \texttt{guest\_all} and one for the
+        $\texttt{"2"} \wedge \texttt{right\_virt\_checked}$ input}
         \If{$i - j = 1$} \Comment{hop is our next}
           \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{left}}$,
           $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) to
@@ -332,7 +335,7 @@
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ which sign the
       \texttt{guest\_all} input by each one of the next $n-j$ hops
       \State ensure that there are exactly $4$ more valid signatures in the
-      stored signatures, which sign the $\texttt{2} \wedge
+      stored signatures, which sign the $\texttt{"2"} \wedge
       \texttt{right\_virt\_checked}$ inputs of $\mathrm{TX}_{\mathrm{loc},
       \mathrm{right}}$ and $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ with
       $\pk{\mathrm{rem}, \mathrm{virt}}$ and $\pk{\mathrm{right},
@@ -411,7 +414,7 @@
         $\mathrm{sigs}_{\mathrm{toLeft}}$ \Comment{if $i$-th hop is
         adjacent, $2$ signatures will be produced by each \textsc{sign}()
         invocation: one for the \texttt{guest\_all} and one for the
-        $\texttt{2} \wedge \texttt{right\_virt\_checked}$ input}
+        $\texttt{"2"} \wedge \texttt{right\_virt\_checked}$ input}
         \State output (\textsc{sign TXs}, $\mathrm{TX}_{i, \mathrm{left}}$,
         $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i, \mathrm{both}}$)
         to \texttt{fundee} and expect reply (\textsc{TXs signed},
@@ -452,7 +455,7 @@
         $\mathrm{sigs}_{\mathrm{toRight}}$ \Comment{if $i$-th hop is
         adjacent, $2$ signatures will be produced by each \textsc{sign}()
         invocation: one for the \texttt{guest\_all} and one for the
-        $\texttt{2} \wedge \texttt{right\_virt\_checked}$ input}
+        $\texttt{"2"} \wedge \texttt{right\_virt\_checked}$ input}
         \State output (\textsc{sign TXs}, $\mathrm{TX}_{i, \mathrm{left}}$,
         $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i, \mathrm{both}}$)
         to \texttt{fundee} and expect reply (\textsc{TXs signed},

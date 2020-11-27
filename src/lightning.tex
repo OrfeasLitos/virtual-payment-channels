@@ -170,7 +170,7 @@
     \begin{algorithmic}[1]
       \If{\texttt{hops} = \ledger} \Comment{opening base channel}
         \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
-        \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
+        \texttt{"3"} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
         \State $\texttt{host}_P \gets \ledger$
         \State $\texttt{layer} \gets 0$
@@ -198,12 +198,12 @@
       $\texttt{maxTime}_{\texttt{window}}$, \texttt{Delay},
       $\texttt{minTime}_{\texttt{window}}$ and \texttt{windowSize} are defined
       in Proposition~\ref{ledger:delay}} \TODO{recheck and include proposition}
-      \State $C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
-      \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (t + s)$) $\vee$
-      $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
+      \State $C_{A, 0} \gets$ TX \{input: $(c, \texttt{"3"} \wedge 2/\{\pk{A,
+      F}, \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (t + s)$)
+      $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
       \label{code:ln:exchange-open-sigs:a-tx}
-      \State $C_{B, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge 2/\{\pk{A, F},
-      \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
+      \State $C_{B, 0} \gets$ TX \{input: $(c, \texttt{"3"} \wedge 2/\{\pk{A,
+      F}, \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
       \mathrm{out}} + (t + s)$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
       \label{code:ln:exchange-open-sigs:b-tx}
       \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A, F})$
@@ -219,16 +219,16 @@
       l.~\ref{code:ln:bob:host})}
       \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
         \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$,
-        output: $(c, \texttt{3} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}}
+        output: $(c, \texttt{"3"} \wedge 2/\{\pk{A, F}, \pk{B, F}\})$\}}
       \EndIf
-      \State \remotecode{$C_{B, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge
+      \State \remotecode{$C_{B, 0} \gets$ TX \{input: $(c, \texttt{"3"} \wedge
       2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$),
       ($0$, ($\pk{B, \mathrm{out}} + (t + s)$) $\vee$ $2/\{\pk{A, R}, \pk{B,
       R}\}$)\}}
       \State \remotecode{ensure \textsc{verify}($C_{B, 0}$, $\mathrm{sig}_{A, C,
       0}$, $\pk{A, F}$) = True}
       \label{code:ln:exchange-open-sigs:b-verify}
-      \State \remotecode{$C_{A, 0} \gets$ TX \{input: $(c, \texttt{3} \wedge
+      \State \remotecode{$C_{A, 0} \gets$ TX \{input: $(c, \texttt{"3"} \wedge
       2/\{\pk{A, F}, \pk{B, F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (t +
       s)$)
       $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
