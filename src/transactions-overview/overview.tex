@@ -87,7 +87,21 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   no monetary loss is possible, $A_i$ must always enforce that $x_{i-1, i,
   \mathrm{right}} \leq x_{i, i+1, \mathrm{right}}$ and $x_{i, i+1,
   \mathrm{left}} \leq x_{i-1, i, \mathrm{left}}$ (where $x_{i, j,
-  \mathrm{left/right}}$ is the coins owned by the left/right party of channel
+  \mathrm{left/right}}$ is the value owned by the left/right party of channel
   $A_i A_j$ respectively). This balance check is performed on every payment and
-  new virtual channel.
+  new virtual channel. NB: This is not too restrictive to not allow payments,
+  but it is conjectured that this limitation can be lifted if an eltoo-based
+  channel update method is used instead of the current, lightning-based method.
+  \item \emph{What is the protocol followed by channel parties to establish the necessary keys and signatures
+  for the virtual channel transactions?}
+  \item At a high level, the protocol consists of three roundtrips, each
+  starting from the virtual channel funder to the first intermediary and then
+  from each intermediary to the next, up to the virtual channel fundee. The
+  first roundtrip is for key distribution, where each party obtains all the
+  necessary keys for all its required transactions, in the second roundtrip all
+  signatures except for those needed to consume funding outputs are distributed
+  and finally in the third roundtrip the parties exchange signatures that
+  consume the funding outputs. This structure ensures that parties only commit
+  to the new channel state only after they have locally all the signatures
+  necessary to enforce this state unilaterally.
 \end{itemize}
