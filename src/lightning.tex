@@ -553,9 +553,9 @@
       x = y$}
       \If{\remotecode{$\texttt{host}_{\bar{P}} \neq \ledger \wedge \bar{P}$
       has a \texttt{host\_sibling}}} \Comment{we are intermediary channel}
-        \State \remotecode{ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x
-        \wedge c_{\bar{P}} + x \geq c_{\mathrm{sib}}$} \Comment{avoid value
-        loss by griefing attack}
+        \State \remotecode{ensure $c_{\bar{P}} + x \leq c_{\bar{P},
+        \mathrm{sib}, \mathrm{rem}} \wedge c_{\bar{P}, \mathrm{sib}} \leq c_P -
+        x$} \Comment{avoid value loss by griefing attack}
       \EndIf
       \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$
       coins moved from $P$'s to $\bar{P}$'s output}
