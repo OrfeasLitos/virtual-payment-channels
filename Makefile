@@ -9,6 +9,9 @@ virtual-channels.pdf: src/*
 transactions-overview.pdf: src/transactions-overview/* src/transactions.tex
 	export TEXINPUTS=.:./src//:; \
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode transactions-overview.tex; \
+	bibtex transactions-overview.aux; \
+	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode transactions-overview.tex; \
+	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode transactions-overview.tex; \
 	rm -rf transactions-overview.aux transactions-overview.log transactions-overview.out transactions-overview.toc transactions-overview.lof transactions-overview.lot transactions-overview.bbl transactions-overview.blg transactions-overview-autopp.out transactions-overview-pics.pdf transactions-overview-autopp.log
 
 bib: src/*
