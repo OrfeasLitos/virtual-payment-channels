@@ -1,9 +1,177 @@
-\begin{figure}[H]
-  \begin{processbox}{\textsc{ln} -- init}
-    \begin{algorithmic}[1]
+\begin{notitlebox}{Off-chain transactions}
+  Syntactic shorthands:
+  \begin{itemize}
+    \item Let $A_i A_j$ the $2$-of-$\{A_i, A_j\}$ spending method.
+    \item Let $\mathit{all}^i$ an $n$-of-$\{A_1, \dots, A_n\}$ spending
+    condition for which all parties except for $A_i$ have circulated their
+    signatures.
+    \item If there is a channel with funding output $A_i A_j$, then $A_i^{-}
+    A_j$ is a new funding output in which $A_i$ owns $x'$ coins less than in
+    $A_i A_j$.
+    \item Literal numbers are used in spending conditions with quotes and
+    monospace font, e.g. \texttt{"1"}.
+    \item A timelock $t$ is represented with $+t$. The timelock required by
+    $A_i$ is $t_i$.
+    \item Spending methods may be combined with $\wedge$ and $\vee$.
+    \item An input or output is written as (spending method(s), value).
+  \end{itemize}
+  Transactions:
+  \begin{itemize}
+    \item Held by $A_1$:
 
-    \end{algorithmic}
-  \end{processbox}
-  \caption{}
-  \label{code:transactions}
-\end{figure}
+    inputs:
+    \begin{itemize}
+      \item $((A_1 A_2), x_{1,2})$
+    \end{itemize}
+    outputs:
+    \begin{itemize}
+      \item $(A_1^- A_2, x_{1,2} - x')$
+      \item $(((\mathit{all}^2 \wedge \texttt{"1"}) \vee (A_1 A_n + t_2)), x')$
+    \end{itemize}
+
+    \item Held by $A_n$:
+
+    inputs:
+    \begin{itemize}
+      \item $((A_{n-1} A_n), x_{n-1,n})$
+    \end{itemize}
+    outputs:
+    \begin{itemize}
+      \item $(((\mathit{all}^{n-1} \wedge \texttt{"}n\texttt{"}) \vee (A_1 A_n +
+      t_{n-1})), x')$
+      \item $(A_{n-1}^- A_n, x_{n-1,n} - x')$
+    \end{itemize}
+
+    \item Held by $A_i, i \in \{2, \dots, n-1\}$:
+
+    \begin{itemize}
+      \item First-mover transaction:
+
+      inputs:
+      \begin{itemize}
+        \item $((A_{i-1} A_i), x_{i-1,i})$
+        \item $((A_i A_{i+1}), x_{i,i+1})$
+      \end{itemize}
+      outputs:
+      \begin{itemize}
+        \item $(A_{i-1}^- A_i, x_{i-1,i} - x')$
+        \item $(A_i^- A_{i+1}, x_{i,i+1} - x')$
+        \item $(A_i, x')$
+        \item (((if $(i-1 > 1)$ $\mathit{all}^{i-1} \wedge
+        \texttt{"}i\texttt{"})$
+
+        $\vee ($if $(i+1 < n)$ $\mathit{all}^{i+1} \wedge
+        \texttt{"}i\texttt{"})$
+
+        $\vee ($if $(i-1 > 1 \vee i+1 < n)$ $A_1 A_n+\max{(t_{i-1}, t_{i+1})}$
+
+        \:\:\: else $A_1 A_n$)),
+
+        $x')$
+      \end{itemize}
+      \item Second-mover transactions:
+      \begin{itemize}
+        \item If $i = 2$:
+
+        inputs:
+        \begin{itemize}
+          \item $(\mathit{all}^2 \wedge \texttt{"1"}, x')$
+          \item $(A_2 A_3, x_{2,3})$
+        \end{itemize}
+        outputs:
+        \begin{itemize}
+          \item $(A_2^- A_3, x_{2,3} - x')$
+          \item $(A_2, x')$
+          \item (if $(n > 3)$ $((\mathit{all}^{3} \wedge \texttt{"2"}) \vee
+          (A_1 A_n + t_3))$ else $A_1 A_n, x'$)
+        \end{itemize}
+        \item If $i = n-1$:
+
+        inputs:
+        \begin{itemize}
+          \item $(A_{n-2} A_{n-1}, x_{n-2,n-1})$
+          \item $(\mathit{all}^{n-1} \wedge \texttt{"}n\texttt{"}, x')$
+        \end{itemize}
+        outputs:
+        \begin{itemize}
+          \item $(A_{n-2}^- A_{n-1}, x_{n-2,n-1} - x')$
+          \item $(A_{n-1}, x')$
+          \item (if $(n-2 > 1)$ $((\mathit{all}^{n-2} \wedge
+          \texttt{"}n-1\texttt{"})
+          \vee (A_1 A_n + t_{n-2}))$ else $A_1 A_n, x'$)
+        \end{itemize}
+        \item $\forall k \in \{2, \dots, i-1\}$:
+
+        inputs:
+        \begin{itemize}
+          \item $(\mathit{all}^i \wedge \texttt{"}k\texttt{"}, x')$
+          \item $(A_i A_{i+1}, x_{i,i+1})$
+        \end{itemize}
+        outputs:
+        \begin{itemize}
+          \item $(A_i^- A_{i+1}, x_{i,i+1} - x')$
+          \item $(A_i, x')$
+          \item (((if $(k-1 > 1)$ $\mathit{all}^{k-1} \wedge
+          \texttt{"}i\texttt{"})$
+
+          $\vee ($if $(i+1 < n)$ $\mathit{all}^{i+1} \wedge
+          \texttt{"}k\texttt{"})$
+
+          $\vee ($if $(k-1 > 1 \vee i+1 < n)$ $A_1 A_n+\max{(t_{k-1}, t_{i+1})}$
+
+          \:\:\: else $A_1 A_n$)),
+
+          $x')$
+        \end{itemize}
+        \item $\forall k \in \{i+1, \dots, n-1\}$:
+
+        inputs:
+        \begin{itemize}
+          \item $(A_{i-1} A_i, x_{i-1,i})$
+          \item $(\mathit{all}^i \wedge \texttt{"}k\texttt{"}, x')$
+        \end{itemize}
+        outputs:
+        \begin{itemize}
+          \item $(A_{i-1}^- A_i, x_{i-1,i} - x')$
+          \item $(A_i, x')$
+          \item (((if $(i-1 > 1)$ $\mathit{all}^{i-1} \wedge \texttt{"}k\texttt{"})$
+
+          $\vee ($if $(k+1 < n)$ $\mathit{all}^{k+1} \wedge \texttt{"}i\texttt{"})$
+
+          $\vee ($if $(i-1 > 1 \vee k+1 < n)$ $A_1 A_n+\max{(t_{i-1}, t_{k+1})}$
+
+          \:\:\: else $A_1 A_n$)),
+
+          $x')$
+        \end{itemize}
+        \item If $i = 2$ let $m \gets 1$ else $m \gets 2$.
+
+        If $i = n-1$ let $l \gets n$ else $l \gets n-1$.
+
+        $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots, l\}$:
+
+        inputs:
+        \begin{itemize}
+          \item $(\mathit{all}^i \wedge \texttt{"}k_1\texttt{"}, x')$
+          \item $(\mathit{all}^i \wedge \texttt{"}k_2\texttt{"}, x')$
+        \end{itemize}
+        outputs:
+        \begin{itemize}
+          \item $(A_i, x')$
+          \item (((if $(k_1 > 2)$ $\mathit{all}^{k_1-1} \wedge
+          \texttt{"}\min{(k_2, n-1)}\texttt{"})$
+
+          $\vee ($if $(k_2 < n - 1)$ $\mathit{all}^{k_2+1} \wedge
+          \texttt{"}\max{(k_1, 2)}\texttt{"})$
+
+          $\vee ($if $(k_1 > 2 \vee k_2 < n-1)$ $A_1 A_n+\max{(t_{k_1-1},
+          t_{k_2+1})}$
+
+          \:\:\: else $A_1 A_n$)),
+
+          $x')$
+        \end{itemize}
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{notitlebox}
