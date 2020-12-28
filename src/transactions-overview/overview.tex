@@ -92,16 +92,34 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   new virtual channel. NB: This is not too restrictive to not allow payments,
   but it is conjectured that this limitation can be lifted if an eltoo-based
   channel update method is used instead of the current, lightning-based method.
-  \item \emph{What is the protocol followed by channel parties to establish the necessary keys and signatures
-  for the virtual channel transactions?}
+  \item \emph{What about timelocks?}
+  \item Virtual outputs can be consumed by second- or third-movers as
+  soon as they enter the ledger state, but if such a party does not publish its
+  transaction after a while, then the virtual channel parties should be able to
+  use this output as funding output for their virtual channel -- this prevents
+  griefing attacks. Therefore we need to put a timelocked spending method on
+  each virtual output spendable by the two parties that own the new virtual
+  channel.
+
+  Each such timelock should be long enough for each of the entitled
+  intermediaries to have enough time to consume the virtual output, plus give a
+  little leeway in case the party goes offline for a short period. Our
+  construction allows the creation of ``recursive'' virtual channels, i.e.
+  virtual channels that are built on top of other virtual channels. The funding
+  outputs of the virtual channels exist off-chain and they need some time to
+  reach the chain. The deeper an intermediary's channel is nested and the larger
+  the number of hops that enabled this intermediary's channels, the longer has
+  to be the timelock for the virtual outputs it is able consume.
+  \item \emph{What is the protocol followed by channel parties to establish the
+  necessary keys and signatures for the virtual channel transactions?}
   \item At a high level, the protocol consists of three roundtrips, each
   starting from the virtual channel funder to the first intermediary and then
   from each intermediary to the next, up to the virtual channel fundee. The
-  first roundtrip is for key distribution, where each party obtains all the
-  necessary keys for all its required transactions, in the second roundtrip all
-  signatures except for those needed to consume funding outputs are distributed
-  and finally in the third roundtrip the parties exchange signatures that
-  consume the funding outputs. This structure ensures that parties only commit
-  to the new channel state only after they have locally all the signatures
-  necessary to enforce this state unilaterally.
+  first roundtrip is for key and timelocks distribution, where each party
+  obtains all the necessary keys for all its required transactions, in the
+  second roundtrip all signatures except for those needed to consume funding
+  outputs are distributed and finally in the third roundtrip the parties
+  exchange signatures that consume the funding outputs. This structure ensures
+  that parties only commit to the new channel state only after they have locally
+  all the signatures necessary to enforce this state unilaterally.
 \end{itemize}
