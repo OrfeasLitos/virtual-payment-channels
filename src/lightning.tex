@@ -261,8 +261,8 @@
     \begin{algorithmic}[1]
       \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{A, \mathrm{chain}})$
       \label{code:ln:base:sign-funding}
-      \State send $(\textsc{open}, c, \pk{A, \mathrm{out}}, \pk{B,
-      \mathrm{out}}, F, \mathrm{sig}_F, \alice, \bob)$ to \adversary
+      \State input $(\textsc{submit}, (F, \mathrm{sig}_F))$ to \ledger{}
+      \Comment{enter ``while'' below before sending}
       \While{$F \notin \Sigma$}
       \label{code:ln:commit-base:f-in-state}
         \State wait for input (\textsc{check funding}) \Comment{ignore all other
