@@ -9,7 +9,8 @@
       \Indent
         \If{$\texttt{last\_poll} \neq \bot$} \Comment{channel has opened}
           \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
-          \If{$\texttt{last\_poll} + t < |\Sigma|$}
+          \If{$\texttt{last\_poll} + p < |\Sigma|$} \Comment{$p$ is a global
+          parameter}
             \State $\texttt{negligent} \gets$ True
             \label{code:ln:init:negligent}
           \EndIf
@@ -147,6 +148,8 @@
       \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
       channel}
         \State \remotecode{$\texttt{layer} \gets 0$}
+        \State \remotecode{$t_P \gets s + p$} \Comment{$s$ is the upper bound of
+        $\eta$ from Lemma~7.19 of~\cite{BMTZ17}}
         \State \remotecode{$\itistate \gets \textsc{waiting for comm
         sig}$}
       \Else \: \Comment{opening virtual channel}
@@ -174,11 +177,12 @@
         \label{code:ln:base:create-funding}
         \State $\texttt{host}_P \gets \ledger$
         \State $\texttt{layer} \gets 0$
+        \State $t_P \gets s + p$
       \Else \: \Comment{opening virtual channel}
         \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
         $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-        output (\textsc{funded}, $\texttt{host}_P$, \texttt{funder\_layer})
-        \Comment{ignore any other message}
+        output (\textsc{funded}, $\texttt{host}_P$, \texttt{funder\_layer},
+        $t_P$) \TODO{added $t_P$ -- decide how to get informed of $t_P$} \Comment{ignore any other message}
         \label{code:ln:prepare-base:fund-me}
         \State $\texttt{layer} \gets \texttt{funder\_layer}$
       \EndIf
@@ -291,7 +295,8 @@
       \Statex
 
       \State On output (\textsc{funded}, $\texttt{host}_P$,
-      \texttt{funder\_layer}) by \texttt{hops}[-1].\texttt{right}:
+      \texttt{funder\_layer}, $t_P$) by \texttt{hops}[-1].\texttt{right}:
+      \TODO{added $t_P$ -- decide how to get informed of $t_P$}
       \label{code:ln:bob:funded}
       \Indent
         \State ensure $\itistate = \textsc{waiting for funded}$
