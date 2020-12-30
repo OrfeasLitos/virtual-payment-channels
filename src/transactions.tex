@@ -9,7 +9,10 @@
     A_j$ is a new funding output in which $A_i$ owns $x'$ coins less than in
     $A_i A_j$.
     \item Literal numbers are used in spending conditions with quotes and
-    monospace font, e.g. \texttt{"1"}.
+    monospace font, e.g. \texttt{"1"}.\footnote{This is used to specify one end
+    of the interval. In Bitcoin script, if the scriptPubKey (on the output)
+    begins with \texttt{OP\_1} \texttt{OP\_EQUALVERIFY}, then the scriptSig (on
+    the input) is valid only if it begins with \texttt{OP\_1}.}
     \item A timelock $t$ is represented with $+t$. The timelock required by
     $A_i$ in all virtual outputs $A_i$ is able to spend is represented with
     $t_i$.
