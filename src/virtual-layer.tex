@@ -194,6 +194,7 @@
         ($c_{\mathrm{right}} - c_{\mathrm{guest}}$, \texttt{"3"} $\wedge$
         \texttt{right\_virt}), ($c_{\mathrm{guest}}, \pk{\mathrm{loc},
         \mathrm{out}}$)\}
+        \label{code:virtual-layer:mid-txs:both}
         \State \Return ($\mathrm{TX}_{\mathrm{none}}$,
         $\mathrm{TX}_{\mathrm{left}}$, $\mathrm{TX}_{\mathrm{right}}$,
         $\mathrm{TX}_{\mathrm{both}}$)
@@ -244,6 +245,7 @@
         \mathrm{guest}}\}$
         \State $\texttt{guest} \gets (\texttt{guest\_out} + (t + s)) \vee
         \texttt{guest\_all}$
+        \label{code:virtual-layer:edge-txs:guest-output}
         \State $\mathrm{TX}_{\mathrm{base}} \gets$ TX \{input:
         ($c_{\mathrm{tot}}$, \texttt{fund}), outputs: (($c_{\mathrm{tot}} -
         c_{\mathrm{guest}}$, \texttt{out}), ($c_{\mathrm{guest}}$,
