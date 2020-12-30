@@ -144,33 +144,35 @@
 
           $x')$
         \end{itemize}
-        \item If $i = 2$ let $m \gets 1$ else $m \gets 2$.
+      \end{itemize}
+      \item Third-mover transactions:
 
-        If $i = n-1$ let $l \gets n$ else $l \gets n-1$.
+      If $i = 2$ let $m \gets 1$ else $m \gets 2$.
 
-        $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots, l\}$:
+      If $i = n-1$ let $l \gets n$ else $l \gets n-1$.
 
-        inputs:
-        \begin{itemize}
-          \item $(\mathit{all}^i \wedge \texttt{"}k_1\texttt{"}, x')$
-          \item $(\mathit{all}^i \wedge \texttt{"}k_2\texttt{"}, x')$
-        \end{itemize}
-        outputs:
-        \begin{itemize}
-          \item $(A_i, x')$
-          \item (((if $(k_1 > 2)$ $\mathit{all}^{k_1-1} \wedge
-          \texttt{"}\min{(k_2, n-1)}\texttt{"})$
+      $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots, l\}$:
 
-          $\vee ($if $(k_2 < n - 1)$ $\mathit{all}^{k_2+1} \wedge
-          \texttt{"}\max{(k_1, 2)}\texttt{"})$
+      inputs:
+      \begin{itemize}
+        \item $(\mathit{all}^i \wedge \texttt{"}k_1\texttt{"}, x')$
+        \item $(\mathit{all}^i \wedge \texttt{"}k_2\texttt{"}, x')$
+      \end{itemize}
+      outputs:
+      \begin{itemize}
+        \item $(A_i, x')$
+        \item (((if $(k_1 > 2)$ $\mathit{all}^{k_1-1} \wedge
+        \texttt{"}\min{(k_2, n-1)}\texttt{"})$
 
-          $\vee ($if $(k_1 > 2 \vee k_2 < n-1)$ $A_1 A_n+\max{(t_{k_1-1},
-          t_{k_2+1})}$
+        $\vee ($if $(k_2 < n - 1)$ $\mathit{all}^{k_2+1} \wedge
+        \texttt{"}\max{(k_1, 2)}\texttt{"})$
 
-          \:\:\: else $A_1 A_n$)),
+        $\vee ($if $(k_1 > 2 \vee k_2 < n-1)$ $A_1 A_n+\max{(t_{k_1-1},
+        t_{k_2+1})}$
 
-          $x')$
-        \end{itemize}
+        \:\:\: else $A_1 A_n$)),
+
+        $x')$
       \end{itemize}
     \end{itemize}
   \end{itemize}
