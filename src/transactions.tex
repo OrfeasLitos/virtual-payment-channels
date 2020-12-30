@@ -17,7 +17,7 @@
   \end{itemize}
   Transactions:
   \begin{itemize}
-    \item Held by $A_1$:
+    \item Held by $A_1$ ($1$ tx):
 
     inputs:
     \begin{itemize}
@@ -29,7 +29,7 @@
       \item $(((\mathit{all}^2 \wedge \texttt{"1"}) \vee (A_1 A_n + t_2)), x')$
     \end{itemize}
 
-    \item Held by $A_n$:
+    \item Held by $A_n$ ($1$ tx):
 
     inputs:
     \begin{itemize}
@@ -45,7 +45,7 @@
     \item Held by $A_i, i \in \{2, \dots, n-1\}$:
 
     \begin{itemize}
-      \item First-mover transaction:
+      \item First-mover transaction ($1$ tx):
 
       inputs:
       \begin{itemize}
@@ -69,9 +69,10 @@
 
         $x')$
       \end{itemize}
-      \item Second-mover transactions:
+      \item Second-mover transactions (if $i \in \{2, n-1\}$, then $n-2$ txs,
+      else $n-3$ txs):
       \begin{itemize}
-        \item If $i = 2$:
+        \item If $i = 2 ($1$ tx):$
 
         inputs:
         \begin{itemize}
@@ -85,7 +86,7 @@
           \item (if $(n > 3)$ $((\mathit{all}^{3} \wedge \texttt{"2"}) \vee
           (A_1 A_n + t_3))$ else $A_1 A_n, x'$)
         \end{itemize}
-        \item If $i = n-1$:
+        \item If $i = n-1$ ($1$ tx):
 
         inputs:
         \begin{itemize}
@@ -100,7 +101,7 @@
           \texttt{"}n-1\texttt{"})
           \vee (A_1 A_n + t_{n-2}))$ else $A_1 A_n, x'$)
         \end{itemize}
-        \item $\forall k \in \{2, \dots, i-1\}$:
+        \item $\forall k \in \{2, \dots, i-1\}$ ($i-2$ txs):
 
         inputs:
         \begin{itemize}
@@ -123,7 +124,7 @@
 
           $x')$
         \end{itemize}
-        \item $\forall k \in \{i+1, \dots, n-1\}$:
+        \item $\forall k \in \{i+1, \dots, n-1\}$ ($n-i-1$ txs):
 
         inputs:
         \begin{itemize}
@@ -145,7 +146,8 @@
           $x')$
         \end{itemize}
       \end{itemize}
-      \item Third-mover transactions:
+      \item Third-mover transactions ($(i-m)\cdot(l-i)$ txs -- $m, l$ defined
+      below):
 
       If $i = 2$ let $m \gets 1$ else $m \gets 2$.
 
