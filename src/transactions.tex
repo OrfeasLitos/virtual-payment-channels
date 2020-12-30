@@ -1,7 +1,7 @@
 \begin{notitlebox}{Off-chain transactions}
   Syntactic shorthands:
   \begin{itemize}
-    \item Let $A_i A_j$ the $2$-of-$\{A_i, A_j\}$ spending method.
+    \item Let $A_i A_j$ the $2$-of-$\{A_i, A_j\}$ spending condition.
     \item Let $\mathit{all}^i$ an $n$-of-$\{A_1, \dots, A_n\}$ spending
     condition for which all parties except for $A_i$ have circulated their
     signatures.
@@ -13,8 +13,8 @@
     \item A timelock $t$ is represented with $+t$. The timelock required by
     $A_i$ in all virtual outputs $A_i$ is able to spend is represented with
     $t_i$.
-    \item Spending methods may be combined with $\wedge$ and $\vee$.
-    \item An input or output is written as (spending method(s), value).
+    \item Spending conditions may be combined with $\wedge$ and $\vee$.
+    \item An input or output is written as (spending condition(s), value).
   \end{itemize}
   Transactions:
   \begin{itemize}
