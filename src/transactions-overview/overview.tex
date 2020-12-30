@@ -36,6 +36,16 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
     produces a new virtual output with $x'$ coins and an output that pays $A_i$
     directly $x'$ coins.
   \end{itemize}
+
+  \item Each party has one ``commitment'' transaction for each channel in which
+  it takes part. This transaction can spend the latest funding output and
+  produce one output for each party, each carrying the rightful amount. It also
+  holds one ``revocation'' transaction per channel update which can be used to
+  punish its counterparty if it publishes an old commitment transaction, by
+  confiscating the entire channel value. To perform a payment, the two parties
+  first create new commitment transactions with the new balance and then create
+  revocation transactions for the old commitment transactions. This is in effect
+  a simpler version of Lightning.
 \end{itemize}
 
 \section*{Q\&A}
