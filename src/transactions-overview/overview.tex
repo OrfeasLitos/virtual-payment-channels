@@ -52,12 +52,18 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
 \begin{itemize}
   \item \emph{Why are there many second- and third-mover transactions?}
   \item A virtual output produced by a tx of $A_i$ specifies exactly the
-  interval of parties around $A_i$ that have already made their move. $A_i$ can
-  only spend a virtual output of which the interval ends just before or just
-  after $i$ and the single newly produced virtual output has an interval that is
-  the union of the intervals of the consumed virtual outputs with $i$ added.
-  Therefore $A_i$ has multiple second- and third-mover transactions because each
-  one corresponds to different previous interval(s).
+  interval of parties around $A_i$ that have already made their move (i.e. the
+  maximal set of successive hops that have made their move and that includes
+  $A_i$). For example in the case of 10 hops, if the spending condition
+  ``$\mathit{all}^8 \wedge \texttt{"4"}$'' is on-chain, it signifies that
+  parties 4, 5, 6 and 7 have moved and that (if everyone is honest) parties 8 and 3
+  have not moved -- it does not say anything about party 1, 2, 9 or 10.
+
+  $A_i$ can only spend a virtual output of which the interval ends just before
+  or just after $i$ and the single newly produced virtual output has an interval
+  that is the union of the intervals of the consumed virtual outputs with $i$
+  added.  Therefore $A_i$ has multiple second- and third-mover transactions
+  because each one corresponds to different previous interval(s).
 
   As a result, each intermediate party can only publish exactly one transaction.
   This transaction always generates exactly one new virtual output. If it is a
