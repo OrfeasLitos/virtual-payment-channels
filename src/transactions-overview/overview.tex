@@ -69,9 +69,10 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   This transaction always generates exactly one new virtual output. If it is a
   first-mover tx, it does not consume a virtual output. If it is a second-mover,
   it consumes one and if it is a third-mover it consumes two. A third-mover tx
-  can be published only if the publishing party is surrounded (directly or
-  indirectly) by two first-movers, therefore eventually only one virtual output
-  will remain, as intended.
+  can be published only if the publishing party is surrounded by two
+  first-movers (its two adjacent parties, two non-adjacent parties one per side,
+  or one adjacent party on one side and a non-adjacent one on the other),
+  therefore eventually only one virtual output will remain, as intended.
   \item \emph{What if a malicious intermediary creates a new virtual output and
   consumes it together with an honest virtual output using its third-mover
   transaction?}
