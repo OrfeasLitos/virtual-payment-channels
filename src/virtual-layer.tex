@@ -6,7 +6,7 @@
       \Indent
         \If{$\texttt{last\_poll} \neq \bot$} \Comment{virtual layer is ready}
           \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
-          \If{$\texttt{last\_poll} + t < |\Sigma|$}
+          \If{$\texttt{last\_poll} + p < |\Sigma|$}
             \For{$P \in \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}$}
             \Comment{at most 1 of \texttt{funder}, \texttt{fundee} is defined}
               \State ensure $P$.\textsc{negligent}() returns (\textsc{ok})
