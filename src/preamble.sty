@@ -31,6 +31,7 @@
 \usepackage[framemethod=TikZ]{mdframed}
 \usepackage{macros}
 \usepackage{float}
+\usepackage{capt-of}
 \ifelseieee{}{\usepackage{appendix}}
 
 % For a better amsmath, as per the IEEE instructions
@@ -211,3 +212,6 @@
   \State \algorithmicif\ #1\ \algorithmicthen\ #2\ \algorithmicelse\ #3}
 \algnewcommand{\IfThen}[2]{% \IfThen{<if>}{<then>}
   \State \algorithmicif\ #1\ \algorithmicthen\ #2}
+
+% C-like /* comment */
+\algnewcommand{\StarComment}[1]{\textcolor{gray}{/*#1*/}}
