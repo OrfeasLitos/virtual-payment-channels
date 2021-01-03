@@ -375,58 +375,55 @@
 \captionof{figure}{}
 \label{code:virtual-layer:mid-txs}
 
-\begin{figure}[H]
-  \begin{processbox}{\textsc{virt}}
-    \begin{algorithmic}[1]
-      \State \Comment{left and right refer to the two counterparties, with left
-      being the one closer to the funder. Note difference with left/right
-      meaning in \textsc{virt.getMidTXs}.}
-      \State \textsc{getEdgeTXs}($c_{\mathrm{guest}}$, $c_{\mathrm{left}}$,
-      $c_{\mathrm{right}}$, $\pk{\mathrm{left}, \mathrm{fund}}$,
-      $\pk{\mathrm{right}, \mathrm{fund}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
-      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
-      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
-      $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$, \texttt{is\_funder}):
+\begin{processbox}{\textsc{virt}}
+  \begin{algorithmic}[1]
+    \State \Comment{left and right refer to the two counterparties, with left
+    being the one closer to the funder. Note difference with left/right
+    meaning in \textsc{virt.getMidTXs}.}
+    \State \textsc{getEdgeTXs}($i$, $n$, $c_{\mathrm{virt}}$,
+    $c_{\mathrm{left}}$, $c_{\mathrm{right}}$, $\pk{\mathrm{left},
+    \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund},
+    \mathrm{old}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$,
+    $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$ $\pk{\mathrm{left},
+    \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{\mathrm{all},
+    j})_{j \in [n]}$, $t$):
+    \Indent
+      \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{virt}}$ \Comment{left
+      party funds virtual channel}
+      \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
+      \State $\texttt{old\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
+      \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
+      \State $\texttt{new\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
+      \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\}$
+      \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
+      \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
+      \If{$i = 1$} \Comment{funder's tx}
+        \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
+        \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}$
+      \Else \: \Comment{fundee's tx}
+        \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
+        \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}$
+      \EndIf
+      \State $\mathrm{TX}_1 \gets \mathrm{TX}$: \Comment{edge nodes have only
+      a first-mover tx}
       \Indent
-        \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{guest}}$
-        \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
-        \State $\texttt{fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund}},
-        \pk{\mathrm{right}, \mathrm{fund}}\}$
-        \State $\texttt{virt} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
-        \pk{\mathrm{right}, \mathrm{virt}}\}$
-        \State $\texttt{virt\_checked} \gets 4/\{\pk{\mathrm{left},
-        \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}, \pk{\mathrm{left},
-        \mathrm{guest}}, \pk{\mathrm{right}, \mathrm{guest}}\}$
-        \If{\texttt{is\_funder} = True}
-          \State $\texttt{out} \gets (\texttt{"1"} \wedge
-          \texttt{virt\_checked}) \vee (\texttt{"3"} \wedge \texttt{virt} + (t +
-          s))$
-          \label{code:virtual-layer:edge-txs:funder-out}
-        \Else \: \Comment{TXs belong to \texttt{fundee}}
-          \State $\texttt{out} \gets (\texttt{"2"} \wedge
-          \texttt{virt\_checked}) \vee (\texttt{"3"} \wedge \texttt{virt} + (t +
-          s))$
-        \EndIf
-        \State $\texttt{guest\_all} \gets \texttt{"5"} \wedge
-        n/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
-        \mathrm{guest}}, \{\pk{\mathrm{sec}, 1 \dots n}\}\}$
-        \State $\texttt{guest\_out} \gets \texttt{"3"} \wedge
-        2/\{\pk{\mathrm{left}, \mathrm{guest}}, \pk{\mathrm{right},
-        \mathrm{guest}}\}$
-        \State $\texttt{guest} \gets (\texttt{guest\_out} + (t + s)) \vee
-        \texttt{guest\_all}$
-        \label{code:virtual-layer:edge-txs:guest-output}
-        \State $\mathrm{TX}_{\mathrm{base}} \gets$ TX \{input:
-        ($c_{\mathrm{tot}}$, \texttt{fund}), outputs: (($c_{\mathrm{tot}} -
-        c_{\mathrm{guest}}$, \texttt{out}), ($c_{\mathrm{guest}}$,
-        \texttt{guest}))\}
-        \State \Return $\mathrm{TX}_{\mathrm{base}}$
+        \State inputs:
+        \Indent
+          \State $(c_{\mathrm{tot}}, \texttt{old\_fund})$
+        \EndIndent
+        \State outputs:
+        \Indent
+          \State $(c_{\mathrm{tot}} - c_{\mathrm{virt}}, \texttt{new\_fund})$,
+          \State $(c_{\mathrm{virt}}, \mathit{all} \vee (\texttt{virt\_fund} +
+          t))$
+        \EndIndent
       \EndIndent
-    \end{algorithmic}
-  \end{processbox}
-  \caption{}
-  \label{code:virtual-layer:edge-txs}
-\end{figure}
+      \State \Return $\mathrm{TX}_1$
+    \EndIndent
+  \end{algorithmic}
+\end{processbox}
+\captionof{figure}{}
+\label{code:virtual-layer:edge-txs}
 
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.siblingSigs}()}
