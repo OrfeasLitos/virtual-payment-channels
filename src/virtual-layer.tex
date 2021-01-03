@@ -130,7 +130,8 @@
     \Indent
       \State ensure $1 < i < n$
       \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{virt}} \wedge
-      c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$
+      c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$ \Comment{left parties fund
+      virtual channel}
       \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sibRem}}$;
       $c_{\mathrm{right}} \gets c_{\mathrm{loc}} + c_{\mathrm{rem}}$
       \State $\texttt{left\_old\_fund} \gets 2/\{\pk{\mathrm{left},
