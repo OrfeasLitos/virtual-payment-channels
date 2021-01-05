@@ -431,17 +431,20 @@
   \begin{processbox}{\textsc{virt.siblingSigs}()}
     \begin{algorithmic}[1]
       \State parse input as $\mathrm{sigs}_{\mathrm{byLeft}}$
-      \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$) $\gets$
-      \textsc{virt.getMidTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
-      $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{\mathrm{sib},
-      \mathrm{rem}, F}$, $\pk{\mathrm{sib}, F}$, $\pk{\mathrm{loc}, F}$,
-      $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{sib}, \mathrm{rem}, \mathrm{virt}}$,
-      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
-      $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left}, \mathrm{guest}}$,
-      $\pk{\mathrm{right}, \mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$,
-      $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
+      \State ($\mathrm{TX}_1$, $(\mathrm{TX}_{2, k})_{k \in \{m, \dots, l\}
+      \setminus \{i\}}$, $(\mathrm{TX}_{3, k_1, k_2})_{(k_1, k_2) \in \{m,
+      \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$ \textsc{virt.getMidTXs}($i$,
+      $n$, $c_{\mathrm{virt}}$, $c_P$, $c_{\bar{P}}$, $c_{\mathrm{sib}}$,
+      $c_{\mathrm{sib}, \mathrm{rem}}$,
+      $\pk{\mathrm{sib}, \mathrm{rem}, F}$, $\pk{\mathrm{sib}, F}$,
+      $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{sib},
+      \mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
+      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$,
+      $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
+      \mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$, $(\pk{i,j,k})_{i
+      \in [n], j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}}$,
+      $(\pk{i, 2, 1})_{i \in [n]}$, $(\pk{i, n-1, n})_{i \in [n]}$,
+      $(t_i)_{i \in [n-1] \setminus \{1\}}$)
       \State store all signatures in $\mathrm{sigs}_{\mathrm{byLeft}}$ that sign
       any of $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
       $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
