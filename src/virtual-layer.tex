@@ -115,25 +115,26 @@
 \begin{processbox}{\textsc{virt}}
   \begin{algorithmic}[1]
     \State \TODO{change all \textsc{getMidTXs}() uses to fit new input/output}
-    \State \textsc{getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$,
-    $c_{\mathrm{loc}}$, $c_{\mathrm{rem}}$, $c_{\mathrm{sib}}$,
-    $c_{\mathrm{sibRem}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
-    $\pk{\mathrm{loc}, \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{sib},
-    \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund},
-    \mathrm{old}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$,
-    $\pk{\mathrm{loc}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{sib},
-    \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{right}, \mathrm{fund},
-    \mathrm{new}}$, $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
-    \mathrm{virt}}$, $\{\pk{i,j,k}\}_{i \in [n], j \in [n-1] \setminus \{1\}, k
-    \in [n-1] \setminus \{1, j\}}$, $\{\pk{i, 2, 1}\}_{i \in [n]}$,
-    $\{\pk{i, n-1, n}\}_{i \in [n]}$, $(t_i)_{i \in [n-1] \setminus \{1\}}$):
+    \State \textsc{getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{\mathrm{loc}}$,
+    $c_{\mathrm{rem}}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$,
+    $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{loc},
+    \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{sib}, \mathrm{fund},
+    \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
+    $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{loc},
+    \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{sib}, \mathrm{fund},
+    \mathrm{new}}$, $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$,
+    $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
+    $\{\pk{i,j,k}\}_{i \in [n], j \in [n-1] \setminus \{1\}, k \in [n-1]
+    \setminus \{1, j\}}$, $\{\pk{i, 2, 1}\}_{i \in [n]}$, $\{\pk{i, n-1, n}\}_{i
+    \in [n]}$, $(t_i)_{i \in [n-1] \setminus \{1\}}$):
     \Indent
       \State ensure $1 < i < n$
-      \State ensure $c_{\mathrm{sibRem}} \geq c_{\mathrm{virt}} \wedge
-      c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$ \Comment{left parties fund
+      \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_{\mathrm{virt}}
+      \wedge c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$ \Comment{left parties fund
       virtual channel}
-      \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sibRem}}$;
-      $c_{\mathrm{right}} \gets c_{\mathrm{loc}} + c_{\mathrm{rem}}$
+      \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sib},
+      \mathrm{rem}}$; $c_{\mathrm{right}} \gets c_{\mathrm{loc}} +
+      c_{\mathrm{rem}}$
       \State $\texttt{left\_old\_fund} \gets 2/\{\pk{\mathrm{left},
       \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{loc}, \mathrm{fund},
       \mathrm{old}}\}$
