@@ -27,7 +27,7 @@
       \Indent
         \State store message contents and \texttt{guest}
         \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
-        for edge nodes, \texttt{fundee} is present only in last node}
+        for endpoints, \texttt{fundee} is present only in last node}
         \State $\texttt{last\_poll} \gets \bot$
         \State output (\textsc{host init ok}) to \texttt{guest}
       \EndIndent
@@ -382,7 +382,7 @@
     \State \Comment{left and right refer to the two counterparties, with left
     being the one closer to the funder. Note difference with left/right
     meaning in \textsc{virt.getMidTXs}.}
-    \State \textsc{getEdgeTXs}($i$, $n$, $c_{\mathrm{virt}}$,
+    \State \textsc{getEndpointTX}($i$, $n$, $c_{\mathrm{virt}}$,
     $c_{\mathrm{left}}$, $c_{\mathrm{right}}$, $\pk{\mathrm{left},
     \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund},
     \mathrm{old}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$,
@@ -420,12 +420,11 @@
           t))$
         \EndIndent
       \EndIndent
-      \State \Return $\mathrm{TX}_1$
-    \EndIndent
-  \end{algorithmic}
-\end{processbox}
-\captionof{figure}{}
-\label{code:virtual-layer:edge-txs}
+    \end{algorithmic}
+  \end{processbox}
+  \captionof{figure}{}
+  \label{code:virtual-layer:endpoint-txs}
+\end{center}
 
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.siblingSigs}()}
@@ -497,7 +496,7 @@
       \If{\texttt{right\_data} does not contain data from a second-next hop}
       \Comment{next hop is \texttt{host\_fundee}}
         \State $\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$ $\gets$
-        \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
+        \textsc{virt.getEndpointTX}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
         $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
         \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
         \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
@@ -554,7 +553,7 @@
       \If{\texttt{left\_data} does not contain data from a second-previous hop}
       \Comment{previous hop is \texttt{host\_funder}}
         \State $\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$ $\gets$
-        \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_{\bar{P}}$, $c_P$,
+        \textsc{virt.getEndpointTX}($c_{\mathrm{guest}}$, $c_{\bar{P}}$, $c_P$,
         $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem},
         \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
         \mathrm{virt}}$, $\pk{\mathrm{left}, \mathrm{guest}}$,
@@ -572,7 +571,7 @@
   \begin{processbox}{\textsc{virt.hostFundeeSigs}()}
     \begin{algorithmic}[1]
       \State $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ $\gets$
-      \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
+      \textsc{virt.getEndpointTX}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
       $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
       \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$,
       $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
@@ -654,7 +653,7 @@
       \textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
       of $P$ and assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
       \State $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ $\gets$
-      \textsc{virt.getEdgeTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
+      \textsc{virt.getEndpointTX}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
       $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
       \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
       \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
@@ -917,7 +916,7 @@
       $\Sigma$
       \If{\texttt{funder} or \texttt{fundee} is defined and
       $\mathrm{TX}_{\mathrm{none}, \mathrm{loc}}$ is not valid in $\Sigma$}
-      \Comment{we are an edge node and our counterparty has closed}
+      \Comment{we are an endpoint and our counterparty has closed}
         \State ignore all messages except for (\textsc{check if closing}) by $R$
         \State $\textit{State} \gets \textsc{closing}$
         \State give up execution token \Comment{control goes to \environment}
