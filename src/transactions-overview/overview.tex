@@ -139,22 +139,24 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
         p + \sum\limits_{i = 2}^{n-1}(s - 1 + t_i) & \mbox{else}
       \end{cases} \enspace,
   \end{equation}
-  where $t_i$ is the timelock of the $i$-th underlying intermediary party, $s$
-  is the upper bound of $\eta$ as in Lemma~7.19 of~\cite{BMTZ17} and we
-  arbitrarily choose $p = 3$ globally. This arises as the worst case delay,
-  where a virtual channel owner submits its transaction and then every
-  intermediary submits its second-mover transaction at the latest possible
-  moment, one after the other.
+  where $t_i$ is the timelock of the $i$-th underlying intermediary party (whose
+  timelock is the maximum of the timelocks of its two channels), $s$ is the
+  upper bound of $\eta$ as in Lemma~7.19 of~\cite{BMTZ17} and we arbitrarily
+  choose $p = 3$ globally. This arises as the worst case delay, where a virtual
+  channel owner submits its transaction and then every intermediary submits its
+  extend-interval transaction at the latest possible moment, one after the
+  other.
   \item \emph{What is the protocol followed by channel parties to establish the
   necessary keys and signatures for the virtual channel transactions?}
-  \item At a high level, the protocol consists of three roundtrips, each
-  starting from the virtual channel funder to the first intermediary and then
-  from each intermediary to the next, up to the virtual channel fundee. The
-  first roundtrip is for key and timelocks distribution, where each party
-  obtains all the necessary keys for all its required transactions, in the
-  second roundtrip all signatures except for those needed to consume funding
-  outputs are distributed and finally in the third roundtrip the parties
-  exchange signatures that consume the funding outputs. This structure ensures
-  that parties only commit to the new channel state only after they have locally
-  all the signatures necessary to enforce this state unilaterally.
+  \item At a high level, the protocol consists of four roundtrips, each starting
+  from the virtual channel funder to the first intermediary and then from each
+  intermediary to the next, up to the virtual channel fundee. The first
+  roundtrip is for key and timelocks distribution, where each party obtains all
+  the necessary keys for all its required transactions, in the second roundtrip
+  all signatures except for those needed to consume funding outputs are
+  distributed, in the third roundtrip the parties exchange signatures that
+  consume the funding outputs and finally in the fourth roundtrip parties revoke
+  their old states. This structure ensures that parties only commit to the new
+  channel state only after they have locally all the signatures necessary to
+  enforce this state unilaterally.
 \end{itemize}
