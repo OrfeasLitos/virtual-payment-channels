@@ -17,22 +17,23 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   Call the latter ``virtual output''.
   \item Each intermediate party $A_i$ has three types of transactions:
   \begin{itemize}
-    \item A ``first-mover'' transaction, which consumes both its channel outputs
+    \item An ``initiator'' transaction, which consumes both its channel outputs
     and produces four: one for the left channel where the left party $A_{i-1}$
     has $x'$ less coins, one for the right channel where $A_i$ has $x'$ less
     coins, one that pays $A_i$ directly $x'$ coins and one virtual output with
     $x'$ coins.
-    \item Several ``second-mover'' transactions which may be used if exactly one
-    of the two adjacent parties has consumed the funding output of the shared
-    channel. Wlog, assume that the party to the left has consumed the funding
-    output $A_{i-1} A_i$ whereas the party to the right has not consumed $A_i
-    A_{i+1}$. $A_i$'s suitable second-mover tx consumes $A_i A_{i+1}$ and
-    the virtual output produced by $A_{i-1}$'s transaction. In turn it produces
-    one $A_i A_{i+1}$ funding output where $A_i$ has $x'$ less coins, one output
-    with $x'$ coins for $A_i$ and a new virtual output with $x'$ coins.
-    \item Several third-mover transactions which can be used if both
+    \item Several ``extend-interval'' transactions which may be used if exactly
+    one of the two adjacent parties has consumed the funding output of the
+    shared channel. Wlog, assume that the party to the left has consumed the
+    funding output $A_{i-1} A_i$ whereas the party to the right has not consumed
+    $A_i A_{i+1}$. $A_i$'s suitable extend-interval tx consumes $A_i A_{i+1}$
+    and the virtual output produced by $A_{i-1}$'s transaction. In turn it
+    produces one $A_i A_{i+1}$ funding output where $A_i$ has $x'$ less coins,
+    one output with $x'$ coins for $A_i$ and a new virtual output with $x'$
+    coins.
+    \item Several ``merge-intervals'' transactions which can be used if both
     adjacent parties have consumed their respective funding output. The suitable
-    ``third mover'' tx consumes both virtual outputs from left and right and
+    merge-intervals tx consumes both virtual outputs from left and right and
     produces a new virtual output with $x'$ coins and an output that pays $A_i$
     directly $x'$ coins.
   \end{itemize}
@@ -50,7 +51,8 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
 
 \section*{Q\&A}
 \begin{itemize}
-  \item \emph{Why are there many second- and third-mover transactions?}
+  \item \emph{Why are there many extend-interval and merge-intervals
+  transactions?}
   \item A virtual output produced by a tx of $A_i$ specifies exactly the
   interval of parties around $A_i$ that have already made their move (i.e. the
   maximal set of successive hops that have made their move and that includes
@@ -62,42 +64,43 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   $A_i$ can only spend a virtual output of which the interval ends just before
   or just after $i$ and the single newly produced virtual output has an interval
   that is the union of the intervals of the consumed virtual outputs with $i$
-  added.  Therefore $A_i$ has multiple second- and third-mover transactions
-  because each one corresponds to different previous interval(s).
+  added.  Therefore $A_i$ has multiple extend-interval and merge-intervals
+  transactions because each one corresponds to different previous interval(s).
 
   As a result, each intermediate party can only publish exactly one transaction.
-  This transaction always generates exactly one new virtual output. If it is a
-  first-mover tx, it does not consume a virtual output. If it is a second-mover,
-  it consumes one and if it is a third-mover it consumes two. A third-mover tx
-  can be published only if the publishing party is surrounded by two
-  first-movers (its two adjacent parties, two non-adjacent parties one per side,
-  or one adjacent party on one side and a non-adjacent one on the other),
-  therefore eventually only one virtual output will remain, as intended.
+  This transaction always generates exactly one new virtual output. If it is an
+  initiator tx, it does not consume a virtual output. If it is an
+  extend-interval, it consumes one and if it is a merge-intervals it consumes
+  two. A merge-interval tx can be published only if the publishing party is
+  surrounded by two initiators (its two adjacent parties, two non-adjacent
+  parties one per side, or one adjacent party on one side and a non-adjacent one
+  on the other), therefore eventually only one virtual output will remain, as
+  intended.
   \item \emph{What if a malicious intermediary creates a new virtual output and
-  consumes it together with an honest virtual output using its third-mover
+  consumes it together with an honest virtual output using its merge-intervals
   transaction?}
-  \item As the third-mover tx has a virtual output with a wider interval, the
-  same party cannot repeat the same trick. Since every new move widens the
+  \item As the merge-intervals tx has a virtual output with a wider interval,
+  the same party cannot repeat the same trick. Since every new move widens the
   interval (it adds the mover to the previous interval), even if only one edge
-  party is honest, the attack cannot carry for ever, therefore eventually the
+  party is honest, the attack cannot carry on for ever, therefore eventually the
   edge party will be able to consume the virtual output as intended. Similar
-  reasoning applies to second-mover malicious transactions, where the malicious
-  party fabricates the funding output.  Regarding the case where a malicious
-  party fabricates a virtual output and then publishes a second-mover
-  transaction that consumes this fabricated output and a valid funding output,
-  we observe that the valid intervals of the aforementioned virtual output may
-  include only parties that are not towards the direction of the honest
-  counterparty. This means that the counterparty has the same view as if the
-  malicious party was indeed a second-mover, which causes it no financial loss.
-  This fact does not change if more parties are malicious: the only possible
-  difference for any honest party is the ability to spend more than one (second-
-  or third-mover) transactions and therefore gain more coins than if everyone
-  were honest. Intuitively, any malicious party that fabricates a malicious
-  output in order to spend an honest one just introduces more coins to the
-  protocol in a way that does not allow it to gain value.
+  reasoning applies to extend-interval malicious transactions, where the
+  malicious party fabricates the funding output. Regarding the case where a
+  malicious party fabricates a virtual output and then publishes an
+  extend-interval transaction that consumes this fabricated output and a valid
+  funding output, we observe that the valid intervals of the aforementioned
+  virtual output may include only parties that are not towards the direction of
+  the honest counterparty. This means that the counterparty has the same view as
+  if the malicious party was indeed an extend-interval, which causes it no
+  financial loss. This fact does not change if more parties are malicious: the
+  only possible difference for any honest party is the ability to spend more
+  than one (extend-interval or merge-intervals) transactions and therefore gain
+  more coins than if everyone were honest. Intuitively, any malicious party that
+  fabricates a malicious output in order to spend an honest one just introduces
+  more coins to the protocol in a way that does not allow it to gain value.
   \item \emph{What if a malicious party publishes an old commitment transaction
-  (i.e. consumes a funding output without using any of the first-, second- or
-  third-mover txs)?}
+  (i.e. consumes a funding output without using any of the initiator,
+  extend-interval or merge-intervals txs)?}
   \item Its counterparty $A_i$ won't be able to close honestly its other
   adjacent channel, but it will be able to punish the malicious party with the
   revocation transaction, thus confiscating all its funds. Therefore, to ensure
@@ -110,7 +113,7 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   but it is conjectured that this limitation can be lifted if an eltoo-based
   channel update method is used instead of the current, lightning-based method.
   \item \emph{What about timelocks?}
-  \item Virtual outputs can be consumed by second- or third-movers as
+  \item Virtual outputs can be consumed by extend-interval or merge-intervals as
   soon as they enter the ledger state, but if such a party does not publish its
   transaction after a while, then the virtual channel parties should be able to
   use this output as funding output for their virtual channel -- this prevents

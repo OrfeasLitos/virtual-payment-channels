@@ -49,7 +49,7 @@
     \item Held by $A_i, i \in \{2, \dots, n-1\}$:
 
     \begin{itemize}
-      \item First-mover transaction ($1$ tx):
+      \item Initiator transaction ($1$ tx):
 
       inputs:
       \begin{itemize}
@@ -73,7 +73,7 @@
 
         $x')$
       \end{itemize}
-      \item Second-mover transactions ($n-3 + \chi_{i=2} + \chi_{i=n-1}$ txs):
+      \item Extend-interval transactions ($n-3 + \chi_{i=2} + \chi_{i=n-1}$ txs):
       \begin{itemize}
         \item If $i = 2$ ($1$ tx):
 
@@ -149,8 +149,8 @@
           $x')$
         \end{itemize}
       \end{itemize}
-      \item Third-mover transactions ($(i-m)\cdot(l-i)$ txs -- $m, l$ defined
-      below):
+      \item Merge-intervals transactions ($(i-m)\cdot(l-i)$ txs -- $m, l$
+      defined below):
 
       If $i = 2$ let $m \gets 1$ else $m \gets 2$.
 
