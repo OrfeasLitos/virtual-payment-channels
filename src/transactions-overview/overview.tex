@@ -51,31 +51,37 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
 
 \section*{Q\&A}
 \begin{itemize}
-  \item \emph{Why are there many extend-interval and merge-intervals
+  \item \emph{Why each party holds many extend-interval and merge-intervals
   transactions?}
-  \item A virtual output produced by a tx of $A_i$ specifies exactly the
-  interval of parties around $A_i$ that have already made their move (i.e. the
-  maximal set of successive hops that have made their move and that includes
-  $A_i$). For example in the case of 10 hops, if the spending condition
-  ``$\mathit{all}^8 \wedge \texttt{"4"}$'' is on-chain, it signifies that
-  parties 4, 5, 6 and 7 have moved and that (if everyone is honest) parties 8 and 3
-  have not moved -- it does not say anything about party 1, 2, 9 or 10.
+  \item When a series of neighbouring parties (an interval) have submitted their
+  transactions, a party situated just beyond one edge of the interval can extend
+  it by submitting its extend-interval transaction that corresponds to this
+  specific interval. Therefore the party must have one extend-interval
+  transaction for every possible interval which ends short of the party. The
+  virtual output of this transaction specifies exactly the new, extended
+  interval. Parties in the interval cannot make another move. For example in the
+  case of 10 hops, if the spending condition ``$\mathit{all}^8 \wedge
+  \texttt{"4"}$'' is on-chain and unspent, it signifies that parties 4, 5, 6 and
+  7 have moved and that (if everyone is honest) parties 8 and 3 have not moved
+  -- it does not say anything about party 1, 2, 9 or 10.
 
-  $A_i$ can only spend a virtual output of which the interval ends just before
-  or just after $i$ and the single newly produced virtual output has an interval
-  that is the union of the intervals of the consumed virtual outputs with $i$
-  added.  Therefore $A_i$ has multiple extend-interval and merge-intervals
-  transactions because each one corresponds to different previous interval(s).
+  A merge-interval transaction can be published only if both funding outputs of
+  the publishing party $A$ have been consumed (either by initiator or by
+  extend-interval transactions of its neighbours). The transactions of its two
+  neighbours have one virtual output each, which the merge-interval transaction
+  consumes and replaces with a single virtual output. Therefore eventually only
+  one virtual output will remain, as intended. If instead the party at the other
+  end of one of the two intervals publishes its transaction before $A$, it
+  consumes one of the two aforementioned virtual outputs but produces a new one
+  instead. This is however already planned for: $A$ has another merge-interval
+  transaction that consumes the new virtual output. $A$ must hold one
+  merge-interval transaction for every possible pair of surrounding intervals.
 
-  As a result, each intermediate party can only publish exactly one transaction.
-  This transaction always generates exactly one new virtual output. If it is an
-  initiator tx, it does not consume a virtual output. If it is an
-  extend-interval, it consumes one and if it is a merge-intervals it consumes
-  two. A merge-interval tx can be published only if the publishing party is
-  surrounded by two initiators (its two adjacent parties, two non-adjacent
-  parties one per side, or one adjacent party on one side and a non-adjacent one
-  on the other), therefore eventually only one virtual output will remain, as
-  intended.
+  Of note is that each intermediate party can only publish exactly one
+  transaction. This transaction always generates exactly one new virtual output.
+  If it is an initiator transaction, it does not consume a virtual output. If it
+  is an extend-interval, it consumes one and if it is a merge-intervals it
+  consumes two.
   \item \emph{What if a malicious intermediary creates a new virtual output and
   consumes it together with an honest virtual output using its merge-intervals
   transaction?}
