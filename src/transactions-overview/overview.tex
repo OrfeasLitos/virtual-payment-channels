@@ -82,28 +82,33 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   If it is an initiator transaction, it does not consume a virtual output. If it
   is an extend-interval, it consumes one and if it is a merge-intervals it
   consumes two.
-  \item \emph{What if a malicious intermediary creates a new virtual output and
-  consumes it together with an honest virtual output using its merge-intervals
-  transaction?}
-  \item As the merge-intervals tx has a virtual output with a wider interval,
-  the same party cannot repeat the same trick. Since every new move widens the
-  interval (it adds the mover to the previous interval), even if only one edge
-  party is honest, the attack cannot carry on for ever, therefore eventually the
-  edge party will be able to consume the virtual output as intended. Similar
-  reasoning applies to extend-interval malicious transactions, where the
-  malicious party fabricates the funding output. Regarding the case where a
-  malicious party fabricates a virtual output and then publishes an
+  \item \emph{How can a malicious party diverge from honest execution? Does it
+  affect balance security?}
+  \item If a malicious intermediary sees an honest virtual output that it can
+  spend with a valid merge-intervals transaction but the other virtual output
+  needed as input for this merge-intervals transaction is not on-chain, it can
+  create the missing virtual output using its own funds (all information needed
+  for creating this is public) and publish its merge-intervals transaction.
+  However, as the merge-intervals transaction has a virtual output with a wider
+  interval, the same party cannot repeat the same trick. Since every new move
+  widens the interval (it adds the mover to the previous interval), even if only
+  one endpoint is honest, the attack cannot carry on for ever, therefore
+  eventually the endpoint will be able to consume the virtual output as
+  intended. Similar reasoning applies to extend-interval malicious transactions,
+  where the malicious party fabricates the funding output. Regarding the case
+  where a malicious party fabricates a virtual output and then publishes an
   extend-interval transaction that consumes this fabricated output and a valid
-  funding output, we observe that the valid intervals of the aforementioned
-  virtual output may include only parties that are not towards the direction of
-  the honest counterparty. This means that the counterparty has the same view as
-  if the malicious party was indeed an extend-interval, which causes it no
-  financial loss. This fact does not change if more parties are malicious: the
-  only possible difference for any honest party is the ability to spend more
-  than one (extend-interval or merge-intervals) transactions and therefore gain
-  more coins than if everyone were honest. Intuitively, any malicious party that
-  fabricates a malicious output in order to spend an honest one just introduces
-  more coins to the protocol in a way that does not allow it to gain value.
+  funding output, we observe that the valid interval of the aforementioned
+  virtual output include only parties that are not towards the direction of the
+  honest counterparty. This means that the counterparty has the same view as if
+  the malicious party had published honestly the extend-interval transaction,
+  which causes no financial loss to the honest party. This fact does not change
+  if more parties are malicious: the only possible difference for any honest
+  party is the ability to spend more than one (extend-interval or
+  merge-intervals) transactions and therefore gain more coins than if everyone
+  were honest. Intuitively, any malicious party that fabricates a malicious
+  output in order to spend an honest one just introduces more coins to the
+  protocol in a way that does not allow it to gain value.
   \item \emph{What if a malicious party publishes an old commitment transaction
   (i.e. consumes a funding output without using any of the initiator,
   extend-interval or merge-intervals txs)?}
