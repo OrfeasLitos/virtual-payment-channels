@@ -95,11 +95,13 @@
       \If{\texttt{left\_data} is given as argument} \Comment{we are not
       \texttt{host\_funder}}
         \State parse \texttt{left\_data} as ($(\pk{j, \mathrm{fund},
-        \mathrm{new}})_{j \in [i-1]}$, $(\pk{j, \mathrm{right}, \mathrm{fund},
-        \mathrm{old}})_{j \in [i-1]}$, $(\pk{j, \mathrm{left}, \mathrm{fund},
-        \mathrm{old}})_{j \in \{2, \dots, j-1\}}$, $(\pk{j, \mathrm{out}})_{j
-        \in [i-1]}$, $(c_{j, \mathrm{left}})_{j \in [i-1]}$, $(c_{j,
-        \mathrm{right}})_{j \in [i-1]}$, $(t_j)_{j \in [i-1]}$)
+        \mathrm{new}})_{j \in [i-1]}$, $(\pk{j, \mathrm{left}, \mathrm{fund},
+        \mathrm{old}})_{j \in \{2, \dots, i-1\}}$, $(\pk{j, \mathrm{right},
+        \mathrm{fund}, \mathrm{old}})_{j \in [i-1]}$, $(\pk{j, \mathrm{out}})_{j
+        \in [i-1]}$, $(c_{j, \mathrm{left}})_{j \in \{2, \dots, i-1\}}$, $(c_{j,
+        \mathrm{right}})_{j \in [i-1]}$, $(t_j)_{j \in [i-1]}$,
+        $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
+        \mathrm{virt}}$)
         \If{we have a \texttt{sibling}} \Comment{we are not
         \texttt{host\_fundee}}
           \State input (\textsc{keys and coins forward}, (\texttt{left\_data},
@@ -108,46 +110,78 @@
           $t_{i, \mathrm{left}}$) to \texttt{sibling}
           \State \trustedcode{store input as \texttt{left\_data} and parse it as
           ($(\pk{j, \mathrm{fund}, \mathrm{new}})_{j \in [i-1]}$, $(\pk{j,
-          \mathrm{right}, \mathrm{fund}, \mathrm{old}})_{j \in [i-1]}$, $(\pk{j,
-          \mathrm{left}, \mathrm{fund}, \mathrm{old}})_{j \in \{2, \dots,
-          i\}}$, $(\pk{j, \mathrm{out}})_{j \in [i-1]}$, $(c_{j,
-          \mathrm{left}})_{j \in [i]}$, $(c_{j, \mathrm{right}})_{j \in [i-1]}$,
-          $(t_j)_{j \in [i-1]}$, $\sk{i, \mathrm{left}, \mathrm{fund},
-          \mathrm{old}}$, $t_{i, \mathrm{left}}$}
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}})_{j \in \{2, \dots, i\}}$,
+          $(\pk{j, \mathrm{right}, \mathrm{fund}, \mathrm{old}})_{j \in [i-1]}$,
+          $(\pk{j, \mathrm{out}})_{j \in [i-1]}$, $(c_{j, \mathrm{left}})_{j \in
+          \{2, \dots, i\}}$, $(c_{j, \mathrm{right}})_{j \in [i-1]}$, $(t_j)_{j
+          \in [i-1]}$, $\sk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
+          $t_{i, \mathrm{left}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
+          $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
+          \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$}
           \State \trustedcode{$t_i \gets \max{(t_{i, \mathrm{left}}, t_{i,
           \mathrm{right}})}$}
           \State \trustedcode{replace $t_{i, \mathrm{left}}$ in
           \texttt{left\_data} with $t_i$}
+          \State \trustedcode{remove $\sk{i, \mathrm{left}, \mathrm{fund},
+          \mathrm{old}}$ from \texttt{left\_data}}
           \State \trustedcode{call
           \textsc{virt.circulateKeysCoinsTimes}(\texttt{left\_data}) of
           $\bar{P}$ and assign returned value to \texttt{right\_data}}
-          \State \trustedcode{parse \texttt{right\_data} as
-          \texttt{far\_right\_data}, $\pk{\mathrm{rem}, \mathrm{virt}}$,
-          $\pk{\mathrm{rem}, \mathrm{out}}$}
+          \State \trustedcode{parse \texttt{right\_data} as ($(\pk{j,
+          \mathrm{fund}, \mathrm{new}})_{j\in \{i+1, \dots, n\}}$, $(\pk{j,
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}})_{j \in \{i+1, \dots,
+          n\}}$, $(\pk{j, \mathrm{right}, \mathrm{fund}, \mathrm{old}})_{j \in
+          \{i+1, \dots, n-1\}}$, $(\pk{j, \mathrm{out}})_{j \in \{i+1, \dots,
+          n\}}$, $(c_{j, \mathrm{left}})_{j \in \{i+1, \dots, n\}}$, $(c_{j,
+          \mathrm{right}})_{j \in \{i+1, \dots, n-1\}}$, $(t_j)_{j \in \{i+1,
+          \dots, n\}}$}
           \State \trustedcode{output (\textsc{keys and coins back},
-          \texttt{right\_data}, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc},
-          F}$), $\pk{\mathrm{rem}, F}$, $c_P$, $c_{\bar{P}}$)}
-          \State store output as \texttt{right\_data}
-          \State parse \texttt{right\_data} as \texttt{far\_right\_data},
-          ($\sk{\mathrm{sib}, F}$, $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib},
-          \mathrm{rem}, F}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sib},
-          \mathrm{rem}}$
-          \State \Return (\texttt{right\_data}, $\pk{\mathrm{loc},
-          \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$)
+          \texttt{right\_data}, ($\sk{i, \mathrm{right}, \mathrm{fund},
+          \mathrm{old}}$, $\pk{i, \mathrm{right}, \mathrm{fund},
+          \mathrm{old}})$, $c_{i, \mathrm{right}}$, $t_i$)}
+          \State store output as \texttt{right\_data} and parse it as ($(\pk{j,
+          \mathrm{fund}, \mathrm{new}})_{j \in \{i+1, \dots, n\}}$, $(\pk{j,
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}})_{j \in \{i+1, \dots,
+          n\}}$, $(\pk{j, \mathrm{right}, \mathrm{fund}, \mathrm{old}})_{j \in
+          \{i, \dots, n-1\}}$, $(\pk{j, \mathrm{out}})_{j \in \{i+1, \dots,
+          n\}}$, $(c_{j, \mathrm{left}})_{j \in \{i+1, \dots, n\}}$, $(c_{j,
+          \mathrm{right}})_{j \in \{i, \dots, n-1\}}$, $(t_j)_{j \in \{i, \dots,
+          n\}}$, $\sk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$)
+          \State remove $\sk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$
+          from \texttt{right\_data}
+          \State \Return (\texttt{right\_data}, $\pk{i, \mathrm{fund},
+          \mathrm{new}}$, $\pk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
+          $\pk{i, \mathrm{out}}$, $c_{i, \mathrm{left}}$)
         \Else \: \Comment{we are \texttt{host\_fundee}}
-          \State extract ($\pk{\mathrm{left}, \mathrm{guest}}$,
-          $\pk{\mathrm{right}, \mathrm{guest}}$) from \texttt{left\_data}
+          \State parse \texttt{left\_data} as ($(\pk{j, \mathrm{fund},
+          \mathrm{new}})_{j \in [n-1]}$, $(\pk{j, \mathrm{left}, \mathrm{fund},
+          \mathrm{old}})_{j \in \{2, \dots, n-1\}}$, $(\pk{j, \mathrm{right},
+          \mathrm{fund}, \mathrm{old}})_{j \in [n-1]}$, $(\pk{j,
+          \mathrm{out}})_{j \in [n-1]}$, $(c_{j, \mathrm{left}})_{j \in \{2,
+          \dots, n-1\}}$, $(c_{j, \mathrm{right}})_{j \in [n-1]}$, $(t_j)_{j \in
+          [n-1]}$, $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
+          \mathrm{virt}}$)
           \State output (\textsc{check keys}, ($\pk{\mathrm{left},
-          \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$)) to
+          \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$)) to
           \texttt{fundee} and expect reply (\textsc{keys ok})
-          \State \Return ($\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-          \mathrm{out}}$)
+          \State \Return ($\pk{n, \mathrm{fund}, \mathrm{new}}$, $\pk{n,
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{n, \mathrm{out}}$,
+          $c_{n, \mathrm{left}}$, $t_n$)
         \EndIf
       \Else \: \Comment{we are \texttt{host\_funder}}
-        \State call \textsc{virt.circulateKeysAndCoins}($\pk{\mathrm{loc},
-        \mathrm{virt}}$, ($\pk{\mathrm{left}, \mathrm{guest}}$,
-        $\pk{\mathrm{right}, \mathrm{guest}}$)) of $\bar{P}$ and assign
-        returned value to \texttt{right\_data}
+        \State call \textsc{virt.circulateKeysCoinsTimes}($\pk{1, \mathrm{fund},
+        \mathrm{new}}$, $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
+        $\pk{1, \mathrm{out}}$, $c_{1, \mathrm{right}}$, $t_1$,
+        $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
+        \mathrm{virt}}$) of $\bar{P}$ and assign returned value to
+        \texttt{right\_data}
+        \State parse \texttt{right\_data} as ($(\pk{j, \mathrm{fund},
+        \mathrm{new}})_{j \in \{2, \dots, n\}}$, $(\pk{j, \mathrm{left},
+        \mathrm{fund}, \mathrm{old}})_{j \in \{2, \dots, n\}}$, $(\pk{j,
+        \mathrm{right}, \mathrm{fund}, \mathrm{old}})_{j \in \{2, \dots,
+        n-1\}}$, $(\pk{j, \mathrm{out}})_{j \in \{2, \dots, n\}}$, $(c_{j,
+        \mathrm{left}})_{j \in \{2, \dots, n\}}$, $(c_{j, \mathrm{right}})_{j
+        \in \{2, \dots, n-1\}}$, $(t_j)_{j \in \{2, \dots, n\}}$)
         \State \Return (\textsc{ok})
       \EndIf
     \end{algorithmic}
