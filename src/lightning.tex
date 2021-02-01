@@ -533,9 +533,10 @@
         \State input (\textsc{init}, $\texttt{host}_P$,
         $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
         $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
-        ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$,
-        $c_{\mathrm{guest}}$) to $\texttt{host}_P'$ and expect reply
-        (\textsc{host init ok})
+        ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{\mathrm{sib},
+        \mathrm{out}}$, $c_P$, $c_{\bar{P}}$, $c_{\mathrm{guest}}$, $i$,
+        ``right'', $n$) to $\texttt{host}_P'$ and expect reply (\textsc{host
+        init ok})
         \State $\itistate \gets \textsc{waiting for revocation}$
         \State output (\textsc{virtualising ack}, $\texttt{host}_P'$,
         $\pk{\bar{P}, F}'$) to \texttt{sibling}
