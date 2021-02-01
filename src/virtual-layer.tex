@@ -1,5 +1,5 @@
 \TODO{reselect \texttt{funder}, \texttt{fundee}, \texttt{guest} names}
-\begin{figure}[H]
+\begin{center} % \captionof hinders page break if not in an environment
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State On every activation, before handling the message:
@@ -50,11 +50,11 @@
       \EndIndent
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:keys}
-\end{figure}
+\end{center}
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{virt}.\textsc{circulateKeysAndCoins}(\texttt{left\_data}):}
     \begin{algorithmic}[1]
       \If{\texttt{left\_data} is given as argument} \Comment{we are not
@@ -108,9 +108,9 @@
       \EndIf
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:circulate-keys-and-coins}
-\end{figure}
+\end{center}
 
 \begin{processbox}{\textsc{virt}}
   \begin{algorithmic}[1]
@@ -372,13 +372,15 @@
       \EndIndent
       \State )
     \EndIndent
-  \end{algorithmic}
-\end{processbox}
-\captionof{figure}{}
-\label{code:virtual-layer:mid-txs}
+    \end{algorithmic}
+  \end{processbox}
+  \captionof{figure}{}
+  \label{code:virtual-layer:mid-txs}
+\end{center}
 
-\begin{processbox}{\textsc{virt}}
-  \begin{algorithmic}[1]
+\begin{center}
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
     \State \Comment{left and right refer to the two counterparties, with left
     being the one closer to the funder. Note difference with left/right
     meaning in \textsc{virt.getMidTXs}.}
@@ -426,7 +428,7 @@
   \label{code:virtual-layer:endpoint-txs}
 \end{center}
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{virt.siblingSigs}()}
     \begin{algorithmic}[1]
       \State parse input as $\mathrm{sigs}_{\mathrm{byLeft}}$
@@ -524,9 +526,9 @@
       $\mathrm{sigs}_{\mathrm{toLeft}}$, $\mathrm{sigs}_{\mathrm{byRight}}$)
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:sibling-sigs}
-\end{figure}
+\end{center}
 
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.intermediarySigs}()}
