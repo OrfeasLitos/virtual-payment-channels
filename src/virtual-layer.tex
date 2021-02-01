@@ -19,30 +19,65 @@
       \State \Comment {\texttt{guest} is trusted to give sane inputs, therefore
       a state machine and input verification is redundant}
       \State On input (\textsc{init}, $\texttt{host}_P$, $\bar{P}$,
-      \texttt{sibling}, \texttt{fundee}, ($\sk{\mathrm{loc}, \mathrm{virt}}$,
-      $\pk{\mathrm{loc}, \mathrm{virt}}$), $\pk{\mathrm{rem}, \mathrm{virt}}$,
-      $\pk{\mathrm{sib}, \mathrm{rem}, \mathrm{virt}}$, ($\sk{\mathrm{loc}, F}$,
-      $\pk{\mathrm{loc}, F}$), $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
-      \mathrm{out}}$, $c_{\mathrm{guest}}$) by \texttt{guest}:
+      \texttt{sibling}, \texttt{fundee}, ($\sk{\mathrm{loc}, \mathrm{fund},
+      \mathrm{new}}$, $\pk{\mathrm{loc}, \mathrm{fund}, \mathrm{new}}$),
+      $\pk{\mathrm{rem}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{sib},
+      \mathrm{rem}, \mathrm{fund}, \mathrm{new}}$, ($\sk{\mathrm{loc},
+      \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{loc}, \mathrm{fund},
+      \mathrm{old}}$), $\pk{\mathrm{rem}, \mathrm{fund}, \mathrm{old}}$,
+      $\pk{\mathrm{loc}, \mathrm{out}}$, $c_P$, $c_{\bar{P}}$,
+      $c_{\mathrm{virt}}$, $i$, \texttt{side}, $n$) by \texttt{guest}:
       \Indent
+        \State ensure $\texttt{side} \in \{\text{``left''},
+        \text{``right''}\}$
         \State store message contents and \texttt{guest}
         \Comment{\texttt{sibling}, $\pk{\mathrm{sib}, \bar{P}, F}$ are missing
         for endpoints, \texttt{fundee} is present only in last node}
+        \State $(\sk{i, \mathrm{fund}, \mathrm{new}}, \pk{i, \mathrm{fund},
+        \mathrm{new}}) \gets (\sk{\mathrm{loc}, \mathrm{fund}, \mathrm{new}},
+        \pk{\mathrm{loc}, \mathrm{fund}, \mathrm{new}})$
+        \State $\pk{\texttt{myRem}, \mathrm{fund}, \mathrm{new}} \gets
+        \pk{\mathrm{rem}, \mathrm{fund}, \mathrm{new}}$
+        \If{$i < n$} \Comment{we are not last hop}
+          \State $\pk{\texttt{sibRem}, \mathrm{fund}, \mathrm{new}} \gets
+          \pk{\mathrm{sib}, \mathrm{rem}, \mathrm{fund}, \mathrm{new}}$
+        \EndIf
+        \If{$\texttt{side} = \text{``left''}$}
+          \State $\texttt{side}' \gets \text{``right''}$; $\texttt{myRem}
+          \gets i-1$; $\texttt{sibRem} \gets i+1$
+        \Else \: \Comment{$\texttt{side} = \text{``right''}$}
+          \State $\texttt{side}' \gets \text{``left''}$; $\texttt{myRem} \gets
+          i+1$; $\texttt{sibRem} \gets i-1$
+        \EndIf
+        \State $(\sk{i, \texttt{side}, \mathrm{fund}, \mathrm{old}}, \pk{i,
+        \texttt{side}, \mathrm{fund}, \mathrm{old}}) \gets (\sk{\mathrm{loc},
+        \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{loc}, \mathrm{fund},
+        \mathrm{old}})$
+        \State $\pk{\mathrm{myRem}, \texttt{side}', \mathrm{fund}, \mathrm{old}}
+        \gets \pk{\mathrm{rem}, \mathrm{fund}, \mathrm{old}}$
+        \State $\pk{i, \mathrm{out}} \gets \pk{\mathrm{loc}, \mathrm{out}}$
+        \State $(c_{i, \texttt{side}}, c_{\texttt{myRem}, \texttt{side}'}) \gets
+        (c_P, c_{\bar{P}})$
         \State $\texttt{last\_poll} \gets \bot$
         \State output (\textsc{host init ok}) to \texttt{guest}
       \EndIndent
       \Statex
 
       \State On input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
-      $\bar{P}$, $\texttt{host}_P$, $c_{\mathrm{guest}}$, $\pk{\mathrm{left},
-      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
-      ($\sk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$),
-      ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$), $\pk{\mathrm{rem}, F}$,
-      $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$) by
+      $\bar{P}$, $\texttt{host}_P$, $c_{1, \mathrm{right}}$, $c_{2,
+      \mathrm{left}}$, $c_{\mathrm{virt}}$, $\pk{\mathrm{left},
+      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$, ($\sk{1,
+      \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{fund}, \mathrm{new}}$),
+      ($\sk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{1,
+      \mathrm{right}, \mathrm{fund}, \mathrm{old}}$), $\pk{2, \mathrm{left},
+      \mathrm{fund}, \mathrm{old}}$, $\pk{2, \mathrm{left}, \mathrm{fund},
+      \mathrm{new}}$, $\pk{1, \mathrm{right}, \mathrm{out}}$, $n$) by
       \texttt{guest}:
       \Indent
         \State $\texttt{last\_poll} \gets \bot$
-        \State ensure \textsc{virt.circulateKeysAndCoins}() returns (\textsc{ok})
+        \State $i \gets 1$
+        \State ensure \textsc{virt.circulateKeysCoinsTimes}() returns
+        (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}() returns (\textsc{ok})
@@ -55,27 +90,36 @@
 \end{center}
 
 \begin{center}
-  \begin{processbox}{\textsc{virt}.\textsc{circulateKeysAndCoins}(\texttt{left\_data}):}
+  \begin{processbox}{\textsc{virt}.\textsc{circulateKeysCoinsTimes}(\texttt{left\_data}):}
     \begin{algorithmic}[1]
       \If{\texttt{left\_data} is given as argument} \Comment{we are not
       \texttt{host\_funder}}
+        \State parse \texttt{left\_data} as ($(\pk{j, \mathrm{fund},
+        \mathrm{new}})_{j \in [i-1]}$, $(\pk{j, \mathrm{right}, \mathrm{fund},
+        \mathrm{old}})_{j \in [i-1]}$, $(\pk{j, \mathrm{left}, \mathrm{fund},
+        \mathrm{old}})_{j \in \{2, \dots, j-1\}}$, $(\pk{j, \mathrm{out}})_{j
+        \in [i-1]}$, $(c_{j, \mathrm{left}})_{j \in [i-1]}$, $(c_{j,
+        \mathrm{right}})_{j \in [i-1]}$, $(t_j)_{j \in [i-1]}$)
         \If{we have a \texttt{sibling}} \Comment{we are not
         \texttt{host\_fundee}}
           \State input (\textsc{keys and coins forward}, (\texttt{left\_data},
-          $(\sk{\mathrm{loc}, \mathrm{virt}}, \pk{\mathrm{loc},
-          \mathrm{virt}})$, ($\sk{\mathrm{loc}, F}$, $\pk{\mathrm{loc}, F}$),
-          $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc}, \mathrm{out}}$, $c_P$,
-          $c_{\bar{P}}$) to \texttt{sibling}
-          \State \trustedcode{store input as \texttt{left\_data}}
-          \State \trustedcode{parse \texttt{left\_data} as
-          \texttt{far\_left\_data}, $(\sk{\mathrm{loc}, \mathrm{virt}},
-          \pk{\mathrm{loc}, \mathrm{virt}})$, ($\sk{\mathrm{sib}, F}$,
-          $\pk{\mathrm{sib}, F}$), $\pk{\mathrm{sib}, \mathrm{rem}, F}$,
-          $\pk{\mathrm{sib}, \mathrm{out}}$, $c_{\mathrm{sib}}$,
-          $c_{\mathrm{sib}, \mathrm{rem}}$} \Comment{remove parentheses as
-          necessary}
+          ($\sk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{i,
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}}$), $c_{i, \mathrm{left}}$,
+          $t_{i, \mathrm{left}}$) to \texttt{sibling}
+          \State \trustedcode{store input as \texttt{left\_data} and parse it as
+          ($(\pk{j, \mathrm{fund}, \mathrm{new}})_{j \in [i-1]}$, $(\pk{j,
+          \mathrm{right}, \mathrm{fund}, \mathrm{old}})_{j \in [i-1]}$, $(\pk{j,
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}})_{j \in \{2, \dots,
+          i\}}$, $(\pk{j, \mathrm{out}})_{j \in [i-1]}$, $(c_{j,
+          \mathrm{left}})_{j \in [i]}$, $(c_{j, \mathrm{right}})_{j \in [i-1]}$,
+          $(t_j)_{j \in [i-1]}$, $\sk{i, \mathrm{left}, \mathrm{fund},
+          \mathrm{old}}$, $t_{i, \mathrm{left}}$}
+          \State \trustedcode{$t_i \gets \max{(t_{i, \mathrm{left}}, t_{i,
+          \mathrm{right}})}$}
+          \State \trustedcode{replace $t_{i, \mathrm{left}}$ in
+          \texttt{left\_data} with $t_i$}
           \State \trustedcode{call
-          \textsc{virt.circulateKeysAndCoins}(\texttt{left\_data}) of
+          \textsc{virt.circulateKeysCoinsTimes}(\texttt{left\_data}) of
           $\bar{P}$ and assign returned value to \texttt{right\_data}}
           \State \trustedcode{parse \texttt{right\_data} as
           \texttt{far\_right\_data}, $\pk{\mathrm{rem}, \mathrm{virt}}$,
