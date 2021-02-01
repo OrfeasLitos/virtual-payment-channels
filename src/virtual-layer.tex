@@ -112,266 +112,267 @@
   \label{code:virtual-layer:circulate-keys-and-coins}
 \end{center}
 
-\begin{processbox}{\textsc{virt}}
-  \begin{algorithmic}[1]
-    \State \TODO{change all \textsc{getMidTXs}() uses to fit new input/output}
-    \State \textsc{getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{\mathrm{loc}}$,
-    $c_{\mathrm{rem}}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$,
-    $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{loc},
-    \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{sib}, \mathrm{fund},
-    \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
-    $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{loc},
-    \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{sib}, \mathrm{fund},
-    \mathrm{new}}$, $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$,
-    $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
-    $\pk{\mathrm{loc}, \mathrm{out}}$, $(\pk{i,j,k})_{i \in [n], j \in [n-1]
-    \setminus \{1\}, k \in [n-1] \setminus \{1, j\}}$, $(\pk{i, 2, 1})_{i \in
-    [n]}$, $(\pk{i, n-1, n})_{i \in [n]}$, $(t_i)_{i \in [n-1] \setminus
-    \{1\}}$):
-    \Indent
-      \State ensure $1 < i < n$
-      \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_{\mathrm{virt}}
-      \wedge c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$ \Comment{left parties fund
-      virtual channel}
-      \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sib},
-      \mathrm{rem}}$; $c_{\mathrm{right}} \gets c_{\mathrm{loc}} +
-      c_{\mathrm{rem}}$
-      \State $\texttt{left\_old\_fund} \gets 2/\{\pk{\mathrm{left},
-      \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{loc}, \mathrm{fund},
-      \mathrm{old}}\}$
-      \State $\texttt{right\_old\_fund} \gets 2/\{\pk{\mathrm{sib},
-      \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund},
-      \mathrm{old}}\}$
-      \State $\texttt{left\_new\_fund} \gets 2/\{\pk{\mathrm{left},
-      \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{loc}, \mathrm{fund},
-      \mathrm{new}}\}$
-      \State $\texttt{right\_new\_fund} \gets 2/\{\pk{\mathrm{sib},
-      \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund},
-      \mathrm{new}}\}$
-      \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
-      \pk{\mathrm{right}, \mathrm{virt}}\}$
-
-      \ForAll{$j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}$}
-        \State $\mathit{all}_{j, k} \gets n/\{\pk{1, j, k}, \dots,
-        \pk{n, j, k}\} \wedge \texttt{"}k\texttt{"}$
-      \EndFor
-      \If{$i = 2$}
-        \State $\mathit{all}_{2, 1} \gets n/\{\pk{1, 2, 1}, \dots, \pk{n, 2,
-        1}\} \wedge \texttt{"1"}$
-      \EndIf
-      \If{$i = n-1$}
-        \State $\mathit{all}_{n-1, n} \gets n/\{\pk{1, n-1, n}, \dots, \pk{n,
-        n-1, n}\} \wedge \texttt{"}n\texttt{"}$
-      \EndIf
-      \State \Comment{After funding is complete, $A_j$ has the signature of
-      all other parties for all $\mathit{all}_{j, k}$ inputs, but other
-      parties do not have $A_j$'s signature for this input, therefore only
-      $A_j$ can publish it.}
-      \State \Comment{$\mathrm{TX}_{i, j, k} :=$ $i$-th move, $j, k$ input
-      interval start and end. $j, k$ unneeded for $i = 1$, $k$ unneeded for $i
-      = 2$.}
-      \State $\mathrm{TX}_1 \gets \mathrm{TX}$:
+\begin{center}
+  \begin{processbox}{\textsc{virt}}
+    \begin{algorithmic}[1]
+      \State \TODO{change all \textsc{getMidTXs}() uses to fit new input/output}
+      \State \textsc{getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{\mathrm{loc}}$,
+      $c_{\mathrm{rem}}$, $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$,
+      $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{loc},
+      \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{sib}, \mathrm{fund},
+      \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
+      $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{loc},
+      \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{sib}, \mathrm{fund},
+      \mathrm{new}}$, $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$,
+      $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
+      $\pk{\mathrm{loc}, \mathrm{out}}$, $(\pk{i,j,k})_{i \in [n], j \in [n-1]
+      \setminus \{1\}, k \in [n-1] \setminus \{1, j\}}$, $(\pk{i, 2, 1})_{i \in
+      [n]}$, $(\pk{i, n-1, n})_{i \in [n]}$, $(t_i)_{i \in [n-1] \setminus
+      \{1\}}$):
       \Indent
-        \State inputs:
-        \Indent
-          \State ($c_{\mathrm{left}}$, \texttt{left\_old\_fund}),
-          \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
-        \EndIndent
-        \State outputs:
-        \Indent
-          \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
-          \texttt{left\_new\_fund}),
-          \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
-          \texttt{right\_new\_fund}),
-          \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
-          \State ($c_{\mathrm{virt}}$,
-          \Indent
-            \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, i}$ else False)
-            \State $\vee$ (if $(i+1 < n)$ then $\mathit{all}_{i+1, i}$ else
-            False)
-            \State $\vee$ (
-            \Indent
-              \State if $(i-1 = 1 \wedge i+1 = n)$ then \texttt{virt\_fund}
-              \State else if $(i-1 > 1 \wedge i+1 = n)$ then
-              $\texttt{virt\_fund} + t_{i-1}$
-              \State else if $(i-1 = 1 \wedge i+1 < n)$ then
-              $\texttt{virt\_fund} + t_{i+1}$
-              \State else \StarComment{$i-1 > 1 \wedge i+1 < n$}
-              $\texttt{virt\_fund} + \max{(t_{i-1}, t_{i+1})}$
-            \EndIndent
-            \State )
-          \EndIndent
-          \State )
-        \EndIndent
-      \EndIndent
+        \State ensure $1 < i < n$
+        \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_{\mathrm{virt}}
+        \wedge c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$ \Comment{left parties fund
+        virtual channel}
+        \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sib},
+        \mathrm{rem}}$; $c_{\mathrm{right}} \gets c_{\mathrm{loc}} +
+        c_{\mathrm{rem}}$
+        \State $\texttt{left\_old\_fund} \gets 2/\{\pk{\mathrm{left},
+        \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{loc}, \mathrm{fund},
+        \mathrm{old}}\}$
+        \State $\texttt{right\_old\_fund} \gets 2/\{\pk{\mathrm{sib},
+        \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund},
+        \mathrm{old}}\}$
+        \State $\texttt{left\_new\_fund} \gets 2/\{\pk{\mathrm{left},
+        \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{loc}, \mathrm{fund},
+        \mathrm{new}}\}$
+        \State $\texttt{right\_new\_fund} \gets 2/\{\pk{\mathrm{sib},
+        \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund},
+        \mathrm{new}}\}$
+        \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
+        \pk{\mathrm{right}, \mathrm{virt}}\}$
 
-      \If{$i = 2$}
-        \State $\mathrm{TX}_{2, 1} \gets \mathrm{TX}$:
-        \Indent
-          \State inputs:
-          \Indent
-            \State ($c_{\mathrm{virt}}$, $\mathit{all}_{2, 1}$),
-            \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
-          \EndIndent
-          \State outputs:
-          \Indent
-            \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
-            \texttt{right\_new\_fund}),
-            \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
-            \State ($c_{\mathrm{virt}}$,
-            \Indent
-              \State if $(n > 3)$ then $(\mathit{all}_{3, 2}
-              \vee (\texttt{virt\_fund} + t_3))$
-              \State else \texttt{virt\_fund}
-            \EndIndent
-            \State )
-          \EndIndent
-        \EndIndent
-      \EndIf
-
-      \If{$i = n-1$}
-        \State $\mathrm{TX}_{2, n} \gets \mathrm{TX}$:
+        \ForAll{$j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}$}
+          \State $\mathit{all}_{j, k} \gets n/\{\pk{1, j, k}, \dots,
+          \pk{n, j, k}\} \wedge \texttt{"}k\texttt{"}$
+        \EndFor
+        \If{$i = 2$}
+          \State $\mathit{all}_{2, 1} \gets n/\{\pk{1, 2, 1}, \dots, \pk{n, 2,
+          1}\} \wedge \texttt{"1"}$
+        \EndIf
+        \If{$i = n-1$}
+          \State $\mathit{all}_{n-1, n} \gets n/\{\pk{1, n-1, n}, \dots, \pk{n,
+          n-1, n}\} \wedge \texttt{"}n\texttt{"}$
+        \EndIf
+        \State \Comment{After funding is complete, $A_j$ has the signature of
+        all other parties for all $\mathit{all}_{j, k}$ inputs, but other
+        parties do not have $A_j$'s signature for this input, therefore only
+        $A_j$ can publish it.}
+        \State \Comment{$\mathrm{TX}_{i, j, k} :=$ $i$-th move, $j, k$ input
+        interval start and end. $j, k$ unneeded for $i = 1$, $k$ unneeded for $i
+        = 2$.}
+        \State $\mathrm{TX}_1 \gets \mathrm{TX}$:
         \Indent
           \State inputs:
           \Indent
             \State ($c_{\mathrm{left}}$, \texttt{left\_old\_fund}),
-            \State ($c_{\mathrm{virt}}$, $\mathit{all}_{n-1, n}$)
+            \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
           \EndIndent
           \State outputs:
           \Indent
             \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
             \texttt{left\_new\_fund}),
-            \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
-            \State ($c_{\mathrm{virt}}$,
-            \Indent
-              \State if $(n-2 > 1)$ then $(\mathit{all}_{n-2, n-1} \vee
-              (\texttt{virt\_fund} + t_{n-2}))$
-              \State else \texttt{virt\_fund}
-            \EndIndent
-            \State )
-          \EndIndent
-        \EndIndent
-      \EndIf
-
-      \ForAll{$k \in \{2, \dots, i-1\}$} \Comment{$i-2$ txs}
-        \State $\mathrm{TX}_{2, k} \gets \mathrm{TX}$:
-        \Indent
-          \State inputs:
-          \Indent
-            \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k}$),
-            \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
-          \EndIndent
-          \State outputs:
-          \Indent
             \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
             \texttt{right\_new\_fund}),
             \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
             \State ($c_{\mathrm{virt}}$,
             \Indent
-              \State (if $(k-1 > 1)$ then $\mathit{all}_{k-1, i}$ else False)
-              \State $\vee$ (if $(i+1 < n)$ then $\mathit{all}_{i+1, k}$ else
+              \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, i}$ else False)
+              \State $\vee$ (if $(i+1 < n)$ then $\mathit{all}_{i+1, i}$ else
               False)
               \State $\vee$ (
               \Indent
-                \State if $(k-1 = 1 \wedge i+1 = n)$ then \texttt{virt\_fund}
-                \State else if $(k-1 > 1 \wedge i+1 = n)$ then
-                $\texttt{virt\_fund} + t_{k-1}$
-                \State else if $(k-1 = 1 \wedge i+1 < n)$ then
-                $\texttt{virt\_fund} + t_{i+1}$
-                \State else \StarComment{$k-1 > 1 \wedge i+1 < n$}
-                $\texttt{virt\_fund} + \max{(t_{k-1}, t_{i+1})}$
-              \EndIndent
-              \State )
-            \EndIndent
-            \State )
-          \EndIndent
-        \EndIndent
-      \EndFor
-
-      \ForAll{$k \in \{i+1, \dots, n-1\}$} \Comment{$n-i-1$ txs}
-        \State $\mathrm{TX}_{2, k} \gets \mathrm{TX}$:
-        \Indent
-          \State inputs:
-          \Indent
-            \State ($c_{\mathrm{left}}$, \texttt{left\_old\_fund})
-            \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k}$),
-          \EndIndent
-          \State outputs:
-          \Indent
-            \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
-            \texttt{left\_new\_fund}),
-            \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
-            \State ($c_{\mathrm{virt}}$,
-            \Indent
-              \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, k}$ else False)
-              \State $\vee$ (if $(k+1 < n)$ then $\mathit{all}_{k+1, i}$ else
-              False)
-              \State $\vee$ (
-              \Indent
-                \State if $(i-1 = 1 \wedge k+1 = n)$ then \texttt{virt\_fund}
-                \State else if $(i-1 > 1 \wedge k+1 = n)$ then
+                \State if $(i-1 = 1 \wedge i+1 = n)$ then \texttt{virt\_fund}
+                \State else if $(i-1 > 1 \wedge i+1 = n)$ then
                 $\texttt{virt\_fund} + t_{i-1}$
-                \State else if $(i-1 = 1 \wedge k+1 < n)$ then
-                $\texttt{virt\_fund} + t_{k+1}$
-                \State else \StarComment{$i-1 > 1 \wedge k+1 < n$}
-                $\texttt{virt\_fund} + \max{(t_{i-1}, t_{k+1})}$
+                \State else if $(i-1 = 1 \wedge i+1 < n)$ then
+                $\texttt{virt\_fund} + t_{i+1}$
+                \State else \StarComment{$i-1 > 1 \wedge i+1 < n$}
+                $\texttt{virt\_fund} + \max{(t_{i-1}, t_{i+1})}$
               \EndIndent
               \State )
             \EndIndent
             \State )
           \EndIndent
         \EndIndent
-      \EndFor
 
-      \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
-      \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
-      \ForAll{$(k_1, k_2) \in \{m, \dots, i-1\} \times \{i+1, \dots, l\}$}
-      \Comment{$(i-m) \cdot (l-i)$ txs}
-        \State $\mathrm{TX}_{3, k_1, k_2} \gets \mathrm{TX}$:
-        \Indent
-          \State inputs:
+        \If{$i = 2$}
+          \State $\mathrm{TX}_{2, 1} \gets \mathrm{TX}$:
           \Indent
-            \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k_1}$),
-            \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k_2}$)
-          \EndIndent
-          \State outputs:
-          \Indent
-            \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
-            \State ($c_{\mathrm{virt}}$,
+            \State inputs:
             \Indent
-              \State (if $(k_1-1 > 1)$ then $\mathit{all}_{k_1-1, \min{(k_2,
-              n-1)}}$ else False)
-              \State $\vee$ (if $(k_2+1 < n)$ then $\mathit{all}_{k_2+1,
-              \max{(k_1, 2)}}$ else False)
-              \State $\vee$ (
+              \State ($c_{\mathrm{virt}}$, $\mathit{all}_{2, 1}$),
+              \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
+            \EndIndent
+            \State outputs:
+            \Indent
+              \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
+              \texttt{right\_new\_fund}),
+              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$,
               \Indent
-                \State if $(k_1-1 \leq 1 \wedge k_2+1 \geq n)$ then
-                \texttt{virt\_fund}
-                \State else if $(k_1-1 > 1 \wedge k_2+1 \geq n)$ then
-                $\texttt{virt\_fund} + t_{k_1-1}$
-                \State else if $(k_1-1 \leq 1 \wedge k_2+1 < n)$ then
-                $\texttt{virt\_fund} + t_{k_2+1}$
-                \State else \StarComment{$k_1-1 > 1 \wedge k_2+1 < n$}
-                \Indent
-                  \State $\texttt{virt\_fund} + \max{(t_{k_1-1}, t_{k_2+1})}$
-                \EndIndent
+                \State if $(n > 3)$ then $(\mathit{all}_{3, 2}
+                \vee (\texttt{virt\_fund} + t_3))$
+                \State else \texttt{virt\_fund}
               \EndIndent
               \State )
             \EndIndent
-            \State )
           \EndIndent
-        \EndIndent
-      \EndFor
+        \EndIf
 
-      \State \Return (
-      \Indent
-        \State $\mathrm{TX}_1$,
-        \State $(\mathrm{TX}_{2, k})_{k \in \{m, \dots, l\} \setminus \{i\}}$,
-        \State $(\mathrm{TX}_{3, k_1, k_2})_{(k_1, k_2) \in \{m, \dots, i-1\}
-        \times \{i+1, \dots, l\}}$
+        \If{$i = n-1$}
+          \State $\mathrm{TX}_{2, n} \gets \mathrm{TX}$:
+          \Indent
+            \State inputs:
+            \Indent
+              \State ($c_{\mathrm{left}}$, \texttt{left\_old\_fund}),
+              \State ($c_{\mathrm{virt}}$, $\mathit{all}_{n-1, n}$)
+            \EndIndent
+            \State outputs:
+            \Indent
+              \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
+              \texttt{left\_new\_fund}),
+              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$,
+              \Indent
+                \State if $(n-2 > 1)$ then $(\mathit{all}_{n-2, n-1} \vee
+                (\texttt{virt\_fund} + t_{n-2}))$
+                \State else \texttt{virt\_fund}
+              \EndIndent
+              \State )
+            \EndIndent
+          \EndIndent
+        \EndIf
+
+        \ForAll{$k \in \{2, \dots, i-1\}$} \Comment{$i-2$ txs}
+          \State $\mathrm{TX}_{2, k} \gets \mathrm{TX}$:
+          \Indent
+            \State inputs:
+            \Indent
+              \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k}$),
+              \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
+            \EndIndent
+            \State outputs:
+            \Indent
+              \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
+              \texttt{right\_new\_fund}),
+              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$,
+              \Indent
+                \State (if $(k-1 > 1)$ then $\mathit{all}_{k-1, i}$ else False)
+                \State $\vee$ (if $(i+1 < n)$ then $\mathit{all}_{i+1, k}$ else
+                False)
+                \State $\vee$ (
+                \Indent
+                  \State if $(k-1 = 1 \wedge i+1 = n)$ then \texttt{virt\_fund}
+                  \State else if $(k-1 > 1 \wedge i+1 = n)$ then
+                  $\texttt{virt\_fund} + t_{k-1}$
+                  \State else if $(k-1 = 1 \wedge i+1 < n)$ then
+                  $\texttt{virt\_fund} + t_{i+1}$
+                  \State else \StarComment{$k-1 > 1 \wedge i+1 < n$}
+                  $\texttt{virt\_fund} + \max{(t_{k-1}, t_{i+1})}$
+                \EndIndent
+                \State )
+              \EndIndent
+              \State )
+            \EndIndent
+          \EndIndent
+        \EndFor
+
+        \ForAll{$k \in \{i+1, \dots, n-1\}$} \Comment{$n-i-1$ txs}
+          \State $\mathrm{TX}_{2, k} \gets \mathrm{TX}$:
+          \Indent
+            \State inputs:
+            \Indent
+              \State ($c_{\mathrm{left}}$, \texttt{left\_old\_fund})
+              \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k}$),
+            \EndIndent
+            \State outputs:
+            \Indent
+              \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
+              \texttt{left\_new\_fund}),
+              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$,
+              \Indent
+                \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, k}$ else False)
+                \State $\vee$ (if $(k+1 < n)$ then $\mathit{all}_{k+1, i}$ else
+                False)
+                \State $\vee$ (
+                \Indent
+                  \State if $(i-1 = 1 \wedge k+1 = n)$ then \texttt{virt\_fund}
+                  \State else if $(i-1 > 1 \wedge k+1 = n)$ then
+                  $\texttt{virt\_fund} + t_{i-1}$
+                  \State else if $(i-1 = 1 \wedge k+1 < n)$ then
+                  $\texttt{virt\_fund} + t_{k+1}$
+                  \State else \StarComment{$i-1 > 1 \wedge k+1 < n$}
+                  $\texttt{virt\_fund} + \max{(t_{i-1}, t_{k+1})}$
+                \EndIndent
+                \State )
+              \EndIndent
+              \State )
+            \EndIndent
+          \EndIndent
+        \EndFor
+
+        \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
+        \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
+        \ForAll{$(k_1, k_2) \in \{m, \dots, i-1\} \times \{i+1, \dots, l\}$}
+        \Comment{$(i-m) \cdot (l-i)$ txs}
+          \State $\mathrm{TX}_{3, k_1, k_2} \gets \mathrm{TX}$:
+          \Indent
+            \State inputs:
+            \Indent
+              \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k_1}$),
+              \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k_2}$)
+            \EndIndent
+            \State outputs:
+            \Indent
+              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$,
+              \Indent
+                \State (if $(k_1-1 > 1)$ then $\mathit{all}_{k_1-1, \min{(k_2,
+                n-1)}}$ else False)
+                \State $\vee$ (if $(k_2+1 < n)$ then $\mathit{all}_{k_2+1,
+                \max{(k_1, 2)}}$ else False)
+                \State $\vee$ (
+                \Indent
+                  \State if $(k_1-1 \leq 1 \wedge k_2+1 \geq n)$ then
+                  \texttt{virt\_fund}
+                  \State else if $(k_1-1 > 1 \wedge k_2+1 \geq n)$ then
+                  $\texttt{virt\_fund} + t_{k_1-1}$
+                  \State else if $(k_1-1 \leq 1 \wedge k_2+1 < n)$ then
+                  $\texttt{virt\_fund} + t_{k_2+1}$
+                  \State else \StarComment{$k_1-1 > 1 \wedge k_2+1 < n$}
+                  \Indent
+                    \State $\texttt{virt\_fund} + \max{(t_{k_1-1}, t_{k_2+1})}$
+                  \EndIndent
+                \EndIndent
+                \State )
+              \EndIndent
+              \State )
+            \EndIndent
+          \EndIndent
+        \EndFor
+
+        \State \Return (
+        \Indent
+          \State $\mathrm{TX}_1$,
+          \State $(\mathrm{TX}_{2, k})_{k \in \{m, \dots, l\} \setminus \{i\}}$,
+          \State $(\mathrm{TX}_{3, k_1, k_2})_{(k_1, k_2) \in \{m, \dots, i-1\}
+          \times \{i+1, \dots, l\}}$
+        \EndIndent
+        \State )
       \EndIndent
-      \State )
-    \EndIndent
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
@@ -381,46 +382,48 @@
 \begin{center}
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
-    \State \Comment{left and right refer to the two counterparties, with left
-    being the one closer to the funder. Note difference with left/right
-    meaning in \textsc{virt.getMidTXs}.}
-    \State \textsc{getEndpointTX}($i$, $n$, $c_{\mathrm{virt}}$,
-    $c_{\mathrm{left}}$, $c_{\mathrm{right}}$, $\pk{\mathrm{left},
-    \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund},
-    \mathrm{old}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$,
-    $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$ $\pk{\mathrm{left},
-    \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{\mathrm{all},
-    j})_{j \in [n]}$, $t$):
-    \Indent
-      \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{virt}}$ \Comment{left
-      party funds virtual channel}
-      \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
-      \State $\texttt{old\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
-      \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
-      \State $\texttt{new\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
-      \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\}$
-      \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
-      \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
-      \If{$i = 1$} \Comment{funder's tx}
-        \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
-        \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}$
-      \Else \: \Comment{fundee's tx}
-        \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
-        \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}$
-      \EndIf
-      \State $\mathrm{TX}_1 \gets \mathrm{TX}$: \Comment{edge nodes have only
-      a first-mover tx}
+      \State \Comment{left and right refer to the two counterparties, with left
+      being the one closer to the funder. Note difference with left/right
+      meaning in \textsc{virt.getMidTXs}.}
+      \State \textsc{getEndpointTX}($i$, $n$, $c_{\mathrm{virt}}$,
+      $c_{\mathrm{left}}$, $c_{\mathrm{right}}$, $\pk{\mathrm{left},
+      \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund},
+      \mathrm{old}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$,
+      $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$ $\pk{\mathrm{left},
+      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{\mathrm{all},
+      j})_{j \in [n]}$, $t$):
       \Indent
-        \State inputs:
+        \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{virt}}$ \Comment{left
+        party funds virtual channel}
+        \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
+        \State $\texttt{old\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
+        \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
+        \State $\texttt{new\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
+        \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\}$
+        \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
+        \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
+        \If{$i = 1$} \Comment{funder's tx}
+          \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
+          \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}$
+        \Else \: \Comment{fundee's tx}
+          \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
+          \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}$
+        \EndIf
+        \State $\mathrm{TX}_1 \gets \mathrm{TX}$: \Comment{endpoints only have
+        an ``initiator'' tx}
         \Indent
-          \State $(c_{\mathrm{tot}}, \texttt{old\_fund})$
+          \State inputs:
+          \Indent
+            \State $(c_{\mathrm{tot}}, \texttt{old\_fund})$
+          \EndIndent
+          \State outputs:
+          \Indent
+            \State $(c_{\mathrm{tot}} - c_{\mathrm{virt}}, \texttt{new\_fund})$,
+            \State $(c_{\mathrm{virt}}, \mathit{all} \vee (\texttt{virt\_fund} +
+            t))$
+          \EndIndent
         \EndIndent
-        \State outputs:
-        \Indent
-          \State $(c_{\mathrm{tot}} - c_{\mathrm{virt}}, \texttt{new\_fund})$,
-          \State $(c_{\mathrm{virt}}, \mathit{all} \vee (\texttt{virt\_fund} +
-          t))$
-        \EndIndent
+        \State \Return $\mathrm{TX}_1$
       \EndIndent
     \end{algorithmic}
   \end{processbox}
