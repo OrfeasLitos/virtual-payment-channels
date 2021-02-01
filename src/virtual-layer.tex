@@ -479,6 +479,8 @@
   \begin{processbox}{\textsc{virt.siblingSigs}()}
     \begin{algorithmic}[1]
       \State parse input as $\mathrm{sigs}_{\mathrm{byLeft}}$
+      \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
+      \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
       \State ($\mathrm{TX}_1$, $(\mathrm{TX}_{2, k})_{k \in \{m, \dots, l\}
       \setminus \{i\}}$, $(\mathrm{TX}_{3, k_1, k_2})_{(k_1, k_2) \in \{m,
       \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$ \textsc{virt.getMidTXs}($i$,
@@ -493,82 +495,106 @@
       \in [n], j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}}$,
       $(\pk{i, 2, 1})_{i \in [n]}$, $(\pk{i, n-1, n})_{i \in [n]}$,
       $(t_i)_{i \in [n-1] \setminus \{1\}}$)
-      \State store all signatures in $\mathrm{sigs}_{\mathrm{byLeft}}$ that sign
-      any of $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ and remove
-      these signatures from $\mathrm{sigs}_{\mathrm{byLeft}}$
-      \State ensure that the stored signatures contain one valid
-      signature for $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$ and
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ which sign the
-      \texttt{guest\_all} input by each one of the previous $j-1$ hops
-      \State ensure that there are exactly $4$ more valid signatures in the
-      stored signatures, which sign the $\texttt{"1"} \wedge
-      \texttt{left\_virt\_checked}$ inputs of $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{left}}$ and $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ with
-      $\pk{\mathrm{sib}, \mathrm{rem}, \mathrm{virt}}$ and $\pk{\mathrm{left},
-      \mathrm{guest}}$
+      \Statex
+      \State \Comment{notation: $\mathrm{sig}(\mathrm{TX}, \pk{}) :=$ sig with
+      \texttt{ANYPREVOUT} flag such that $\textsc{verify}(\mathrm{TX},
+      \mathrm{sig}, \pk{}) =$ True}
+      \State ensure that the following signatures are present in
+      $\mathrm{sigs}_{\mathrm{byLeft}}$ and store them:
+      \begin{itemize}
+        \item \Comment{$(l-m) \cdot (i-1)$ signatures}
+      \end{itemize}
+      \Indent
+        \State $\forall k \in \{m, \dots, l\} \setminus \{i\}, \forall j \in
+        [i-1]:$
+        \Indent
+          \State sig($\mathrm{TX}_{2, k}, \pk{j, i, k}$)
+        \EndIndent
+      \EndIndent
+      \begin{itemize}
+        \item \Comment{$2 \cdot (i-m) \cdot (l-i) \cdot
+        (i-1)$ signatures}
+      \end{itemize}
+      \Indent
+        \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots,
+        l\}, \forall j \in [i-1]:$
+        \Indent
+          \State sig($\mathrm{TX}_{3, k_1, k_2}, \pk{j, i, k_1}$),
+          sig($\mathrm{TX}_{3, k_1, k_2}, \pk{j, i, k_2}$)
+        \EndIndent
+      \EndIndent
       \State $\mathrm{sigs}_{\mathrm{toRight}} \gets
       \mathrm{sigs}_{\mathrm{byLeft}}$
-      \For{each hop apart from the first, the last and ours ($i \in [2, \dots,
-      n-1] \setminus \{j\}$)} \Comment{$j$ is our hop number, hop data encoded
+      \Statex
+      \ForAll{$j \in [2, \dots, n-1] \setminus \{i\}$} \Comment{hop data encoded
       in \texttt{left\_data} and \texttt{right\_data}}
-        \State extract data needed for \textsc{getMidTXs}() from
-        \texttt{left\_data} (if $i < j$) or \texttt{right\_data} (if $i > j$)
-        and assign it to $\texttt{data}_i$ and $\{\pk{\mathrm{sec}, i}\}_{i \in
-        1 \dots n}$ \Comment{$P$ and \texttt{comm\_keys} are missing, that is
-        OK. $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$ contains each party's
-        $\pk{i, \mathrm{virt}}$}
-        \State ($\mathrm{TX}_{i, \mathrm{none}}$, $\mathrm{TX}_{i,
-        \mathrm{left}}$, $\mathrm{TX}_{i, \mathrm{right}}$, $\mathrm{TX}_{i,
-        \mathrm{both}}$) $\gets$ \textsc{virt.getMidTXs}($\texttt{data}_i$,
-        $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
-        \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{right}}$,
-        $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) and
-        \textsc{sign}($\mathrm{TX}_{i, \mathrm{both}}$, $\sk{\mathrm{loc},
-        \mathrm{virt}}$, \textsc{anyprevout}) to
-        $\mathrm{sigs}_{\mathrm{toLeft}}$ if $i < j$, or
-        $\mathrm{sigs}_{\mathrm{toRight}}$ if $i > j$ \Comment{if $i$-th hop is
-        adjacent, $2$ signatures will be produced by each \textsc{sign}()
-        invocation: one for the \texttt{guest\_all} and one for the
-        $\texttt{"2"} \wedge \texttt{right\_virt\_checked}$ input}
-        \If{$i - j = 1$} \Comment{hop is our next}
-          \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{left}}$,
-          $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) to
-          $\mathrm{sigs}_{\mathrm{toRight}}$
-        \ElsIf{$j - i = 1$} \Comment{hop is our previous}
-          \State add \textsc{sign}($\mathrm{TX}_{i, \mathrm{left}}$,
-          $\sk{\mathrm{loc}, \mathrm{virt}}$, \textsc{anyprevout}) to
-          $\mathrm{sigs}_{\mathrm{toLeft}}$
-        \EndIf
+        \State ($\mathrm{TX}_{j, 1}$, $(\mathrm{TX}_{j, 2, k})_{k \in \{m, \dots,
+        l\} \setminus \{i\}}$, $(\mathrm{TX}_{j, 3, k_1, k_2})_{(k_1, k_2) \in
+        \{m, \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$ \textsc{getMidTXs}($j$,
+        $n$, $c_{\mathrm{virt}}$, $c_{j, \mathrm{right}}$, $c_{j+1,
+        \mathrm{left}}$, $c_{j, \mathrm{left}}$, $c_{j-1, \mathrm{right}}$,
+        $\pk{j-1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{j,
+        \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{j, \mathrm{right},
+        \mathrm{fund}, \mathrm{old}}$, $\pk{j+1, \mathrm{left}, \mathrm{fund},
+        \mathrm{old}}$, $\pk{j-1, \mathrm{fund}, \mathrm{new}}$, $\pk{j,
+        \mathrm{fund}, \mathrm{new}}$, $\pk{j, \mathrm{fund}, \mathrm{new}}$,
+        $\pk{j+1, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{virt},
+        \mathrm{left}}$, $\pk{\mathrm{virt}, \mathrm{right}}$, $\pk{j,
+        \mathrm{right}, \mathrm{out}}$, $(\pk{k, p, s})_{k \in [n], p \in [n-1]
+        \setminus \{1\}, s \in [n-1] \setminus \{1, p\}}$, $(\pk{k, 2, 1})_{k \in
+        [n]}$, $(\pk{k, n-1, n})_{k \in [n]}$, $(t_k)_{k \in [n-1] \setminus
+        \{1\}}$)
+        \IfThenElse{$j < i$}{$\mathrm{sigs} \gets
+        \mathrm{sigs}_{\mathrm{toLeft}}$}{$\mathrm{sigs} \gets
+        \mathrm{sigs}_{\mathrm{toRight}}$}
+        \ForAll{$k \in \{m, \dots, l\} \setminus \{1\}$}
+          \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{i, j, k}$,
+          \texttt{ANYPREVOUT}) to sigs
+        \EndFor
+        \ForAll{$k_1 \in \{m, \dots, i-1\}, k_2 \in \{i+1, \dots, l\}$}
+          \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{i, j,
+          k_1}$, \texttt{ANYPREVOUT}) to sigs
+          \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{i, j,
+          k_2}$, \texttt{ANYPREVOUT}) to sigs
+        \EndFor
       \EndFor
-      \If{\texttt{right\_data} does not contain data from a second-next hop}
-      \Comment{next hop is \texttt{host\_fundee}}
-        \State $\mathrm{TX}_{\mathrm{next}, \mathrm{none}}$ $\gets$
-        \textsc{virt.getEndpointTX}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
-        $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc},
-        \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left},
-        \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$,
-        $\{\pk{\mathrm{sec}, i}\}_{1 \dots n}$, False)
+      \If{$i+1 = n$} \Comment{next hop is \texttt{host\_fundee}}
+        \State $\mathrm{TX}_{n, 1}$ $\gets$ \textsc{virt.getEndpointTX}($n$, $n$,
+        $c_{\mathrm{virt}}$, $c_{i, \mathrm{right}}$, $c_n$, $\pk{i,
+        \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{n, \mathrm{fund},
+        \mathrm{old}}$, $\pk{i, \mathrm{right}, \mathrm{fund}, \mathrm{new}}$,
+        $\pk{n, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
+        \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, i, n})_{j
+        \in [n]}$, $t_n$)
       \EndIf
+      \Statex
       \State call
       $\bar{P}$.\textsc{circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
       and assign returned value to $\mathrm{sigs}_{\mathrm{byRight}}$
-      \State store all signatures in $\mathrm{sigs}_{\mathrm{byRight}}$ that
-      sign any of $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ and remove
-      these signatures from $\mathrm{sigs}_{\mathrm{byRight}}$
-      \State ensure that the stored signatures contain one valid signature for
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{right}}$ and
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ which sign the
-      \texttt{guest\_all} input by each one of the next $n-j$ hops
-      \State ensure that there are exactly $4$ more valid signatures in the
-      stored signatures, which sign the $\texttt{"2"} \wedge
-      \texttt{right\_virt\_checked}$ inputs of $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{right}}$ and $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$ with
-      $\pk{\mathrm{rem}, \mathrm{virt}}$ and $\pk{\mathrm{right},
-      \mathrm{guest}}$
+      \State ensure that the following signatures are present in
+      $\mathrm{sigs}_{\mathrm{byRight}}$ and store them:
+      \begin{itemize}
+        \item \Comment{$(l-m) \cdot (n-i)$ signatures}
+      \end{itemize}
+      \Indent
+        \State $\forall k \in \{m, \dots, l\} \setminus \{i\}, \forall j \in
+        \{i+1, \dots, n\}:$
+        \Indent
+          \State sig($\mathrm{TX}_{2, k}, \pk{j, i, k}$)
+        \EndIndent
+      \EndIndent
+      \begin{itemize}
+        \item \Comment{$2 \cdot (i-m) \cdot (l-i) \cdot
+        (n-i)$ signatures}
+      \end{itemize}
+      \Indent
+        \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots,
+        l\}, \forall j \in \{i+1, \dots, n\}:$
+        \Indent
+          \State sig($\mathrm{TX}_{3, k_1, k_2}, \pk{j, i, k_1}$),
+          sig($\mathrm{TX}_{3, k_1, k_2}, \pk{j, i, k_2}$)
+        \EndIndent
+      \EndIndent
       \State output (\textsc{virtualSigsBack},
       $\mathrm{sigs}_{\mathrm{toLeft}}$, $\mathrm{sigs}_{\mathrm{byRight}}$)
     \end{algorithmic}
