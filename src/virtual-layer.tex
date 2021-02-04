@@ -654,17 +654,21 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.intermediarySigs}()}
     \begin{algorithmic}[1]
-      \State ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$) $\gets$
-      \textsc{virt.getMidTXs}($c_{\mathrm{guest}}$, $c_P$, $c_{\bar{P}}$,
-      $c_{\mathrm{sib}}$, $c_{\mathrm{sib}, \mathrm{rem}}$, $\pk{\mathrm{loc},
-      F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{sib}, F}$, $\pk{\mathrm{sib},
-      \mathrm{rem}, F}$, $\pk{\mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-      \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{sib},
-      \mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{left}, \mathrm{guest}}$,
-      $\pk{\mathrm{right}, \mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$,
-      $\{\pk{\mathrm{sec}, i}\}_{i \in 1 \dots n}$)
+      \State ($\mathrm{TX}_{i, 1}$, $(\mathrm{TX}_{i, 2, k})_{k \in \{m, \dots,
+      l\} \setminus \{i\}}$, $(\mathrm{TX}_{i, 3, k_1, k_2})_{(k_1, k_2) \in
+      \{m, \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$
+      \textsc{virt.getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{i-1,
+      \mathrm{right}}$, $c_{i, \mathrm{left}}$, $c_{i, \mathrm{right}}$,
+      $c_{i+1, \mathrm{left}}$, $\pk{i-1, \mathrm{right}, \mathrm{fund},
+      \mathrm{old}}$, $\pk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
+      $\pk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{i+1,
+      \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{i-1, \mathrm{fund},
+      \mathrm{new}}$, $\pk{i, \mathrm{fund}, \mathrm{new}}$, $\pk{i,
+      \mathrm{fund}, \mathrm{new}}$, $\pk{i+1, \mathrm{fund}, \mathrm{new}}$,
+      $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
+      $\pk{i, \mathrm{out}}$, $(\pk{i,j,k})_{i \in [n], j \in [n-1] \setminus
+      \{1\}, k \in [n-1] \setminus \{1, j\}}$, $(\pk{i, 2, 1})_{i \in [n]}$,
+      $(\pk{i, n-1, n})_{i \in [n]}$, $(t_i)_{i \in [n-1] \setminus \{1\}}$)
       \State \Comment{not verifying our signatures in
       $\mathrm{sigs}_{\mathrm{byLeft}}$, our (trusted) \texttt{sibling} will do
       that}
@@ -675,13 +679,13 @@
       \mathrm{sigs}_{\mathrm{byRight}} + \mathrm{sigs}_{\mathrm{toLeft}}$
       \If{\texttt{left\_data} does not contain data from a second-previous hop}
       \Comment{previous hop is \texttt{host\_funder}}
-        \State $\mathrm{TX}_{\mathrm{prev}, \mathrm{none}}$ $\gets$
-        \textsc{virt.getEndpointTX}($c_{\mathrm{guest}}$, $c_{\bar{P}}$, $c_P$,
-        $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem},
-        \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-        \mathrm{virt}}$, $\pk{\mathrm{left}, \mathrm{guest}}$,
-        $\pk{\mathrm{right}, \mathrm{guest}}$, $\{\pk{\mathrm{sec}, i}\}_{1
-        \dots n}$, True)
+        \State $\mathrm{TX}_{1, 1}$ $\gets$ \textsc{virt.getEndpointTX}($n$,
+        $n$, $c_{\mathrm{virt}}$, $c_{1, \mathrm{right}}$, $c_{2,
+        \mathrm{left}}$, $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
+        $\pk{2, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{1,
+        \mathrm{fund}, \mathrm{new}}$, $\pk{2, \mathrm{fund}, \mathrm{new}}$,
+        $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
+        \mathrm{virt}}$, $(\pk{j, 2, 1})_{j \in [n]}$, $t_1$)
       \EndIf
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
