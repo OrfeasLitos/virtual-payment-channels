@@ -677,8 +677,7 @@
       \State \trustedcode{\textsc{virt.siblingSigs}()}
       \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets
       \mathrm{sigs}_{\mathrm{byRight}} + \mathrm{sigs}_{\mathrm{toLeft}}$
-      \If{\texttt{left\_data} does not contain data from a second-previous hop}
-      \Comment{previous hop is \texttt{host\_funder}}
+      \If{$i = 2$} \Comment{previous hop is \texttt{host\_funder}}
         \State $\mathrm{TX}_{1, 1}$ $\gets$ \textsc{virt.getEndpointTX}($n$,
         $n$, $c_{\mathrm{virt}}$, $c_{1, \mathrm{right}}$, $c_{2,
         \mathrm{left}}$, $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
