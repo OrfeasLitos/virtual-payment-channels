@@ -607,13 +607,13 @@
         \EndFor
       \EndFor
       \If{$i+1 = n$} \Comment{next hop is \texttt{host\_fundee}}
-        \State $\mathrm{TX}_{n, 1}$ $\gets$ \textsc{virt.getEndpointTX}($n$, $n$,
-        $c_{\mathrm{virt}}$, $c_{i, \mathrm{right}}$, $c_n$, $\pk{i,
-        \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{n, \mathrm{fund},
-        \mathrm{old}}$, $\pk{i, \mathrm{right}, \mathrm{fund}, \mathrm{new}}$,
-        $\pk{n, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
-        \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, i, n})_{j
-        \in [n]}$, $t_n$)
+        \State $\mathrm{TX}_{n, 1}$ $\gets$ \textsc{virt.getEndpointTX}($n$,
+        $n$, $c_{\mathrm{virt}}$, $c_{i, \mathrm{right}}$, $c_{n,
+        \mathrm{left}}$, $\pk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
+        $\pk{n, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{i,
+        \mathrm{fund}, \mathrm{new}}$, $\pk{n, \mathrm{fund}, \mathrm{new}}$,
+        $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
+        \mathrm{virt}}$, $(\pk{j, i, n})_{j \in [n]}$, $t_n$)
       \EndIf
       \Statex
       \State call
