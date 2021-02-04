@@ -219,9 +219,9 @@
       n-1, n})_{i \in [n]}$, $(t_i)_{i \in [n-1] \setminus \{1\}}$):
       \Indent
         \State ensure $1 < i < n$
-        \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_{\mathrm{virt}}
-        \wedge c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$ \Comment{left parties fund
-        virtual channel}
+        \State ensure $c_{\mathrm{rem}, \mathrm{left}} \geq c_{\mathrm{loc},
+        \mathrm{right}} \wedge c_{\mathrm{rem}, \mathrm{right}} \geq
+        c_{\mathrm{loc}, \mathrm{left}}$ \Comment{avoid griefing attack}
         \State $c_{\mathrm{left}} \gets c_{\mathrm{rem}, \mathrm{left}} +
         c_{\mathrm{loc}, \mathrm{left}}$; $c_{\mathrm{right}} \gets
         c_{\mathrm{loc}, \mathrm{right}} + c_{\mathrm{rem}, \mathrm{right}}$
