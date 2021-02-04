@@ -202,9 +202,9 @@
   \begin{processbox}{\textsc{virt}}
     \begin{algorithmic}[1]
       \State \TODO{change all \textsc{getMidTXs}() uses to fit new input/output}
-      \State \textsc{getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{\mathrm{loc},
-      \mathrm{right}}$, $c_{\mathrm{rem}, \mathrm{right}}$, $c_{\mathrm{loc},
-      \mathrm{left}}$, $c_{\mathrm{rem}, \mathrm{left}}$, $\pk{\mathrm{rem},
+      \State \textsc{getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{\mathrm{rem},
+      \mathrm{left}}$, $c_{\mathrm{loc}, \mathrm{left}}$, $c_{\mathrm{loc},
+      \mathrm{right}}$, $c_{\mathrm{rem}, \mathrm{right}}$, $\pk{\mathrm{rem},
       \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{loc},
       \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{loc},
       \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{rem},
@@ -222,9 +222,9 @@
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_{\mathrm{virt}}
         \wedge c_{\mathrm{loc}} \geq c_{\mathrm{virt}}$ \Comment{left parties fund
         virtual channel}
-        \State $c_{\mathrm{left}} \gets c_{\mathrm{sib}} + c_{\mathrm{sib},
-        \mathrm{rem}}$; $c_{\mathrm{right}} \gets c_{\mathrm{loc}} +
-        c_{\mathrm{rem}}$
+        \State $c_{\mathrm{left}} \gets c_{\mathrm{rem}, \mathrm{left}} +
+        c_{\mathrm{loc}, \mathrm{left}}$; $c_{\mathrm{right}} \gets
+        c_{\mathrm{loc}, \mathrm{right}} + c_{\mathrm{rem}, \mathrm{right}}$
         \State $\texttt{left\_old\_fund} \gets 2/\{\pk{\mathrm{rem},
         \mathrm{left}, \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{loc},
         \mathrm{left}, \mathrm{fund}, \mathrm{old}}\}$
@@ -525,20 +525,21 @@
       \State parse input as $\mathrm{sigs}_{\mathrm{byLeft}}$
       \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
       \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
-      \State ($\mathrm{TX}_1$, $(\mathrm{TX}_{2, k})_{k \in \{m, \dots, l\}
-      \setminus \{i\}}$, $(\mathrm{TX}_{3, k_1, k_2})_{(k_1, k_2) \in \{m,
-      \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$ \textsc{virt.getMidTXs}($i$,
-      $n$, $c_{\mathrm{virt}}$, $c_P$, $c_{\bar{P}}$, $c_{\mathrm{sib}}$,
-      $c_{\mathrm{sib}, \mathrm{rem}}$,
-      $\pk{\mathrm{sib}, \mathrm{rem}, F}$, $\pk{\mathrm{sib}, F}$,
-      $\pk{\mathrm{loc}, F}$, $\pk{\mathrm{rem}, F}$, $\pk{\mathrm{sib},
-      \mathrm{rem}, \mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{virt}}$,
-      $\pk{\mathrm{loc}, \mathrm{virt}}$, $\pk{\mathrm{rem}, \mathrm{virt}}$,
-      $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
-      \mathrm{guest}}$, $\pk{\mathrm{loc}, \mathrm{out}}$, $(\pk{i,j,k})_{i
-      \in [n], j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}}$,
-      $(\pk{i, 2, 1})_{i \in [n]}$, $(\pk{i, n-1, n})_{i \in [n]}$,
-      $(t_i)_{i \in [n-1] \setminus \{1\}}$)
+      \State ($\mathrm{TX}_{i, 1}$, $(\mathrm{TX}_{i, 2, k})_{k \in \{m, \dots,
+      l\} \setminus \{i\}}$, $(\mathrm{TX}_{i, 3, k_1, k_2})_{(k_1, k_2) \in
+      \{m, \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$
+      \textsc{virt.getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{i-1,
+      \mathrm{right}}$, $c_{i, \mathrm{left}}$, $c_{i, \mathrm{right}}$,
+      $c_{i+1, \mathrm{left}}$, $\pk{i-1, \mathrm{right}, \mathrm{fund},
+      \mathrm{old}}$, $\pk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
+      $\pk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{i+1,
+      \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{i-1, \mathrm{fund},
+      \mathrm{new}}$, $\pk{i, \mathrm{fund}, \mathrm{new}}$, $\pk{i,
+      \mathrm{fund}, \mathrm{new}}$, $\pk{i+1, \mathrm{fund}, \mathrm{new}}$,
+      $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
+      $\pk{i, \mathrm{out}}$, $(\pk{i,j,k})_{i \in [n], j \in [n-1] \setminus
+      \{1\}, k \in [n-1] \setminus \{1, j\}}$, $(\pk{i, 2, 1})_{i \in [n]}$,
+      $(\pk{i, n-1, n})_{i \in [n]}$, $(t_i)_{i \in [n-1] \setminus \{1\}}$)
       \Statex
       \State \Comment{notation: $\mathrm{sig}(\mathrm{TX}, \pk{}) :=$ sig with
       \texttt{ANYPREVOUT} flag such that $\textsc{verify}(\mathrm{TX},
