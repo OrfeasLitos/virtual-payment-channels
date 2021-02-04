@@ -572,22 +572,22 @@
       \mathrm{sigs}_{\mathrm{byLeft}}$
       \Statex
       \ForAll{$j \in [2, \dots, n-1] \setminus \{i\}$}
-        \State ($\mathrm{TX}_{j, 1}$, $(\mathrm{TX}_{j, 2, k})_{k \in \{m, \dots,
-        l\} \setminus \{i\}}$, $(\mathrm{TX}_{j, 3, k_1, k_2})_{(k_1, k_2) \in
-        \{m, \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$ \textsc{getMidTXs}($j$,
-        $n$, $c_{\mathrm{virt}}$, $c_{j, \mathrm{right}}$, $c_{j+1,
-        \mathrm{left}}$, $c_{j, \mathrm{left}}$, $c_{j-1, \mathrm{right}}$,
-        $\pk{j-1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{j,
-        \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{j, \mathrm{right},
-        \mathrm{fund}, \mathrm{old}}$, $\pk{j+1, \mathrm{left}, \mathrm{fund},
-        \mathrm{old}}$, $\pk{j-1, \mathrm{fund}, \mathrm{new}}$, $\pk{j,
-        \mathrm{fund}, \mathrm{new}}$, $\pk{j, \mathrm{fund}, \mathrm{new}}$,
-        $\pk{j+1, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{virt},
-        \mathrm{left}}$, $\pk{\mathrm{virt}, \mathrm{right}}$, $\pk{j,
-        \mathrm{right}, \mathrm{out}}$, $(\pk{k, p, s})_{k \in [n], p \in [n-1]
-        \setminus \{1\}, s \in [n-1] \setminus \{1, p\}}$, $(\pk{k, 2, 1})_{k \in
-        [n]}$, $(\pk{k, n-1, n})_{k \in [n]}$, $(t_k)_{k \in [n-1] \setminus
-        \{1\}}$)
+        \State ($\mathrm{TX}_{j, 1}$, $(\mathrm{TX}_{j, 2, k})_{k \in \{m,
+        \dots, l\} \setminus \{i\}}$, $(\mathrm{TX}_{j, 3, k_1, k_2})_{(k_1,
+        k_2) \in \{m, \dots, i-1\} \{i+1, \dots, l\}}$) $\gets$
+        \textsc{getMidTXs}($j$, $n$, $c_{\mathrm{virt}}$, $c_{j-1,
+        \mathrm{right}}$, $c_{j, \mathrm{left}}$, $c_{j, \mathrm{right}}$,
+        $c_{j+1, \mathrm{left}}$, $\pk{j-1, \mathrm{right}, \mathrm{fund},
+        \mathrm{old}}$, $\pk{j, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
+        $\pk{j, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{j+1,
+        \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{j-1, \mathrm{fund},
+        \mathrm{new}}$, $\pk{j, \mathrm{fund}, \mathrm{new}}$, $\pk{j,
+        \mathrm{fund}, \mathrm{new}}$, $\pk{j+1, \mathrm{fund}, \mathrm{new}}$,
+        $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
+        \mathrm{virt}}$, $\pk{j, \mathrm{out}}$, $(\pk{k, p,
+        s})_{k \in [n], p \in [n-1] \setminus \{1\}, s \in [n-1] \setminus \{1,
+        p\}}$, $(\pk{k, 2, 1})_{k \in [n]}$, $(\pk{k, n-1, n})_{k \in [n]}$,
+        $(t_k)_{k \in [n-1] \setminus \{1\}}$)
         \IfThenElse{$j < i$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toLeft}}$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toRight}}$}
