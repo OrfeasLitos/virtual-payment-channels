@@ -28,6 +28,8 @@
       $\pk{\mathrm{loc}, \mathrm{out}}$, $c_P$, $c_{\bar{P}}$,
       $c_{\mathrm{virt}}$, $i$, \texttt{side}, $n$) by \texttt{guest}:
       \Indent
+        \State ensure $1 < i \leq n$ \Comment{\texttt{host\_funder} ($i = 1$) is
+        initialised with \textsc{host me}}
         \State ensure $\texttt{side} \in \{\text{``left''},
         \text{``right''}\}$
         \State store message contents and \texttt{guest}
