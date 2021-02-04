@@ -628,7 +628,7 @@
         \State $\forall k \in \{m, \dots, l\} \setminus \{i\}, \forall j \in
         \{i+1, \dots, n\}:$
         \Indent
-          \State sig($\mathrm{TX}_{2, k}, \pk{j, i, k}$)
+          \State sig($\mathrm{TX}_{i, 2, k}, \pk{j, i, k}$)
         \EndIndent
       \EndIndent
       \begin{itemize}
@@ -639,8 +639,8 @@
         \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots,
         l\}, \forall j \in \{i+1, \dots, n\}:$
         \Indent
-          \State sig($\mathrm{TX}_{3, k_1, k_2}, \pk{j, i, k_1}$),
-          sig($\mathrm{TX}_{3, k_1, k_2}, \pk{j, i, k_2}$)
+          \State sig($\mathrm{TX}_{i, 3, k_1, k_2}, \pk{j, i, k_1}$),
+          sig($\mathrm{TX}_{i, 3, k_1, k_2}, \pk{j, i, k_2}$)
         \EndIndent
       \EndIndent
       \State output (\textsc{virtualSigsBack},
