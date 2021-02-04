@@ -30,6 +30,7 @@
       \Indent
         \State ensure $1 < i \leq n$ \Comment{\texttt{host\_funder} ($i = 1$) is
         initialised with \textsc{host me}}
+        \label{code:virtual-layer:keys:init:check-i}
         \State ensure $\texttt{side} \in \{\text{``left''},
         \text{``right''}\}$
         \State store message contents and \texttt{guest}
@@ -82,6 +83,7 @@
       \Indent
         \State $\texttt{last\_poll} \gets \bot$
         \State $i \gets 1$
+        \label{code:virtual-layer:keys:host-me:set-i}
         \State $(\sk{1, j, k}, \pk{1, j, k})_{j \in \{2, \dots, n-1\}, k \in [n]
         \setminus \{j\}} \gets \textsc{keyGen}()^{(n-2)(n-1)}$
         \State ensure \textsc{virt.circulateKeysCoinsTimes}() returns
@@ -797,17 +799,17 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{byLeft}}$)}
     \begin{algorithmic}[1]
-      \If{$\mathrm{sigs}_{\mathrm{byLeft}}$ is given as argument} \Comment{we
-      are not \texttt{host\_funder}}
-        \If{we have a \texttt{sibling}} \Comment{we are not
-        \texttt{host\_fundee}}
-          \State \Return \textsc{virt.intermediarySigs}()
-        \Else \: \Comment{we are \texttt{host\_fundee}}
-          \State \Return \textsc{virt.hostFundeeSigs}()
-        \EndIf
-      \Else \: \Comment{we are \texttt{host\_funder}}
+      \If{$1 < i < n$} \Comment{we are not \texttt{host\_funder} nor
+      \texttt{host\_fundee}}
+        \State \Return \textsc{virt.intermediarySigs}()
+      \ElsIf{$i = 1$} \Comment{we are \texttt{host\_funder}}
         \State \Return \textsc{virt.hostFunderSigs}()
-      \EndIf
+      \ElsIf{$i = n$} \Comment{we are \texttt{host\_fundee}}
+        \State \Return \textsc{virt.hostFundeeSigs}()
+      \EndIf \: \Comment{it is always $1 \leq i \leq n$ -- c.f.
+      Fig.~\ref{code:virtual-layer:keys},
+      l.~\ref{code:virtual-layer:keys:init:check-i} and
+      l.~\ref{code:virtual-layer:keys:host-me:set-i}}
     \end{algorithmic}
   \end{processbox}
   \caption{}
