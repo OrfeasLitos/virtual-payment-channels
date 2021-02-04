@@ -214,9 +214,9 @@
       \mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{rem},
       \mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
       \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-      \mathrm{out}}$, $(\pk{i,j,k})_{i \in [n], j \in [n-1] \setminus \{1\}, k
-      \in [n-1] \setminus \{1, j\}}$, $(\pk{i, 2, 1})_{i \in [n]}$, $(\pk{i,
-      n-1, n})_{i \in [n]}$, $(t_i)_{i \in [n-1] \setminus \{1\}}$):
+      \mathrm{out}}$, $(\pk{p,j,k})_{p \in [n], j \in [n-1] \setminus \{1\}, k
+      \in [n-1] \setminus \{1, j\}}$, $(\pk{p, 2, 1})_{p \in [n]}$, $(\pk{p,
+      n-1, n})_{p \in [n]}$, $(t_j)_{j \in [n-1] \setminus \{1\}}$):
       \Indent
         \State ensure $1 < i < n$
         \State ensure $c_{\mathrm{rem}, \mathrm{left}} \geq c_{\mathrm{loc},
@@ -591,7 +591,7 @@
         \IfThenElse{$j < i$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toLeft}}$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toRight}}$}
-        \ForAll{$k \in \{m, \dots, l\} \setminus \{1\}$}
+        \ForAll{$k \in \{m, \dots, l\} \setminus \{i\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{i, j, k}$,
           \texttt{ANYPREVOUT}) to sigs
         \EndFor
