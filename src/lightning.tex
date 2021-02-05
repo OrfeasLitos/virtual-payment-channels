@@ -446,16 +446,6 @@
         \State reply (\textsc{host ack})
         \label{code:ln:virtualise:start-end:reply}
       \EndIndent
-      \Statex
-
-      \State On output (\textsc{sign TXs}, TXs) by $\texttt{host}'_P$:
-      \Indent
-        \State $\mathrm{sigs} \gets \emptyset$
-        \For{TX in TXs}
-          \State add \textsc{sign}(TX, $\sk{P, F}$, \textsc{anyprevout}) to sigs
-        \EndFor
-        \State reply (\textsc{TXs signed}, sigs)
-      \EndIndent
     \end{algorithmic}
   \end{processbox}
   \caption{}
