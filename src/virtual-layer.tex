@@ -656,7 +656,7 @@
   \label{code:virtual-layer:sibling-sigs}
 \end{center}
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{virt.intermediarySigs}()}
     \begin{algorithmic}[1]
       \State ($\mathrm{TX}_{i, 1}$, $(\mathrm{TX}_{i, 2, k})_{k \in \{m, \dots,
@@ -694,11 +694,11 @@
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:intermediary-sigs}
-\end{figure}
+\end{center}
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{virt.hostFundeeSigs}()}
     \begin{algorithmic}[1]
       \State $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ $\gets$
@@ -742,11 +742,11 @@
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:fundee-sigs}
-\end{figure}
+\end{center}
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{virt.hostFunderSigs}()}
     \begin{algorithmic}[1]
       \For{each hop apart from the last and ours ($i \in [2, \dots, n-1]$)}
@@ -793,9 +793,9 @@
       \State \Return (\textsc{ok})
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:funder-sigs}
-\end{figure}
+\end{center}
 
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{byLeft}}$)}
