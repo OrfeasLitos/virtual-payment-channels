@@ -736,13 +736,13 @@
         \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
         \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{n, j, k}$,
-          \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
+          \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndFor
         \ForAll{$k_1 \in \{m, \dots, j-1\}, k_2 \in \{j+1, \dots, l\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{n, j,
-          k_1}$, \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
+          k_1}$, \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
           \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{n, j,
-          k_2}$, \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
+          k_2}$, \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndFor
       \EndFor
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
@@ -777,13 +777,13 @@
         \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
         \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{1, j, k}$,
-          \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
+          \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toRight}}$
         \EndFor
         \ForAll{$k_1 \in \{m, \dots, j-1\}, k_2 \in \{j+1, \dots, l\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{1, j,
-          k_1}$, \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
+          k_1}$, \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toRight}}$
           \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{1, j,
-          k_2}$, \textsc{anyprevout}) to $\mathrm{sigs}_{\mathrm{toRight}}$
+          k_2}$, \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toRight}}$
         \EndFor
       \EndFor
       \State call
