@@ -1087,9 +1087,9 @@
   \end{processbox}
   \captionof{figure}{}
   \label{code:virtual-layer:poll}
-\end{center}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{virt} -- On input (\textsc{close}) by $R \in
   \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}$:}
     \begin{algorithmic}[1]
@@ -1113,37 +1113,36 @@
       output (\textsc{closed}) by it}
       \State send (\textsc{read}) to \ledger as $R$ and assign reply to
       $\Sigma$
-      \If{\texttt{funder} or \texttt{fundee} is defined and
-      $\mathrm{TX}_{\mathrm{none}, \mathrm{loc}}$ is not valid in $\Sigma$}
-      \Comment{we are an endpoint and our counterparty has closed}
+      \If{$i \in \{1, n\} \wedge (\mathrm{TX}_{(i-1) + \frac{2}{n-1}(n-i), 1}
+      \in \Sigma \vee \exists k \in [n]: \mathrm{TX}_{(i-1) +
+      \frac{2}{n-1}(n-i), 2, k} \in \Sigma)$} \Comment{we are an endpoint and our
+      counterparty has closed -- 1st TX subscript is $2$ if $i=1$ and $n-1$ if
+      $i=n$}
         \State ignore all messages except for (\textsc{check if closing}) by $R$
         \State $\textit{State} \gets \textsc{closing}$
         \State give up execution token \Comment{control goes to \environment}
       \EndIf
-      \State let \texttt{tx} be the unique valid TX for $\Sigma$ among
-      ($\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$,
-      $\mathrm{TX}_{\mathrm{loc}, \mathrm{left}}$, $\mathrm{TX}_{\mathrm{loc},
-      \mathrm{right}}$, $\mathrm{TX}_{\mathrm{loc}, \mathrm{both}}$)
-      \Comment{if we are not an intermediary, only the first exists}
+      \State let \texttt{tx} be the unique TX among $\mathrm{TX}_{i, 1}$,
+      $(\mathrm{TX}_{i, 2, k})_{k \in [n]}$, $(\mathrm{TX}_{i, 3, k_1,
+      k_2})_{k_1, k_2 \in [n]}$ that can be appended to $\Sigma$ in a valid way
+      \Comment{ignore invalid subscript combinations}
       \label{code:virtual-layer:close:tx}
-      \State let \texttt{sigs} be the corresponding set of signatures among
-      ($\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$,
-      $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}}$,
-      $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}}$,
-      $\mathrm{sigs}_{\mathrm{loc}, \mathrm{both}}$)
-      \State add \textsc{sign}(\texttt{tx}, $\sk{A, F}$) and
-      \textsc{sign}(\texttt{tx}, $\sk{\mathrm{loc}, \mathrm{virt}}$) to
-      \texttt{sigs} \Comment{one of the two signatures may be empty, as some
-      transactions don't need a signature by both keys. This is not a
-      problem.}
+      \State let \texttt{sigs} be the set of stored signatures that sign
+      \texttt{tx}
+      \State add \textsc{sign}(\texttt{tx}, $\sk{i, \mathrm{left},
+      \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT}),
+      \textsc{sign}(\texttt{tx}, $\sk{i, \mathrm{right}, \mathrm{fund},
+      \mathrm{old}}$, \texttt{ANYPREVOUT}), $(\textsc{sign}(\texttt{tx}, \sk{i,
+      j, k}, \texttt{ANYPREVOUT}))_{j, k \in [n]}$ to \texttt{sigs}
+      \Comment{ignore invalid signatures}
       \State ignore all messages except for (\textsc{check if closing}) by $R$
       \State $\textit{State} \gets \textsc{closing}$
-      \State send (\textsc{submit}, (\texttt{tx}, \texttt{sigs})) to \ledger
+      \State send (\textsc{submit}, \texttt{tx}, \texttt{sigs}) to \ledger
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:close}
-\end{figure}
+\end{center} \ \\
 
 \begin{center}
   \begin{processbox}{\textsc{virt} -- On input (\textsc{check if closing}) by
