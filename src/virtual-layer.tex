@@ -827,100 +827,130 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{processbox}{\textsc{virt.circulateFundingSigs}($\mathrm{sig}_{\mathrm{loc},
-  \mathrm{none}}, \mathrm{sig}_{\mathrm{loc}, \mathrm{right}}$)}
+  \begin{processbox}{\textsc{virt.circulateFundingSigs}($\mathrm{sigs}_{\mathrm{byLeft}}$)}
     \begin{algorithmic}[1]
-      \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ is given as argument}
-      \Comment{we are not \texttt{host\_funder}}
-        \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-        \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-        $\pk{\mathrm{prev}, F}$) = True \Comment{$\pk{\mathrm{prev}, F}$ found
-        in \texttt{left\_data}}
-        \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
-        \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
-        \If{$\mathrm{sig}_{\mathrm{loc}, \mathrm{right}}$ is given as argument}
-        \Comment{we are not \texttt{host\_fundee}}
-          \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{right}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{right}}$,
-          $\pk{\mathrm{prev}, F}$) = True
-          \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}} \gets \{
-          \mathrm{sig}_{\mathrm{loc}, \mathrm{right}} \}$
-          \State input (\textsc{virtual base sig forward},
-          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) to \texttt{sibling}
-          \Comment{\texttt{sibling} needs $\mathrm{sig}_{\mathrm{loc},
-          \mathrm{none}}$ for closing}
-          \State \trustedcode{$\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets
-          \{ \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$}
-          \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
-          \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
-          \sk{\mathrm{loc}, F})$}
-          \State \trustedcode{$\texttt{args} \gets \{\mathrm{sig}_{\mathrm{next},
-          \mathrm{none}}$\}}
-          \If{\trustedcode{\texttt{right\_data} contains data from a second-next
-          hop}} \Comment{next hop is not \texttt{host\_fundee}}
-            \State \trustedcode{$\mathrm{sig}_{\mathrm{next}, \mathrm{right}}
-            \gets \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{right}},
-            \sk{\mathrm{loc}, F})$}
-            \State \trustedcode{add $\mathrm{sig}_{\mathrm{next},
-            \mathrm{right}}$ to \texttt{args}}
-          \EndIf
-          \State \trustedcode{call
-          \textsc{virt.circulateFundingSigs}(\texttt{args}) of $\bar{P}$ and
-          assign returned values to ($\mathrm{sig}_{\mathrm{loc},
-          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{left}}$)}
-          \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-          $\pk{\mathrm{next}, F}$) = True} \Comment{$\pk{\mathrm{next}, F}$,
-          found in \texttt{right\_data}}
-          \State \trustedcode{ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{left}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{left}}$,
-          $\pk{\mathrm{next}, F}$) = True}
-          \State \trustedcode{add $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$
-          to $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$;
-          $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}} \gets \{
-          \mathrm{sig}_{\mathrm{loc}, \mathrm{left}} \}$}
-          \State \trustedcode{output (\textsc{virtual base sig back},
-          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$) \Comment{sibling needs
-          $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ for closing}}
-          \State add $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$ to
-          $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}}$
+      \If{$1 < i < n$} \Comment{we are not endpoint}
+        \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
+        \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
+        \State ensure that the following signatures are present in
+        $\mathrm{sigs}_{\mathrm{byLeft}}$ and store them:
+        \begin{itemize}
+          \item \Comment{1 signature}
+        \end{itemize}
+        \Indent
+          \State sig($\mathrm{TX}_{i, 1}, \pk{i-1, \mathrm{right},
+          \mathrm{fund}, \mathrm{old}}$)
+        \EndIndent
+        \begin{itemize}
+          \item \Comment{$n-3 + \chi_{i=2} + \chi_{i=n-1}$ signatures}
+        \end{itemize}
+        \Indent
+          \State $\forall k \in \{m, \dots, l\} \setminus \{i\}$
+          \Indent
+            \State sig($\mathrm{TX}_{i, 2, k}, \pk{i-1, \mathrm{right},
+            \mathrm{fund}, \mathrm{old}}$)
+          \EndIndent
+        \EndIndent
+        \State input (\textsc{virtual base sig forward},
+        $\mathrm{sigs}_{\mathrm{byLeft}}$) to \texttt{sibling}
+        \State \trustedcode{extract and store sig($\mathrm{TX}_{i, 1}, \pk{i-1,
+        \mathrm{right}, \mathrm{fund}, \mathrm{old}}$) and $\forall k \in \{m,
+        \dots, l\} \setminus \{i\}$ sig($\mathrm{TX}_{i, 2, k}, \pk{i-1,
+        \mathrm{right}, \mathrm{fund}, \mathrm{old}}$) from
+        $\mathrm{sigs}_{\mathrm{byLeft}}$} \Comment{same signatures as
+        \texttt{sibling}}
+        \State \trustedcode{$\mathrm{sigs}_{\mathrm{toRight}} \gets
+        \{\textsc{sign}(\mathrm{TX}_{i+1, 1}, \sk{i, \mathrm{right},
+        \mathrm{fund}, \mathrm{old}}, \texttt{ANYPREVOUT})\}$}
+        \If{\trustedcode{$i+1 < n$}}
+          \IfThenElse{\trustedcode{$i+1 = n-1$}}{\trustedcode{$l' \gets
+          n$}}{\trustedcode{$l' \gets n-1$}}
+          \ForAll{\trustedcode{$k \in \{2, \dots, l'\}$}}
+            \State \trustedcode{add \textsc{sign}($\mathrm{TX}_{i+1, 2, k}$,
+            $\sk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
+            \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toRight}}$}
+          \EndFor
         \EndIf
-        \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}} \gets
-        \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{none}},
-        \sk{\mathrm{loc}, F})$
-        \If{\texttt{left\_data} contains data from a second-previous hop}
-        \Comment{previous hop not is \texttt{host\_funder}}
-          \State $\mathrm{sig}_{\mathrm{prev}, \mathrm{left}} \gets
-          \textsc{sign}(\mathrm{TX}_{\mathrm{prev}, \mathrm{left}},
-          \sk{\mathrm{loc}, F})$
-          \State \Return ($\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$,
-          $\mathrm{sig}_{\mathrm{prev}, \mathrm{left}}$)
-        \Else \: \Comment{previous hop is \texttt{host\_funder}}
-          \State \Return $\mathrm{sig}_{\mathrm{prev}, \mathrm{none}}$
+        \State \trustedcode{call
+        \textsc{virt.circulateFundingSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
+        of $\bar{P}$ and assign returned values to
+        $\mathrm{sigs}_{\mathrm{byRight}}$}
+        \State \trustedcode{ensure that the following signatures are present in
+        $\mathrm{sigs}_{\mathrm{byRight}}$ and store them:}
+        \begin{itemize}
+          \item \Comment{1 signature}
+        \end{itemize}
+        \Indent
+          \State \trustedcode{sig($\mathrm{TX}_{i, 1}, \pk{i+1, \mathrm{left},
+          \mathrm{fund}, \mathrm{old}}$)}
+        \EndIndent
+        \begin{itemize}
+          \item \Comment{$n-3 + \chi_{i=2} + \chi_{i=n-1}$ signatures}
+        \end{itemize}
+        \Indent
+          \State \trustedcode{$\forall k \in \{m, \dots, l\} \setminus \{i\}$}
+          \Indent
+            \State \trustedcode{sig($\mathrm{TX}_{i, 2, k}, \pk{i+1,
+            \mathrm{right}, \mathrm{fund}, \mathrm{old}}$)}
+          \EndIndent
+        \EndIndent
+        \State \trustedcode{output (\textsc{virtual base sig back},
+        $\mathrm{sigs}_{\mathrm{byRight}}$)}
+        \State extract and store sig($\mathrm{TX}_{i, 1}, \pk{i+1,
+        \mathrm{right}, \mathrm{fund}, \mathrm{old}}$) and $\forall k \in \{m,
+        \dots, l\} \setminus \{i\}$ sig($\mathrm{TX}_{i, 2, k}, \pk{i+1,
+        \mathrm{right}, \mathrm{fund}, \mathrm{old}}$) from
+        $\mathrm{sigs}_{\mathrm{byRight}}$ \Comment{same signatures as
+        \texttt{sibling}}
+        \State $\mathrm{sig}_{\mathrm{toLeft}} \gets
+        \{\textsc{sign}(\mathrm{TX}_{i-1, 1}, \sk{i, \mathrm{left},
+        \mathrm{fund}, \mathrm{old}}, \texttt{ANYPREVOUT})\}$
+        \If{$i-1 > 1$}
+          \IfThenElse{$i-1 = 2$}{$m' \gets
+          1$}{$m' \gets 2$}
+          \ForAll{$k \in \{m', \dots, n-1\}$}
+            \State add \textsc{sign}($\mathrm{TX}_{i-1, 2, k}$,
+            $\sk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
+            \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
+          \EndFor
         \EndIf
-      \Else \: \Comment{we are \texttt{host\_funder}}
-        \State $\mathrm{sig}_{\mathrm{next}, \mathrm{none}} \gets
-        \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{none}},
-        \sk{\mathrm{loc}, F})$
-        \label{code:virtual-layer:funding-sigs:funder-sign-none}
-        \State $\mathrm{sig}_{\mathrm{next}, \mathrm{right}} \gets
-        \textsc{sign}(\mathrm{TX}_{\mathrm{next}, \mathrm{right}},
-        \sk{\mathrm{loc}, F})$
-        \label{code:virtual-layer:funding-sigs:funder-sign-right}
+        \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
+      \ElsIf{$i = 1$} \Comment{we are \texttt{host\_funder}}
+        \State $\mathrm{sigs}_{\mathrm{toRight}} \gets
+        \{\textsc{sign}(\mathrm{TX}_{2, 1}, \sk{1, \mathrm{right},
+        \mathrm{fund}, \mathrm{old}}, \texttt{ANYPREVOUT})\}$
+        \IfThenElse{$2 = n-1$}{$l' \gets n$}{$l' \gets n-1$}
+        \ForAll{$k \in \{3, \dots, l'\}$}
+          \State add \textsc{sign}($\mathrm{TX}_{2, 2, k}$, $\sk{1,
+          \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT})
+          to $\mathrm{sigs}_{\mathrm{toRight}}$
+        \EndFor
         \State call
-        \textsc{virt.circulateFundingSigs}($\mathrm{sig}_{\mathrm{next},
-        \mathrm{none}}$, $\mathrm{sig}_{\mathrm{next}, \mathrm{right}}$) of
-        $\bar{P}$ and assign returned value to $\mathrm{sig}_{\mathrm{loc},
-        \mathrm{none}}$
-        \State ensure \textsc{verify}($\mathrm{TX}_{\mathrm{loc},
-        \mathrm{none}}$, $\mathrm{sig}_{\mathrm{loc}, \mathrm{none}}$,
-        $\pk{\mathrm{next}, F}$) = True \Comment{$\pk{\mathrm{next}, F}$ found
-        in \texttt{right\_data}}
-        \label{code:virtual-layer:funding-sigs:funder-verify}
-        \State $\mathrm{sigs}_{\mathrm{loc}, \mathrm{none}} \gets \{
-        \mathrm{sig}_{\mathrm{loc}, \mathrm{none}} \}$
+        \textsc{virt.circulateFundingSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
+        of $\bar{P}$ and assign returned value to
+        $\mathrm{sigs}_{\mathrm{byRight}}$
+        \State ensure that sig($\mathrm{TX}_{1, 1}$, $\pk{2, \mathrm{left},
+        \mathrm{fund}, \mathrm{old}}$) is present in
+        $\mathrm{sigs}_{\mathrm{byRight}}$ and store it
         \State \Return (\textsc{ok})
-      \EndIf
+      \ElsIf{$i = n$} \Comment{we are \texttt{host\_fundee}}
+        \State ensure sig($\mathrm{TX}_{n, 1}$, $\pk{n-1, \mathrm{right},
+        \mathrm{fund}, \mathrm{old}}$) is present in
+        $\mathrm{sigs}_{\mathrm{byLeft}}$ and store it
+        \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets
+        \{\textsc{sign}(\mathrm{TX}_{n-1, 1}, \sk{n, \mathrm{left},
+        \mathrm{fund}, \mathrm{old}}, \texttt{ANYPREVOUT})\}$
+        \IfThenElse{$n-1 = 2$}{$m' \gets 1$}{$m' \gets 2$}
+        \ForAll{$k \in \{m', \dots, n-2\}$}
+          \State add \textsc{sign}($\mathrm{TX}_{n-1, 2, k}$, $\sk{n,
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT}) to
+          $\mathrm{sigs}_{\mathrm{toLeft}}$
+        \EndFor
+        \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
+      \EndIf \: \Comment{it is always $1 \leq i \leq n$ -- c.f.
+      Fig.~\ref{code:virtual-layer:keys},
+      l.~\ref{code:virtual-layer:keys:init:check-i} and
+      l.~\ref{code:virtual-layer:keys:host-me:set-i}}
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
