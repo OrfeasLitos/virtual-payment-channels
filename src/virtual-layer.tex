@@ -1012,53 +1012,82 @@
   \label{code:virtual-layer:revocation}
 \end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{virt} -- poll}
     \begin{algorithmic}[1]
       \State On input (\textsc{check for lateral close}) by $R \in$
       \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}:
       \Indent
         \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
-        \State $\texttt{prev\_went\_on\_chain} \gets \mathrm{TX}_{\mathrm{prev},
-        \mathrm{left}} \in \Sigma \vee \mathrm{TX}_{\mathrm{prev},
-        \mathrm{none}} \in \Sigma$
-        \State $\texttt{next\_went\_on\_chain} \gets \mathrm{TX}_{\mathrm{next},
-        \mathrm{right}} \in \Sigma \vee \mathrm{TX}_{\mathrm{next},
-        \mathrm{none}} \in \Sigma$
+        \State $k_1 \gets 0$
+        \If{$\mathrm{TX}_{i-1, 1}$ is defined and $\mathrm{TX}_{i-1, 1} \in
+        \Sigma$}
+          \State $k_1 \gets i-1$
+        \EndIf
+        \ForAll{$k \in [i-2]$}
+          \If{$\mathrm{TX}_{i-1, 2, k}$ is defined and $\mathrm{TX}_{i-1, 2, k}
+          \in \Sigma$}
+            \State $k_1 \gets k$
+          \EndIf
+        \EndFor
+        \State $k_2 \gets 0$
+        \If{$\mathrm{TX}_{i+1, 1}$ is defined and $\mathrm{TX}_{i+1, 1} \in
+        \Sigma$}
+          \State $k_2 \gets i+1$
+        \EndIf
+        \ForAll{$k \in \{i+2, \dots, n\}$}
+          \If{$\mathrm{TX}_{i+1, 2, k}$ is defined and $\mathrm{TX}_{i+1, 2, k}
+          \in \Sigma$}
+            \State $k_2 \gets k$
+          \EndIf
+        \EndFor
         \State $\texttt{last\_poll} \gets |\Sigma|$
-        \If{$\texttt{prev\_went\_on\_chain} \vee
-        \texttt{next\_went\_on\_chain}$}
+        \If{$k_1 > 0 \vee k_2 > 0$} \Comment{at least one neighbour has
+        published its TX}
           \State ignore all messages except for (\textsc{check if closing}) by
           $R$
           \State $\textit{State} \gets \textsc{closing}$
+          \State $\mathrm{sigs} \gets \emptyset$
         \EndIf
-        \If{$\texttt{prev\_went\_on\_chain} \wedge
-        \texttt{next\_went\_on\_chain}$}
-          \State
-          \textsc{virt}.\textsc{signAndSubmit}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{both}}$, $\mathrm{sigs}_{\mathrm{loc}, \mathrm{both}}$)
-        \ElsIf{\texttt{prev\_went\_on\_chain}}
-          \State
-          \textsc{virt}.\textsc{signAndSubmit}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{left}}$, $\mathrm{sigs}_{\mathrm{loc}, \mathrm{left}}$)
-        \ElsIf{\texttt{next\_went\_on\_chain}}
-          \State
-          \textsc{virt}.\textsc{signAndSubmit}($\mathrm{TX}_{\mathrm{loc},
-          \mathrm{right}}$, $\mathrm{sigs}_{\mathrm{loc}, \mathrm{right}}$)
+        \If{$k_1 > 0 \wedge k_2 > 0$} \Comment{both neighbours have published
+        their TXs}
+          \State add $(\mathrm{sig}(\mathrm{TX}_{i, 3, k_1, k_2}, \pk{p, i,
+          k_1}))_{p \in [n] \setminus \{i\}}$ to sigs
+          \State add $(\mathrm{sig}(\mathrm{TX}_{i, 3, k_1, k_2}, \pk{p, i,
+          k_2}))_{p \in [n] \setminus \{i\}}$ to sigs
+          \State add \textsc{sign}($\mathrm{TX}_{i, 3, k_1, k_2}$, $\sk{i, i,
+          k_1}$, \texttt{ANYPREVOUT}) to sigs
+          \State add \textsc{sign}($\mathrm{TX}_{i, 3, k_1, k_2}$, $\sk{i, i,
+          k_2}$, \texttt{ANYPREVOUT}) to sigs
+          \State input (\textsc{submit}, $\mathrm{TX}_{i, 3, k_1, k_2}$, sigs)
+          to \ledger
+        \ElsIf{$k_1 > 0$} \Comment{only left neighbour has published its TX}
+          \State add $(\mathrm{sig}(\mathrm{TX}_{i, 2, k_1}, \pk{p, i, k_1}))_{p
+          \in [n] \setminus \{i\}}$ to sigs
+          \State add \textsc{sign}($\mathrm{TX}_{i, 2, k_1}$, $\sk{i, i, k_1}$,
+          \texttt{ANYPREVOUT}) to sigs
+          \State add \textsc{sign}($\mathrm{TX}_{i, 2, k_1}$, $\sk{i,
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT}) to
+          sigs
+          \State input (\textsc{submit}, $\mathrm{TX}_{i, 2, k_1}$, sigs) to
+          \ledger
+        \ElsIf{$k_2 > 0$} \Comment{only right neighbour has published its TX}
+          \State add $(\mathrm{sig}(\mathrm{TX}_{i, 2, k_2}, \pk{p, i, k_2}))_{p
+          \in [n] \setminus \{i\}}$ to sigs
+          \State add \textsc{sign}($\mathrm{TX}_{i, 2, k_2}$, $\sk{i, i, k_2}$,
+          \texttt{ANYPREVOUT}) to sigs
+          \State add \textsc{sign}($\mathrm{TX}_{i, 2, k_2}$, $\sk{i,
+          \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT}) to
+          sigs
+          \State input (\textsc{submit}, $\mathrm{TX}_{i, 2, k_2}$, sigs) to
+          \ledger
         \EndIf
-      \EndIndent
-      \Statex
-
-      \State \textsc{virt}.\textsc{signAndSubmit}(tx, sigs):
-      \Indent
-        \State add \textsc{sign}(tx, $\sk{\mathrm{loc}, F}$) to sigs
-        \State input (\textsc{submit}, tx, sigs) to \ledger
       \EndIndent
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:virtual-layer:poll}
-\end{figure}
+\end{center}
 
 \begin{figure}[H]
   \begin{processbox}{\textsc{virt} -- On input (\textsc{close}) by $R \in
