@@ -73,13 +73,13 @@
 
       \State On input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
       $\bar{P}$, $\texttt{host}_P$, $c_P$, $c_{\bar{P}}$, $c_{\mathrm{virt}}$,
-      $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
-      \mathrm{guest}}$, ($\sk{1, \mathrm{fund}, \mathrm{new}}$, $\pk{1,
-      \mathrm{fund}, \mathrm{new}}$), ($\sk{1, \mathrm{right}, \mathrm{fund},
-      \mathrm{old}}$, $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$),
-      $\pk{2, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{2,
-      \mathrm{left}, \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{right},
-      \mathrm{out}}$, $n$) by \texttt{guest}:
+      $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
+      ($\sk{1, \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{fund},
+      \mathrm{new}}$), ($\sk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
+      $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$), $\pk{2,
+      \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{2, \mathrm{left},
+      \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{right}, \mathrm{out}}$,
+      $n$) by \texttt{guest}:
       \Indent
         \State $\texttt{last\_poll} \gets \bot$
         \State $i \gets 1$
@@ -963,59 +963,60 @@
 \begin{center}
   \begin{processbox}{\textsc{virt.circulateRevocations}(\texttt{revoc\_by\_prev})}
     \begin{algorithmic}[1]
-    \If{\texttt{revoc\_by\_prev} is given as argument} \Comment{we are not
-    \texttt{host\_funder}}
-      \State ensure
-      \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_prev})
-      returns (\textsc{ok})
-      \label{code:virtual-layer:revocation:non-funder:proc-remote}
-    \Else \: \Comment{we are \texttt{host\_funder}}
-      \State $\texttt{revoc\_for\_next} \gets
+      \If{\texttt{revoc\_by\_prev} is given as argument} \Comment{we are not
+      \texttt{host\_funder}}
+        \State ensure
+        \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_prev})
+        returns (\textsc{ok})
+        \label{code:virtual-layer:revocation:non-funder:proc-remote}
+      \Else \: \Comment{we are \texttt{host\_funder}}
+        \State $\texttt{revoc\_for\_next} \gets
+        \texttt{guest}.\textsc{revokePrevious}()$
+        \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
+        \State $\texttt{last\_poll} \gets |\Sigma|$
+        \State call
+        \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next}) of
+        $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
+        \label{code:virtual-layer:revocation:revoc-by-next}
+        \State ensure
+        \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
+        returns (\textsc{ok}) \Comment{If the ``ensure'' fails, the opening
+        process freezes, this is intentional. The channel can still close via
+        (\textsc{close})}
+        \label{code:virtual-layer:revocation:funder:proc-remote}
+        \State \Return (\textsc{ok})
+      \EndIf
+      \If{we have a \texttt{sibling}} \Comment{we are not \texttt{host\_fundee}
+      nor \texttt{host\_funder}}
+        \State input (\textsc{virtual revocation forward}) to \texttt{sibling}
+        \State \trustedcode{$\texttt{revoc\_for\_next} \gets
+        \texttt{guest}.\textsc{revokePrevious}()$}
+        \State \trustedcode{input (\textsc{read}) to \ledger and assign ouput to
+        $\Sigma$}
+        \State \trustedcode{$\texttt{last\_poll} \gets |\Sigma|$}
+        \State \trustedcode{call
+        \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next}) of
+        $\bar{P}$ and assign output to \texttt{revoc\_by\_next}}
+        \State \trustedcode{ensure
+        \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
+        returns (\textsc{ok})}
+        \State \trustedcode{output (\textsc{hosts ready}, $t_i$) to
+        \texttt{guest} and expect reply (\textsc{host ack})}
+        \State \trustedcode{output (\textsc{virtual revocation back})}
+      \EndIf
+      \State $\texttt{revoc\_for\_prev} \gets
       \texttt{guest}.\textsc{revokePrevious}()$
-      \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
-      \State $\texttt{last\_poll} \gets |\Sigma|$
-      \State call
-      \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next}) of
-      $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
-      \label{code:virtual-layer:revocation:revoc-by-next}
-      \State ensure
-      \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
-      returns (\textsc{ok}) \Comment{If the ``ensure'' fails, the opening
-      process freezes, this is intentional. The channel can still close via
-      (\textsc{close})}
-      \label{code:virtual-layer:revocation:funder:proc-remote}
-      \State \Return (\textsc{ok})
-    \EndIf
-    \If{we have a \texttt{sibling}} \Comment{we are not \texttt{host\_fundee}
-    nor \texttt{host\_funder}}
-      \State input (\textsc{virtual revocation forward}) to \texttt{sibling}
-      \State \trustedcode{$\texttt{revoc\_for\_next} \gets
-      \texttt{guest}.\textsc{revokePrevious}()$}
-      \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
-      \State $\texttt{last\_poll} \gets |\Sigma|$
-      \State \trustedcode{call
-      \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next}) of $\bar{P}$
-      and assign output to \texttt{revoc\_by\_next}}
-      \State \trustedcode{ensure
-      \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
-      returns (\textsc{ok})}
-      \State \trustedcode{output (\textsc{hosts ready}, $t_i$) to
-      \texttt{guest} and expect reply (\textsc{host ack})}
-      \State \trustedcode{output (\textsc{virtual revocation back})}
-    \EndIf
-    \State $\texttt{revoc\_for\_prev} \gets
-    \texttt{guest}.\textsc{revokePrevious}()$
-    \If{$1 < i < n$} \Comment{we are intermediary}
-      \State output (\textsc{hosts ready}, $t_i$) to \texttt{guest} and expect
-      reply (\textsc{host ack})
-      \Comment{$p$ is every how many blocks we have to check the chain}
-      \label{code:virtual-layer:revocation:hosts-ready}
-    \Else \: \Comment{we are \texttt{host\_fundee}, case of
-    \texttt{host\_funder} covered earlier}
-      \State output (\textsc{hosts ready}, $p + \sum\limits_{j = 2}^{n-1}(s -
-      1 + t_j)$) to \texttt{guest} and expect reply (\textsc{host ack})
-    \EndIf
-    \State \Return \texttt{revoc\_for\_prev}
+      \If{$1 < i < n$} \Comment{we are intermediary}
+        \State output (\textsc{hosts ready}, $t_i$) to \texttt{guest} and expect
+        reply (\textsc{host ack})
+        \Comment{$p$ is every how many blocks we have to check the chain}
+        \label{code:virtual-layer:revocation:hosts-ready}
+      \Else \: \Comment{we are \texttt{host\_fundee}, case of
+      \texttt{host\_funder} covered earlier}
+        \State output (\textsc{hosts ready}, $p + \sum\limits_{j = 2}^{n-1}(s -
+        1 + t_j)$) to \texttt{guest} and expect reply (\textsc{host ack})
+      \EndIf
+      \State \Return \texttt{revoc\_for\_prev}
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
@@ -1200,7 +1201,7 @@
   \end{processbox}
   \captionof{figure}{}
   \label{code:virtual-layer:check-chain-close}
-\end{center}
+\end{center} \ \\
 
 \begin{center}
   \begin{processbox}{\textsc{virt} -- punishment handling}
