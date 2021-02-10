@@ -71,18 +71,19 @@
       \Statex
 
       \State On input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
-      $\bar{P}$, $\texttt{host}_P$, $c_{1, \mathrm{right}}$, $c_{2,
-      \mathrm{left}}$, $c_{\mathrm{virt}}$, $\pk{\mathrm{left},
-      \mathrm{guest}}$, $\pk{\mathrm{right}, \mathrm{guest}}$, ($\sk{1,
-      \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{fund}, \mathrm{new}}$),
-      ($\sk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{1,
-      \mathrm{right}, \mathrm{fund}, \mathrm{old}}$), $\pk{2, \mathrm{left},
-      \mathrm{fund}, \mathrm{old}}$, $\pk{2, \mathrm{left}, \mathrm{fund},
-      \mathrm{new}}$, $\pk{1, \mathrm{right}, \mathrm{out}}$, $n$) by
-      \texttt{guest}:
+      $\bar{P}$, $\texttt{host}_P$, $c_P$, $c_{\bar{P}}$, $c_{\mathrm{virt}}$,
+      $\pk{\mathrm{left}, \mathrm{guest}}$, $\pk{\mathrm{right},
+      \mathrm{guest}}$, ($\sk{1, \mathrm{fund}, \mathrm{new}}$, $\pk{1,
+      \mathrm{fund}, \mathrm{new}}$), ($\sk{1, \mathrm{right}, \mathrm{fund},
+      \mathrm{old}}$, $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$),
+      $\pk{2, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{2,
+      \mathrm{left}, \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{right},
+      \mathrm{out}}$, $n$) by \texttt{guest}:
       \Indent
         \State $\texttt{last\_poll} \gets \bot$
         \State $i \gets 1$
+        \State $c_{1, \mathrm{right}} \gets c_P$; $c_{2, \mathrm{left}} \gets
+        c_{\bar{P}}$
         \label{code:virtual-layer:keys:host-me:set-i}
         \State $(\sk{1, j, k}, \pk{1, j, k})_{j \in \{2, \dots, n-1\}, k \in [n]
         \setminus \{j\}} \gets \textsc{keyGen}()^{(n-2)(n-1)}$
