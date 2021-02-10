@@ -182,7 +182,7 @@
         \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
         $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
         output (\textsc{funded}, $\texttt{host}_P$, \texttt{funder\_layer},
-        $t_P$) \TODO{added $t_P$ -- decide how to get informed of $t_P$} \Comment{ignore any other message}
+        $t_P$) \Comment{ignore any other message}
         \label{code:ln:prepare-base:fund-me}
         \State $\texttt{layer} \gets \texttt{funder\_layer}$
       \EndIf
@@ -296,7 +296,6 @@
 
       \State On output (\textsc{funded}, $\texttt{host}_P$,
       \texttt{funder\_layer}, $t_P$) by \texttt{hops}[-1].\texttt{right}:
-      \TODO{added $t_P$ -- decide how to get informed of $t_P$}
       \label{code:ln:bob:funded}
       \Indent
         \State ensure $\itistate = \textsc{waiting for funded}$
@@ -420,7 +419,7 @@
       \EndIndent
       \Statex
 
-      \State On output (\textsc{hosts ready}) by $\texttt{host}_P$:
+      \State On output (\textsc{hosts ready}, $t_P$) by $\texttt{host}_P$:
       \Comment{$\texttt{host}_P$ is the new host, renamed in
       Fig.~\ref{code:ln:methods-for-virt},
       l.~\ref{code:ln:methods-for-virt:host-update}}
@@ -432,15 +431,16 @@
         \State $(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P, F}')$;
         $\pk{\bar{P}, F} \gets \pk{\bar{P}, F}'$
         \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
-          \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$)
-          to \texttt{fundee} and expect reply (\textsc{fund ack})
+          \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$,
+          $t_P$) to \texttt{fundee} and expect reply (\textsc{fund ack})
           \label{code:ln:virtualise:start-end:helper-output-funded}
         \ElsIf{we have received input \textsc{fund me} just before we moved to
         the \textsc{virtualising} state} \Comment{we are the first hop}
           \State $c_P \gets c_P - c_{\mathrm{guest}}$
           \label{code:ln:virtualise:start-end:reduce-coins}
-          \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$)
-          to \texttt{funder} \Comment{do not expect reply by \texttt{funder}}
+          \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$,
+          $t_P$) to \texttt{funder} \Comment{do not expect reply by
+          \texttt{funder}}
           \label{code:ln:virtualise:start-end:funder-funded}
         \EndIf
         \State reply (\textsc{host ack})
@@ -482,15 +482,15 @@
           $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
           $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
           ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$,
-          $c_P$, $c_{\bar{P}}$, $c_{\mathrm{guest}}$, $i$, ``left'', $n$) to
-          $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
+          $c_P$, $c_{\bar{P}}$, $c_{\mathrm{guest}}$, $i$, $t_P$, ``left'', $n$)
+          to $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \Else \: \Comment{we are the last hop}
           \State input (\textsc{init}, $\texttt{host}_P$,
           $\texttt{host}_{\bar{P}}'$, \texttt{fundee}=\texttt{fundee}, ($\sk{P,
           F}'$, $\pk{P, F}'$), $\pk{\bar{P}, F}'$, ($\sk{P, F}$, $\pk{P, F}$),
           $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$, $c_P$, $c_{\bar{P}}$,
-          $c_{\mathrm{guest}}$, $i$, ``left'', $n$) to new \textsc{virt} ITI
-          $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
+          $c_{\mathrm{guest}}$, $t_P$, $i$, ``left'', $n$) to new \textsc{virt}
+          ITI $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \EndIf
         \State $\itistate \gets \textsc{waiting for revocation}$
         \State send (\textsc{virtualising ack}, $\texttt{host}_P'$, $\pk{P, F}'$)

@@ -26,7 +26,7 @@
       \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{loc}, \mathrm{fund},
       \mathrm{old}}$), $\pk{\mathrm{rem}, \mathrm{fund}, \mathrm{old}}$,
       $\pk{\mathrm{loc}, \mathrm{out}}$, $c_P$, $c_{\bar{P}}$,
-      $c_{\mathrm{virt}}$, $i$, \texttt{side}, $n$) by \texttt{guest}:
+      $c_{\mathrm{virt}}$, $t_P$, $i$, \texttt{side}, $n$) by \texttt{guest}:
       \label{code:virtual-layer:keys:init}
       \Indent
         \State ensure $1 < i \leq n$ \Comment{\texttt{host\_funder} ($i = 1$) is
@@ -60,8 +60,8 @@
         \State $\pk{\mathrm{myRem}, \texttt{side}', \mathrm{fund}, \mathrm{old}}
         \gets \pk{\mathrm{rem}, \mathrm{fund}, \mathrm{old}}$
         \State $\pk{i, \mathrm{out}} \gets \pk{\mathrm{loc}, \mathrm{out}}$
-        \State $(c_{i, \texttt{side}}, c_{\texttt{myRem}, \texttt{side}'}) \gets
-        (c_P, c_{\bar{P}})$
+        \State $(c_{i, \texttt{side}}, c_{\texttt{myRem}, \texttt{side}'}, t_{i,
+        \texttt{side}}) \gets (c_P, c_{\bar{P}}, t_P)$
         \State $\texttt{last\_poll} \gets \bot$
         \If{$\texttt{side} = \text{``left''} \wedge i \neq n$}
           \State $(\sk{i, j, k}, \pk{i, j, k})_{j \in \{2, \dots, n-1\}, k \in
@@ -93,7 +93,9 @@
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateFundingSigs}() returns (\textsc{ok})
         \State ensure \textsc{virt.circulateRevocations}() returns (\textsc{ok})
-        \State output (\textsc{hosts ready}) to \texttt{guest}
+        \State output (\textsc{hosts ready}, $p + \sum\limits_{j = 2}^{n-1}(s -
+        1 + t_j)$) to \texttt{guest} \Comment{$p$ is every how many blocks we
+        have to check the chain}
       \EndIndent
     \end{algorithmic}
   \end{processbox}
@@ -972,8 +974,9 @@
       \texttt{guest}.\textsc{revokePrevious}()$
       \State input (\textsc{read}) to \ledger and assign ouput to $\Sigma$
       \State $\texttt{last\_poll} \gets |\Sigma|$
-      \State call \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next})
-      of $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
+      \State call
+      \textsc{virt.circulateRevocations}(\texttt{revoc\_for\_next}) of
+      $\bar{P}$ and assign returned value to \texttt{revoc\_by\_next}
       \label{code:virtual-layer:revocation:revoc-by-next}
       \State ensure
       \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
@@ -996,17 +999,23 @@
       \State \trustedcode{ensure
       \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
       returns (\textsc{ok})}
-      \State \trustedcode{output (\textsc{hosts ready}) to \texttt{guest} and
-      expect reply (\textsc{host ack})}
+      \State \trustedcode{output (\textsc{hosts ready}, $t_i$) to
+      \texttt{guest} and expect reply (\textsc{host ack})}
       \State \trustedcode{output (\textsc{virtual revocation back})}
     \EndIf
     \State $\texttt{revoc\_for\_prev} \gets
     \texttt{guest}.\textsc{revokePrevious}()$
-    \State output (\textsc{hosts ready}) to \texttt{guest} and expect reply
-    (\textsc{host ack})
-    \label{code:virtual-layer:revocation:hosts-ready}
-    \State \Return \texttt{revoc\_for\_prev} \Comment{we are not
-    \texttt{host\_fundee} nor \texttt{host\_funder}}
+    \If{$1 < i < n$} \Comment{we are intermediary}
+      \State output (\textsc{hosts ready}, $t_i$) to \texttt{guest} and expect
+      reply (\textsc{host ack})
+      \Comment{$p$ is every how many blocks we have to check the chain}
+      \label{code:virtual-layer:revocation:hosts-ready}
+    \Else \: \Comment{we are \texttt{host\_fundee}, case of
+    \texttt{host\_funder} covered earlier}
+      \State output (\textsc{hosts ready}, $p + \sum\limits_{j = 2}^{n-1}(s -
+      1 + t_j)$) to \texttt{guest} and expect reply (\textsc{host ack})
+    \EndIf
+    \State \Return \texttt{revoc\_for\_prev}
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
