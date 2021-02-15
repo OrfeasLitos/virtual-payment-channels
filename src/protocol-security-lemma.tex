@@ -70,10 +70,10 @@
   and a new list is added for every new virtual layer. We also observe that a
   non-negligent party with history $(F, C)$ satisfies the Lemma conditions and
   that the value of the right hand side of the
-  inequality~\ref{lemma:real-balance-security:ineq} is equal to $\sum\limits_{s
-  \in C} \sum\limits_{x \in s} x$, as all inbound and outbound payment values
-  and new channel funding values that appear in the Lemma conditions are
-  recorded in $C$.
+  inequality~(\ref{lemma:real-balance-security:ineq}) is equal to
+  $\sum\limits_{s \in C} \sum\limits_{x \in s} x$, as all inbound and outbound
+  payment values and new channel funding values that appear in the Lemma
+  conditions are recorded in $C$.
 
   Let party $P$ with a particular history. We will inductively prove that $P$
   satisfies the Lemma. The base case is when a channel is opened with
@@ -126,10 +126,11 @@
   it with $\sk{P, R}$, therefore the alternative spending method, $\pk{P,
   \mathrm{out}} + (t + s)$, is the only one that will be spendable if $C_{P, 0}$
   is included in \ledger, thus contributing $g$ to the sum of outputs that
-  contribute to inequality~\ref{lemma:real-balance-security:ineq}. Likewise, if
-  $C_{\bar{P}, 0}$ is included in \ledger, it will contribute at least one ($g$,
-  $\pk{P, \mathrm{out}}$) output to this inequality, as $C_{\bar{P}, 0}$ has a
-  ($g$, $\pk{P, \mathrm{out}}$) output (Fig.~\ref{code:ln:exchange-open-sigs},
+  contribute to inequality~(\ref{lemma:real-balance-security:ineq}). Likewise,
+  if $C_{\bar{P}, 0}$ is included in \ledger, it will contribute at least one
+  ($g$, $\pk{P, \mathrm{out}}$) output to this inequality, as $C_{\bar{P}, 0}$
+  has a ($g$, $\pk{P, \mathrm{out}}$) output
+  (Fig.~\ref{code:ln:exchange-open-sigs},
   l.~\ref{code:ln:exchange-open-sigs:a-tx}
   or~\ref{code:ln:exchange-open-sigs:b-tx}). Additionally, if $P$ receives
   (\textsc{close}) by \environment while $H = ([], [g])$, it attempts to publish
@@ -141,7 +142,7 @@
 
   Let $P$ with history $H = (F, C)$. The induction hypothesis is that the Lemma
   holds for $P$. Let $c_P$ the sum in the right hand side of
-  inequality~\ref{lemma:real-balance-security:ineq}. In order to perform the
+  inequality~(\ref{lemma:real-balance-security:ineq}). In order to perform the
   induction step, assume that $P$ is in the \textsc{open} state. We will prove
   all the following (the facts to be proven are shown with emphasis for
   clarity):
