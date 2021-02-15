@@ -360,7 +360,7 @@
     \begin{algorithmic}[1]
       \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, F}'$ and
       $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
-      respectively, reducing the input and $P$'s output by $c_{\mathrm{guest}}$
+      respectively, reducing the input and $P$'s output by $c_{\mathrm{virt}}$
       \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1})$
       \Comment{kept by $\bar{P}$}
       \State send (\textsc{update forward}, $\mathrm{sig}_{P, C, i+1}$) to
@@ -368,19 +368,19 @@
       in local and remote code}
       \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P,
       F}'$ and $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
-      respectively, reducing the input and $P$'s output by $c_{\mathrm{guest}}$}
+      respectively, reducing the input and $P$'s output by $c_{\mathrm{virt}}$}
       \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
       $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}'$) = True}
       \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and
       $\pk{P, F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively,
-      reducing the input and $P$'s output by $c_{\mathrm{guest}}$}
+      reducing the input and $P$'s output by $c_{\mathrm{virt}}$}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
       \textsc{sign}(C_{P, i+1}, sk_{\bar{P}, F}')$} \Comment{kept by $P$}
       \State \remotecode{reply (\textsc{update back}, $\mathrm{sig}_{\bar{P}, C,
       i+1}$)}
       \State $C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and $\pk{P,
       F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively, reducing
-      the input and $P$'s output by $c_{\mathrm{guest}}$
+      the input and $P$'s output by $c_{\mathrm{virt}}$
       \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
       i+1}$, $\pk{\bar{P}, F}'$) = True
     \end{algorithmic}
@@ -392,17 +392,17 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln} -- virtualise start and end}
     \begin{algorithmic}[1]
-      \State On input (\textsc{fund me}, $c_{\mathrm{guest}}$, \texttt{fundee},
+      \State On input (\textsc{fund me}, $c_{\mathrm{virt}}$, \texttt{fundee},
       \texttt{hops}, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
       \Indent
         \State ensure $\itistate = \textsc{open}$
-        \State ensure $c_P - \texttt{locked}_P \geq c_{\mathrm{guest}}$
+        \State ensure $c_P - \texttt{locked}_P \geq c_{\mathrm{virt}}$
         \State $\itistate \gets \textsc{virtualising}$
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
         \label{code:ln:virtualise:start-end:define}
         \State send (\textsc{virtualising}, $\texttt{host}_P'$, $\pk{P, F}'$,
-        \texttt{hops}, \texttt{fundee}, $c_{\mathrm{guest}}$, $2$,
+        \texttt{hops}, \texttt{fundee}, $c_{\mathrm{virt}}$, $2$,
         len(\texttt{hops})) to $\bar{P}$ and expect reply (\textsc{virtualising
         ack}, $\texttt{host}_{\bar{P}}'$, $\pk{\bar{P}, F}'$)
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
@@ -412,7 +412,7 @@
         \State $\itistate \gets \textsc{waiting for revocation}$
         \State input (\textsc{host me}, \texttt{funder}, \texttt{fundee},
         $\texttt{host}_{\bar{P}}'$, $\texttt{host}_P$, $c_P$, $c_{\bar{P}}$,
-        $c_{\mathrm{guest}}$, $\pk{A, V}$, $\pk{B, V}$, ($\sk{P, F}'$, $\pk{P,
+        $c_{\mathrm{virt}}$, $\pk{A, V}$, $\pk{B, V}$, ($\sk{P, F}'$, $\pk{P,
         F}'$), ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{\bar{P},
         F}'$, $\pk{P, \mathrm{out}}$, len(\texttt{hops})) to $\texttt{host}_P'$
         \label{code:ln:virtualise:start-end:host-me}
@@ -436,7 +436,7 @@
           \label{code:ln:virtualise:start-end:helper-output-funded}
         \ElsIf{we have received input \textsc{fund me} just before we moved to
         the \textsc{virtualising} state} \Comment{we are the first hop}
-          \State $c_P \gets c_P - c_{\mathrm{guest}}$
+          \State $c_P \gets c_P - c_{\mathrm{virt}}$
           \label{code:ln:virtualise:start-end:reduce-coins}
           \State output (\textsc{funded}, $\texttt{host}_P$, $\texttt{layer}$,
           $t_P$) to \texttt{funder} \Comment{do not expect reply by
@@ -456,7 +456,7 @@
   \begin{processbox}{\textsc{ln} -- virtualise hops}
     \begin{algorithmic}[1]
       \State On (\textsc{virtualising}, $\texttt{host}_{\bar{P}}'$,
-      $\pk{\bar{P}, F}'$, \texttt{hops}, \texttt{fundee}, $c_{\mathrm{guest}}$,
+      $\pk{\bar{P}, F}'$, \texttt{hops}, \texttt{fundee}, $c_{\mathrm{virt}}$,
       $i$, $n$) by $\bar{P}$:
       \Indent
         \State ensure $\itistate = \textsc{open}$
@@ -467,14 +467,14 @@
         \State $\itistate \gets \textsc{virtualising}$
         \State $\texttt{locked}_{\bar{P}} \gets \texttt{locked}_{\bar{P}} + c$
         \Comment{if $\bar{P}$ is hosting the \texttt{funder}, $\bar{P}$ will
-        transfer $c_{\mathrm{guest}}$ coins instead of locking them, but the end
+        transfer $c_{\mathrm{virt}}$ coins instead of locking them, but the end
         result is the same}
         \State $(\sk{P, F}', \pk{P, F}') \gets \textsc{keyGen}()$
         \If{$\mathrm{len}(\texttt{hops}) > 1$} \Comment{we are not the last hop}
           \State define new \textsc{virt} ITI $\texttt{host}_P'$
           \State input (\textsc{virtualising}, $\texttt{host}_P'$, ($\sk{P,
           F}'$, $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{P, \mathrm{out}}$,
-          \texttt{hops}[1:], \texttt{fundee}, $c_{\mathrm{guest}}$,
+          \texttt{hops}[1:], \texttt{fundee}, $c_{\mathrm{virt}}$,
           $c_{\bar{P}}$, $c_P$, $i$, $n$) to \texttt{hops}[1].\texttt{left} and
           expect reply (\textsc{virtualising ack}, \texttt{host\_sibling},
           $\pk{\mathrm{sib}, \bar{P}, F}$)
@@ -482,14 +482,14 @@
           $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
           $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
           ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$,
-          $c_P$, $c_{\bar{P}}$, $c_{\mathrm{guest}}$, $i$, $t_P$, ``left'', $n$)
+          $c_P$, $c_{\bar{P}}$, $c_{\mathrm{virt}}$, $i$, $t_P$, ``left'', $n$)
           to $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \Else \: \Comment{we are the last hop}
           \State input (\textsc{init}, $\texttt{host}_P$,
           $\texttt{host}_{\bar{P}}'$, \texttt{fundee}=\texttt{fundee}, ($\sk{P,
           F}'$, $\pk{P, F}'$), $\pk{\bar{P}, F}'$, ($\sk{P, F}$, $\pk{P, F}$),
           $\pk{\bar{P}, F}$, $\pk{P, \mathrm{out}}$, $c_P$, $c_{\bar{P}}$,
-          $c_{\mathrm{guest}}$, $t_P$, $i$, ``left'', $n$) to new \textsc{virt}
+          $c_{\mathrm{virt}}$, $t_P$, $i$, ``left'', $n$) to new \textsc{virt}
           ITI $\texttt{host}_P'$ and expect reply (\textsc{host init ok})
         \EndIf
         \State $\itistate \gets \textsc{waiting for revocation}$
@@ -500,7 +500,7 @@
 
       \State On input (\textsc{virtualising}, \texttt{host\_sibling}, ($\sk{P,
       F}'$, $\pk{P, F}'$), $\pk{\mathrm{sib}, \bar{P}, F}$, $\pk{\mathrm{sib},
-      \mathrm{out}}$, \texttt{hops}, \texttt{fundee}, $c_{\mathrm{guest}}$,
+      \mathrm{out}}$, \texttt{hops}, \texttt{fundee}, $c_{\mathrm{virt}}$,
       $c_{\mathrm{sib}, \mathrm{rem}}$, $c_{\mathrm{sib}}$, $i$, $n$) by
       \texttt{sibling}:
       \Indent
@@ -514,7 +514,7 @@
         \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
         \State send (\textsc{virtualising}, $\texttt{host}_P'$, $\pk{P, F}'$,
-        \texttt{hops}, \texttt{fundee}, $c_{\mathrm{guest}}$, $i+1$, $n$) to
+        \texttt{hops}, \texttt{fundee}, $c_{\mathrm{virt}}$, $i+1$, $n$) to
         \texttt{hops}[0].\texttt{right} and expect reply (\textsc{virtualising
         ack}, $\texttt{host}_{\bar{P}}'$, $\pk{\bar{P}, F}'$)
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
@@ -524,7 +524,7 @@
         $\texttt{host}_{\bar{P}}'$, \texttt{host\_sibling}, ($\sk{P, F}'$,
         $\pk{P, F}'$), $\pk{\bar{P}, F}'$, $\pk{\mathrm{sib}, \bar{P}, F}$,
         ($\sk{P, F}$, $\pk{P, F}$), $\pk{\bar{P}, F}$, $\pk{\mathrm{sib},
-        \mathrm{out}}$, $c_P$, $c_{\bar{P}}$, $c_{\mathrm{guest}}$, $i$,
+        \mathrm{out}}$, $c_P$, $c_{\bar{P}}$, $c_{\mathrm{virt}}$, $i$,
         ``right'', $n$) to $\texttt{host}_P'$ and expect reply (\textsc{host
         init ok})
         \State $\itistate \gets \textsc{waiting for revocation}$
