@@ -32,6 +32,14 @@
 \end{lemma}
 
 \begin{proof}
+  We first note that, as signature forgeries only happen with negligible
+  probability and only a polynomial number of signatures are verified by honest
+  parties throughout an execution, the event in which any forged signature
+  passes the verification of an honest party or of \ledger happens only with
+  negligible probability. We can therefore ignore this event throughout this
+  proof and simply add a computationally negligible distance between
+  \environment's outputs in the real and the ideal world at the end.
+
   Define the \emph{history} of a channel as $H = (F, C)$, where each of $F, C$
   is a list of lists of integers. A party $P$ which satisfies the Lemma
   conditions has a unique, unambiguously and recursively defined history: If the
@@ -128,9 +136,8 @@
   $C_{P, 0}$ (Fig.~\ref{code:ln:close}, l.~\ref{code:ln:close:submit}), and will
   either succeed or $C_{\bar{P}, 0}$ will be published instead. We therefore
   conclude that in every case \ledger will eventually have a state $\Sigma$ that
-  contains at least one $(g, \pk{P, \mathrm{out}})$ output with overwhelming
-  probability (as a signature forgery may happen only with negligible
-  probability), therefore satisfying the Lemma consequence.
+  contains at least one $(g, \pk{P, \mathrm{out}})$ output, therefore satisfying
+  the Lemma consequence.
 
   Let $P$ with history $H = (F, C)$. The induction hypothesis is that the Lemma
   holds for $P$. Let $c_P$ the sum in the right hand side of
