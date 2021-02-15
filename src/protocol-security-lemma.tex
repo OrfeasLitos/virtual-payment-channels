@@ -39,9 +39,9 @@
   message was equal to \ledger, then $F$ is the empty list, otherwise $F$ is the
   concatenation of the $F$ and $C$ lists of the party that sent
   (\textsc{funded}, $\dots$) to $P$, as they were at the moment the latter
-  message was sent. After initialised, $F$ remains immutable. Observe that both
-  aforementioned messages must have been received before $P$ transitions to the
-  \textsc{open} state.
+  message was sent. After initialised, $F$ remains immutable. Observe that, if
+  $\texttt{hops} \neq \ledger$, both aforementioned messages must have been
+  received before $P$ transitions to the \textsc{open} state.
 
   The list $C$ of party $P$ is initialised to $[[g]]$ when $P$'s $\itistate$
   transitions for the first time to \textsc{open}, where $g = c$ if $P =
