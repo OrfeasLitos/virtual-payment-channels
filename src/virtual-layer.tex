@@ -622,7 +622,7 @@
         $\pk{n-1, \mathrm{fund}, \mathrm{new}}$, $\pk{n, \mathrm{fund},
         \mathrm{new}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
         $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, n-1, n})_{j \in [n]}$,
-        $t_n$)
+        $t_{n-1}$)
       \EndIf
       \Statex
       \State call
@@ -689,13 +689,13 @@
       \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets
       \mathrm{sigs}_{\mathrm{byRight}} + \mathrm{sigs}_{\mathrm{toLeft}}$
       \If{$i = 2$} \Comment{previous hop is \texttt{host\_funder}}
-        \State $\mathrm{TX}_{1, 1}$ $\gets$ \textsc{virt.getEndpointTX}($n$,
+        \State $\mathrm{TX}_{1, 1}$ $\gets$ \textsc{virt.getEndpointTX}($1$,
         $n$, $c_{\mathrm{virt}}$, $c_{1, \mathrm{right}}$, $c_{2,
         \mathrm{left}}$, $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
         $\pk{2, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{1,
         \mathrm{fund}, \mathrm{new}}$, $\pk{2, \mathrm{fund}, \mathrm{new}}$,
         $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
-        \mathrm{virt}}$, $(\pk{j, 2, 1})_{j \in [n]}$, $t_1$)
+        \mathrm{virt}}$, $(\pk{j, 2, 1})_{j \in [n]}$, $t_2$)
       \EndIf
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
@@ -714,7 +714,7 @@
       \mathrm{fund}, \mathrm{old}}$, $\pk{n-1, \mathrm{fund}, \mathrm{new}}$,
       $\pk{n, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
       \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, n-1,
-      n})_{j \in [n]}$, $t_n$)
+      n})_{j \in [n]}$, $t_{n-1}$)
       \label{code:virtual-layer:fundee-sigs:tx}
       \ForAll{$j \in [n-1] \setminus \{1\}$}
         \IfThenElse{$j = 2$}{$m \gets 1$}{$m \gets 2$}
@@ -798,7 +798,7 @@
       \mathrm{fund}, \mathrm{old}}$, $\pk{1, \mathrm{fund}, \mathrm{new}}$,
       $\pk{2, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
       \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, 2,
-      1})_{j \in [n]}$, $t_1$)
+      1})_{j \in [n]}$, $t_2$)
       \label{code:virtual-layer:fundee-sigs:tx}
       \label{code:virtual-layer:funder-sigs:tx-none}
       \State \Return (\textsc{ok})
