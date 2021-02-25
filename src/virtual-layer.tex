@@ -279,17 +279,21 @@
           \Indent
             \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
             \texttt{left\_new\_fund}),
+            \label{code:virtual-layer:mid-txs:initiator:left-new-fund}
             \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
             \texttt{right\_new\_fund}),
             \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
             \State ($c_{\mathrm{virt}}$,
             \Indent
               \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, i}$ else False)
+              \label{code:virtual-layer:mid-txs:initiator:left-all}
               \State $\vee$ (if $(i+1 < n)$ then $\mathit{all}_{i+1, i}$ else
               False)
+              \label{code:virtual-layer:mid-txs:initiator:right-all}
               \State $\vee$ (
               \Indent
                 \State if $(i-1 = 1 \wedge i+1 = n)$ then \texttt{virt\_fund}
+                \label{code:virtual-layer:mid-txs:initiator:i-is-2:n-is-3}
                 \State else if $(i-1 > 1 \wedge i+1 = n)$ then
                 $\texttt{virt\_fund} + t_{i-1}$
                 \State else if $(i-1 = 1 \wedge i+1 < n)$ then
@@ -300,6 +304,7 @@
               \State )
             \EndIndent
             \State )
+            \label{code:virtual-layer:mid-txs:initiator:virt-out}
           \EndIndent
         \EndIndent
 
@@ -309,6 +314,7 @@
             \State inputs:
             \Indent
               \State ($c_{\mathrm{virt}}$, $\mathit{all}_{2, 1}$),
+              \label{code:virtual-layer:mid-txs:i-is-2:extend-interval-left:virt}
               \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
             \EndIndent
             \State outputs:
@@ -357,6 +363,7 @@
             \State inputs:
             \Indent
               \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k}$),
+              \label{code:virtual-layer:mid-txs:extend-interval-left:virt}
               \State ($c_{\mathrm{right}}$, \texttt{right\_old\_fund})
             \EndIndent
             \State outputs:
@@ -398,6 +405,7 @@
             \Indent
               \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
               \texttt{left\_new\_fund}),
+              \label{code:virtual-layer:mid-txs:extend-interval-right:new-fund}
               \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
               \State ($c_{\mathrm{virt}}$,
               \Indent
@@ -430,6 +438,7 @@
             \State inputs:
             \Indent
               \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k_1}$),
+              \label{code:virtual-layer:mid-txs:merge-intervals:left-virt-input}
               \State ($c_{\mathrm{virt}}$, $\mathit{all}_{i, k_2}$)
             \EndIndent
             \State outputs:
@@ -517,8 +526,10 @@
           \State outputs:
           \Indent
             \State $(c_{\mathrm{tot}} - c_{\mathrm{virt}}, \texttt{new\_fund})$,
+            \label{code:virtual-layer:endpoint-txs:new-fund}
             \State $(c_{\mathrm{virt}}, \mathit{all} \vee (\texttt{virt\_fund} +
             t))$
+            \label{code:virtual-layer:endpoint-txs:virt}
           \EndIndent
         \EndIndent
         \State \Return $\mathrm{TX}_1$
@@ -921,12 +932,14 @@
         \State $\mathrm{sigs}_{\mathrm{toRight}} \gets
         \{\textsc{sign}(\mathrm{TX}_{2, 1}, \sk{1, \mathrm{right},
         \mathrm{fund}, \mathrm{old}}, \texttt{ANYPREVOUT})\}$
+        \label{code:virtual-layer:funding-sigs:funder-sign-first}
         \IfThenElse{$2 = n-1$}{$l' \gets n$}{$l' \gets n-1$}
         \ForAll{$k \in \{3, \dots, l'\}$}
           \State add \textsc{sign}($\mathrm{TX}_{2, 2, k}$, $\sk{1,
           \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT})
           to $\mathrm{sigs}_{\mathrm{toRight}}$
         \EndFor
+        \label{code:virtual-layer:funding-sigs:funder-sign-second-end}
         \State call
         \textsc{virt.circulateFundingSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
         of $\bar{P}$ and assign returned value to
@@ -934,6 +947,7 @@
         \State ensure that sig($\mathrm{TX}_{1, 1}$, $\pk{2, \mathrm{left},
         \mathrm{fund}, \mathrm{old}}$) is present in
         $\mathrm{sigs}_{\mathrm{byRight}}$ and store it
+        \label{code:virtual-layer:funding-sigs:funder-check-sig}
         \State \Return (\textsc{ok})
       \ElsIf{$i = n$} \Comment{we are \texttt{host\_fundee}}
         \State ensure sig($\mathrm{TX}_{n, 1}$, $\pk{n-1, \mathrm{right},
@@ -1166,12 +1180,12 @@
         \pk{2, \mathrm{fund}, \mathrm{new}}\}$ spending method with
         expired/non-existent timelock in $\Sigma$ \Comment{new base funding
         output}
-        \label{code:virtual-layer:check-chain-close:funder:output-virt}
+        \label{code:virtual-layer:check-chain-close:funder:output-funder}
         \State ensure that there exists an output with $c_{\mathrm{virt}}$ coins
         and a $2/\{\pk{\mathrm{left}, \mathrm{virt}}, \pk{\mathrm{right},
         \mathrm{virt}}\}$ spending method with expired/non-existent timelock in
         $\Sigma$ \Comment{virtual funding output}
-        \label{code:virtual-layer:check-chain-close:funder:output-funder}
+        \label{code:virtual-layer:check-chain-close:funder:output-virt}
       \ElsIf{$i = n$} \Comment{we are \texttt{host\_fundee}}
         \State ensure that there exists an output with $c_P + c_{\bar{P}} -
         c_{\mathrm{virt}}$ coins and a $2/\{\pk{n-1, \mathrm{fund},
