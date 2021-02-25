@@ -154,8 +154,8 @@
     $\texttt{host}_P$ before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
     \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
-    \sum\limits_{s \in C} \sum\limits_{x \in s} x$}. Furthermore, given that $P$
-    moves to the \textsc{open} state after the (\textsc{fund me}, $\dots$)
+    \sum\limits_{s \in C'} \sum\limits_{x \in s} x$}. Furthermore, given that
+    $P$ moves to the \textsc{open} state after the (\textsc{fund me}, $\dots$)
     message, it also sends (\textsc{funded}, $\dots$) to $R$
     (Fig.~\ref{code:ln:virtualise:start-end},
     l.~\ref{code:ln:virtualise:start-end:funder-funded}). If subsequently the
@@ -230,59 +230,150 @@
   transactions of both $P$ and $\bar{P}$ are invalidated
   (Fig.~\ref{code:ln:methods-for-virt},
   l.~\ref{code:ln:methods-for-virt:revoke-previous} and
-  l.~\ref{code:ln:methods-for-virt:process-remote-revocation} respectively).
-  When $P$ receives (\textsc{close}) by \environment, it inputs (\textsc{close})
-  to $\texttt{host}_P$ (Fig.~\ref{code:ln:close}, l.~\ref{code:ln:close:relay}).
-  If the \texttt{host} of $\texttt{host}_P$ is \ledger, then $\texttt{host}_P$
-  either is able to publish its $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$
-  (since it has necessarily received a valid $\mathrm{sig}_{\mathrm{loc},
-  \mathrm{none}}$ (Fig.~\ref{code:virtual-layer:funding-sigs},
-  l.~\ref{code:virtual-layer:funding-sigs:funder-verify}) by its counterparty
+  l.~\ref{code:ln:methods-for-virt:process-remote-revocation} respectively). We
+  note that the use of the \texttt{ANYPREVOUT} flag in all signatures that
+  correspond to transaction inputs that may spend various different transaction
+  outputs ensures that this is possible, as it avoids tying each input to a
+  specific, predefined output.  When $P$ receives (\textsc{close}) by
+  \environment, it inputs (\textsc{close}) to $\texttt{host}_P$
+  (Fig.~\ref{code:ln:close}, l.~\ref{code:ln:close:relay}).  As per the Lemma
+  conditions, $\texttt{host}_P$ will output (\textsc{closed}). This can only
+  happen only when \ledger contains a suitable output for both $P$'s and $R$'s
+  channel (Fig.~\ref{code:virtual-layer:check-chain-close},
+  and~\ref{code:virtual-layer:check-chain-close:funder:output-funder}
+  ll.~\ref{code:virtual-layer:check-chain-close:funder:output-virt}
+  respectively). If the \texttt{host} of $\texttt{host}_P$ is \ledger, then the
+  funding output $o_{1, 2} = (c_P + c_{\bar{P}}, 2/\{\pk{P, F}, \pk{\bar{P},
+  F}\})$ for the $A_1, A_2$ channel is on-chain and $\texttt{host}_P$ is either
+  able to publish its $\mathrm{TX}_{1, 1}$ (it has necessarily received a valid
+  signature $\mathrm{sig}(\mathrm{TX}_{1, 1}, \pk{\bar{P}, F})$
+  (Fig.~\ref{code:virtual-layer:funding-sigs},
+  l.~\ref{code:virtual-layer:funding-sigs:funder-check-sig}) by its counterparty
   before it moved to the \textsc{open} state for the first time), or the output
-  needed to spend $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ has already been
-  spent. The only other transactions that can spend it are $\mathrm{TX}_{2,
-  \mathrm{none}}$ and $\mathrm{TX}_{2, \mathrm{right}}$, since these are the
-  only transactions that spend the aforementioned output and that
-  $\texttt{host}_P$ has signed (Fig.~\ref{code:virtual-layer:funding-sigs},
-  ll.~\ref{code:virtual-layer:funding-sigs:funder-sign-none}
-  and~\ref{code:virtual-layer:funding-sigs:funder-sign-right}). The output can
-  be also spent by old, revoked commitment transactions, but in that case
-  $\texttt{host}_P$ would not have output (\textsc{closed}); $P$ would have
-  instead detected this triggered by a (\textsc{check chain for closed}) message
-  by \environment (Fig.~\ref{code:ln:poll}) and would have moved to the
+  $(c_P + c_{\bar{P}}, 2/\{\pk{P, F}, \pk{\bar{P}, F}\})$ needed to spend
+  $\mathrm{TX}_{1, 1}$ has already been spent. The only other transactions that
+  can spend it are $\mathrm{TX}_{2, 1}$ and any of $(\mathrm{TX}_{2, 2, k})_{k >
+  2}$, since these are the only transactions that spend the aforementioned
+  output and that $\texttt{host}_P$ has signed with $\sk{P, F}$
+  (Fig.~\ref{code:virtual-layer:funding-sigs},
+  ll.~\ref{code:virtual-layer:funding-sigs:funder-sign-first}-\ref{code:virtual-layer:funding-sigs:funder-sign-second-end}).
+  The output can be also spent by old, revoked commitment transactions, but in
+  that case $\texttt{host}_P$ would not have output (\textsc{closed}); $P$ would
+  have instead detected this triggered by a (\textsc{check chain for closed})
+  message by \environment (Fig.~\ref{code:ln:poll}) and would have moved to the
   \textsc{closed} state on its own accord (lack of such a message by
   \environment would lead $P$ to become \texttt{negligent}, something that
-  cannot happen according to the Lemma conditions). If
-  $\mathrm{TX}_{\mathrm{loc}, \mathrm{none}}$ ends up in \ledger, its
-  \texttt{out} output (Fig.~\ref{code:virtual-layer:endpoint-txs},
-  l.~\ref{code:virtual-layer:edge-txs:funder-out}) carries $c_P + c_{\bar{P}} -
-  f$ coins and can be spent either by a timelocked $\texttt{"3"} \wedge
-  2/\{\pk{P, F}', \pk{\bar{P}, F}'\}$ spending method or by a non-timelocked
-  $\texttt{"1"} \wedge 4/\{\pk{P, F}', \pk{\bar{P}, F}', \pk{R, F}, \pk{\bar{R},
-  F}\}$ spending method. The only transactions with an input having the latter
-  spending method that $\texttt{host}_P$ has signed with $\sk{P, F}'$ are
-  $\mathrm{TX}_{2, \mathrm{left}}$ and $\mathrm{TX}_{2, \mathrm{both}}$
-  (Fig.~\ref{code:virtual-layer:funder-sigs}) and they both have a ($c_P +
-  c_{\bar{P}} - f$, $\texttt{"3"} \wedge 2/\{\pk{P,F}', \pk{\bar{P},F}'\}$)
-  output. Similarly, both $\mathrm{TX}_{2, \mathrm{none}}$ and $\mathrm{TX}_{2,
-  \mathrm{right}}$ have an output with $c_P + c_{\bar{P}} - f$ coins that can be
-  spent either by a timelocked $\texttt{"3"} \wedge 2/\{\pk{P,F}',
-  \pk{\bar{P},F}'\}$ spending method or by a non-timelocked $\texttt{"2"} \wedge
-  4/\{\pk{P, F}', \pk{\bar{P}, F}', \pk{R, F}, \pk{\bar{R}, F}\}$ spending
-  method.  $\texttt{host}_P$ has never signed any transaction that can use the
-  latter spending method, therefore the timelock will eventually expire. To sum
-  up, in all cases a ($c_P + c_{\bar{P}} - f$, $\texttt{"3"} \wedge
-  2/\{\pk{P,F}', \pk{\bar{P},F}'\}$) output will end up in \ledger. This output
-  can be spent either by $C_{P, i}$ or $C_{\bar{P}, i}$.  Both these
-  transactions have a $(c_P - f, \pk{P, \mathrm{out}})$ output. This output of
-  $C_{P, i}$ is timelocked, but the alternative spending method cannot be used
-  as $P$ never signed a transaction that uses it (as it is reserved for
+  cannot happen according to the Lemma conditions). Every transaction among
+  $\mathrm{TX}_{1, 1}$, $\mathrm{TX}_{2, 1}$, $(\mathrm{TX}_{2, 2, k})_{k > 2}$
+  has a ($c_P + c_{\bar{P}} - f$, $2/\{\pk{P, F}', \pk{\bar{P}, F}'\}$) output
+  (Fig.~\ref{code:virtual-layer:endpoint-txs},
+  l.~\ref{code:virtual-layer:endpoint-txs:new-fund} and
+  Fig.~\ref{code:virtual-layer:mid-txs},
+  ll.~\ref{code:virtual-layer:mid-txs:initiator:left-new-fund}
+  and~\ref{code:virtual-layer:mid-txs:extend-interval-right:new-fund}) which
+  will end up in \ledger{} -- call this output $o_P$. We will prove that at most
+  $\sum\limits_{i=2}^{n-1}(t_i + p + s - 1)$ blocks after (\textsc{close}) is
+  received by $P$, an output $o_R$ with $c_{\mathrm{virt}}$ coins and a
+  $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ spending condition without or with an
+  expired timelock will be included in \ledger. In case party $A_2$ is idle,
+  then $o_{1, 2}$ is consumed by $\mathrm{TX}_{1, 1}$ and the timelock on its
+  virtual output expires, therefore the required output $o_R$ is on-chain.  In
+  case $A_2$ is active, exactly one of $\mathrm{TX}_{2, 1}$, $(\mathrm{TX}_{2,
+  2, k})_{k > 2}$ or $(\mathrm{TX}_{2, 3, 1, k})_{k > 2}$ is a descendant of
+  $o_{1, 2}$; if the transaction belongs to one of the two last transaction
+  groups then necessarily $\mathrm{TX}_{1, 1}$ is on-chain in some block height
+  $h$ and given the timelock on the virtual output of $\mathrm{TX}_{1, 1}$,
+  $A_2$'s transaction can be at most at block height $h + t_2 + p + s - 1$. If
+  $n=3$ or $k=n-1$, then $A_2$'s unique transaction has the required output
+  $o_R$ (without a timelock). The rest of the cases are covered by the following
+  sequence of events:
+
+  \begin{center}
+    \begin{notitlebox}{Closing sequence}
+      \begin{algorithmic}[1]
+        \State $\texttt{maxDel} \gets t_2 + p + s - 1$ \Comment{$A_2$ is active
+        and the virtual output of $\mathrm{TX}_{1, 1}$ has a timelock of $t_2$}
+        \State $i \gets 3$
+        \State \textbf{loop}
+        \Indent
+          \If{$A_i$ is idle}
+            \State The timelock on the virtual output of the transaction
+            published by $A_{i-1}$ expires and therefore the required $o_R$ is
+            on-chain
+          \Else \: \Comment{$A_i$ publishes a transaction that is a descendant
+          of $o_{1, 2}$}
+            \State $\texttt{maxDel} \gets \texttt{maxDel} + t_i + p + s - 1$
+            \State The published transaction can be of the form $\mathrm{TX}_{i,
+            2, 2}$ or $(\mathrm{TX}_{i, 3, 2, k})_{k > i}$ as it spends the
+            virtual output which is encumbered with a public key controlled by
+            $R$ and $R$ has only signed these transactions
+            \If{$i = n-1$ or $k \geq n-1$} \Comment{The interval contains all
+            intermediaries}
+              \State The virtual output of the transaction is not timelocked and
+              has only a $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ spending method,
+              therefore the required $o_R$ is on-chain
+            \Else \: \Comment{At least one intermediary is not in the interval}
+              \IfThenElse{the transaction is $\mathrm{TX}_{i, 3, 2, k}$}{$i
+              \gets k$}{$i \gets i+1$}
+            \EndIf
+          \EndIf
+        \EndIndent
+        \State \textbf{end loop}
+        \State \Comment{$\texttt{maxDel} \leq \sum\limits_{i=2}^{n-1}(t_i + p +
+        s - 1)$}
+      \end{algorithmic}
+    \end{notitlebox}
+    \captionof{figure}{}
+    \label{code:settling-process}
+  \end{center} \ \\
+
+  In every case $o_P$ and $o_R$ end up on-chain in at most $s$ and
+  $\sum\limits_{i=2}^{n-1}(t_i + p + s - 1)$ blocks respectively from the moment
+  (\textsc{close}) is received.
+
+%  Call $n$ the number of base channels used for the virtual channel and
+%  the following transactions ``virtual transactions'' collectively. $\forall i
+%  \in [n]$, ``initiator'' $\mathrm{TX}_{i, 1}$ has an ``out-interval'' equal to
+%  $\{i\}$. $\forall i \in \{2, \dots, n-1\}$, ``extend-interval''
+%  $\mathrm{TX}_{i, 2, k}$ has an ``in-interval'' equal to $\{\min{(i+1, k)},
+%  \dots, \max{(i-1, k)}\}$ and an ``out-interval'' equal to $\{\min{(i, k)},
+%  \dots, \max{(i, k)}\}$. $\forall i \in [n]$ ``merge-intervals''
+%  $\mathrm{TX}_{i, 3, k_1, k_2}$ has two ``in-intervals'' equal to $\{k_1,
+%  \dots, i-1\}$ and $\{i+1, \dots, k_2\}$ respectively, and an ``out-interval''
+%  equal to $\{k_1, \dots, k_2\}$. Observe that a party cannot add any other
+%  party but itself to an interval, that if it extends a single already existing
+%  interval (with a merge-interval transaction), it can only extend an iterval
+%  that ends just before or just after $i$ and that if it merges two intervals
+%  (with a merge-interval transaction), $i$ has to be the only missing link for
+%  the two intervals to become one uninterrupted interval. Furthermore all
+%  virtual transactions add the publishing party to the interval. Given that, if
+%  all players are honest, all funding and interval-carrying (i.e.
+%  ``\emph{all}'') outputs are unique and that for an intermediary to add itself
+%  to a preexisting interval to its left/right it must be the case that its
+%  funding output to its left/right respectively has been already spent, the only
+%  way for a party that is implicated in a virtual channel (either as
+%  intermediary or as endpoint) to publish more than one virtual transaction is
+%  if a malicious party has published a suitable copy of a funding or
+%  interval-carrying output (at the malicious party's own expense). By inspection
+%  of the virtual transactions, we deduce that no honest party stands to lose
+%  any funds if such copies are introduced. Indeed, an intermediary that
+%  publishes a virtual transaction immediately gains $c_{\mathrm{virt}}$ coins,
+%  generates a new base funding output for each old base funding output it
+%  consumed, where the left party owns $c_{\mathrm{virt}}$ coins less than in the
+%  old base output. If the latter party has already made its move, that means
+%  that 
+
+  The output $o_P$ an be spent either by $C_{P, i}$ or $C_{\bar{P}, i}$.  Both
+  these transactions have a $(c_P - f, \pk{P, \mathrm{out}})$ output. This
+  output of $C_{P, i}$ is timelocked, but the alternative spending method cannot
+  be used as $P$ never signed a transaction that uses it (as it is reserved for
   revocation, which has not taken place yet in this virtualisation layer).  By
   the induction hypothesis, before the funding procedure started $P$ could close
   the channel for an ($c_P$, $\pk{P, \mathrm{out}}$) output. We have now proven
   that if $P$ completes the funding of a new channel and it has $F = []$, then
   it can close its channel for a ($c_P - f$, $\pk{P, \mathrm{out}}$) output.
-  Regarding the case that $F \neq []$, this means that before the funding
+  \TODO{decide if we can express this next given by the induction in a simpler
+  way} Regarding the case that $F \neq []$, this means that before the funding
   procedure started $\texttt{host}_P \neq \ledger$. By the inductive hypothesis,
   $P$ could then close the channel for an ($c_P$, $\pk{P, \mathrm{out}}$)
   output. After the funding procedure is complete, the new $\texttt{host}_P$
