@@ -174,7 +174,7 @@
     before any further change to its history, then \emph{eventually $P$'s
     \ledger state will contain $h$ $(c_i, \pk{P, \mathrm{out}})$ transaction
     outputs such that $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C}
-    \sum\limits_{i \in s} i$}. Furthermore, given that $P$ moves to the
+    \sum\limits_{x \in s} x$}. Furthermore, given that $P$ moves to the
     \textsc{open} state after the (\textsc{virtualise}, $\dots$) message and in
     case it sends (\textsc{funded}, $\dots$) to some party $R$
     (Fig.~\ref{code:ln:virtualise:start-end},
@@ -197,7 +197,7 @@
     equivalently $F \neq []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
     \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
-    \sum\limits_{s \in C} \sum\limits_{i \in s} i$}.
+    \sum\limits_{s \in C} \sum\limits_{x \in s} x$}.
     \item If $P$ receives (\textsc{get paid}, $e$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $e$ appended to the last list of $C$) and finally
@@ -206,7 +206,7 @@
     equivalently $F = []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
     \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
-    \sum\limits_{s \in C} \sum\limits_{i \in s} i$}.
+    \sum\limits_{s \in C} \sum\limits_{x \in s} x$}.
   \end{itemize}
 
   By the induction hypothesis, before the funding procedure started $P$ could
