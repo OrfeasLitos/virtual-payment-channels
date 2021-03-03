@@ -153,11 +153,12 @@
     finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
-    \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
-    \sum\limits_{s \in C'} \sum\limits_{x \in s} x$}. Furthermore, given that
-    $P$ moves to the \textsc{open} state after the (\textsc{fund me}, $\dots$)
-    message, it also sends (\textsc{funded}, $\dots$) to $R$
-    (Fig.~\ref{code:ln:virtualise:start-end},
+    \mathrm{out}})$ transaction outputs that are descendants of an output with
+    spending method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that
+    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C'} \sum\limits_{x \in s}
+    x$}. Furthermore, given that $P$ moves to the \textsc{open} state after the
+    (\textsc{fund me}, $\dots$) message, it also sends (\textsc{funded},
+    $\dots$) to $R$ (Fig.~\ref{code:ln:virtualise:start-end},
     l.~\ref{code:ln:virtualise:start-end:funder-funded}). If subsequently the
     state of $R$ transitions to \textsc{open} (therefore obtaining history
     $(F_R, C_R)$ where $F_R = F + C$ and $C_R = [[f]]$), and finally receives
@@ -165,18 +166,21 @@
     ($\texttt{host}_R = \texttt{host}_P$ -- Fig.~\ref{code:ln:bob},
     l.~\ref{code:ln:bob:host}) before any further change to its history, then
     \emph{eventually $R$'s \ledger state will contain $k$ $(c^R_i, \pk{R,
-    \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^k c^R_i
-    \geq \sum\limits_{s \in C_R} \sum\limits_{x \in s} x$}.
+    \mathrm{out}})$ transaction outputs that are descendants of an output with
+    spending method $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ such that
+    $\sum\limits_{i=1}^k c^R_i \geq \sum\limits_{s \in C_R} \sum\limits_{x \in
+    s} x$}.
     \item If $P$ receives (\textsc{virtualising}, $\dots$) by $\bar{P}$,
     subsequently transitions back to \textsc{open} (therefore moving to history
     $(F, C')$ where $C' = C + [0]$) and finally receives \textsc{close} by
     \environment and (\textsc{closed}) by $\texttt{host}_P$ before any further
     change to its history, then \emph{eventually $P$'s \ledger state will
-    contain $h$ $(c_i, \pk{P, \mathrm{out}})$ transaction outputs such that
-    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{x \in s}
-    x$}. Furthermore, given that $P$ moves to the \textsc{open} state after the
-    (\textsc{virtualising}, $\dots$) message and in case it sends
-    (\textsc{funded}, $\dots$) to some party $R$
+    contain $h$ $(c_i, \pk{P, \mathrm{out}})$ transaction outputs that are
+    descendants of an output with spending method $2/\{\pk{P, F}, \pk{\bar{P},
+    F}\}$ such that $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C}
+    \sum\limits_{x \in s} x$}. Furthermore, given that $P$ moves to the
+    \textsc{open} state after the (\textsc{virtualising}, $\dots$) message and
+    in case it sends (\textsc{funded}, $\dots$) to some party $R$
     (Fig.~\ref{code:ln:virtualise:start-end},
     l.~\ref{code:ln:virtualise:start-end:helper-output-funded}), the latter
     party is the (local, trusted) \texttt{fundee} of a new virtual channel. If
@@ -195,9 +199,8 @@
     receives \textsc{close} by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
     equivalently $F \neq []$) before any further change to its history, then
-    \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
-    \mathrm{out}})$ transaction outputs such that $\sum\limits_{i=1}^h c_i \geq
-    \sum\limits_{s \in C} \sum\limits_{x \in s} x$}.
+    \emph{eventually $P$'s \ledger state will contain an output with a
+    $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ spending method}.
     \item If $P$ receives (\textsc{get paid}, $e$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $e$ appended to the last list of $C$) and finally
@@ -210,15 +213,15 @@
   \end{itemize}
 
   By the induction hypothesis, before the funding procedure started $P$ could
-  close the channel and end up with a ($c_P$, $\pk{P, \mathrm{out}}$) output
-  on-chain. When $P$ is in the \textsc{open} state and receives (\textsc{fund
-  me}, $f$, $\dots$), it can only move again to the \textsc{open} state after
-  doing the following state transitions: \textsc{open} $\rightarrow$
-  \textsc{virtualising} $\rightarrow$ \textsc{waiting for revocation}
-  $\rightarrow$ \textsc{waiting for inbound revocation} $\rightarrow$
-  \textsc{waiting for hosts ready} $\rightarrow$ \textsc{open}. During this
-  sequence of events, a new $\texttt{host}_P$ is defined
-  (Fig.~\ref{code:ln:virtualise:start-end},
+  close the channel and end up with on-chain transaction outputs exclusively
+  spendable by $\pk{P, \mathrm{out}}$ with a sum value of $c_P$. When $P$ is in
+  the \textsc{open} state and receives (\textsc{fund me}, $f$, $\dots$), it can
+  only move again to the \textsc{open} state after doing the following state
+  transitions: \textsc{open} $\rightarrow$ \textsc{virtualising} $\rightarrow$
+  \textsc{waiting for revocation} $\rightarrow$ \textsc{waiting for inbound
+  revocation} $\rightarrow$ \textsc{waiting for hosts ready} $\rightarrow$
+  \textsc{open}. During this sequence of events, a new $\texttt{host}_P$ is
+  defined (Fig.~\ref{code:ln:virtualise:start-end},
   l.~\ref{code:ln:virtualise:start-end:define}), new commitment transactions are
   negotiated with $\bar{P}$ (Fig.~\ref{code:ln:virtualise:start-end},
   l.~\ref{code:ln:virtualise:start-end:virtual-update}), control of the old
@@ -237,7 +240,7 @@
   note that the use of the \texttt{ANYPREVOUT} flag in all signatures that
   correspond to transaction inputs that may spend various different transaction
   outputs ensures that this is possible, as it avoids tying each input to a
-  specific, predefined output.  When $P$ receives (\textsc{close}) by
+  specific, predefined output. When $P$ receives (\textsc{close}) by
   \environment, it inputs (\textsc{close}) to $\texttt{host}_P$
   (Fig.~\ref{code:ln:close}, l.~\ref{code:ln:close:relay}). As per the Lemma
   conditions, $\texttt{host}_P$ will output (\textsc{closed}). This can only
@@ -354,25 +357,28 @@
   that uses it (as it is reserved for revocation, which has not taken place yet
   in this virtualisation layer). We have now proven that if $P$ completes the
   funding of a new channel then it can close its channel for a ($c_P - f$,
-  $\pk{P, \mathrm{out}}$) output, i.e. the first claim of the first bullet.
+  $\pk{P, \mathrm{out}}$) output that is a descendant of an output with spending
+  method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$, i.e. the first claim of the first
+  bullet.
 
   We will now prove that the newly funded party $R$ can close its channel
   securely. After $R$ receives (\textsc{funded}, $\texttt{host}_P$, $\dots$) by
   $P$ and before moving to the \textsc{open} state, it receives
-  $\mathrm{sig}_{\bar{R}, C, 0}$ which is a valid signature on $C_{R, 0}$ by
-  $\sk{\bar{R}, F}$ and sends $\mathrm{sig}_{R, C, 0}$ which is a valid
-  signature on $C_{\bar{R}, 0}$ by $\sk{R, F}$. Both these transactions spend
-  $o_R$. As we showed before, if $R$ receives (\textsc{close}) by \environment
-  then $o_R$ eventually ends up on-chain. After receiving (\textsc{closed}) from
-  $\texttt{host}_P$, $R$ attempts to add $C_{R, 0}$ to \ledger, which may only
-  fail if $C_{\bar{R}, 0}$ ends up on-chain instead.  Similar to the case of
-  $P$, both these transactions have an $(f, \pk{R, \mathrm{out}})$ output. This
-  output of $C_{R, 0}$ is timelocked, but the alternative spending method cannot
-  be used as $R$ never signed a transaction that uses it (as it is reserved for
-  revocation, which has not taken place yet) so the timelock will expire and the
-  desired spending method will be available. We have now proven that if $R$'s
-  channel is funded to completion then it can close its channel for a ($f$,
-  $\pk{R, \mathrm{out}}$) output. We have therefore proven the first bullet.
+  $\mathrm{sig}_{\bar{R}, C, 0} =$ sig($C_{R, 0}$, $\pk{\bar{R}, F}$) and sends
+  $\mathrm{sig}_{R, C, 0} =$ sig($C_{\bar{R}, 0}$, $\pk{R, F}$). Both these
+  transactions spend $o_R$. As we showed before, if $R$ receives
+  (\textsc{close}) by \environment then $o_R$ eventually ends up on-chain. After
+  receiving (\textsc{closed}) from $\texttt{host}_P$, $R$ attempts to add $C_{R,
+  0}$ to \ledger, which may only fail if $C_{\bar{R}, 0}$ ends up on-chain
+  instead.  Similar to the case of $P$, both these transactions have an $(f,
+  \pk{R, \mathrm{out}})$ output. This output of $C_{R, 0}$ is timelocked, but
+  the alternative spending method cannot be used as $R$ never signed a
+  transaction that uses it (as it is reserved for revocation, which has not
+  taken place yet) so the timelock will expire and the desired spending method
+  will be available. We have now proven that if $R$'s channel is funded to
+  completion then it can close its channel for a ($f$, $\pk{R, \mathrm{out}}$)
+  output that is a descendant of $o_R$. We have therefore proven the first
+  bullet.
 
 %  May be needed for naming the txs and the intervals:
 %
