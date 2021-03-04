@@ -296,18 +296,18 @@
   $\sum\limits_{i=2}^{n-1}(t_i + p + s - 1)$ blocks after (\textsc{close}) is
   received by $P$, an output $o_R$ with $c_{\mathrm{virt}}$ coins and a
   $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ spending condition without or with an
-  expired timelock will be included in \ledger. In case party $A_2$ is idle,
+  expired timelock will be included in \ledger. In case party $\bar{P}$ is idle,
   then $o_{1, 2}$ is consumed by $\mathrm{TX}_{1, 1}$ and the timelock on its
-  virtual output expires, therefore the required output $o_R$ is on-chain.  In
-  case $A_2$ is active, exactly one of $\mathrm{TX}_{2, 1}$, $(\mathrm{TX}_{2,
-  2, k})_{k > 2}$ or $(\mathrm{TX}_{2, 3, 1, k})_{k > 2}$ is a descendant of
-  $o_{1, 2}$; if the transaction belongs to one of the two last transaction
-  groups then necessarily $\mathrm{TX}_{1, 1}$ is on-chain in some block height
-  $h$ and given the timelock on the virtual output of $\mathrm{TX}_{1, 1}$,
-  $A_2$'s transaction can be at most at block height $h + t_2 + p + s - 1$. If
-  $n=3$ or $k=n-1$, then $A_2$'s unique transaction has the required output
-  $o_R$ (without a timelock). The rest of the cases are covered by the following
-  sequence of events:
+  virtual output expires, therefore the required output $o_R$ is on-chain. In
+  case $\bar{P}$ is active, exactly one of $\mathrm{TX}_{2, 1}$,
+  $(\mathrm{TX}_{2, 2, k})_{k > 2}$ or $(\mathrm{TX}_{2, 3, 1, k})_{k > 2}$ is a
+  descendant of $o_{1, 2}$; if the transaction belongs to one of the two last
+  transaction groups then necessarily $\mathrm{TX}_{1, 1}$ is on-chain in some
+  block height $h$ and given the timelock on the virtual output of
+  $\mathrm{TX}_{1, 1}$, $\bar{P}$'s transaction can be at most at block height
+  $h + t_2 + p + s - 1$. If $n=3$ or $k=n-1$, then $\bar{P}$'s unique
+  transaction has the required output $o_R$ (without a timelock). The rest of
+  the cases are covered by the following sequence of events:
 
   \begin{center}
     \begin{notitlebox}{Closing sequence}
@@ -315,6 +315,7 @@
         \State $\texttt{maxDel} \gets t_2 + p + s - 1$ \Comment{$A_2$ is active
         and the virtual output of $\mathrm{TX}_{1, 1}$ has a timelock of $t_2$}
         \State $i \gets 3$
+        \label{code:settling-process:init-i}
         \State \textbf{loop}
         \Indent
           \If{$A_i$ is idle}
@@ -336,6 +337,7 @@
             \Else \: \Comment{At least one intermediary is not in the interval}
               \IfThenElse{the transaction is $\mathrm{TX}_{i, 3, 2, k}$}{$i
               \gets k$}{$i \gets i+1$}
+              \label{code:settling-process:increment}
             \EndIf
           \EndIf
         \EndIndent
@@ -414,4 +416,17 @@
 %  old base output. If the latter party has already made its move, that means
 %  that 
 
+  We now move on to the second bullet. In case $P$ is the \texttt{funder} (i.e.
+  $i=n$), then the same arguments as in the previous bullet hold here with
+  ``\textsc{waiting for inbound revocation}'' replaced with ``\textsc{waiting
+  for outbound revocation}'', $o_{1, 2}$ with $o_{n-1, n}$, $\mathrm{TX}_{1, 1}$
+  with $\mathrm{TX}_{n, 1}$, $\mathrm{TX}_{2, 1}$ with $\mathrm{TX}_{n-1, 1}$,
+  $(\mathrm{TX}_{2, 2, k})_{k > 2}$ with $(\mathrm{TX}_{n-1, 2, k})_{k < n-1}$,
+  $(\mathrm{TX}_{2, 3, 1, k})_{k > 2}$ with $(\mathrm{TX}_{n-1, 3, n, k})_{k <
+  n-1}$, $t_2$ with $t_{n-1}$, $\mathrm{TX}_{i, 3, 2, k}$ with $\mathrm{TX}_{i,
+  3, n-1, k}$, $i$ is initialized to $n-2$ in
+  l.~\ref{code:settling-process:init-i} of Fig.~\ref{code:settling-process}, $i$
+  is decremented instead of incremented in
+  l.~\ref{code:settling-process:increment} of the same Figure and $f$ is
+  replaced with $0$. This is so because these two cases are symmetric.
 \end{proof}
