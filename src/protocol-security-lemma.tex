@@ -429,4 +429,55 @@
   is decremented instead of incremented in
   l.~\ref{code:settling-process:increment} of the same Figure and $f$ is
   replaced with $0$. This is so because these two cases are symmetric.
+
+  In case $P$ is not the \texttt{funder} ($1<i<n$), then we only need to prove
+  the first statement of the second bullet. By the induction hypothesis and
+  since \texttt{sibling} is trusted, we know that both $P$'s and
+  \texttt{sibling}'s funding outputs either are or can be eventually put
+  on-chain and that $P$'s funding output has at least $c_P = \sum\limits_{s \in
+  C} \sum\limits_{x \in s} x$ coins. If $P$ is on the ``left'' of its
+  \texttt{sibling} (i.e. there is an untrusted party that sent the
+  (\textsc{virtualising}, $\dots$) message to $P$ which triggered the latter to
+  move to the \textsc{virtualising} state and to send a (\textsc{virtualising},
+  $\dots$) message to its own \texttt{sibling}), the ``left'' funding output
+  $o_{\mathrm{left}}$ (the one held with the untrusted party to the left) can be
+  spent by one of $\mathrm{TX}_{i, 1}$, $(\mathrm{TX}_{i, 2, k})_{k > i}$,
+  $\mathrm{TX}_{i-1, 1}$, or $(\mathrm{TX}_{i-1, 2, k})_{k < i-1}$, as these are
+  the only transactions that $P$ has signed with $\sk{P, F}$. All these
+  transactions have a ($c_P + c_{\bar{P}} - f$, $2/\{\pk{P, F'}, \pk{\bar{P},
+  F'}\}$) output that can in turn be spent by either $C_{P, 0}$ or $C_{\bar{P},
+  0}$, both of which have an output of value $c_P$ and a $\pk{P, \mathrm{out}}$
+  spending method and no other spending method can be used (as $P$ has not
+  signed the ``revocation'' spending method of $C_{P, 0}$).
+
+  In the case that $P$ is to the right of its \texttt{sibling} (i.e. $P$
+  receives by \texttt{sibling} the (\textsc{virtualising}, $\dots$) message that
+  causes $P$'s transition to the \textsc{virutalising} state), the ``right''
+  funding output $o_{\mathrm{right}}$ (the one held with the untrusted party to
+  the right) can be spent by one of $\mathrm{TX}_{i, 1}$, $(\mathrm{TX}_{i, 2,
+  k})_{k < i}$, $\mathrm{TX}_{i+1, 1}$, or $(\mathrm{TX}_{i+1, 2, k})_{k >
+  i+1}$, as these are the only transactions that $P$ has signed with $\sk{P,
+  F}$. All these transactions have a ($c_P + c_{\bar{P}} - f$, $2/\{\pk{P, F'},
+  \pk{\bar{P}, F'}\}$) output that can in turn be spent by either $C_{P, 0}$ or
+  $C_{\bar{P}, 0}$, both of which have an output of value $c_P-f$ and a $\pk{P,
+  \mathrm{out}}$ spending method and no other spending method can be used (as
+  $P$ has not signed the ``revocation'' spending method of $C_{P, 0}$). $P$ can
+  get the remaining $f$ coins as follows: $\mathrm{TX}_{i, 1}$ and all of
+  $(\mathrm{TX}_{i, 2, k})_{k < i}$ already have an ($f$, $\pk{P,
+  \mathrm{out}}$) output. If instead $\mathrm{TX}_{i+1, 1}$ or one of
+  $(\mathrm{TX}_{i+1, 2, k_2})_{k_2 > i+1}$ spends $o_{\mathrm{right}}$, then
+  $P$ will publish $\mathrm{TX}_{i, 2, i+1}$ or $\mathrm{TX}_{i, 2, k_2}$
+  respectively if $o_{\mathrm{left}}$ is unspent, otherwise $o_{\mathrm{left}}$
+  is spent by one of $\mathrm{TX}_{i-1, 1}$ or $(\mathrm{TX}_{i-1, 2, k_1})_{k_1
+  < i-1}$ in which case $P$ will publish one of $\mathrm{TX}_{i, 3, k_1, i+1}$,
+  $\mathrm{TX}_{i, 3, i-1, k_2}$, $\mathrm{TX}_{i, 3, i-1, i+1}$ or
+  $\mathrm{TX}_{i, 3, k_1, k_2}$. In particular, $\mathrm{TX}_{i, 3, k_1, i+1}$
+  is published if $\mathrm{TX}_{i-1, 2, k_1}$ and $\mathrm{TX}_{i+1, 1}$ are
+  on-chain, $\mathrm{TX}_{i, 3, i-1, k_2}$ is published if $\mathrm{TX}_{i-1,
+  1}$ and $\mathrm{TX}_{i+1, 2, k_2}$ are on-chain, $\mathrm{TX}_{i, 3, i-1,
+  i+1}$ is published if $\mathrm{TX}_{i-1, 1}$ and $\mathrm{TX}_{i+1, 1}$ are
+  on-chain, or $\mathrm{TX}_{i, 3, k_1, k_2}$ is published if $\mathrm{TX}_{i-1,
+  2, k_1}$ and $\mathrm{TX}_{i+1, 2, k_2}$ are on-chain.  All these transactions
+  include an ($f$, $\pk{P, \mathrm{out}}$) output. We have therefore covered all
+  cases and proven the second bullet.
 \end{proof}
