@@ -587,13 +587,13 @@
       \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
       i+1}$, $\pk{\bar{P}, F}$) = True
       \label{code:ln:pay:revocations:verify-comm}
-      \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
+      \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$\bar{P}$,
       output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}
       \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
       i}$, $\pk{\bar{P}, R}$) = True
       \label{code:ln:pay:revocations:verify-rev}
-      \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$\bar{P}$,
-      output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
+      \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$P$, output:
+      ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
       \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
       \sk{P, R})$
       \State add $x$ to \texttt{paid\_out}
@@ -601,7 +601,7 @@
       \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
       i + 1$
       \State $\itistate \gets \textsc{open}$
-      \If{$\texttt{host}_P \neq \ledger \wedge$ we have a
+      \If{$\texttt{host}_P \neq \ledger \: \wedge$ we have a
       \texttt{host\_sibling}} \Comment{we are intermediary channel}
         \State input (\textsc{new balance}, $c_P$, $c_{\bar{P}}$) to
         $\texttt{host}_P$
