@@ -540,10 +540,13 @@
     \begin{algorithmic}[1]
       \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$ coins moved from
       $P$'s to $\bar{P}$'s output
+      \label{code:ln:pay:signatures:new-comm}
       \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1},
       \sk{P, F})$ \Comment{kept by $\bar{P}$}
+      \label{code:ln:pay:signatures:sign-new-comm}
       \State $\itistate \gets \textsc{waiting for commitment signed}$
       \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
+      \label{code:ln:pay:signatures:pay}
       \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
       and remote code}
       \State \remotecode{ensure $\itistate = \textsc{waiting to get paid} \wedge
@@ -583,10 +586,12 @@
     \begin{algorithmic}[1]
       \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
       i+1}$, $\pk{\bar{P}, F}$) = True
+      \label{code:ln:pay:revocations:verify-comm}
       \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
       output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}
       \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
       i}$, $\pk{\bar{P}, R}$) = True
+      \label{code:ln:pay:revocations:verify-rev}
       \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$\bar{P}$,
       output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
       \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},

@@ -483,4 +483,33 @@
   2, k_1}$ and $\mathrm{TX}_{i+1, 2, k_2}$ are on-chain.  All these transactions
   include an ($f$, $\pk{P, \mathrm{out}}$) output. We have therefore covered all
   cases and proven the second bullet.
+
+  Regarding now the third bullet, once again the induction hypothesis guarantees
+  that before (\textsc{pay}, $d$) was received, $P$ could close the channel
+  resulting in on-chain outputs exclusively spendable by $\pk{P, \mathrm{out}}$
+  that are descendants of an output with a  $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$
+  spending method that have a sum value of $c_P = \sum\limits_{s \in C}
+  \sum\limits_{x \in s} x$. (Note that $\sum\limits_{s \in C'} \sum\limits_{x
+  \in s} x = d + \sum\limits_{s \in C} \sum\limits_{x \in s} x$.) When $P$
+  receives (\textsc{pay}, $d$) while in the \textsc{open} state, it moves to the
+  \textsc{waiting for commitment signed} state before returning to the
+  \textsc{open} state. It signs (Fig.~\ref{code:ln:pay:signatures},
+  l.~\ref{code:ln:pay:signatures:sign-new-comm}) the new commitment transaction
+  $C_{\bar{P}, i+1}$ in which the counterparty owns $d$ more coins than before
+  that moment (Fig.~\ref{code:ln:pay:signatures},
+  l.~\ref{code:ln:pay:signatures:new-comm}), sends the signature to the
+  counterparty (Fig.~\ref{code:ln:pay:signatures},
+  l.~\ref{code:ln:pay:signatures:pay}) and expects valid signatures on its own
+  updated commitment transaction (Fig.~\ref{code:ln:pay:revocations},
+  l.~\ref{code:ln:pay:revocations:verify-comm}) and the revocation
+  transaction for the old commitment transaction of the counterparty
+  (Fig.~\ref{code:ln:pay:revocations},
+  l.~\ref{code:ln:pay:revocations:verify-rev}). Note that if the counterparty
+  does not respond or if it responds with missing/invalid signatures, either $P$
+  can close the channel with the old commitment transaction $C_{P, i}$ exactly
+  like before the update started (as it has not yet sent the signature for the
+  old revocation transaction), or the counterparty will close the channel either
+  with the new or with the old commitment transaction. In all cases, there is an
+  output with a $\pk{P, \mathrm{out}}$ spending method and no other useable
+  spending method that carries at least $c_P - d$ coins.
 \end{proof}
