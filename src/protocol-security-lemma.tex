@@ -509,7 +509,30 @@
   can close the channel with the old commitment transaction $C_{P, i}$ exactly
   like before the update started (as it has not yet sent the signature for the
   old revocation transaction), or the counterparty will close the channel either
-  with the new or with the old commitment transaction. In all cases, there is an
-  output with a $\pk{P, \mathrm{out}}$ spending method and no other useable
-  spending method that carries at least $c_P - d$ coins.
+  with the new or with the old commitment transaction. In all cases in which
+  validation fails and the channel closes, there is an output with a $\pk{P,
+  \mathrm{out}}$ spending method and no other useable spending method that
+  carries at least $c_P - d$ coins. Only if the verification
+  succeeds does $P$ sign (Fig.~\ref{code:ln:pay:revocations},
+  l.~\ref{code:ln:pay:revocations:sign-rev}) and send
+  (Fig.~\ref{code:ln:pay:revocations},
+  l.~\ref{code:ln:pay:revocations:send-rev}) the counterparty's revocation
+  transaction for $P$'s previous commitment transaction.
+
+  Similarly to previous bullets, if $\mathtt{host}_P \neq \ledger$ the funding
+  output can be put on-chain, otherwise the funding output is already on-chain.
+  In both cases, since the closing procedure continues, one of $C_{P, i+1}$
+  $(C_{\bar{P}, j})_{0 \leq j \leq i+1}$ will end up on-chain. If $C_{\bar{P},
+  j}$ for some $j < i+1$ is on-chain, then $P$ submits $R_{P, j}$ (we discussed
+  how $P$ obtained $R_{P, i}$ and the rest of the cases are covered by
+  induction) and takes the entire value of the channel which is at least $c_P -
+  d$. If $C_{\bar{P}, i+1}$ is on-chain, it has a ($c_P - d$, $\pk{P,
+  \mathrm{out}}$) output. If $C_{P, i+1}$ is on-chain, it has an output of value
+  $c_P - d$, a timelocked $\pk{P, \mathrm{out}}$ spending method and a
+  non-timelocked spending method that needs the signature made with $\sk{P, R}$
+  on $R_{\bar{P}, i+1}$. $P$ however has not generated that signature, therefore
+  this spending method cannot be used and the timelock will expire, therefore in
+  all cases outputs that descend from the funding output, can be spent
+  exclusively by $\pk{P, \mathrm{out}}$ and carry at least $c_P - d$ coins are
+  put on-chain. We have proven the third bullet.
 \end{proof}
