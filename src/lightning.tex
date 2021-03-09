@@ -551,12 +551,6 @@
       and remote code}
       \State \remotecode{ensure $\itistate = \textsc{waiting to get paid} \wedge
       x = y$}
-      \If{\remotecode{$\texttt{host}_{\bar{P}} \neq \ledger \wedge \bar{P}$
-      has a \texttt{host\_sibling}}} \Comment{we are intermediary channel}
-        \State \remotecode{ensure $c_{\bar{P}} + x \leq c_{\bar{P},
-        \mathrm{sib}, \mathrm{rem}} \wedge c_{\bar{P}, \mathrm{sib}} \leq c_P -
-        x$} \Comment{avoid value loss by griefing attack}
-      \EndIf
       \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$
       coins moved from $P$'s to $\bar{P}$'s output}
       \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
@@ -677,6 +671,12 @@
   \begin{processbox}{\textsc{ln} -- On (\textsc{get paid}, $y$):}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_{\bar{P}} \geq y$
+      \If{$\texttt{host}_{P} \neq \ledger \wedge P$ has a
+      \texttt{host\_sibling}} \Comment{we are intermediary channel}
+        \State ensure $c_P + y \leq c_{\mathrm{sib}, \mathrm{rem}} \wedge
+        c_{\mathrm{sib}} \leq c_{\bar{P}} - y$ \Comment{avoid value loss by
+        griefing attack}
+      \EndIf
       \State store $y$
       \State $\itistate \gets \textsc{waiting to get paid}$
       \label{code:ln:get-paid:state}
