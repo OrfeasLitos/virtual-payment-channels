@@ -596,6 +596,7 @@
       ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
       \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
       \sk{P, R})$
+      \label{code:ln:pay:revocations:sign-rev}
       \State add $x$ to \texttt{paid\_out}
       \label{code:ln:pay:revocations:paid-out}
       \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
@@ -619,6 +620,7 @@
       \EndIf
       \State send (\textsc{revoke and ack}, $\mathrm{sig}_{P, R, i}$) to
       $\bar{P}$
+      \label{code:ln:pay:revocations:send-rev}
       \State \remotecode{ensure $\itistate = \textsc{waiting for pay
       revocation}$}
       \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
@@ -677,6 +679,7 @@
       \State ensure $\itistate = \textsc{open} \wedge c_{\bar{P}} \geq y$
       \State store $y$
       \State $\itistate \gets \textsc{waiting to get paid}$
+      \label{code:ln:get-paid:state}
     \end{algorithmic}
   \end{processbox}
   \caption{}
