@@ -542,36 +542,38 @@
   descendants of an output $o_F$ with a $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$
   spending method and have a sum value of $c_P = \sum\limits_{s \in C}
   \sum\limits_{x \in s} x$. (Note that $e + \sum\limits_{s \in C'}
-  \sum\limits_{x \in s} x = \sum\limits_{s \in C} \sum\limits_{x \in s} x$.)
-  When $P$ receives (\textsc{get paid}, $e$) while in the \textsc{open} state,
-  if the balance of the counterparty is enough it moves to the \textsc{waiting
-  to get paid} state (Fig.~\ref{code:ln:get-paid},
-  l.~\ref{code:ln:get-paid:state}). If subsequently it receives a valid
-  signature for $C_{P, i+1}$ (Fig.~\ref{code:ln:pay:signatures},
-  l.~\ref{code:ln:pay:signatures:verify}) which is a commitment transaction that
-  can spend the $o_F$ output and gives to $P$ an additional $e$ coins compared
-  to $C_{P, i}$. Subsequently $P$'s state transitions to \textsc{waiting for pay
-  revocation} and sends signatures for $C_{\bar{P}, i+1}$ and $R_{\bar{P}, i}$
-  to $\bar{P}$. If the $o_F$ output is spent while $P$ is in the latter state,
-  it can be spent by one of $C_{P, i+1}$ or $(C_{\bar{P}, j})_{0 \leq j \leq
-  i+1}$. If it is spent by $C_{P, i+1}$ or $C_{\bar{P}, i+1}$, then these two
-  transactions have a ($c_P + e$, $\pk{P, \mathrm{out}}$) output. (Note that the
-  former is encumbered with a timelock, but the alternative spending method
-  cannot be used as $P$ has not signed $R_{\bar{P}, i+1}$.) If it is spent by
-  $C_{\bar{P}, i}$ then a ($c_P$, $\pk{P, \mathrm{out}}$) output becomes
-  available instead, therefore $P$ can still get the $c_P$ coins that correspond
-  to the previous state. If any of $(C_{\bar{P}, j})_{0 \leq j < i}$ spends
-  $o_F$ then it makes available a $\pk{P, \mathrm{out}}$ output with the coins
-  that $P$ had at state $j$ and additionally $P$ can publish $R_{P, j}$ that
-  spends $\bar{P}$'s output of $C_{\bar{P}, j}$ and obtain the entirety of
-  $\bar{P}$'s coins at state $j$ for a total of $c_P + c_{\bar{P}}$ coins.
-  Therefore in every case $P$ can claim at least $c_P$ coins. In the case that
-  $P$ instead subsequently receives a valid signature to $R_{P, i}$
-  (Fig.~\ref{code:ln:pay:revocations}, l.~\ref{code:ln:pay:revocations:verify})
-  it finally moves to the \textsc{open} state once again. In this state the
-  above analysis of what can happen when $o_F$ holds similarly, with the
-  difference that if $\bar{P}$ spends $o_F$ with $C_{\bar{P}, i}$ now $P$ can
-  publish $R_{P, i}$ which gives $P$ the coins of $\bar{P}$. Therefore with this
-  difference $P$ is now guaranteed to gain at least $c_P + e$ coins upon channel
-  closure. We have therefore proven the fourth bullet.
+  \sum\limits_{x \in s} x = \sum\limits_{s \in C} \sum\limits_{x \in s} x$ and
+  that $o_F$ either is already on-chain or can be eventually put on-chain as we
+  have argued in the previous bullets by the induction hypothesis.) When $P$
+  receives (\textsc{get paid}, $e$) while in the \textsc{open} state, if the
+  balance of the counterparty is enough it moves to the \textsc{waiting to get
+  paid} state (Fig.~\ref{code:ln:get-paid}, l.~\ref{code:ln:get-paid:state}). If
+  subsequently it receives a valid signature for $C_{P, i+1}$
+  (Fig.~\ref{code:ln:pay:signatures}, l.~\ref{code:ln:pay:signatures:verify})
+  which is a commitment transaction that can spend the $o_F$ output and gives to
+  $P$ an additional $e$ coins compared to $C_{P, i}$. Subsequently $P$'s state
+  transitions to \textsc{waiting for pay revocation} and sends signatures for
+  $C_{\bar{P}, i+1}$ and $R_{\bar{P}, i}$ to $\bar{P}$. If the $o_F$ output is
+  spent while $P$ is in the latter state, it can be spent by one of $C_{P, i+1}$
+  or $(C_{\bar{P}, j})_{0 \leq j \leq i+1}$. If it is spent by $C_{P, i+1}$ or
+  $C_{\bar{P}, i+1}$, then these two transactions have a ($c_P + e$, $\pk{P,
+  \mathrm{out}}$) output. (Note that the former is encumbered with a timelock,
+  but the alternative spending method cannot be used as $P$ has not signed
+  $R_{\bar{P}, i+1}$.) If it is spent by $C_{\bar{P}, i}$ then a ($c_P$, $\pk{P,
+  \mathrm{out}}$) output becomes available instead, therefore $P$ can still get
+  the $c_P$ coins that correspond to the previous state. If any of $(C_{\bar{P},
+  j})_{0 \leq j < i}$ spends $o_F$ then it makes available a $\pk{P,
+  \mathrm{out}}$ output with the coins that $P$ had at state $j$ and
+  additionally $P$ can publish $R_{P, j}$ that spends $\bar{P}$'s output of
+  $C_{\bar{P}, j}$ and obtain the entirety of $\bar{P}$'s coins at state $j$ for
+  a total of $c_P + c_{\bar{P}}$ coins.  Therefore in every case $P$ can claim
+  at least $c_P$ coins. In the case that $P$ instead subsequently receives a
+  valid signature to $R_{P, i}$ (Fig.~\ref{code:ln:pay:revocations},
+  l.~\ref{code:ln:pay:revocations:verify}) it finally moves to the \textsc{open}
+  state once again. In this state the above analysis of what can happen when
+  $o_F$ holds similarly, with the difference that if $\bar{P}$ spends $o_F$ with
+  $C_{\bar{P}, i}$ now $P$ can publish $R_{P, i}$ which gives $P$ the coins of
+  $\bar{P}$. Therefore with this difference $P$ is now guaranteed to gain at
+  least $c_P + e$ coins upon channel closure. We have therefore proven the
+  fourth bullet.
 \end{proof}
