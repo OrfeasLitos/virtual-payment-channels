@@ -1,7 +1,8 @@
 \begin{lemma}[No halt]
 \label{lemma:no-halt}
-  In an ideal execution with \fchan and \simulator, the functionality halts with
-  negligible probability in the security parameter (i.e.
+  In an ideal execution with \fchan and \simulator, if the trusted parties of
+  the honest parties of \fchan are themselves honest, then the functionality
+  halts with negligible probability in the security parameter (i.e.
   l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}
   is executed negligibly often).
 \end{lemma}
@@ -131,8 +132,9 @@
   combining these facts with the consequences of the two Lemmas and the check
   that leads \fchan to halt if it fails (Fig.~\ref{code:functionality:close},
   l.~\ref{code:functionality:close:check:if}), we deduce that if the conditions
-  of Lemma~\ref{lemma:ideal-balance} hold, then the functionality halts only
-  with negligible probability.
+  of Lemma~\ref{lemma:ideal-balance} hold for the honest parties of \fchan and
+  their trusted parties, then the functionality halts only with negligible
+  probability.
 
   In the second proof step, we show that if the conditions of
   Lemma~\ref{lemma:ideal-balance} do not hold, then the check of
