@@ -363,8 +363,9 @@
   in this virtualisation layer). We have now proven that if $P$ completes the
   funding of a new channel then it can close its channel for a ($c_P - f$,
   $\pk{P, \mathrm{out}}$) output that is a descendant of an output with spending
-  method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$, i.e. the first claim of the first
-  bullet.
+  method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ and that lower bound of value holds
+  for the duration of the funding procedure, i.e. we have proven the first claim
+  of the first bullet.
 
   We will now prove that the newly funded party $R$ can close its channel
   securely. After $R$ receives (\textsc{funded}, $\texttt{host}_P$, $\dots$) by
@@ -381,10 +382,9 @@
   transaction that uses it (as it is reserved for revocation, which has not
   taken place yet) so the timelock will expire and the desired spending method
   will be available. We have now proven that if $R$'s channel is funded to
-  completion then it can close its channel for a ($f$, $\pk{R, \mathrm{out}}$)
-  output that is a descendant of $o_R$. We have therefore proven the first
-  bullet.
-
+  completion (i.e. $R$ moves to the \textsc{open} state for the first time) then
+  it can close its channel for a ($f$, $\pk{R, \mathrm{out}}$) output that is a
+  descendant of $o_R$. We have therefore proven the first bullet.
 
   We now move on to the second bullet. In case $P$ is the \texttt{funder} (i.e.
   $i=n$), then the same arguments as in the previous bullet hold here with
