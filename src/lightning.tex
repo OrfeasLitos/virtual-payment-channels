@@ -555,6 +555,7 @@
       coins moved from $P$'s to $\bar{P}$'s output}
       \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
       $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}$) = True}
+      \label{code:ln:pay:signatures:verify}
       \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from
       $P$'s to $\bar{P}$'s output}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
@@ -621,6 +622,7 @@
       i}$.outputs.$\bar{P}$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
       \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
       $\mathrm{sig}_{P, R, i}$, $\pk{P, R}$) = True}
+      \label{code:ln:pay:revocations:verify}
       \State \remotecode{add $x$ to \texttt{paid\_in}}
       \label{code:ln:pay:revocations:paid-in}
       \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
