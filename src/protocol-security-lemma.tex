@@ -385,39 +385,6 @@
   output that is a descendant of $o_R$. We have therefore proven the first
   bullet.
 
-%  May be needed for naming the txs and the intervals:
-%
-%  Call $n$ the number of base channels used for the virtual channel and
-%  the following transactions ``virtual transactions'' collectively. $\forall i
-%  \in [n]$, ``initiator'' $\mathrm{TX}_{i, 1}$ has an ``out-interval'' equal to
-%  $\{i\}$. $\forall i \in \{2, \dots, n-1\}$, ``extend-interval''
-%  $\mathrm{TX}_{i, 2, k}$ has an ``in-interval'' equal to $\{\min{(i+1, k)},
-%  \dots, \max{(i-1, k)}\}$ and an ``out-interval'' equal to $\{\min{(i, k)},
-%  \dots, \max{(i, k)}\}$. $\forall i \in [n]$ ``merge-intervals''
-%  $\mathrm{TX}_{i, 3, k_1, k_2}$ has two ``in-intervals'' equal to $\{k_1,
-%  \dots, i-1\}$ and $\{i+1, \dots, k_2\}$ respectively, and an ``out-interval''
-%  equal to $\{k_1, \dots, k_2\}$. Observe that a party cannot add any other
-%  party but itself to an interval, that if it extends a single already existing
-%  interval (with a merge-interval transaction), it can only extend an iterval
-%  that ends just before or just after $i$ and that if it merges two intervals
-%  (with a merge-interval transaction), $i$ has to be the only missing link for
-%  the two intervals to become one uninterrupted interval. Furthermore all
-%  virtual transactions add the publishing party to the interval. Given that, if
-%  all players are honest, all funding and interval-carrying (i.e.
-%  ``\emph{all}'') outputs are unique and that for an intermediary to add itself
-%  to a preexisting interval to its left/right it must be the case that its
-%  funding output to its left/right respectively has been already spent, the only
-%  way for a party that is implicated in a virtual channel (either as
-%  intermediary or as endpoint) to publish more than one virtual transaction is
-%  if a malicious party has published a suitable copy of a funding or
-%  interval-carrying output (at the malicious party's own expense). By inspection
-%  of the virtual transactions, we deduce that no honest party stands to lose
-%  any funds if such copies are introduced. Indeed, an intermediary that
-%  publishes a virtual transaction immediately gains $c_{\mathrm{virt}}$ coins,
-%  generates a new base funding output for each old base funding output it
-%  consumed, where the left party owns $c_{\mathrm{virt}}$ coins less than in the
-%  old base output. If the latter party has already made its move, that means
-%  that 
 
   We now move on to the second bullet. In case $P$ is the \texttt{funder} (i.e.
   $i=n$), then the same arguments as in the previous bullet hold here with
