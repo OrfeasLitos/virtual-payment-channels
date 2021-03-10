@@ -58,7 +58,10 @@
         \mathrm{old}})$
         \State $\pk{\mathrm{myRem}, \texttt{side}', \mathrm{fund}, \mathrm{old}}
         \gets \pk{\mathrm{rem}, \mathrm{fund}, \mathrm{old}}$
-        \State $\pk{i, \mathrm{out}} \gets \pk{\mathrm{loc}, \mathrm{out}}$
+        \If{\texttt{side} = ``left''}
+          \State $\pk{i, \mathrm{out}} \gets \pk{\mathrm{loc}, \mathrm{out}}$
+        \EndIf \: \Comment{otherwise \texttt{sibling} will send $\pk{i,
+        \mathrm{out}}$ in \textsc{keys and coins forward}}
         \State $(c_{i, \texttt{side}}, c_{\texttt{myRem}, \texttt{side}'}, t_{i,
         \texttt{side}}) \gets (c_P, c_{\bar{P}}, t_P)$
         \State $\texttt{last\_poll} \gets \bot$
@@ -77,8 +80,8 @@
       \mathrm{new}}$), ($\sk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
       $\pk{1, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$), $\pk{2,
       \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{2, \mathrm{left},
-      \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{right}, \mathrm{out}}$,
-      $n$) by \texttt{guest}:
+      \mathrm{fund}, \mathrm{new}}$, $\pk{1, \mathrm{out}}$, $n$) by
+      \texttt{guest}:
       \Indent
         \State $\texttt{last\_poll} \gets \bot$
         \State $i \gets 1$
@@ -120,14 +123,15 @@
         \texttt{host\_fundee}}
           \State input (\textsc{keys and coins forward}, (\texttt{left\_data},
           ($\sk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{i,
-          \mathrm{left}, \mathrm{fund}, \mathrm{old}}$), $c_{i, \mathrm{left}}$,
-          $t_{i, \mathrm{left}}$, $(\sk{i, j, k}, \pk{i, j, k})_{j \in \{2,
-          \dots, n-1\}, k \in [n] \setminus \{j\}}$) to \texttt{sibling}
+          \mathrm{left}, \mathrm{fund}, \mathrm{old}}$), $\pk{i, \mathrm{out}}$,
+          $c_{i, \mathrm{left}}$, $t_{i, \mathrm{left}}$, $(\sk{i, j, k}, \pk{i,
+          j, k})_{j \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$) to
+          \texttt{sibling}
           \State \trustedcode{store input as \texttt{left\_data} and parse it as
           ($(\pk{j, \mathrm{fund}, \mathrm{new}})_{j \in [i-1]}$, $(\pk{j,
           \mathrm{left}, \mathrm{fund}, \mathrm{old}})_{j \in \{2, \dots, i\}}$,
           $(\pk{j, \mathrm{right}, \mathrm{fund}, \mathrm{old}})_{j \in [i-1]}$,
-          $(\pk{j, \mathrm{out}})_{j \in [i-1]}$, $(c_{j, \mathrm{left}})_{j \in
+          $(\pk{j, \mathrm{out}})_{j \in [i]}$, $(c_{j, \mathrm{left}})_{j \in
           \{2, \dots, i\}}$, $(c_{j, \mathrm{right}})_{j \in [i-1]}$, $(t_j)_{j
           \in [i-1]}$, $\sk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
           $t_{i, \mathrm{left}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
