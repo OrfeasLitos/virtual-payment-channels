@@ -57,8 +57,8 @@
       \Indent
         \State ensure $\mathit{State}^P \in \{\textsc{open}, \textsc{closed}\}$
         \label{code:functionality:chan:skeleton:base:balance:start}
-        \State output (\textsc{balance}, $c_A, c_B, \texttt{locked}_A,
-        \texttt{locked}_B$)
+        \State output (\textsc{balance}, $c_A, \pk{A, \mathrm{out}}, c_B, \pk{B,
+        \mathrm{out}}, \texttt{locked}_A, \texttt{locked}_B$)
         \label{code:functionality:chan:skeleton:base:balance:end}
       \EndIndent
     \end{algorithmic}
