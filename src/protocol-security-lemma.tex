@@ -19,10 +19,11 @@
     \textsc{open} \textit{State}] $l$ times.
   \end{itemize}
   Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ receives
-  $(\textsc{close})$ by \environment and, if $\texttt{host}_P \neq \ledger$
-  the output of $\texttt{host}_P$ is (\textsc{closed}), then eventually the
-  state obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$
-  $(c_i, \pk{R, \mathrm{out}})$ outputs such that
+  $(\textsc{close})$ by \environment and, if $\texttt{host}_P \neq \ledger$ the
+  output of $\texttt{host}_P$ is (\textsc{closed}), then eventually the state
+  obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$ outputs
+  each of value $c_i$ and that has been spent or is exclusively spendable by
+  $\pk{R, \mathrm{out}})$ such that
   \begin{equation}
   \label{lemma:real-balance-security:ineq}
     \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
@@ -42,6 +43,10 @@
   negligible probability. We can therefore ignore this event throughout this
   proof and simply add a computationally negligible distance between
   \environment's outputs in the real and the ideal world at the end.
+
+  We also note that $\pk{P, \mathrm{out}}$ has been provided by \environment,
+  therefore it can freely use coins spendable by this key. This is why we allow
+  for any of the $\pk{P, \mathrm{out}}$ outputs to have been spent.
 
   Define the \emph{history} of a channel as $H = (F, C)$, where each of $F, C$
   is a list of lists of integers. A party $P$ which satisfies the Lemma
@@ -155,35 +160,37 @@
     state (therefore moving to history $(F, C')$ where $C' = C + [-f]$) and
     finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ before any further change to its history, then
-    \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
-    \mathrm{out}})$ transaction outputs that are descendants of an output with
-    spending method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that
-    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C'} \sum\limits_{x \in s}
-    x$}. Furthermore, given that $P$ moves to the \textsc{open} state after the
-    (\textsc{fund me}, $\dots$) message, it also sends (\textsc{funded},
-    $\dots$) to $R$ (Fig.~\ref{code:ln:virtualise:start-end},
+    \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
+    each of value $c_i$ exclusively spendable or already spent by $\pk{P,
+    \mathrm{out}})$ that are descendants of an output with spending method
+    $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C'} \sum\limits_{x \in s} x$}. Furthermore, given that
+    $P$ moves to the \textsc{open} state after the (\textsc{fund me}, $\dots$)
+    message, it also sends (\textsc{funded}, $\dots$) to $R$
+    (Fig.~\ref{code:ln:virtualise:start-end},
     l.~\ref{code:ln:virtualise:start-end:funder-funded}). If subsequently the
     state of $R$ transitions to \textsc{open} (therefore obtaining history
     $(F_R, C_R)$ where $F_R = F + C$ and $C_R = [[f]]$), and finally receives
     (\textsc{close}) by \environment and (\textsc{closed}) by $\texttt{host}_R$
     ($\texttt{host}_R = \texttt{host}_P$ -- Fig.~\ref{code:ln:bob},
     l.~\ref{code:ln:bob:host}) before any further change to its history, then
-    \emph{eventually $R$'s \ledger state will contain $k$ $(c^R_i, \pk{R,
-    \mathrm{out}})$ transaction outputs that are descendants of an output with
-    spending method $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ such that
-    $\sum\limits_{i=1}^k c^R_i \geq \sum\limits_{s \in C_R} \sum\limits_{x \in
-    s} x$}.
+    \emph{eventually $R$'s \ledger state will contain $k$ transaction outputs
+    each of value $c^R_i$ exclusively spendable or already spent by $\pk{R,
+    \mathrm{out}})$ that are descendants of an output with spending method
+    $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ such that $\sum\limits_{i=1}^k c^R_i \geq
+    \sum\limits_{s \in C_R} \sum\limits_{x \in s} x$}.
     \item If $P$ receives (\textsc{virtualising}, $\dots$) by $\bar{P}$,
     subsequently transitions back to \textsc{open} (therefore moving to history
     $(F, C')$ where $C' = C + [0]$) and finally receives \textsc{close} by
     \environment and (\textsc{closed}) by $\texttt{host}_P$ before any further
     change to its history, then \emph{eventually $P$'s \ledger state will
-    contain $h$ $(c_i, \pk{P, \mathrm{out}})$ transaction outputs that are
-    descendants of an output with spending method $2/\{\pk{P, F}, \pk{\bar{P},
-    F}\}$ such that $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C}
-    \sum\limits_{x \in s} x$}. Furthermore, given that $P$ moves to the
-    \textsc{open} state after the (\textsc{virtualising}, $\dots$) message and
-    in case it sends (\textsc{funded}, $\dots$) to some party $R$
+    contain $h$ transaction outputs each of value $c_i$ exclusively spendable or
+    already spent by $\pk{P, \mathrm{out}})$ that are descendants of an output
+    with spending method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that
+    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{x \in s}
+    x$}. Furthermore, given that $P$ moves to the \textsc{open} state after the
+    (\textsc{virtualising}, $\dots$) message and in case it sends
+    (\textsc{funded}, $\dots$) to some party $R$
     (Fig.~\ref{code:ln:virtualise:start-end},
     l.~\ref{code:ln:virtualise:start-end:helper-output-funded}), the latter
     party is the (local, trusted) \texttt{fundee} of a new virtual channel. If
@@ -200,34 +207,35 @@
     receives \textsc{close} by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
     equivalently $F \neq []$) before any further change to its history, then
-    \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
-    \mathrm{out}})$ transaction outputs that are descendants of an output with a
-    $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ spending method such that
-    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C'} \sum\limits_{x \in s}
-    x$}.
+    \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
+    each of value $c_i$ exclusively spendable or already spent by $\pk{P,
+    \mathrm{out}})$ that are descendants of an output with a $2/\{\pk{P, F},
+    \pk{\bar{P}, F}\}$ spending method such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C'} \sum\limits_{x \in s} x$}.
     \item If $P$ receives (\textsc{get paid}, $e$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $e$ appended to the last list of $C$) and finally
     receives \textsc{close} by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
     equivalently $F = []$) before any further change to its history, then
-    \emph{eventually $P$'s \ledger state will contain $h$ $(c_i, \pk{P,
-    \mathrm{out}})$ transaction outputs that are descendants of an output with a
-    $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ spending method such that
-    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C'} \sum\limits_{x \in s}
-    x$}.
+    \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
+    each of value $c_i$ exclusively spendable or already spent by $\pk{P,
+    \mathrm{out}})$ that are descendants of an output with a $2/\{\pk{P, F},
+    \pk{\bar{P}, F}\}$ spending method such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C'} \sum\limits_{x \in s} x$}.
   \end{itemize}
 
   By the induction hypothesis, before the funding procedure started $P$ could
   close the channel and end up with on-chain transaction outputs exclusively
-  spendable by $\pk{P, \mathrm{out}}$ with a sum value of $c_P$. When $P$ is in
-  the \textsc{open} state and receives (\textsc{fund me}, $f$, $\dots$), it can
-  only move again to the \textsc{open} state after doing the following state
-  transitions: \textsc{open} $\rightarrow$ \textsc{virtualising} $\rightarrow$
-  \textsc{waiting for revocation} $\rightarrow$ \textsc{waiting for inbound
-  revocation} $\rightarrow$ \textsc{waiting for hosts ready} $\rightarrow$
-  \textsc{open}. During this sequence of events, a new $\texttt{host}_P$ is
-  defined (Fig.~\ref{code:ln:virtualise:start-end},
+  spendable or already spent by $\pk{P, \mathrm{out}}$ with a sum value of
+  $c_P$. When $P$ is in the \textsc{open} state and receives (\textsc{fund me},
+  $f$, $\dots$), it can only move again to the \textsc{open} state after doing
+  the following state transitions: \textsc{open} $\rightarrow$
+  \textsc{virtualising} $\rightarrow$ \textsc{waiting for revocation}
+  $\rightarrow$ \textsc{waiting for inbound revocation} $\rightarrow$
+  \textsc{waiting for hosts ready} $\rightarrow$ \textsc{open}. During this
+  sequence of events, a new $\texttt{host}_P$ is defined
+  (Fig.~\ref{code:ln:virtualise:start-end},
   l.~\ref{code:ln:virtualise:start-end:define}), new commitment transactions are
   negotiated with $\bar{P}$ (Fig.~\ref{code:ln:virtualise:start-end},
   l.~\ref{code:ln:virtualise:start-end:virtual-update}), control of the old
@@ -456,14 +464,14 @@
 
   Regarding now the third bullet, once again the induction hypothesis guarantees
   that before (\textsc{pay}, $d$) was received, $P$ could close the channel
-  resulting in on-chain outputs exclusively spendable by $\pk{P, \mathrm{out}}$
-  that are descendants of an output with a  $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$
-  spending method that have a sum value of $c_P = \sum\limits_{s \in C}
-  \sum\limits_{x \in s} x$. (Note that $\sum\limits_{s \in C'} \sum\limits_{x
-  \in s} x = d + \sum\limits_{s \in C} \sum\limits_{x \in s} x$.) When $P$
-  receives (\textsc{pay}, $d$) while in the \textsc{open} state, it moves to the
-  \textsc{waiting for commitment signed} state before returning to the
-  \textsc{open} state. It signs (Fig.~\ref{code:ln:pay:signatures},
+  resulting in on-chain outputs exclusively spendable or already spent by
+  $\pk{P, \mathrm{out}}$ that are descendants of an output with a  $2/\{\pk{P,
+  F}, \pk{\bar{P}, F}\}$ spending method that have a sum value of $c_P =
+  \sum\limits_{s \in C} \sum\limits_{x \in s} x$. (Note that $\sum\limits_{s \in
+  C'} \sum\limits_{x \in s} x = d + \sum\limits_{s \in C} \sum\limits_{x \in s}
+  x$.) When $P$ receives (\textsc{pay}, $d$) while in the \textsc{open} state,
+  it moves to the \textsc{waiting for commitment signed} state before returning
+  to the \textsc{open} state. It signs (Fig.~\ref{code:ln:pay:signatures},
   l.~\ref{code:ln:pay:signatures:sign-new-comm}) the new commitment transaction
   $C_{\bar{P}, i+1}$ in which the counterparty owns $d$ more coins than before
   that moment (Fig.~\ref{code:ln:pay:signatures},
@@ -471,8 +479,8 @@
   counterparty (Fig.~\ref{code:ln:pay:signatures},
   l.~\ref{code:ln:pay:signatures:pay}) and expects valid signatures on its own
   updated commitment transaction (Fig.~\ref{code:ln:pay:revocations},
-  l.~\ref{code:ln:pay:revocations:verify-comm}) and the revocation
-  transaction for the old commitment transaction of the counterparty
+  l.~\ref{code:ln:pay:revocations:verify-comm}) and the revocation transaction
+  for the old commitment transaction of the counterparty
   (Fig.~\ref{code:ln:pay:revocations},
   l.~\ref{code:ln:pay:revocations:verify-rev}). Note that if the counterparty
   does not respond or if it responds with missing/invalid signatures, either $P$
@@ -482,8 +490,8 @@
   with the new or with the old commitment transaction. In all cases in which
   validation fails and the channel closes, there is an output with a $\pk{P,
   \mathrm{out}}$ spending method and no other useable spending method that
-  carries at least $c_P - d$ coins. Only if the verification
-  succeeds does $P$ sign (Fig.~\ref{code:ln:pay:revocations},
+  carries at least $c_P - d$ coins. Only if the verification succeeds does $P$
+  sign (Fig.~\ref{code:ln:pay:revocations},
   l.~\ref{code:ln:pay:revocations:sign-rev}) and send
   (Fig.~\ref{code:ln:pay:revocations},
   l.~\ref{code:ln:pay:revocations:send-rev}) the counterparty's revocation
@@ -508,14 +516,14 @@
 
   For the fourth and last bullet, again by the induction hypothesis, before
   (\textsc{get paid}, $e$) was received $P$ could close the channel resulting in
-  on-chain outputs exclusively spendable by $\pk{P, \mathrm{out}}$ that are
-  descendants of an output $o_F$ with a $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$
-  spending method and have a sum value of $c_P = \sum\limits_{s \in C}
-  \sum\limits_{x \in s} x$. (Note that $e + \sum\limits_{s \in C'}
-  \sum\limits_{x \in s} x = \sum\limits_{s \in C} \sum\limits_{x \in s} x$ and
-  that $o_F$ either is already on-chain or can be eventually put on-chain as we
-  have argued in the previous bullets by the induction hypothesis.) When $P$
-  receives (\textsc{get paid}, $e$) while in the \textsc{open} state, if the
+  on-chain outputs exclusively spendable or already spent by $\pk{P,
+  \mathrm{out}}$ that are descendants of an output $o_F$ with a $2/\{\pk{P, F},
+  \pk{\bar{P}, F}\}$ spending method and have a sum value of $c_P =
+  \sum\limits_{s \in C} \sum\limits_{x \in s} x$. (Note that $e + \sum\limits_{s
+  \in C'} \sum\limits_{x \in s} x = \sum\limits_{s \in C} \sum\limits_{x \in s}
+  x$ and that $o_F$ either is already on-chain or can be eventually put on-chain
+  as we have argued in the previous bullets by the induction hypothesis.) When
+  $P$ receives (\textsc{get paid}, $e$) while in the \textsc{open} state, if the
   balance of the counterparty is enough it moves to the \textsc{waiting to get
   paid} state (Fig.~\ref{code:ln:get-paid}, l.~\ref{code:ln:get-paid:state}). If
   subsequently it receives a valid signature for $C_{P, i+1}$

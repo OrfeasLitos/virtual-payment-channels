@@ -322,7 +322,8 @@
       \Indent
         \State input (\textsc{read}) to \ledger as $P$ and assign ouput to
         $\Sigma$
-        \State $\coins{} \gets$ sum of coins exclusively spendable by $\pk{P}$
+        \State $\coins{} \gets$ sum of values of outputs exclusively spendable
+        or spent by $\pk{P}$
         in $\Sigma$
         \label{code:functionality:close:coins}
         \State $\balance{} \gets \balance{P}$
@@ -330,8 +331,8 @@
           \State input (\textsc{balance}) to $R$ as $P$ and extract
           $\balance{R}$, $\pk{R}$ from response
           \State $\balance{} \gets \balance{} + \balance{R}$
-          \State $\coins{} \gets \coins{} \:+ $ sum of coins exclusively
-          spendable by $\pk{R}$ in $\Sigma$
+          \State $\coins{} \gets \coins{} \:+ $ sum of values of outputs
+          exclusively spendable or spent by $\pk{R}$ in $\Sigma$
         \EndFor
         \If{$\coins{} \geq \balance{}$}
         \label{code:functionality:close:check:if}
