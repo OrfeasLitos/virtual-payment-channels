@@ -1,11 +1,12 @@
 \begin{theorem}[Recursive Virtual Payment Channel Security]
-  The protocol $\textsc{LN}$ realises $\fchan$ with simulator \simulator given a
-  global functionality $\ledger$ and assuming the security of the underlying
-  digital signature. Specifically,
+  The protocol $\textsc{LN}$ realises $\fchan$ given a global functionality
+  $\ledger$ and assuming the security of the underlying digital signature.
+  Specifically,
   \begin{gather*}
-    \forall \text{ PPT } \adversary, \environment \text{ it is }
+    \forall \text{ PPT } \adversary, \exists \text{ PPT } \simulator: \forall
+    \text{ PPT } \environment \text{ it is }
     \textsc{exec}^{\ledger}_{\textsc{LN}, \adversary, \environment} \approx
-    \textsc{exec}^{\fchan, \ledger}_{\simulator_{\adversary}, \environment}
+    \textsc{exec}^{\fchan, \ledger}_{\simulator, \environment}
   \end{gather*}
 \end{theorem}
 
