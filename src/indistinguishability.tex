@@ -1,4 +1,5 @@
 \begin{theorem}[Recursive Virtual Payment Channel Security]
+  \label{theorem:security}
   The protocol $\pchan$ realises $\fchan$ given a global functionality
   $\ledger$ and assuming the security of the underlying digital signature.
   Specifically,
@@ -21,3 +22,27 @@
   halts with negligible probability according to Lemma~\ref{lemma:no-halt},
   therefore the two executions are computationally indistinguishable.
 \end{proof}
+
+We now generalise Theorem~\ref{theorem:security} to prove the
+indistinguishability of multiple \fchan instances from multiple \pchan
+instances, leveraging the definition of the multi-session extension of an ideal
+functionality~\cite{DBLP:conf/crypto/CanettiR03}.
+
+\begin{definition}[Multi-Session Extension of a Protocol]
+  Let protocol $\pi$. Its \emph{multi-session extension} $\hat{\pi}$ has the
+  same code as $\pi$ and has 2 session ids: the ``sub-session id''
+  \emph{ssid} which replaces the session id of $\pi$ and the usual session id
+  \emph{sid} which has no further function apart from what is prescribed by the
+  UC framework.
+\end{definition}
+
+\begin{theorem}[Indistinguishability of multiple sessions]
+  Let \fchanhat the multi-session extension of \fchan and \pchanhat the
+  protocol-multi-session extension of \pchan.
+  \begin{gather*}
+    \forall \text{ PPT } \adversary, \exists \text{
+    PPT } \simulator: \forall \text{ PPT } \environment \text{ it is }
+    \textsc{exec}^{\ledger}_{\pchanhat, \adversary, \environment} \approx
+    \textsc{exec}^{\fchanhat, \ledger}_{\simulator, \environment}
+  \end{gather*}
+\end{theorem}
