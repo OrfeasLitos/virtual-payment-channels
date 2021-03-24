@@ -48,24 +48,13 @@ functionality~\cite{DBLP:conf/crypto/CanettiR03}.
 \end{theorem}
 
 \begin{proof}
-  Let $N \in \mathbb{N}^*$ be the number of distinct \emph{ssid}s that
-  \environment uses in its messages to \pchanhat or \fchanhat instances plus the
-  number of distinct \emph{sid}s that \environment uses in its messages to
-  \pchan or \fchan instances throughout the entire execution. We will prove the
-  theorem by induction in the number of underlying sessions $n$ in \fchanhat.
-
-  For the base case $n=1$, in the real world the instances of \pchanhat behave
-  exactly like \pchan in the real world execution of
-  Theorem~\ref{theorem:security} except for the change of \emph{sid} to
-  \emph{ssid}. Likewise \fchanhat has the exact same interface as its underlying
-  \fchan, except for the change of \emph{sid} to \emph{ssid}. Therefore
-  according to Theorem~\ref{theorem:security}, in the base case the two worlds
-  are indistinguishable.
-
-  The induction hypothesis is that the theorem holds for $n = k$, where $N > k >
-  1$. We will now show that it then also holds for the case $n = k + 1$, thus
-  concluding the proof. Fix an environment $\textsc{exec}_1^{\Pi}$ and
-  $\textsc{exec}_1^{\mathcal{F}}$ the real and ideal world execution
-  respectively when $n = k$, likewise $\textsc{exec}_2^{\Pi}$ and
-  $\textsc{exec}_2^{\mathcal{F}}$ when $n = k + 1$. \TODO{continue}
+  We observe that \fchanhat uses \fchan internally. According to the UC
+  theorem~\cite{uc} and given that \pchan UC-realises \fchan
+  (Theorem~\ref{theorem:security}), $\fchanhat^{\fchan \rightarrow \pchan}$
+  UC-emulates \fchanhat. We now observe that $\fchanhat^{\fchan \rightarrow
+  \pchan}$ behaves identically to a session with \pchanhat protocols, as the
+  former routes each message to the same internal \pchan instance that would
+  handle the same message in the latter case, therefore $\fchanhat^{\fchan
+  \rightarrow \pchan}$ UC-emulates \pchanhat. By the transitivity of
+  UC-emulation, we deduce that \fchanhat UC-emulates \pchanhat.
 \end{proof}
