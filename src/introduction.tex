@@ -1,0 +1,42 @@
+\section{Introduction}
+  The popularity of blockchains in recent years has stretched their
+  performance to its limits. Due to their need for synchronisation their latency
+  is large (e.g. Bitcoin has a latency of 1h~\cite{bitcoin}) and due to the need
+  for massive redundancy their throughput is low (Bitcoin can handle at most 7
+  transactions per second~\cite{scaling}). To circumvent these inherent
+  limitations of blockchains, a prominent solution is to optimistically handle
+  payments off-chain via a Payment Channel Network (PCN) \TODO{cite PCN SoK/many
+  papers} and only use the blockchain as an arbiter in case of dispute.
+
+  The most popular PCN is the Lightning Network (LN)~\cite{lightning}, which
+  works on top of Bitcoin. With this, parties can open a pairwise channel with a
+  single on-chain transaction and subsequently pay each other an unlimited
+  number of times, only limited by the speed of their internet connection. What
+  is more, a party can pay another even if they do not have a direct channel.
+  They can instead leverage a path of channels for a fee and perform a so-called
+  multi-hop payment in an atomic manner. Unfortunately a multi-hop payment needs
+  active cooperation by all intermediaries, therefore increasing the latency and
+  the probability of failure of the payment.
+
+  To mitigate this issue, virtual payment channels have been proposed
+  \TODO{cite}. These enable two parties, say Alice and Bob, to open a payment
+  channel over two preexisting channels, one between Alice and Charlie and
+  another between Charlie and Bob. \TODO{check if recursive channels exist}
+
+  However, due to the limited scripting language of Bitcoin, it has proved
+  challenging to build a secure protocol that allows virtual channels to be
+  opened over more than two underlying channels, \TODO{delete following phrase
+  if the previous's TODO answer is affirmative} as well as to make this
+  construction recursive in the sense that further virtual channels can be
+  opened on top of other virtual channels.
+
+  This work fills this gap by providing a concrete protocol that allows for
+  arbitrarily many channels to be opened on top of arbitrarily long channel
+  paths, where the underlying channels may themselves be virtual. This is
+  achieved using standard Bitcoin script and an elaborate transaction
+  configuration. We formally prove the security of the protocol in the
+  UC~\cite{uc} setting. The construction relies on the \texttt{ANYPREVOUT}
+  signature type, which does not sign the hash of the transaction it spends,
+  therefore allowing for a single pre-signed transaction to spend any output
+  with a suitable script. We conjecture that this primitive cannot be achieved
+  without \texttt{ANYPREVOUT}.
