@@ -22,4 +22,20 @@
   a more efficient optimistic collaborative closing procedure, which however is
   left as future work.
 
-  \TODO{Describe high level opening protocol steps and all transactions}
+  In more detail, in order to open a channel (c.f.~\ref{code:ln:open}) the two
+  counterparties first create new keypairs and exchange the resulting public
+  keys (2 messages), then prepare the underlying base channels if the new
+  channel is virtual (\TODO{count messages}), then exchange signatures for their
+  respective initial commitment transactions (2 messages) and lastly, if the
+  channel is not virtual, the channel funder \TODO{ensure that single-sided
+  funding is already mentioned by now} signs and publishes the funding
+  transaction on-chain.
+
+  Regarding an off-chain payment (a.k.a. channel update --
+  c.f.~\ref{code:ln:pay}), the two channel parties first create the new
+  commitment transactions that carry the updated balance and exchange signatures
+  for them (2 messages), and afterwards create the revocation transactions that
+  spend the commitment transactions of the previous version and exchange their
+  signatures (2 messages).
+
+  \TODO{Describe all transactions}
