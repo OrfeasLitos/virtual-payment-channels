@@ -1,1 +1,23 @@
 \section{High Level Explanation}
+  Conceptually, our protocol is split into three main actions: channel opening,
+  payments and closing. A channel between $P_1$ and $P_n$ may be opened directly
+  on-chain, in which case the two parties follow a modified Lightning opening
+  procedure, or it can be opened on top of a path of preexisting channels
+  established between parties $(P_2, P_3), (P_3, P_4), \dots, (P_{n-3},
+  P_{n-2}), (P_{n-2}, P_{n-1})$. In this case all parties $P_i$ on the path
+  follow our novel protocol as discussed below in more detail, locking funds in
+  their channels as collateral for the virtual channel being opened. Once all
+  intermediaries are committed, $P_1$ and $P_n$ finally create (and keep
+  off-chain) their funding transaction, following a logic similar to Lightning.
+
+  A payment over an established channel follows a procedure heavily inspired by
+  Lightning, but without the use of HTLCs. In particular \TODO{}.
+
+  Finally, the closing procedure can be completed unilaterally and consists of
+  signing and publishing a number of transactions on-chain. As we will discuss
+  later, the exact transactions that a party will publish vary depending on the
+  exact actions of the other on-path parties. Our protocol can be augmented with
+  a more efficient optimistic collaborative closing procedure, which however is
+  left as future work.
+
+  \TODO{Describe high level opening protocol steps and all transactions}
