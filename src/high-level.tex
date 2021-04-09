@@ -24,8 +24,8 @@
   In more detail, to open a channel (c.f.~\ref{code:ln:open}) the two
   counterparties (a.k.a. ``endpoints'') first create new keypairs and exchange
   the resulting public keys ($2$ messages), then prepare the underlying base
-  channels if the new channel is virtual ($10(n-1)$ total messages, i.e. $5$
-  outgoing messages per endpoint and $10$ outgoing messages per intermediary
+  channels if the new channel is virtual ($10 \cdot (n-1)$ total messages, i.e.
+  $5$ outgoing messages per endpoint and $10$ outgoing messages per intermediary
   with the number of intermediaries being $n-2$), next they exchange signatures
   for their respective initial commitment transactions ($2$ messages) and
   lastly, if the channel is simple (i.e. not virtual), the ``funder'' signs and
