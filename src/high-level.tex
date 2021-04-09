@@ -2,18 +2,17 @@
   Conceptually, our protocol is split into three main actions: channel opening,
   payments and closing. A channel $(P_1, P_n)$ between parties $P_1$ and $P_n$
   may be opened directly on-chain, in which case the two parties follow an
-  opening procedure similar to that of Lightning, or it can be opened
-  on top of a path of preexisting channels $(P_2, P_3), (P_3, P_4), \dots,
-  (P_{n-3}, P_{n-2}), (P_{n-2}, P_{n-1})$. In the latter case all parties $P_i$
-  on the path follow our novel protocol, locking funds in their channels as
-  collateral for the new virtual channel that is being opened. Once all
-  intermediaries are committed, $P_1$ and $P_n$ finally create (and keep
-  off-chain) their ``commitment'' transaction, following a logic similar to
-  Lightning.
+  opening procedure similar to that of LN, or it can be opened on top of a path
+  of preexisting channels $(P_2, P_3), (P_3, P_4), \dots, (P_{n-3}, P_{n-2}),
+  (P_{n-2}, P_{n-1})$. In the latter case all parties $P_i$ on the path follow
+  our novel protocol, setting aside funds in their channels as collateral for
+  the new virtual channel that is being opened. Once all intermediaries are
+  committed, $P_1$ and $P_n$ finally create (and keep off-chain) their
+  ``commitment'' transaction, following a logic similar to Lightning.
 
   A payment over an established channel follows a procedure heavily inspired by
-  Lightning, but without the use of HTLCs. To be completed, a payment needs
-  three messages to be exchanged by the two parties.
+  LN, but without the use of HTLCs. To be completed, a payment needs three
+  messages to be exchanged by the two parties.
 
   Finally, the closing procedure can be completed unilaterally and consists of
   signing and publishing a number of transactions on-chain. As we will discuss
@@ -23,48 +22,59 @@
   left as future work.
 
   In more detail, to open a channel (c.f.~\ref{code:ln:open}) the two
-  counterparties first create new keypairs and exchange the resulting public
-  keys (2 messages), then prepare the underlying base channels if the new
-  channel is virtual (\TODO{count messages} with the number of intermediaries
-  being $n-2$), next they exchange signatures for their respective initial
-  commitment transactions (2 messages) and lastly, if the channel is simple
-  (i.e. not virtual), the ``funder'' signs and publishes the ``funding''
-  transaction on-chain.  We here note that like Lightning, only one of the two
-  parties, the funder, provides coins for a new channel. This limitation
-  simplifies the execution model and the analysis, but can be lifted at the cost
-  of additional protocol complexity.
+  counterparties (a.k.a. ``endpoints'') first create new keypairs and exchange
+  the resulting public keys ($2$ messages), then prepare the underlying base
+  channels if the new channel is virtual ($10(n-1)$ total messages, i.e. $5$
+  outgoing messages per endpoint and $10$ outgoing messages per intermediary
+  with the number of intermediaries being $n-2$), next they exchange signatures
+  for their respective initial commitment transactions ($2$ messages) and
+  lastly, if the channel is simple (i.e. not virtual), the ``funder'' signs and
+  publishes the ``funding'' transaction on-chain.  We here note that like LN,
+  only one of the two parties, the funder, provides coins for a new channel.
+  This limitation simplifies the execution model and the analysis, but can be
+  lifted at the cost of additional protocol complexity.
 
   In a similar vein to earlier PCN proposals, having an open channel essentially
   means having very specific keys, transactions and signatures at hand, as well
   as checking the ledger periodically and being ready to take action if
   misbehaviour is detected. Let us first consider a simple channel that has been
   established between \alice and \bob where the former owns $c_A$ and the latter
-  $c_B$ coins. There are three sets of transactions at play:
-  \begin{itemize}
-    \item a single on-chain ``funding'' transaction with a single output that
-    is encumbered with a $2/\{\alice, \bob\}$ multisig and carries $c_A + c_B$
-    coins,
-    \item two ``commitment'' transactions, each of which can spend the funding
-    tx and produce two outputs with $c_A$ and $c_B$ coins each. The two txs
-    differ in the outputs' spending conditions: The $c_A$ output in \alice's
-    commitment tx can be spent either by \alice after it has been on-chain for a
-    pre-agreed time (i.e. it is encumbered with a ``timelock''), or by a
-    ``revocation'' transaction (discussed below), whereas the $c_B$ output can
-    be spent only by \bob without any timelock. \bob's commitment tx is
-    symmetric: the $c_A$ output can be spent only by \alice without timelock and
-    the $c_B$ output can be spent either by \bob after the timelock expiration
-    or by a revocation tx. When a new pair of commitment txs are created (either
-    during channel opening or on each update) \alice signs \bob's commitment tx
-    and sends him the signature (and vice-versa), therefore \alice can
-    unilaterally sign and publish only her commitment tx (and vice-versa).
-    \item $2m$ ``revocation'' transactions where $m$ is the number of updates.
-    \TODO{continue}
-  \end{itemize}
+  $c_B$ coins. There are three sets of transactions at play: A ``funding''
+  transaction that is put on-chain, off-chain ``commitment'' transactions that
+  spend the funding output and off-chain ``revocation'' transactions that spend
+  commitment outputs in case of misbehaviour. \TODO{add figure}
 
-  \TODO{delete/change a lot next paragraph}
-  Regarding an off-chain payment (a.k.a. channel update --
-  c.f.~\ref{code:ln:pay}), the two channel parties first create the new
-  commitment transactions that carry the updated balance and exchange signatures
-  for them (2 messages), and afterwards create the revocation transactions that
-  spend the commitment transactions of the previous version and exchange their
-  signatures (2 messages).
+  In particular, there is a single on-chain funding transaction with a single
+  output that is encumbered with a $2/\{\pk{A}, \pk{B}\}$ multisig and carries
+  $c_A + c_B$ coins.
+
+  Next, there are two commitment transactions, each of which can spend the
+  funding tx and produce two outputs with $c_A$ and $c_B$ coins each. The two
+  txs differ in the outputs' spending conditions: The $c_A$ output in \alice's
+  commitment tx can be spent either by \alice after it has been on-chain for a
+  pre-agreed period (i.e. it is encumbered with a ``timelock''), or by a
+  ``revocation'' transaction (discussed below) via a 2-of-2 multisig between the
+  counterparties, whereas the $c_B$ output can be spent only by \bob without a
+  timelock. \bob's commitment tx is symmetric: the $c_A$ output can be spent
+  only by \alice without timelock and the $c_B$ output can be spent either by
+  \bob after the timelock expiration or by a revocation tx.  When a new pair of
+  commitment txs are created (either during channel opening or on each update)
+  \alice signs \bob's commitment tx and sends him the signature (and
+  vice-versa), therefore \alice can unilaterally sign and publish her commitment
+  tx but \bob's (and vice-versa).
+
+  Last, there are $2m$ revocation transactions, where $m$ is the total number of
+  updates of the channel. The $j$th revocation tx held by an endpoint spends the
+  output carrying the counterparty's funds in the counterparty's $j$th
+  commitment tx. It has a single output spendable immediately by the
+  aforementioned endpoint. Each endpoint stores $m$ revocation txs, one for each
+  superseded commitment tx. This creates a disincentive for an endpoint to cheat
+  by using any other commitment transaction instead of its most recent one to
+  spend the funding output: the timelock on the output permits its counterparty
+  to use the corresponding revocation transaction and thus claim the cheater's
+  funds. Endpoints do not have a revocation tx for the last commitment
+  transaction, therefore these can be safely published. For a channel update to
+  be completed, the endpoints must exchange the signatures for the revocation
+  txs that spend the commitment txs that just became obsolete.
+
+  Observe that the above logic is essentially a simplification of LN.
