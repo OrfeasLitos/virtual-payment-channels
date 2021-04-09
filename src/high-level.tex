@@ -34,6 +34,7 @@
   This limitation simplifies the execution model and the analysis, but can be
   lifted at the cost of additional protocol complexity.
 
+\subsection{Simple Channels}
   In a similar vein to earlier PCN proposals, having an open channel essentially
   means having very specific keys, transactions and signatures at hand, as well
   as checking the ledger periodically and being ready to take action if
@@ -78,3 +79,5 @@
   txs that spend the commitment txs that just became obsolete.
 
   Observe that the above logic is essentially a simplification of LN.
+
+\subsection{Virtual Channels}
