@@ -84,6 +84,96 @@
   Observe that the above logic is essentially a simplification of LN.
 
 \subsection{Virtual Channels}
-  In order to gain intuition on how virtual channels function, consider $4$
-  simple channels between honest parties: $(\alice, \bob)$, $(\bob, \charlie)$,
-  $(\charlie, \dave)$, $(\dave, \eve)$.
+  In order to gain intuition on how virtual channels function, consider $n-1$
+  simple channels established between $n$ honest parties as before. $P_1$ (the
+  funder) and $P_n$ want to open a virtual channel over these base channels.
+  Before opening the virtual, each base channel is entirely independent, having
+  different unique keys, separate on-chain funding outputs, a possibly different
+  balance and number of updates. After the $n$ parties follow our novel virtual
+  channel opening protocol, they will all hold off-chain a number of new,
+  ``virtual'' transactions that spend their respective funding transactions and
+  can themselves be spent by new commitment transactions in a manner that
+  ensures fair funds allocation for all honest parties.
+
+  In particular, apart from the transactions of simple channels, each of the two
+  endpoints also has an ``initiator'' transaction that spends the funding output
+  of its only base channel and produces two outputs: one new funding output for
+  the base channel and one ``virtual'' output (c.f. Figure~\TODO{}). If the
+  virtual transaction ends up on-chain, the latter output carries coins that
+  will directly or indirectly fund the funding output of the virtual channel.
+
+  Intermediaries on the other hand store three sets of virtual transactions:
+  ``initiator'', ``extend-interval'' and ``merge-intervals'' (c.f.
+  Figure~\TODO{}). Each intermediary has one initiator tx, which spends the
+  party's two funding outputs and produces four: one funding output for each
+  base channel, one output that directly pays the intermediary coins equal to
+  the total value in the virtual channel, and one virtual output. If both
+  funding outputs are still unspent, publishing its initiator tx is the only way
+  for an intermediary to close either of its channels.
+
+  Furthermore, each intermediary has $O(n)$ extend-interval transactions. If
+  exactly one of the party's two base channels' funding outputs is unspent,
+  publishing an extend-interval transaction is the only way for the party to
+  close that base channel. Such a transaction consumes two outputs: the only
+  available funding output and a suitable virtual output, as discussed below. An
+  extend-interval tx has three outputs: A funding output replacing the one just
+  spent, one output that directly pays the intermediary coins equal to the total
+  value of the virtual channel, and one virtual output.
+
+  Last, each intermediary has $O(n^2)$ merge-intervals transactions. If both
+  party's base channels' funding outputs are spent, publishing a merge-intervals
+  transaction is the only way for the party to close either base channel. Such a
+  transaction consumes two suitable virtual outputs, as discussed below. It has
+  two outputs: One that directly pays the intermediary coins equal to the total
+  value of the virtual channel, and one virtual output.
+
+  To understand why this multitude of virtual transactions is needed, we now
+  zoom out from the individual party and discuss the dynamic of the system as a
+  whole. The first party $P_i$ that wishes to close a base channel observes that
+  its funding output(s) remain(s) unspent and publishes its initiator
+  transaction. First, this allows $P_i$ to use its commitment transaction to
+  close the channel. Second, in case $P_i$ is an intermediary, it directly
+  regains the coins it has locked for the virtual channel. Third, it produces a
+  virtual output that can only be consumed by $P_{i-1}$ and $P_{i+1}$, the
+  parties adjacent to $P_i$ (if any) with specific extend-interval transactions.
+  The virtual output of this extend-interval transaction can in turn be spent by
+  specific extend-interval transactions of $P_{i-2}$ or $P_{i+2}$ that have not
+  published a transaction yet (if any) and so on for the next neighbours. The
+  idea is that each party only needs to publish a single virtual transaction to
+  ``collapse'' the virtual layer and each virtual output uniquely defines the
+  continuous interval of parties that have already published a virtual
+  transaction and only allow parties at the edges of this interval to extend it.
+  This prevents malicious parties from indefinitely replacing a virtual output
+  with a new one. As the name suggests, merge-intervals transactions are
+  published by parties that are adjacent to two parties that have already
+  published their virtual transactions an in effect joins the two intervals into
+  one.
+
+  Each virtual output can also be used as the funding output for the virtual
+  channel after a timelock, to protect from unresponsive parties blocking the
+  virtual channel indefinitely. This in turn means that if an intermediary
+  observes either of its funding outputs being spent, it has to publish its
+  suitable virtual transaction before the timelock expires to avoid losing
+  funds. What is more, all virtual outputs need the signature of all parties to
+  be spent before the timelock (i.e. they have an $n$-of-$n$ multisig) in order
+  to prevent colluding parties from faking the intervals progression. The only
+  exception are virtual outputs that correspond to an interval that includes all
+  parties, which can only be used as funding outputs for the virtual channel as
+  its interval cannot be further extended, therefore the two separate spending
+  methods and the associated timelock are dropped.
+
+  Note that the newly established virtual channel can itself act as a base for
+  further virtual channels, as its funding output can be unilaterally put
+  on-chain in a pre-agreed maximum number of blocks. This in turn means that, as
+  discussed later in more detail, a further virtual channel must take the delay
+  of its virtual base channels into account to determine the timelocks needed
+  for its own virtual outputs.
+
+  As for the actual protocol needed to establish a virtual channel, $5$ chains
+  of messages are exchanged, starting from the funder and hop by hop reaching
+  the fundee and back (c.f.~\ref{code:ln:prepare-base}). The first communicates
+  parties' identities, their funding keys and their neighbours' channel
+  balances, the second creates new commitment transactions, the third circulates
+  virtual keys, all parties' coins and desired timelocks, the fourth circulates
+  signatures for the virtual transactions and the fifth circulates revocation
+  signatures for the old channel states.
