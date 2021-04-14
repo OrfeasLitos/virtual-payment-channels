@@ -1,1 +1,21 @@
-\section{Construction}
+\section{Model \& Construction}
+  In this section we will examine the architecture and the details of our model,
+  along with possible attacks and their mitigations. Following the UC
+  framework~\cite{uc}, we define an ideal-world functionality \fchan and a
+  simulator \simulator, along with a real-world protocol \pchan that UC-realizes
+  \fchan (Theorem~\ref{theorem:security}).
+
+  Our ideal world functionality \fchan
+  (Figures~\ref{code:functionality:rules}-\ref{code:functionality:close})
+  represents a single channel, either simple or virtual. It acts as a relay
+  between \adversary and \environment, leaking all messages. This simplifies the
+  functionality and facilitates the indistinguishability argument by having
+  \simulator simply running internally the real world protocols of the channel
+  parties \pchan with no modifications. \fchan internally maintains a state
+  machine (c.f. Figure~\TODO{state machine}) that keeps track of which internal
+  parties are corrupted or negligent, whether the channel has opened, whether a
+  payment is underway, which external parties are to be considered trusted (as
+  they correspond to other channels owned by the same player) and whether the
+  channel has closed. The single security check performed is whether the
+  on-chain coins are at least equal to the expected balance once the channel
+  closes. If this check fails, \fchan halts.
