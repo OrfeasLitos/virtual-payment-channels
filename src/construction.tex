@@ -21,4 +21,104 @@
   performed is whether the on-chain coins are at least equal to the expected
   balance once the channel closes. If this check fails, \fchan halts.
 
+  Our real world protocol \pchan, ran by party $P$, consists of two
+  subprotocols: the Lightning-inspired part, dubbed \textsc{ln}
+  (Figures~\ref{code:ln:init}-\ref{code:ln:used-revocation}) and the novel
+  virtual layer subprotocol, named \textsc{virt}
+  (Figures~\ref{code:virtual-layer:keys}-\ref{code:virtual-layer:punishment}).
+
+  The \textsc{ln} subprotocol has two variations depending on whether $P$ is the
+  channel funder (\alice) or the fundee (\bob). It performs a number of tasks:
+  Initialisation takes a single step for fundees and two steps for funders.
+  \textsc{ln} first receives a public key $\pk{P, \mathrm{out}}$ from
+  \environment. This is the public key that should eventually own all $P$'s
+  coins after the channel is closed. \textsc{ln} also initialises its internal
+  variables. If $P$ is a funder, \textsc{ln} waits for a second activation to
+  generate a keypair and then waits for \environment to endow it with some
+  coins, which will be subsequently used to open the channel
+  (Figure~\ref{code:ln:init}).
+
+  After initialisation, the funder \alice is ready to open the channel. Once it
+  is given by \environment \bob's identity, the initial channel balance $c$ and,
+  in case it is a virtual, the identities of the base channel owners
+  (Figure~\ref{code:ln:open}), \alice generates and sends \bob her funding and
+  revocation public keys ($\pk{A, F}$, $\pk{A, R}$) along with $c$, $\pk{A,
+  \mathrm{out}}$, and the base channel identities (if any). Given that \bob has
+  been initialised, it generates funding and revocation keys and replies to
+  \alice with $\pk{B, F}$, $\pk{B, R}$, and $\pk{B, \mathrm{out}}$
+  (Figure~\ref{code:ln:exchange-open-keys}).
+
+  The next step prepares the base channels (Figure~\ref{code:ln:prepare-base}).
+  If our channel is a simple one, then \alice simply generates the funding tx
+  $F$. If it is a virtual and assuming all base parties (running \textsc{ln})
+  cooperate, a chain of messages from \alice to \bob and back via all base
+  parties is initiated (Figures~\ref{code:ln:virtualise:start-end}
+  and~\ref{code:ln:open:virtualise:hops}). These messages let each successive
+  neighbour know the identities of all the base parties. Furthermore each party
+  instantiates a new ``host'' party that runs \textsc{virt}. It also generates
+  new funding keys and communicates them, along with its out key and its
+  leftward and rightward balances. If this circuit of messages completes, \alice
+  delegates the creation of the new virtual layer transactions to its new
+  \textsc{virt} host, which will be discussed later in detail. If the virtual
+  layer is successful, each base party is informed by its host accordingly,
+  intermediaries return to the \textsc{open} state and \alice and \bob continue
+  the opening procedure. In particular, \alice and \bob exchange signatures on
+  the initial commitment transactions, therefore ensuring that the funding
+  output can be spent (Figure~\ref{code:ln:exchange-open-sigs}). After that, in
+  case the channel is simple the funding transaction is put on-chain
+  (Figure~\ref{code:ln:commit-base}) and finally \environment is informed of the
+  successful channel opening.
+
+  There are two facts that should be noted: Firstly, in case the opened channel
+  is virtual, each intermediary base party necessarily partakes in two channels.
+  However each protocol instance only represents a party in a single channel,
+  therefore each intermediary is in practice realised by two mutually trusted
+  \pchan instances that communicate locally, called ``siblings''. Secondly, our
+  protocol is not designed to gracefully recover if other parties do not send an
+  expected message at any point in the opening or payment procedure. Such
+  anti-Denial-of-Service measures would greatly complicate the protocol and are
+  left as a task for a real world implementation. It should be however stressed
+  that an honest party with an open channel that has fallen victim to such an
+  attack can still unilaterally close the channel, therefore no coins are lost
+  in any case.
+
+  Once the channel is open, \alice and \bob can carry out an unlimited number of
+  payments in either direction with a speed that is bounded only by network
+  delay. The payment procedure is identical for simple and virtual channels and
+  crucially it does not implicate the intermediaries. For a payment to be
+  carried out, the payee is first notified by \environment
+  (Figure~\ref{code:ln:get-paid}) and subsequently the payer is instructed by
+  \environment to commence the payment (Figure~\ref{code:ln:pay}). If the
+  channel is virtual, each party also checks that its upcoming balance is lower
+  than the balance of its sibling's counterparty and that the upcoming balance
+  of the counterparty is higher than the balance of its own sibling, otherwise
+  it rejects the payment. This is to mitigate an attack where a malicious
+  counterparty uses an old commitment transaction to spend the base funding
+  output, therefore blocking the honest party from using its initiator virtual
+  transaction. This check ensures that the coins gained by the punishment are
+  sufficient to cover the losses from the blocked initiator transaction. We
+  conjecture that this balance limitation can be lifted if the current
+  Lightning-based payment method is replaced with an eltoo-based
+  one~\cite{eltoo}.
+
+  Subsequently each of the two parties builds the new commitment transaction of
+  its counterparty, signs it and sends over the signature, then the revocation
+  transactions for the previously valid commitment transactions are generated,
+  signed and the signatures are exchanged. To reduce the number of messages, the
+  payee sends the two signatures in one message. This does not put it at risk of
+  losing funds, since the new commitment transaction (for which it has already
+  received a signature and therefore can spend) gives it more funds than the
+  previous one.
+
+  \pchan also monitors whether the party is activated often enough and marks it
+  as negligent otherwise (Figure~\ref{code:ln:init}). This need stems from the
+  fact that party activation is entirely controlled by \environment, therefore
+  it can happen that an otherwise honest party is not activated in time to
+  prevent a malicious counterparty from successfully using an old commitment
+  transaction. Therefore at the beginning of every activation while the channel
+  is open, \textsc{ln} checks if the party has been activated within the last
+  $p$ blocks (where $p$ is an implementation-dependent global constant). If a
+  party is marked as negligent, no balance security guarantees are given (c.f.
+  Lemma~\ref{lemma:real-balance-security}).
+
   \TODO{close}
