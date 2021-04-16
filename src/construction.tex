@@ -88,16 +88,20 @@
   crucially it does not implicate the intermediaries. For a payment to be
   carried out, the payee is first notified by \environment
   (Figure~\ref{code:ln:get-paid}) and subsequently the payer is instructed by
-  \environment to commence the payment (Figure~\ref{code:ln:pay}). If the
-  channel is virtual, each party also checks that its upcoming balance is lower
-  than the balance of its sibling's counterparty and that the upcoming balance
-  of the counterparty is higher than the balance of its own sibling, otherwise
-  it rejects the payment. This is to mitigate an attack where a malicious
-  counterparty uses an old commitment transaction to spend the base funding
-  output, therefore blocking the honest party from using its initiator virtual
-  transaction. This check ensures that the coins gained by the punishment are
-  sufficient to cover the losses from the blocked initiator transaction. We
-  conjecture that this balance limitation can be lifted if the current
+  \environment to commence the payment (Figure~\ref{code:ln:pay}).
+
+  If the channel is virtual, each party also checks that its upcoming balance is
+  lower than the balance of its sibling's counterparty and that the upcoming
+  balance of the counterparty is higher than the balance of its own sibling,
+  otherwise it rejects the payment. This is to mitigate an attack where a
+  malicious counterparty uses an old commitment transaction to spend the base
+  funding output, therefore blocking the honest party from using its initiator
+  virtual transaction. This check ensures that the coins gained by the
+  punishment are sufficient to cover the losses from the blocked initiator
+  transaction. If the attack takes place, other local channels based directly or
+  indirectly on it are informed and they moved to a failed state. Note that this
+  does not bring a risk of losing any of the total coins of all local channels.
+  We conjecture that this balance constraint can be lifted if the current
   Lightning-based payment method is replaced with an eltoo-based
   one~\cite{eltoo}.
 
@@ -110,15 +114,22 @@
   received a signature and therefore can spend) gives it more funds than the
   previous one.
 
-  \pchan also monitors whether the party is activated often enough and marks it
-  as negligent otherwise (Figure~\ref{code:ln:init}). This need stems from the
-  fact that party activation is entirely controlled by \environment, therefore
-  it can happen that an otherwise honest party is not activated in time to
-  prevent a malicious counterparty from successfully using an old commitment
-  transaction. Therefore at the beginning of every activation while the channel
-  is open, \textsc{ln} checks if the party has been activated within the last
-  $p$ blocks (where $p$ is an implementation-dependent global constant). If a
-  party is marked as negligent, no balance security guarantees are given (c.f.
-  Lemma~\ref{lemma:real-balance-security}).
+  \pchan also monitors the chain for outdated commitment transactions by the
+  counterparty and publishes the corresponding revocation transaction in case
+  one is found (Figure~\ref{code:ln:poll}). It also monitors whether the party
+  is activated often enough and marks it as negligent otherwise
+  (Figure~\ref{code:ln:init}). The need for explicit negligence marking stems
+  from the fact that party activation is entirely controlled by \environment,
+  therefore it can happen that an otherwise honest party is not activated in
+  time to prevent a malicious counterparty from successfully using an old
+  commitment transaction. Therefore at the beginning of every activation while
+  the channel is open, \textsc{ln} checks if the party has been activated within
+  the last $p$ blocks (where $p$ is an implementation-dependent global constant
+  \TODO{decide if reference to Proposition is needed}). If a party is marked as
+  negligent, no balance security guarantees are given (c.f.
+  Lemma~\ref{lemma:real-balance-security}). Note that this does not affect
+  indistinguishability with the ideal world, as \fchan is notified by our
+  \simulator if a party becomes negligent and does not perform the balance
+  security check.
 
   \TODO{close}
