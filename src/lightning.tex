@@ -718,7 +718,7 @@
         \State $\itistate \gets \textsc{closed}$
         \label{code:ln:poll:state-closed-punished}
         \State output (\textsc{closed})
-      \ElsIf{$C_{P, j} \in \Sigma \wedge C_{\bar{P}, j} \in \Sigma$}
+      \ElsIf{$C_{P, i} \in \Sigma \vee C_{\bar{P}, i} \in \Sigma$}
         \State $\itistate \gets \textsc{closed}$
         \label{code:ln:poll:state-closed-honestly}
         \State output (\textsc{closed})
