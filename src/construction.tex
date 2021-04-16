@@ -132,4 +132,18 @@
   \simulator if a party becomes negligent and does not perform the balance
   security check.
 
-  \TODO{close}
+  When either party is instructed by \environment to close the channel
+  (Figure~\ref{code:ln:close}), it first asks its host to close (details on the
+  exact steps are discussed later) and once that is done, the ledger is checked
+  for any transaction spending the funding output. In case the latest remote
+  commitment tx is on-chain, then the channel is already closed and no further
+  action is necessary. If an old committment transaction is on-chain, the
+  corresponding revocation transaction is used for punishment. If the funding
+  output is still unspent, the party attempts to publish the latest commitment
+  transaction after waiting for any relevant timelock to expire. Until the
+  funding output is irrevocably spent, the party still has to periodically check
+  the blockchain and again be ready to use a revocation transaction if an old
+  commitment transaction spends the funding output after all
+  (Figure~\ref{code:ln:poll}).
+
+  \TODO{\textsc{virt}}
