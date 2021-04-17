@@ -148,4 +148,11 @@
   (Figure~\ref{code:ln:poll}).
 
 \subsection{\textsc{virt} subprotocol}
-  \TODO{\textsc{virt}}
+  This subprotocol acts as a mediator between the base channels and the
+  Lightning-based logic. Put otherwise, its responsibility is putting the
+  funding output of the channel on-chain. When first initialised by a machine
+  that executes the \textsc{ln} subprotocol, it learns and stores the
+  identities, keys, and balances of various relevant parties, along with the
+  required timelock and other useful data regarding the base channels
+  (Figure~\ref{code:virtual-layer:keys}). It then generates a number of keys as
+  needed for the rest of the base preparation.
