@@ -26,8 +26,8 @@
   In more detail, to open a channel (c.f.~\ref{code:ln:open}) the two
   counterparties (a.k.a. ``endpoints'') first create new keypairs and exchange
   the resulting public keys ($2$ messages), then prepare the underlying base
-  channels if the new channel is virtual ($10 \cdot (n-1)$ total messages, i.e.
-  $5$ outgoing messages per endpoint and $10$ outgoing messages per
+  channels if the new channel is virtual ($12 \cdot (n-1)$ total messages, i.e.
+  $6$ outgoing messages per endpoint and $12$ outgoing messages per
   intermediary, for $n-2$ intermediaries), next they exchange signatures for
   their respective initial commitment transactions ($2$ messages) and lastly, if
   the channel is simple (i.e. not virtual), the ``funder'' signs and publishes
@@ -169,11 +169,12 @@
   of its virtual base channels into account to determine the timelocks needed
   for its own virtual outputs.
 
-  As for the actual protocol needed to establish a virtual channel, $5$ chains
+  As for the actual protocol needed to establish a virtual channel, $6$ chains
   of messages are exchanged, starting from the funder and hop by hop reaching
   the fundee and back (c.f.~\ref{code:ln:prepare-base}). The first communicates
   parties' identities, their funding keys and their neighbours' channel
   balances, the second creates new commitment transactions, the third circulates
-  virtual keys, all parties' coins and desired timelocks, the fourth circulates
-  signatures for the virtual transactions and the fifth circulates revocation
-  signatures for the old channel states.
+  virtual keys, all parties' coins and desired timelocks, the fourth and the
+  fifth circulate signatures for the virtual transactions (signatures for
+  virtual outputs and funding outputs respectively) and the sixth circulates
+  revocation signatures for the old channel states.
