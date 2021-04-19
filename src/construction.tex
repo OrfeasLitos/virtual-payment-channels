@@ -149,10 +149,41 @@
 
 \subsection{\textsc{virt} subprotocol}
   This subprotocol acts as a mediator between the base channels and the
-  Lightning-based logic. Put otherwise, its responsibility is putting the
-  funding output of the channel on-chain. When first initialised by a machine
-  that executes the \textsc{ln} subprotocol, it learns and stores the
-  identities, keys, and balances of various relevant parties, along with the
-  required timelock and other useful data regarding the base channels
-  (Figure~\ref{code:virtual-layer:keys}). It then generates a number of keys as
-  needed for the rest of the base preparation.
+  Lightning-based logic. Put otherwise, its responsibility is putting on-chain
+  the funding output of the channel when needed. When first initialised by a
+  machine that executes the \textsc{ln} subprotocol
+  (Figure~\ref{code:virtual-layer:keys}), it learns and stores the identities,
+  keys, and balances of various relevant parties, along with the required
+  timelock and other useful data regarding the base channels. It then generates
+  a number of keys as needed for the rest of the base preparation. If the
+  initialiser is also the channel funder, then the \textsc{virt} machine
+  initiates $4$ ``circuits'' of messages. Each circuit consists of one message
+  from the funder $P_1$ to its neighbour $P_2$, one message from each
+  intermediary $P_i$ to the ``next'' neighbour $P_{i+1}$, one message from the
+  fundee $P_n$ to its neighbour $P_{n-1}$ and one more message from each
+  intermediary $P_i$ to the ``previous'' neighbour $P_{i-1}$, for a total of
+  $2\cdot(n-1)$ messages per circuit.
+
+  The first circuit (Figure~\ref{code:virtual-layer:circulate-keys-and-coins})
+  communicates all ``out'', virtual and funding keys (both old and new), all
+  balances and all timelocks among all parties. In the second circuit
+  (Figure~\ref{code:virtual-layer:virtual-sigs}) every party receives and
+  verifies all signatures for all inputs of its virtual transactions that spend
+  a virtual output. It also produces and sends its own such signatures to the
+  other parties. Each party generates and circulates $S = \sum\limits_{i =
+  2}^{n-2} (n-3 + \chi_{i = 2} + \chi_{i = n - 1} + 2(i - 2 + \chi_{i = 2})(n -
+  i - 1 + \chi_{i = n - 1})) \in O(n^3)$ signatures (where $\chi_A$ is the
+  characteristic function that equals $1$ if $A$ is true and $0$ else), for a
+  total of $nS \in O(n^4)$ signatures in this phase. The number of virtual
+  transactions is $1$ for the two endpoints
+  (Figure~\ref{code:virtual-layer:endpoint-txs}) and $\chi_{i = 2} + \chi_{i = n
+  - 1} + n - 2 + (i - 2 + \chi_{i = 2}) (n - 1 + \chi_{i = n-1} - i) \in O(n^2)$
+  (Figure~\ref{code:virtual-layer:mid-txs}). The third circuit concerns sharing
+  signatures for the funding outputs
+  (Figure~\ref{code:virtual-layer:funding-sigs}). Each party signs all
+  transactions that spend a funding output relevant to the party, i.e. the
+  initiator transaction and extend-interval transactions of its neighbours. The
+  two endpoints send $2$ signatures each when $n = 3$ and $n - 2$ signatures
+  each when $n > 3$, whereas each intermediary sends $1 + \chi_{i + 1 < n}(n - 2
+  + \chi_{i = n - 2}) + 1 + \chi_{i - 1 > 1}(n - 2 + \chi_{i = 3}) \in O(n)$
+  signatures each.
