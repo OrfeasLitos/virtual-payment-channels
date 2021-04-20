@@ -174,16 +174,16 @@
   2}^{n-2} (n-3 + \chi_{i = 2} + \chi_{i = n - 1} + 2(i - 2 + \chi_{i = 2})(n -
   i - 1 + \chi_{i = n - 1})) \in O(n^3)$ signatures (where $\chi_A$ is the
   characteristic function that equals $1$ if $A$ is true and $0$ else), for a
-  total of $nS \in O(n^4)$ signatures in this phase. The number of virtual
-  transactions is $1$ for the two endpoints
-  (Figure~\ref{code:virtual-layer:endpoint-txs}) and $\chi_{i = 2} + \chi_{i = n
-  - 1} + n - 2 + (i - 2 + \chi_{i = 2}) (n - 1 + \chi_{i = n-1} - i) \in O(n^2)$
-  (Figure~\ref{code:virtual-layer:mid-txs}). The third circuit concerns sharing
-  signatures for the funding outputs
+  total of $nS \in O(n^4)$ signatures in this phase. On a related note, the
+  number of virtual transactions stored by each party is $1$ for the two
+  endpoints (Figure~\ref{code:virtual-layer:endpoint-txs}) and $n - 2 + \chi_{i
+  = 2} + \chi_{i = n - 1} +  (i - 2 + \chi_{i = 2}) (n - i - 1 + \chi_{i = n-1})
+  \in O(n^2)$ (Figure~\ref{code:virtual-layer:mid-txs}). The third circuit
+  concerns sharing signatures for the funding outputs
   (Figure~\ref{code:virtual-layer:funding-sigs}). Each party signs all
   transactions that spend a funding output relevant to the party, i.e. the
-  initiator transaction and extend-interval transactions of its neighbours. The
-  two endpoints send $2$ signatures each when $n = 3$ and $n - 2$ signatures
-  each when $n > 3$, whereas each intermediary sends $1 + \chi_{i + 1 < n}(n - 2
-  + \chi_{i = n - 2}) + 1 + \chi_{i - 1 > 1}(n - 2 + \chi_{i = 3}) \in O(n)$
-  signatures each.
+  initiator transaction and some of the extend-interval transactions of its
+  neighbours. The two endpoints send $2$ signatures each when $n = 3$ and $n -
+  2$ signatures each when $n > 3$, whereas each intermediary sends $1 + \chi_{i
+  + 1 < n}(n - 2 + \chi_{i = n - 2}) + 1 + \chi_{i - 1 > 1}(n - 2 + \chi_{i =
+  3}) \in O(n)$ signatures each.
