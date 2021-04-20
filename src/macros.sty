@@ -23,22 +23,6 @@
 }
 
 %----- Theorems ----------------------------------------------------------------
-\ifelseieee{\newtheorem{theorem}{Theorem}}{}
-\ifelseieee{\newtheorem{lemma}{Lemma}}{}
-\ifelseieee{\newtheorem{proposition}{Proposition}}{}
-\ifelseieee{\newtheorem{corollary}{Corollary}}{}
-\ifelseieee{\newtheorem{definition}{Definition}}{}
-%\newtheorem{example}{Example}
-%\spnewtheorem*{definition*}{Definition}{\bfseries}{\itshape}
-
-\ifelseieee{
-\newenvironment{theorem*}{\medskip \noindent {\bfseries Theorem.} \itshape}{\medskip}
-\newenvironment{lemma*}{\medskip \noindent {\bfseries Lemma.} \itshape}{\medskip}
-}{
-  \spnewtheorem*{theorem*}{Theorem}{\bfseries}{\itshape}
-  \spnewtheorem*{theoremnn}{Theorem}{\bfseries}{\itshape}
-  \spnewtheorem*{lemma*}{Lemma}{\bfseries}{\itshape}
-}
 \newenvironment{claimproof}[1]{\par\noindent\underline{Proof}:\space#1}{\hfill $\blacksquare$}
 
 \newcommand{\ignore}[1]{\relax} 

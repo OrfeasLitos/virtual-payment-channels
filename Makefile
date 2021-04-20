@@ -4,7 +4,7 @@ all: virtual-channels.pdf transactions-overview.pdf
 virtual-channels.pdf: src/*
 	export TEXINPUTS=.:./src//:; \
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode virtual-channels.tex; \
-	rm -rf virtual-channels.aux virtual-channels.log virtual-channels.out virtual-channels.toc virtual-channels.lof virtual-channels.lot virtual-channels.bbl virtual-channels.blg virtual-channels-autopp.out virtual-channels-pics.pdf virtual-channels-autopp.log
+	rm -rf virtual-channels.aux virtual-channels.log virtual-channels.out virtual-channels.toc virtual-channels.lof virtual-channels.lot virtual-channels.bbl virtual-channels.blg virtual-channels-autopp.out virtual-channels-pics.pdf virtual-channels-autopp.log virtual-channels-autopp.xcp
 
 transactions-overview.pdf: src/transactions-overview/* src/transactions.tex
 	export TEXINPUTS=.:./src//:; \
@@ -20,7 +20,7 @@ bib: src/*
 	bibtex virtual-channels.aux; \
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode virtual-channels.tex; \
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode virtual-channels.tex; \
-	rm -rf virtual-channels.aux virtual-channels.log virtual-channels.out virtual-channels.toc virtual-channels.lof virtual-channels.lot virtual-channels.bbl virtual-channels.blg virtual-channels-autopp.out virtual-channels-pics.pdf virtual-channels-autopp.log
+	rm -rf virtual-channels.aux virtual-channels.log virtual-channels.out virtual-channels.toc virtual-channels.lof virtual-channels.lot virtual-channels.bbl virtual-channels.blg virtual-channels-autopp.out virtual-channels-pics.pdf virtual-channels-autopp.log virtual-channels-autopp.xcp
 
 clean:
 	rm -rf *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.pdf

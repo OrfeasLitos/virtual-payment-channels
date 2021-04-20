@@ -40,7 +40,7 @@
       \label{code:functionality:open:boot}
       \Indent
         \State $\pk{P} \gets \bot$; $\texttt{host}_P \gets \bot$;
-        $\texttt{enabler}_P \gets \bot$; $\balance{P} \gets 0$;
+        $\texttt{enabler}_P \gets \bot$; $\subbalance{P} \gets 0$;
         \State $\itistate_P \gets \textsc{uninit}$
       \EndIndent
       \Statex
@@ -74,7 +74,7 @@
       \State On (\textsc{base open}) by \adversary when $\itistate_A =
       \textsc{tentative base open}$:
       \Indent
-        \State $\balance{A} \gets x$
+        \State $\subbalance{A} \gets x$
         \label{code:functionality:open:base-balance}
         \State $\itistate_A \gets \textsc{open}$
       \EndIndent
@@ -119,7 +119,7 @@
       \State On (\textsc{virtual open}) by \adversary when $\itistate_P =
       \textsc{tentative virtual open}$:
       \Indent
-        \IfThen{$P = \alice$}{$\balance{P} \gets x$}
+        \IfThen{$P = \alice$}{$\subbalance{P} \gets x$}
         \label{code:functionality:open:virtual-balance}
         \State $\itistate_P \gets \textsc{open}$
       \EndIndent
@@ -173,7 +173,7 @@
       \Indent
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync get
         paid}, x)\}$}
-          \State $\balance{P} \gets \balance{P} - x$
+          \State $\subbalance{P} \gets \subbalance{P} - x$
           \label{code:functionality:pay:decrement}
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with
@@ -188,7 +188,7 @@
       \Indent
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, (\textsc{sync pay},
         x)\}$}
-          \State $\balance{P} \gets \balance{P} + x$
+          \State $\subbalance{P} \gets \subbalance{P} + x$
           \label{code:functionality:pay:increment}
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with l.~\ref{code:functionality:pay:pay-end}}
@@ -262,7 +262,7 @@
       \Indent
         \If{$\itistate_{\bar{P}} \in \{\textsc{ignored}, \textsc{sync help
         fund}\}$}
-          \State $\balance{P} \gets \balance{P} - x$
+          \State $\subbalance{P} \gets \subbalance{P} - x$
           \label{code:functionality:fund:complete-fund}
           \State $\texttt{host}_P \gets \texttt{host}$
           \State \Comment{if $\bar{P}$ honest, this state transition happens
@@ -306,8 +306,8 @@
         \If{$\itistate_P \notin$ \{\textsc{uninit}, \textsc{init},
         \textsc{pending virtual open}, \textsc{tentative virtual open},
         \textsc{tentative base open}, \textsc{ignored}, \textsc{closed}\}}
-          \State reply (\textsc{my balance}, $\balance{P}$, $\pk{P}$,
-          $\balance{\bar{P}}$, $\pk{\bar{P}}$)
+          \State reply (\textsc{my balance}, $\subbalance{P}$, $\pk{P}$,
+          $\subbalance{\bar{P}}$, $\pk{\bar{P}}$)
         \Else
           \State reply (\textsc{my balance}, $0$, $\pk{P}$, $0$, $\pk{\bar{P}}$)
         \EndIf
@@ -326,15 +326,15 @@
         or spent by $\pk{P}$
         in $\Sigma$
         \label{code:functionality:close:coins}
-        \State $\balance{} \gets \balance{P}$
+        \State $\subbalance{} \gets \subbalance{P}$
         \ForAll{$P$'s trusted parties $R$}
           \State input (\textsc{balance}) to $R$ as $P$ and extract
-          $\balance{R}$, $\pk{R}$ from response
-          \State $\balance{} \gets \balance{} + \balance{R}$
+          $\subbalance{R}$, $\pk{R}$ from response
+          \State $\subbalance{} \gets \subbalance{} + \subbalance{R}$
           \State $\coins{} \gets \coins{} \:+ $ sum of values of outputs
           exclusively spendable or spent by $\pk{R}$ in $\Sigma$
         \EndFor
-        \If{$\coins{} \geq \balance{}$}
+        \If{$\coins{} \geq \subbalance{}$}
         \label{code:functionality:close:check:if}
           \State $\itistate_P \gets \textsc{closed}$
         \Else \: \Comment{balance security is broken}

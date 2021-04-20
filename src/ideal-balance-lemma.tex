@@ -28,55 +28,55 @@
   \end{equation}
 \end{lemma}
 
-\begin{proof}
-  We will prove the Lemma by following the evolution of the $\balance{P}$
+\proof{
+  We will prove the Lemma by following the evolution of the $\subbalance{P}$
   variable.
   \begin{itemize}
-    \item When \fchan is activated for the first time, it sets $\balance{P}
+    \item When \fchan is activated for the first time, it sets $\subbalance{P}
     \gets 0$ (Fig.~\ref{code:functionality:open},
     l.~\ref{code:functionality:open:boot}). \item If $P = \alice$ and it
     receives (\textsc{open}, $c$, $\dots$) by \environment, it stores $c$
     (Fig.~\ref{code:functionality:open},
     l.~\ref{code:functionality:open:store}). If later $\itistate_P$ becomes
-    \textsc{open}, \fchan sets $\balance{P} \gets c$
+    \textsc{open}, \fchan sets $\subbalance{P} \gets c$
     (Fig.~\ref{code:functionality:open},
     ll.~\ref{code:functionality:open:base-balance}
     or~\ref{code:functionality:open:virtual-balance}). In contrast, if $P =
-    \bob$, it is $\balance{P} = 0$ until at least the first transition of
+    \bob$, it is $\subbalance{P} = 0$ until at least the first transition of
     $\itistate_P$ to \textsc{open} (Fig.~\ref{code:functionality:open}).
     \item Every time $P$ receives input $(\textsc{fund me}, f_i, \dots)$ by
     another party while $\itistate_P = \textsc{open}$, $P$ stores $f_i$
     (Fig.~\ref{code:functionality:fund},
     l.~\ref{code:functionality:fund:when-fund}). The next time $\itistate_P$
-    transitions to \textsc{open} (if such a transition happens), $\balance{P}$
+    transitions to \textsc{open} (if such a transition happens), $\subbalance{P}$
     is decremented by $f_i$ (Fig.~\ref{code:functionality:fund},
     l.~\ref{code:functionality:fund:complete-fund}). Therefore, if this cycle
-    happens $n \geq 0$ times, $\balance{P}$ will be decremented by
+    happens $n \geq 0$ times, $\subbalance{P}$ will be decremented by
     $\sum\limits_{i=1}^n f_i$ in total.
     \item Every time $P$ receives input $(\textsc{pay}, d_i)$ by \environment
     while $\itistate_P = \textsc{open}$, $d_i$ is stored
     (Fig.~\ref{code:functionality:pay},
     l.~\ref{code:functionality:pay:store-pay}). The next time
     $\itistate_P$ transitions to \textsc{open} (if such a transition happens),
-    $\balance{P}$ is decremented by $d_i$
+    $\subbalance{P}$ is decremented by $d_i$
     (Fig.~\ref{code:functionality:pay},
     l.~\ref{code:functionality:pay:decrement}). Therefore, if this cycle
-    happens $m \geq 0$ times, $\balance{P}$ will be decremented by
+    happens $m \geq 0$ times, $\subbalance{P}$ will be decremented by
     $\sum\limits_{i=1}^m d_i$ in total.
     \item Every time $P$ receives input $(\textsc{get paid}, e_i)$ by
     \environment while $\itistate_P = \textsc{open}$, $e_i$ is stored
     (Fig.~\ref{code:functionality:pay},
     l.~\ref{code:functionality:pay:store-get-paid}). The next time
     $\itistate_P$ transitions to \textsc{open} (if such a transition happens)
-    $\balance{P}$ is incremented by $e_i$
+    $\subbalance{P}$ is incremented by $e_i$
     (Fig.~\ref{code:functionality:pay},
     l.~\ref{code:functionality:pay:increment}). Therefore, if this cycle
-    happens $l \geq 0$ times, $\balance{P}$ will be incremented by
+    happens $l \geq 0$ times, $\subbalance{P}$ will be incremented by
     $\sum\limits_{i=1}^l e_i$ in total.
   \end{itemize}
   On aggregate, after the above are completed and then \fchan receives
-  (\textsc{close}, $P$) by \simulator, it is $\balance{P} = c -
+  (\textsc{close}, $P$) by \simulator, it is $\subbalance{P} = c -
   \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$
-  if $P = \alice$, or else if $P = \bob$, $\balance{P} = - \sum\limits_{i=1}^n
+  if $P = \alice$, or else if $P = \bob$, $\subbalance{P} = - \sum\limits_{i=1}^n
   f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$.
-\end{proof}
+}

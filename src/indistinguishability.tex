@@ -11,7 +11,7 @@
   \end{gather*}
 \end{theorem}
 
-\begin{proof}
+\proof{
   By inspection of Figs.~\ref{code:functionality:rules}
   and~\ref{code:simulator:flow} we can deduce that for a particular
   \environment, in the ideal world execution $\textsc{exec}^{\fchan,
@@ -21,7 +21,7 @@
   \adversary, \environment}$ in case \fchan does not halt. Indeed, \fchan only
   halts with negligible probability according to Lemma~\ref{lemma:no-halt},
   therefore the two executions are computationally indistinguishable.
-\end{proof}
+}
 
 We now generalise Theorem~\ref{theorem:security} to prove the
 indistinguishability of multiple \fchan instances from multiple \pchan
@@ -47,7 +47,7 @@ functionality~\cite{DBLP:conf/crypto/CanettiR03}.
   \end{gather*}
 \end{theorem}
 
-\begin{proof}
+\proof{
   We observe that \fchanhat uses \fchan internally. According to the UC
   theorem~\cite{uc} and given that \pchan UC-realises \fchan
   (Theorem~\ref{theorem:security}), $\fchanhat^{\fchan \rightarrow \pchan}$
@@ -57,4 +57,4 @@ functionality~\cite{DBLP:conf/crypto/CanettiR03}.
   handle the same message in the latter case, therefore $\fchanhat^{\fchan
   \rightarrow \pchan}$ UC-emulates \pchanhat. By the transitivity of
   UC-emulation, we deduce that \fchanhat UC-emulates \pchanhat.
-\end{proof}
+}

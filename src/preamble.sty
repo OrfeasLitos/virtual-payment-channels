@@ -11,8 +11,6 @@
 \usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{multirow}
-\usepackage{amssymb}
-\usepackage{lmodern}
 \usepackage[T1]{fontenc}
 \usepackage{listings}
 \usepackage{graphviz}
@@ -24,22 +22,14 @@
 \usepackage{color}
 \usepackage{hyperref}
 \usepackage{import}
-%\usepackage[n, advantage, operators, sets,
-%  adversary, landau, probability, notions, logic,
-%  ff, mm, primitives, events, complexity,
-%  asymptotics, keys]{cryptocode}
 \usepackage[framemethod=TikZ]{mdframed}
 \usepackage{macros}
 \usepackage{float}
 \usepackage{capt-of}
-\ifelseieee{}{\usepackage{appendix}}
-
-% For a better amsmath, as per the IEEE instructions
-\ifelseieee{\interdisplaylinepenalty=2500}{}
+\usepackage{appendix}
 
 \usepackage{pstricks,pst-node}
 \usepackage{auto-pst-pdf}
-\usepackage{amssymb}
 \usepackage{calc}
 \usepackage{pgffor}
 \usepackage{xparse}
@@ -50,12 +40,6 @@
 \usepackage{xspace}
 \usepackage{notation}
 \usepackage{macros}
-\usepackage{txfig}
-
-% redefine environment proof to IEEEproof if using IEEE class
-\ifelseieee
-  {\renewenvironment{proof}[1][Proof]{\begin{IEEEproof}[#1]}{\end{IEEEproof}}}
-  {}
 
 % PG: Margin comments were placed oddly for me, and this saved the day (taken from
 % http://mirror.hmc.edu/ctan/macros/latex/contrib/todonotes/todonotes.pdf)
@@ -199,7 +183,7 @@
 \newcommand{\environment}{\ensuremath{\mathcal{E}}\xspace}
 \NewDocumentCommand{\pk}{m}{\textit{pk}_{#1}}
 \NewDocumentCommand{\sk}{m}{\textit{sk}_{#1}}
-\NewDocumentCommand{\balance}{m}{\texttt{balance}_{#1}}
+\NewDocumentCommand{\subbalance}{m}{\texttt{balance}_{#1}}
 \NewDocumentCommand{\coins}{m}{\texttt{coins}_{#1}}
 \NewDocumentCommand{\itistate}{o}{
   \IfNoValueTF{#1}
