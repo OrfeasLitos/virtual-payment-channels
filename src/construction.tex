@@ -191,3 +191,17 @@
   the previous states of all base channels. After this, base parties can only
   use the newly created virtual transactions to spend their funding outputs. In
   this step each party exchanges a single signature with each of its neighbours.
+
+  When \textsc{virt} is instructed to close
+  (Figure~\ref{code:virtual-layer:close}), it first notifies its \textsc{virt}
+  host (if any) and waits for it to close. After that, it signs and publishes
+  the unique valid virtual transaction. It then repeatedly checks the chain to
+  see if the transaction is included
+  (Figure~\ref{code:virtual-layer:check-chain-close}). If it is included, the
+  virtual layer is closed and \textsc{virt} informs its higher layer. The
+  instruction to close has to be received potentially many times, because a
+  number of virtual transactions (the ones that spend the same output) are
+  mutually exclusive and therefore if another base party publishes an
+  incompatible virtual transaction contemporaneously and that remote transaction
+  enters the chain, then our \textsc{virt} party has to try again with another,
+  compatible virtual transaction.
