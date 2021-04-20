@@ -186,4 +186,8 @@
   neighbours. The two endpoints send $2$ signatures each when $n = 3$ and $n -
   2$ signatures each when $n > 3$, whereas each intermediary sends $1 + \chi_{i
   + 1 < n}(n - 2 + \chi_{i = n - 2}) + 1 + \chi_{i - 1 > 1}(n - 2 + \chi_{i =
-  3}) \in O(n)$ signatures each.
+  3}) \in O(n)$ signatures each. The last circuit of messages
+  (Figure~\ref{code:virtual-layer:revocation}) carries the revocations of
+  the previous states of all base channels. After this, base parties can only
+  use the newly created virtual transactions to spend their funding outputs. In
+  this step each party exchanges a single signature with each of its neighbours.
