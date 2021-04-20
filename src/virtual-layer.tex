@@ -1128,13 +1128,13 @@
       \IfThen{\textit{State} = \textsc{guest punished}}{output (\textsc{guest
       punished}) to $R$}
       \label{code:virtual-layer:close:output-guest-punished}
-      \State ensure \textit{State} = \textsc{open}
+      \State ensure $\textit{State} \in \{\textsc{open}, \textsc{closing}\}$
       \If{$\texttt{host}_P \neq \ledger$} \Comment{$\texttt{host}_P$ is a
       \textsc{virt}}
       \label{code:virtual-layer:close:if-nested-host}
         \State ignore all messages except for output (\textsc{closed}) by
         $\texttt{host}_P$. Also relay to $\texttt{host}_P$ any (\textsc{check if
-        closing}) input received
+        closing}) or (\textsc{close}) input received
         \State input (\textsc{close}) to $\texttt{host}_P$
       \EndIf
       \State \Comment{if we have a $\texttt{host}_P$, continue from here on
@@ -1146,7 +1146,8 @@
       \frac{2}{n-1}(n-i), 2, k} \in \Sigma)$} \Comment{we are an endpoint and
       our counterparty has closed -- 1st subscript of TX is $2$ if $i=1$ and
       $n-1$ if $i=n$}
-        \State ignore all messages except for (\textsc{check if closing}) by $R$
+        \State ignore all messages except for (\textsc{check if closing}) and
+        (\textsc{close}) by $R$
         \State $\textit{State} \gets \textsc{closing}$
         \State give up execution token \Comment{control goes to \environment}
       \EndIf

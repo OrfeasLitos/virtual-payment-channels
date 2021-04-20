@@ -758,9 +758,10 @@
       \textsc{closed}, \textsc{base punished}\}$ \Comment{channel open}
       \If{$\texttt{host}_P \neq \ledger$} \Comment{we have a virtual channel}
         \State $\itistate \gets \textsc{host closing}$
-        \State input (\textsc{close}) to $\texttt{host}_P$ and keep relaying
-        inputs (\textsc{check if closing}) to $\texttt{host}_P$ until receiving
-        output (\textsc{closed}) by $\texttt{host}_P$
+        \State input (\textsc{close}) to $\texttt{host}_P$ and keep relaying any
+        (\textsc{check if closing}) or (\textsc{close}) input to
+        $\texttt{host}_P$ until receiving output (\textsc{closed}) by
+        $\texttt{host}_P$
         \label{code:ln:close:relay}
         \State $\texttt{host}_P \gets \ledger$
       \EndIf
