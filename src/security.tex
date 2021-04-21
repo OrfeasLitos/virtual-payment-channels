@@ -1,0 +1,53 @@
+\section{Security}
+  The first step to formally arguing about the security of our scheme is to
+  clearly delineate the exact security guarantees it provides. To that end, we
+  first prove two similar claims regarding the conservation of funds in the real
+  and ideal world, Lemmas~\ref{lemma:real-balance-security}
+  and~\ref{lemma:ideal-balance} respectively. Informally, the first claims that
+  an honest, non-negligent party which was implicated in an already closed
+  channel on which a number of payments took place will have at least the
+  expected funds on-chain. The second lemma states that for an ideal party in a
+  similar situation, the balance that \fchan has stored for it is at least equal
+  to the expected funds. In both cases the expected funds are (initial balance -
+  funds for supported virtuals - outbound payments + inbound payments). Note
+  that the funds for supported virtuals only refer to those funds used by the
+  funder of the virtual channel, not the rest of the base parties.
+
+  Both proofs follow the various possible execution paths, keeping track of the
+  resulting balance in each case and coming to the conclusion that balance is
+  secure in all cases, except if signatures are forged.
+
+  It is important to note that in fact \pchan provides a stronger guarantee,
+  namely that an honest, non-negligent party with an open channel can
+  unilaterally close it and obtain the expected funds on-chain within a known
+  time frame, given that \environment sends the necessary ``daemon'' messages.
+  This stronger guarantee is sufficient to make this construction reliable
+  enough for real-world applications. However a corresponding ideal world
+  functionality with such guarantees would have to be aware of the specific
+  transactions and signatures, therefore it would be essentially as complicated
+  as the protocol, thus violating the spirit of the simulation-based security
+  paradigm.
+
+  Subsequently we prove Lemma~\ref{lemma:no-halt}, which informally states that
+  if an ideal party and all its trusted parties are honest, then \fchan does not
+  halt with overwhelming probability. This is proven by first arguing that if
+  the conditions of Lemma~\ref{lemma:ideal-balance} for the ideal world hold,
+  then the conditions of Lemma~\ref{lemma:real-balance-security} also hold for
+  the equivalent real world execution, therefore in this case \fchan does not
+  halt. We then argue that also in case the conditions of
+  Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
+  therefore concluding the proof.
+
+  We then formulate and prove Theorem~\ref{theorem:security}, which states that
+  \pchan UC-realises \fchan. The corresponding proof is a simple application of
+  Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
+  \simulator faithfully simulates \pchan internally.
+
+  Lastly we construct a ``multi-session
+  extension''~\cite{DBLP:conf/crypto/CanettiR03} of \fchan and of \pchan and
+  prove Theorem~\ref{theorem:multi-session-security}, which claims that the
+  real-world multi-session extension protocol UC-realises the ideal-world
+  multi-session extension functionality. The proof is straightforward and
+  utilises the transitivity of UC-emulation.
+
+  All formal proofs can be found in the Appendix.
