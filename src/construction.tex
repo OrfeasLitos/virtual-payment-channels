@@ -8,6 +8,18 @@
   (Figures~\ref{code:ln:init}-\ref{code:virtual-layer:punishment}) that
   UC-realizes \fchan (Theorem~\ref{theorem:security}).
 
+  Similarly to~\cite{DBLP:conf/csfw/KiayiasL20}, the role of \environment
+  corresponds to two distinct actors in a real world implementation. On the one
+  hand \environment passes inputs that correspond to the desires of end-users
+  (e.g. open a channel, pay, close), on the other hand \environment is
+  responsible with periodically waking up parties to check the ledger and act
+  upon any detected counterparty misbehaviour, similar to an always-on
+  ``daemon'' that periodically nudges the implementation to perform these
+  checks. Since it is possible that \environment fails to wake up a party often
+  enough, \pchan explicitly checks whether it has become ``negligent'' every
+  time it is activated and all security guarantees are conditioned on the party
+  not being negligent.
+
   Our ideal world functionality \fchan represents a single channel, either
   simple or virtual. It acts as a relay between \adversary and \environment,
   leaking all messages. This simplifies the functionality and facilitates the
