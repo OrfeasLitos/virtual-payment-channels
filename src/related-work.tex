@@ -1,8 +1,70 @@
 \section{Related Work}
-  \cite{spider}, \cite{lightning}, \cite{bitcoin}, \cite{scaling},
-  \cite{decker}, \cite{silentwhispers}, \cite{DBLP:conf/ccs/DziembowskiFH18},
+  Due to massive replication and pervasive synchronisation requirements,
+  blockchains have inherently low throughput and high latency~\cite{scaling}.
+  The most prominent solution is Payment Channel Networks
+  (PCNs)~\cite{DBLP:conf/fc/GudgeonMRMG20}. A number of constructions has been
+  proposed, each with its own features and limitations. One of the oldest PCN is
+  Duplex Micropayment Channels (DMC)~\cite{decker}, which uses a decrementing
+  timelock for each new channel state, ensuring that only the latest state can
+  be put on-chain first. The Lightning Network~\cite{lightning} was proposed to
+  allow channels to stay open for an arbitrary length of time. Lightning is now
+  implemented and functional for Bitcoin. It has also been adapted for
+  Ethereum~\cite{wood2014ethereum}, where it is known as the Raiden
+  Network~\cite{raiden}. The wormhole
+  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against Lightning allowed
+  colluding parties in a multi-hop payment to steal the fees of their
+  intermediaries. Generalized Bitcoin-Compatible
+  Channels~\cite{cryptoeprint:2020:476} enable the creation of state channels on
+  Bitcoin, extending channel functionality from simple payments to arbitrary
+  Bitcoin scripts.
+
+
+  Payment routing~\cite{spider,prihodko2016flare} is another research area that
+  aims to improve the network efficiency without sacrificing privacy.
+
+  Sprites~\cite{sprites} leverages the scripting language of Ethereum to
+  decrease the time collateral is locked up compared to Lightning.
+  Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
+  Turing-complete scripting language of Ethereum to provide virtual state
+  channels, i.e. channels that can open without an on-chain transaction and that
+  allow for arbitrary scripts to be executed off-chain. Similar features are
+  provided by Celer~\cite{dong2018celer}. Hydra~\cite{cryptoeprint:2020:299}
+  provides state channels for the Cardano~\cite{cardano} blockchain.
+
+  BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be
+  funded with no on-chain transactions by allowing parties to form groups that
+  can pool their funds together off-chain and then use those funds to open
+  channels. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic
+  payments with reduced collateral, enabling new applications such as
+  crowdfunding conditional on reaching a funding target.
+
+  TEE-based~\cite{zhao2019sok}
+  solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster} improve the
+  throughput and efficiency of PCNs by an order of magnitude, at the cost of
+  having to trust TEEs. Brick~\cite{avarikioti2020brick} uses a partially
+  trusted committee to extend PCNs to fully asynchronous networks.
+
+  Solutions alternative to PCNs include sidechains~\cite{cryptoeprint:2020:175}
+  and partially centralised payment networks that entirely avoid using a
+  blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}.
+
+  Last but not least, a number of works propose virtual channel constructions
+  for Bitcoin. Lightweight Virtual Payment
+  Channels~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
+  opened on top of two preexisting channels and uses a technique similar to DMC.
+  Bitcoin-Compatible Virtual Channels~\cite{cryptoeprint:2020:554} also enables
+  virtual channels on top of two preexisting simple (i.e. non-virtual) channels
+  and offers two protocols, the first of which guarantees that the channel will
+  stay off-chain for an agreed period, while the second allows the intermediary
+  to turn the virtual into a simple channel.
+
+  \cite{DBLP:conf/fc/GudgeonMRMG20}, \cite{spider}, \cite{lightning},
+  \cite{raiden}, \cite{bitcoin}, \cite{scaling}, \cite{decker},
+  \cite{DBLP:conf/trust/ArmknechtKMYZ15}, \cite{stellar}, \cite{silentwhispers},
+  \cite{DBLP:conf/ndss/RoosMKG18}, \cite{DBLP:conf/ccs/DziembowskiFH18},
   \cite{perun}, \cite{teechan}, \cite{sprites}, \cite{prihodko2016flare},
   \cite{DBLP:conf/ndss/MalavoltaMSKM19}, \cite{cryptoeprint:2020:175},
   \cite{cryptoeprint:2020:554}, \cite{cryptoeprint:2020:476},
   \cite{avarikioti2020brick}, \cite{10.1145/3319535.3345666},
-  \cite{10.1007/978-3-030-65411-5_18}
+  \cite{10.1007/978-3-030-65411-5_18}, \cite{cryptoeprint:2020:299},
+  \cite{dong2018celer}, \cite{10.1145/3341301.3359627}, \cite{liao2021speedster}
