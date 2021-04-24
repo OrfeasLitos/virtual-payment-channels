@@ -2,25 +2,36 @@
   Due to massive replication and pervasive synchronisation requirements,
   blockchains have inherently low throughput and high latency~\cite{scaling}.
   The most prominent solution is Payment Channel Networks
-  (PCNs)~\cite{DBLP:conf/fc/GudgeonMRMG20}. A number of constructions has been
-  proposed, each with its own features and limitations. One of the oldest PCN is
-  Duplex Micropayment Channels (DMC)~\cite{decker}, which uses a decrementing
-  timelock for each new channel state, ensuring that only the latest state can
-  be put on-chain first. The Lightning Network~\cite{lightning} was proposed to
-  allow channels to stay open for an arbitrary length of time. Lightning is now
-  implemented and functional for Bitcoin. It has also been adapted for
-  Ethereum~\cite{wood2014ethereum}, where it is known as the Raiden
-  Network~\cite{raiden}. The wormhole
-  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against Lightning allowed
-  colluding parties in a multi-hop payment to steal the fees of their
-  intermediaries. Generalized Bitcoin-Compatible
+  (PCNs)~\cite{DBLP:conf/fc/GudgeonMRMG20}. A number of constructions have been
+  proposed, each with its own features and limitations. The first such
+  proposal~\cite{spilman} only enabled unidirectional payment channels. One of
+  the oldest PCNs is Duplex Micropayment Channels (DMC)~\cite{decker}, which
+  uses a decrementing timelock for each new channel state, ensuring that only
+  the latest state can be put on-chain first. The Lightning
+  Network~\cite{lightning} was proposed to allow channels to stay open for an
+  arbitrary length of time, leveraging the punishment mechanism that is used in
+  the current work as well. Lightning is now implemented and functional for
+  Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, where
+  it is known as the Raiden Network~\cite{raiden}.
+
+  The design comes with some weaknesses. The wormhole
+  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against Lightning allows
+  colluding parties in a multi-hop payment to steal the fees of the
+  intermediaries between them and Flood \& Loot~\cite{10.1145/3419614.3423248}
+  analyses the feasibility of an attack in which too many channels are forced to
+  close in a short amount of time, reducing the blockchain liveness and enabling
+  a malicious party to steal off-chain funds.
+
+  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another
+  research area that aims to improve the network efficiency without sacrificing
+  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
+  further increase network efficiency by preventing routes from becoming
+  unavailable due to lack of well-balanced funds.
+
+  Generalized Bitcoin-Compatible
   Channels~\cite{cryptoeprint:2020:476} enable the creation of state channels on
   Bitcoin, extending channel functionality from simple payments to arbitrary
   Bitcoin scripts.
-
-
-  Payment routing~\cite{spider,prihodko2016flare} is another research area that
-  aims to improve the network efficiency without sacrificing privacy.
 
   Sprites~\cite{sprites} leverages the scripting language of Ethereum to
   decrease the time collateral is locked up compared to Lightning.
@@ -39,10 +50,11 @@
   crowdfunding conditional on reaching a funding target.
 
   TEE-based~\cite{zhao2019sok}
-  solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster} improve the
-  throughput and efficiency of PCNs by an order of magnitude, at the cost of
-  having to trust TEEs. Brick~\cite{avarikioti2020brick} uses a partially
-  trusted committee to extend PCNs to fully asynchronous networks.
+  solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster,lee2020routee}
+  improve the throughput and efficiency of PCNs by an order of magnitude or
+  more, at the cost of having to trust TEEs. Brick~\cite{avarikioti2020brick}
+  uses a partially trusted committee to extend PCNs to fully asynchronous
+  networks.
 
   Solutions alternative to PCNs include sidechains~\cite{cryptoeprint:2020:175}
   and partially centralised payment networks that entirely avoid using a

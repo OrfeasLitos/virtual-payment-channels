@@ -1041,3 +1041,57 @@ series = {SOSP '19}
       archivePrefix={arXiv},
       primaryClass={cs.CR}
 }
+
+@inproceedings{10.1145/3419614.3423248,
+author = {Harris, Jona and Zohar, Aviv},
+title = {Flood \& Loot: A Systemic Attack on The Lightning Network},
+year = {2020},
+isbn = {9781450381390},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3419614.3423248},
+doi = {10.1145/3419614.3423248},
+abstract = {The Lightning Network promises to alleviate Bitcoin's known scalability problems. The operation of such second layer approaches relies on the ability of participants to turn to the blockchain to claim funds at any time, which is assumed to happen rarely.One of the risks that was identified early on is that of a wide systemic attack on the protocol, in which an attacker triggers the closure of many Lightning channels at once. The resulting high volume of transactions in the blockchain will not allow for the proper settlement of all debts, and attackers may get away with stealing some funds.This paper explores the details of such an attack and evaluates its cost and overall impact on Bitcoin and the Lightning Network. Specifically, we show that an attacker is able to simultaneously cause victim nodes to overload the Bitcoin blockchain with requests and to steal funds that were locked in channels.We go on to examine the interaction of Lightning nodes with the fee estimation mechanism and show that the attacker can continuously lower the fee of transactions that will later be used by the victim in its attempts to recover funds - eventually reaching a state in which only low fractions of the block are available for lightning transactions. Our attack is made easier even further as the Lightning protocol allows the attacker to increase the fee offered by his own transactions.We show that the vast majority of nodes agree to channel opening requests from unknown sources and are therefore susceptible to this attack. We highlight differences between various implementations of the Lightning Network protocol and review the susceptibility of each one to the attack. Finally, we propose mitigation strategies to lower the systemic attack risk of the network.},
+booktitle = {Proceedings of the 2nd ACM Conference on Advances in Financial Technologies},
+pages = {202–213},
+numpages = {12},
+keywords = {Lightning Network, HTLC, Payment channels, Bitcoin, Second-layer},
+location = {New York, NY, USA},
+series = {AFT '20}
+}
+
+@misc{lee2020routee,
+      title={RouTEE: A Secure Payment Network Routing Hub using Trusted Execution Environments},
+      author={Junmo Lee and Seongjun Kim and Sanghyeon Park and Soo-Mook Moon},
+      year={2020},
+      eprint={2012.04254},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
+}
+
+
+@inproceedings{DBLP:conf/ccs/KhalilG17,
+	Author = {Rami Khalil and Arthur Gervais},
+	Bibsource = {dblp computer science bibliography, https://dblp.org},
+	Biburl = {https://dblp.org/rec/bib/conf/ccs/KhalilG17},
+	Booktitle = {Proceedings of the 2017 {ACM} {SIGSAC} Conference on Computer and Communications Security, {CCS} 2017, Dallas, TX, USA, October 30 - November 03, 2017},
+	Crossref = {DBLP:conf/ccs/2017},
+	Date-Added = {2019-05-29 16:05:12 +0100},
+	Date-Modified = {2019-05-29 16:05:12 +0100},
+	Doi = {10.1145/3133956.3134033},
+	Pages = {439--453},
+	Timestamp = {Tue, 06 Nov 2018 11:07:29 +0100},
+	Title = {Revive: Rebalancing Off-Blockchain Payment Networks},
+	Url = {https://doi.org/10.1145/3133956.3134033},
+	Year = {2017},
+	Bdsk-Url-1 = {https://doi.org/10.1145/3133956.3134033}}
+
+@misc{spilman,
+	Author = {Jeremy Spilman},
+	Date-Added = {2019-05-29 16:24:22 +0100},
+	Date-Modified = {2019-05-29 16:53:47 +0100},
+	Howpublished = {\url{https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2013-April/002433.html}},
+	Month = {April},
+	Title = {Anti dos for tx replacement},
+	Year = {2013}}
+
