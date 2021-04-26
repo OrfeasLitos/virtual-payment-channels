@@ -198,12 +198,8 @@
 \begin{figure}[H]
   \begin{processbox}{\textsc{ln.exchangeOpenSigs}()}
     \begin{algorithmic}[1]
-      \State \Comment{$s = (2 + \lceil \texttt{maxTime}_{\texttt{window}} +
-      \frac{\texttt{Delay}}{2} /
-      \texttt{minTime}_{\texttt{window}}\rceil)\texttt{windowSize}$, where
-      $\texttt{maxTime}_{\texttt{window}}$, \texttt{Delay},
-      $\texttt{minTime}_{\texttt{window}}$ and \texttt{windowSize} are defined
-      in Proposition~\ref{ledger:delay}} \TODO{recheck and include proposition}
+      \State \Comment{$s = (2 + q)\texttt{windowSize}$, where $q$ and
+      \texttt{windowSize} are defined in Proposition~\ref{prop:liveness}}
       \State $C_{A, 0} \gets$ TX \{input: $(c, 2/\{\pk{A, F}, \pk{B, F}\})$,
       outputs: ($c$, ($\pk{A, \mathrm{out}} + (t + s)$) $\vee$ $2/\{\pk{A, R},
       \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}

@@ -37,11 +37,11 @@
   based on $p$~\ref{code:ln:init} and $s$~\ref{code:ln:exchange-open-sigs},
   which are global constants that are immutable and common to all parties. $s$
   stems from the liveness guarantees of Bitcoin, as discussed in
-  Proposition~\TODO{} and therefore cannot be tweaked. However, $p$ represents
-  the maximum time between two activations of a non-negligent party, so in
-  principle it is possible for the parties to explicitly negotiate this value
-  when opening a new channel and even renegotiate it after the channel has been
-  opened if need be. We leave this usability-augmenting protocol feature as
+  Proposition~\ref{prop:liveness} and therefore cannot be tweaked. However, $p$
+  represents the maximum time between two activations of a non-negligent party,
+  so in principle it is possible for the parties to explicitly negotiate this
+  value when opening a new channel and even renegotiate it after the channel has
+  been opened if need be. We leave this usability-augmenting protocol feature as
   future work.
 
   As we mentioned earlier, our protocol is not designed to gracefully recover
