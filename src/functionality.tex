@@ -33,8 +33,7 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan{} -- state machine up to \textsc{open} for $P \in
-  \{\alice, \bob\}$}
+  \begin{systembox}{\fchan{} -- open state machine, $P \in \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On first activation: \Comment{before handing the message}
       \label{code:functionality:open:boot}
@@ -130,8 +129,7 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan{} -- payments state machine for $P \in \{\alice,
-  \bob\}$}
+  \begin{systembox}{\fchan{} -- payment state machine, $P \in \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On (\textsc{pay}, $x$) by \environment when $\itistate_P =
       \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
@@ -203,8 +201,7 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan{} -- fundings state machine for $P \in \{\alice,
-  \bob\}$}
+  \begin{systembox}{\fchan{} -- funding state machine, $P \in \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, $x$, $\dots$) by ITI $R \in \{\fchan,
       \textsc{ln}\}$ when $\itistate_P = \textsc{open}$:
@@ -290,7 +287,7 @@
 \end{figure}
 
 \begin{figure}[H]
-  \begin{systembox}{\fchan{} -- closure state machine for $P \in \{\alice,
+  \begin{systembox}{\fchan{} -- close state machine, $P \in \{\alice,
   \bob\}$}
     \begin{algorithmic}[1]
       \State On (\textsc{close}) by \environment when $\itistate_P =
