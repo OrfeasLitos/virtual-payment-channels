@@ -106,17 +106,17 @@
   If the channel is virtual, each party also checks that its upcoming balance is
   lower than the balance of its sibling's counterparty and that the upcoming
   balance of the counterparty is higher than the balance of its own sibling,
-  otherwise it rejects the payment. This is to mitigate an attack where a
-  malicious counterparty uses an old commitment transaction to spend the base
-  funding output, therefore blocking the honest party from using its initiator
-  virtual transaction. This check ensures that the coins gained by the
-  punishment are sufficient to cover the losses from the blocked initiator
-  transaction. If the attack takes place, other local channels based directly or
-  indirectly on it are informed and they moved to a failed state. Note that this
-  does not bring a risk of losing any of the total coins of all local channels.
-  We conjecture that this balance constraint can be lifted if the current
-  Lightning-based payment method is replaced with an eltoo-based
-  one~\cite{eltoo}.
+  otherwise it rejects the payment. This is to mitigate a ``griefing'' (i.e.
+  that does not lead to financial gain) attack where a malicious counterparty
+  uses an old commitment transaction to spend the base funding output, therefore
+  blocking the honest party from using its initiator virtual transaction. This
+  check ensures that the coins gained by the punishment are sufficient to cover
+  the losses from the blocked initiator transaction. If the attack takes place,
+  other local channels based directly or indirectly on it are informed and they
+  moved to a failed state. Note that this does not bring a risk of losing any of
+  the total coins of all local channels. We conjecture that this balance
+  constraint can be lifted if the current Lightning-based payment method is
+  replaced with an eltoo-based one~\cite{eltoo}.
 
   Subsequently each of the two parties builds the new commitment transaction of
   its counterparty, signs it and sends over the signature, then the revocation
