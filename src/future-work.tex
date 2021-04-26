@@ -1,14 +1,87 @@
 \section{Future work}
-  \begin{itemize}
-    \item Add support for cooperative adding multiple virtuals to single channel
-    (needs cooperation by all hops of all existing virtuals of current channel)
-    \item Add support for cooperative closing
-    \item Use eltoo instead of lightning to avoid balance restriction that
-    prevents the revoked-griefing attack
-    \item Allow for user-defined ``leeway'' timeout and timeout renegotiation
-    \item Incorporate fees
-    \item Prevent DoS attacks
-    \item Improve privacy (mention full \fchan leakage)
-    \item Integrate with Lightning (i.e. allow both HTLC multi-hop payments
-    \emph{and} virtual channels
-  \end{itemize}
+  A number of features can be added to our protocol for additional efficiency,
+  usability and flexibility. First of all, a new subprotocol for cooperatively
+  closing a virtual channel can be created. In the optimistic case, a virtual
+  channel would then be closed with no on-chain transactions and its base
+  channels would become independent once again. To achieve this goal,
+  cooperation is needed between all base parties of the virtual channel and
+  possibly parties implicated in other virtual channels that use the same base
+  channels.
+
+  In our current construction, each time a particular channel $C$ acts as a base
+  channel for a new virtual, one more ``virtualisation layer'' is added. When
+  one of its owners wants to close $C$, it has to put on-chain as many
+  transactions as there are virtualisation layers. Also the timelocks associated
+  with closing a virtual channel increase with the number of virtualisation
+  layers of its base channels. Both these issues can be alleviated by extending
+  the opening subprotocol with the ability to cooperatively open multiple
+  virtual channels in the same layer, either simultaneously or as an amendment
+  to an existing virtualisation layer.
+
+  Due to the possibility of the griefing attack discussed in
+  Subection~\ref{construction:ln}, the range of balances a virtual channel can
+  support is limited by the balances of neighbouring channels. We believe that
+  this limitation can be lifted if instead of using a Lightning-based
+  construction for the payment layer, we instead replace it with an
+  eltoo-based~\cite{eltoo} construction. Since in eltoo a maliciously published
+  old state can be simply re-spent by the honest latest state, the griefing
+  attack is completely avoided. What is more, our protocol shares with eltoo the
+  need for the \texttt{ANYPREVOUT} sighash flag, therefore no additional
+  requirements from the Bitcoin protocol would be added by this change. Lastly,
+  due to the separation of intermediate layers with the payment layer in our
+  pseudocode implementation as found in the Appendix (i.e. the distinction
+  between the \textsc{ln} and the \textsc{virt} protocols), this change should
+  in principle not need extensive changes in all parts of the protocol.
+
+  As it currently stands, the timelocks calculated for the virtual channels are
+  based on $p$~\ref{code:ln:init} and $s$~\ref{code:ln:exchange-open-sigs},
+  which are global constants that are immutable and common to all parties. $s$
+  stems from the liveness guarantees of Bitcoin, as discussed in
+  Proposition~\TODO{} and therefore cannot be tweaked. However, $p$ represents
+  the maximum time between two activations of a non-negligent party, so in
+  principle it is possible for the parties to explicitly negotiate this value
+  when opening a new channel and even renegotiate it after the channel has been
+  opened if need be. We leave this usability-augmenting protocol feature as
+  future work.
+
+  As we mentioned earlier, our protocol is not designed to gracefully recover
+  from a situation in which halfway through a subprotocol, one of the
+  counterparties starts misbehaving. Currently the only solution is to
+  unilaterally close the channel. This however means that DoS attacks (that
+  still do not lead to financial losses) are possible. A practical
+  implementation of our protocol would need to expand the available actions and
+  states to be able to transparently and gracefully recover from such problems,
+  avoiding closing the channel where possible, especially when the problem stems
+  from network issues and not from malicious behaviour.
+
+  Furthermore, a realistic implementation has to explicitly handle the issue of
+  fees. These include miner fees for on-chain transactions and intermediary fees
+  for the parties that own base channels and facilitate opening virtual
+  channels. To incorporate these, an incentive analysis has to be conducted and
+  subsequently the protocol has to be augmented with the necessary data and
+  corresponding messages.
+
+  In order to increase readability and to keep focus on the salient points of
+  the construction, our protocol does not exploit a number of possible
+  optimisations. These include a number of techniques employed in Lightning that
+  drastically reduce storage requirements, along with a variety of possible
+  improvements to our novel virtual subprotocol. As this work is mainly a proof
+  of feasibility, we leave these optimisations as future work.
+
+  Additionally, our protocol does not enable a one-off multi-hop payment without
+  setting up a virtual channel first. This however is a useful feature in case
+  two parties know that they will only transact once, as opening a virtual
+  channel needs substantially more network messages than performing an one-of
+  multi-hop payment. It would be therefore fruitful to also enable the multi-hop
+  payment technique used in Lightning and allow users to choose which method to
+  use in each case.
+
+  Last but not least, the current analysis gives no privacy guarantees for the
+  protocol, as it does not employ onion packets~\cite{sphinx} like Lightning.
+  Furthermore, \fchan leaks all messages to the ideal adversary therefore
+  theoretically to privacy is offered at all. Nevertheless, onion packets can be
+  incorporated in the current construction and intuitively our construction
+  leaks less data than Lightning for the same multi-hop payments, as
+  intermediaries in our case do not learn the new balance after every payment,
+  contrary to Lightning. Therefore a future extension can improve the privacy of
+  the construction and formally prove exact privacy guarantees.
