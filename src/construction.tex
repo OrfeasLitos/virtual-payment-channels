@@ -138,12 +138,11 @@
   time to prevent a malicious counterparty from successfully using an old
   commitment transaction. Therefore at the beginning of every activation while
   the channel is open, \textsc{ln} checks if the party has been activated within
-  the last $p$ blocks (where $p$ is an implementation-dependent global constant
-  \TODO{decide if reference to Proposition is needed}). If a party is marked as
-  negligent, no balance security guarantees are given (c.f.
-  Lemma~\ref{lemma:real-balance-security}). Note that this does not affect
-  indistinguishability with the ideal world, as \fchan is notified by our
-  \simulator if a party becomes negligent and does not perform the balance
+  the last $p$ blocks (where $p$ is an implementation-dependent global
+  constant). If a party is marked as negligent, no balance security guarantees
+  are given (c.f. Lemma~\ref{lemma:real-balance-security}). Note that this does
+  not affect indistinguishability with the ideal world, as \fchan is notified by
+  our \simulator if a party becomes negligent and does not perform the balance
   security check.
 
   When either party is instructed by \environment to close the channel
