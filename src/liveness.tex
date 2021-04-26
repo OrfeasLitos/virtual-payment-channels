@@ -1,0 +1,10 @@
+\begin{proposition}
+  \label{prop:liveness}
+  Consider a synchronised honest party that submits a transaction \tx to the
+  ledger functionality~\cite{genesis} by the time the block indexed by $h$ is
+  added to $\texttt{state}$ in its view. Then \tx is guaranteed to be included
+  in the block range $[h+1, h + (2 + q) \windowSize]$, where $q = \lceil
+  (\maxTime + \frac{\vdelay}{2})/ \minTime \rceil$.
+\end{proposition}
+
+The proof can be found in~\cite{DBLP:conf/csfw/KiayiasL20}.
