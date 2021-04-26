@@ -28,10 +28,14 @@
   further increase network efficiency by preventing routes from becoming
   unavailable due to lack of well-balanced funds.
 
-  Generalized Bitcoin-Compatible
-  Channels~\cite{cryptoeprint:2020:476} enable the creation of state channels on
-  Bitcoin, extending channel functionality from simple payments to arbitrary
-  Bitcoin scripts.
+  An alternantive payment channel construction that aspires to be the successor
+  of Lightning is eltoo~\cite{eltoo}. It has a conceptually simpler
+  construction, smaller on-chain footprint and a more forgiving attitude towards
+  submitting an old channel state than Lightning, but it needs the
+  \texttt{ANYPREVOUT} sighash flag to be added to Bitcoin. Generalized
+  Bitcoin-Compatible Channels~\cite{cryptoeprint:2020:476} enable the creation
+  of state channels on Bitcoin, extending channel functionality from simple
+  payments to arbitrary Bitcoin scripts.
 
   Sprites~\cite{sprites} leverages the scripting language of Ethereum to
   decrease the time collateral is locked up compared to Lightning.
@@ -71,7 +75,7 @@
   to turn the virtual into a simple channel.
 
   \cite{DBLP:conf/fc/GudgeonMRMG20}, \cite{spider}, \cite{lightning},
-  \cite{raiden}, \cite{bitcoin}, \cite{scaling}, \cite{decker},
+  \cite{eltoo}, \cite{raiden}, \cite{bitcoin}, \cite{scaling}, \cite{decker},
   \cite{DBLP:conf/trust/ArmknechtKMYZ15}, \cite{stellar}, \cite{silentwhispers},
   \cite{DBLP:conf/ndss/RoosMKG18}, \cite{DBLP:conf/ccs/DziembowskiFH18},
   \cite{perun}, \cite{teechan}, \cite{sprites}, \cite{prihodko2016flare},
