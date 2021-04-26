@@ -1,5 +1,4 @@
-\TODO{use center and captionof instead of figure, like \textsc{virt}}
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- init}
     \begin{algorithmic}[1]
       \State \Comment{When not specified, input comes from and output goes to
@@ -65,11 +64,11 @@
       \EndIndent
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:init}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- methods used by \textsc{virt}}
     \begin{algorithmic}[1]
       \State \textsc{revokePrevious}():
@@ -126,11 +125,11 @@
       \EndIndent
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:methods-for-virt}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln.exchangeOpenKeys}()}
     \begin{algorithmic}[1]
       \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
@@ -166,11 +165,11 @@
       \State $\itistate \gets \textsc{opening keys ok}$
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:exchange-open-keys}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln.prepareBase}()}
     \begin{algorithmic}[1]
       \If{\texttt{hops} = \ledger} \Comment{opening base channel}
@@ -190,12 +189,12 @@
       \EndIf
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:prepare-base}
-\end{figure}
+\end{center} \ \\
 
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln.exchangeOpenSigs}()}
     \begin{algorithmic}[1]
       \State \Comment{$s = (2 + q)\texttt{windowSize}$, where $q$ and
@@ -252,11 +251,11 @@
       \label{code:ln:exchange-open-sigs:a-verify}
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:exchange-open-sigs}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln.commitBase}()}
     \begin{algorithmic}[1]
       \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{A, \mathrm{chain}})$
@@ -271,11 +270,11 @@
       \EndWhile
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:commit-base}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- external open messages for \bob}
     \begin{algorithmic}[1]
       \State On input (\textsc{check funding}):
@@ -314,11 +313,11 @@
       \EndIndent
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:bob}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{open}, $c$, \texttt{hops},
   \texttt{fundee}):}
     \begin{algorithmic}[1]
@@ -347,11 +346,11 @@
       \State output (\textsc{open ok}, $c$, \texttt{fundee}, \texttt{hops})
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:open}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{updateForVirtual}()}
     \begin{algorithmic}[1]
       \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, F}'$ and
@@ -381,11 +380,11 @@
       i+1}$, $\pk{\bar{P}, F}'$) = True
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:open:virtual-update}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- virtualise start and end}
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, $c_{\mathrm{virt}}$, \texttt{fundee},
@@ -444,11 +443,11 @@
       \EndIndent
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:virtualise:start-end}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- virtualise hops}
     \begin{algorithmic}[1]
       \State On (\textsc{virtualising}, $\texttt{host}_{\bar{P}}'$,
@@ -529,11 +528,11 @@
       \EndIndent
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:open:virtualise:hops}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{signaturesRoundTrip}()}
     \begin{algorithmic}[1]
       \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$ coins moved from
@@ -570,11 +569,11 @@
       $\bar{P}$'s output
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:pay:signatures}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{revocationsTrip}()}
     \begin{algorithmic}[1]
       \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
@@ -643,11 +642,11 @@
       \EndIf
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:pay:revocations}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_P \geq x$
@@ -663,11 +662,11 @@
       \State \Comment{No output is given to the caller, this is intentional}
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:pay}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{get paid}, $y$):}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_{\bar{P}} \geq y$
@@ -682,11 +681,11 @@
       \label{code:ln:get-paid:state}
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:get-paid}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{check for lateral close}):}
     \begin{algorithmic}[1]
       \If{$\texttt{host}_P \neq \ledger$}
@@ -695,11 +694,11 @@
       \EndIf
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:poll-virtual}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{check chain for closed}):}
     \begin{algorithmic}[1]
       \State ensure $\itistate \notin \{\bot, \textsc{init},
@@ -722,11 +721,11 @@
       \EndIf
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:poll}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{submitAndCheckRevocation}($j$)}
     \begin{algorithmic}[1]
       \State $\mathrm{sig}_{P, R, j} \gets \textsc{sign}(R_{P, j}, \sk{P, R})$
@@ -743,11 +742,11 @@
       \EndIf
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:submit-revocation}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{close}):}
     \begin{algorithmic}[1]
       \State ensure $\itistate \notin \{\bot, \textsc{init}, \textsc{topped up},
@@ -784,17 +783,17 @@
       \EndIf
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:close}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On output (\textsc{enabler used revocation})
   by $\texttt{host}_P$:}
     \begin{algorithmic}[1]
       \State $\itistate \gets \textsc{base punished}$
     \end{algorithmic}
   \end{processbox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:ln:used-revocation}
-\end{figure}
+\end{center} \ \\
