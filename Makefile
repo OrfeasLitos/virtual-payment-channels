@@ -1,7 +1,9 @@
-all: virtual-channels.pdf transactions-overview.pdf
+TIKZS = $(patsubst src/figures/dot/%.dot, src/figures/auto-tikz/%.tex, $(wildcard src/figures/dot/*.dot))
+
+all: figures virtual-channels.pdf transactions-overview.pdf
 
 #.ONESHELL:
-virtual-channels.pdf: src/*
+virtual-channels.pdf: src/* src/figures/auto-tikz/* src/figures/manual-tikz/*
 	export TEXINPUTS=.:./src//:; \
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode virtual-channels.tex; \
 	rm -rf virtual-channels.aux virtual-channels.log virtual-channels.out virtual-channels.toc virtual-channels.lof virtual-channels.lot virtual-channels.bbl virtual-channels.blg virtual-channels-autopp.out virtual-channels-pics.pdf virtual-channels-autopp.log virtual-channels-autopp.xcp
@@ -22,5 +24,12 @@ bib: src/*
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode virtual-channels.tex; \
 	rm -rf virtual-channels.aux virtual-channels.log virtual-channels.out virtual-channels.toc virtual-channels.lof virtual-channels.lot virtual-channels.bbl virtual-channels.blg virtual-channels-autopp.out virtual-channels-pics.pdf virtual-channels-autopp.log virtual-channels-autopp.xcp
 
+figures: $(TIKZS)
+
+src/figures/manual-tikz/*:
+
+src/figures/auto-tikz/%.tex: src/figures/dot/%.dot
+	dot2tex --texmode math --format tikz --figonly --autosize --usepdflatex --nominsize $< > $@
+
 clean:
-	rm -rf *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.pdf
+	rm -rf *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.pdf src/figures/auto-tikz/*.tex
