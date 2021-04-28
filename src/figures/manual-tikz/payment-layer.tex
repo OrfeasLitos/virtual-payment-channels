@@ -1,0 +1,25 @@
+\begin{tikzpicture}[>=latex,line join=bevel,]
+  \node (funding) at (10.5bp,39.124bp) [draw,ellipse] {$F$};
+  \coordinate (funding_out) at (61.64bp,39.124bp);
+  \node (commitment) at (95.29bp,39.124bp) [draw,ellipse] {$C_{A, i}$};
+  \coordinate (commitment_out_1) at (146.08bp,52.124bp);
+  \coordinate (commitment_out_2) at (130.08bp,16.124bp);
+  \node (revocation) at (173.87bp,59.124bp) [draw,ellipse] {$R_{B, i}$};
+  \coordinate (revocation_out) at (230.16bp,72.124bp);
+  \draw [->] (funding) ..controls (40.199bp,39.124bp) and (60.589bp,39.124bp)  .. (funding_out);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (40.0bp,46.124bp) node {$c_A + c_B$};
+  \draw (50.0bp,31.116bp) node {$2/\{\pk{A, F}, \pk{B, F}\}$};
+  \draw [->] (funding_out) ..controls (81.74bp,39.124bp) and (76.79bp,39.124bp)  .. (commitment);
+  \draw [->] (commitment) -- (commitment_out_1);
+  \draw (120.29bp,52.124bp) node {$c_A$};
+  \draw (172.29bp,39.124bp) node {$2/\{\pk{A, R}, \pk{B, R}\} \vee (\pk{A, \mathrm{out}} + t)$};
+  \draw [->] (commitment) -- (commitment_out_2);
+  \draw (107.29bp,21.124bp) node {$\pk{B, \mathrm{out}}$};
+  \draw (124.29bp,25.124bp) node {$c_B$};
+  \draw [->] (commitment_out_1) -- (revocation);
+  \draw [->] (revocation) -- (revocation_out);
+  \draw (197.87bp,72.124bp) node {$c_A$};
+  \draw (212.87bp,58.124bp) node {$\pk{B, \mathrm{out}}$};
+\end{tikzpicture}

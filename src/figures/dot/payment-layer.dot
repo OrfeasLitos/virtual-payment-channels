@@ -1,0 +1,18 @@
+digraph G {
+  funding [label="F"]
+  funding_out [style=invisible]
+  commitment [label="C_{A, i}"]
+  commitment_out_1 [style=invisible]
+  commitment_out_2 [style=invisible]
+  revocation [label="R_{B, i}"]
+  revocation_out [style=invisible]
+
+  funding -> funding_out [label="2/\{\pk{A, F}, \pk{B, F}\}"]
+  funding_out -> commitment
+  commitment -> commitment_out_1 [label="2/\{\pk{A, R}, \pk{B, R}\} \vee (\pk{A, \mathrm{out}} + t)"]
+  commitment -> commitment_out_2 [label="\pk{B, \mathrm{out}}"]
+  commitment_out_1 -> revocation
+  revocation -> revocation_out [label="\pk{B, \mathrm{out}}"]
+
+  rankdir=LR
+}

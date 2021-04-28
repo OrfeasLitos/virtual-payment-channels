@@ -46,8 +46,13 @@
   $c_B$ coins. There are three sets of transactions at play: A ``funding''
   transaction that is put on-chain, off-chain ``commitment'' transactions that
   spend the funding output on channel closure and off-chain ``revocation''
-  transactions that spend commitment outputs in case of misbehaviour. \TODO{add
-  figure}
+  transactions that spend commitment outputs in case of misbehaviour (c.f.
+  Figure~\ref{figure:payment-layer}).
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{payment-layer.tex}
+    \caption{Funding, commitment and revocation transactions}
+    \label{figure:payment-layer}
+  \end{figure}
 
   In particular, there is a single on-chain funding transaction that spends $c_A
   + c_B$ funder's coins, with a single output that is encumbered with a
