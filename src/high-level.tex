@@ -105,8 +105,9 @@
   endpoints also has an ``initiator'' transaction that spends the funding output
   of its only base channel and produces two outputs: one new funding output for
   the base channel and one ``virtual'' output (c.f. Figure~\TODO{}). If the
-  virtual transaction ends up on-chain, the latter output carries coins that
-  will directly or indirectly fund the funding output of the virtual channel.
+  virtual\TODO{initiator?} transaction ends up on-chain, the latter output carries coins that
+  will directly or indirectly fund the funding output of the virtual channel. \TODO{we need to add here a couple of sentences about how updates are performed between the 
+  two end-points in the virtual channels.}
 
   Intermediaries on the other hand store three sets of virtual transactions:
   ``initiator'', ``extend-interval'' and ``merge-intervals'' (c.f.
