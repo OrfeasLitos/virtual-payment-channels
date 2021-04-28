@@ -48,6 +48,7 @@
   spend the funding output on channel closure and off-chain ``revocation''
   transactions that spend commitment outputs in case of misbehaviour (c.f.
   Figure~\ref{figure:payment-layer}).
+
   \begin{figure}
     \subimport{./figures/manual-tikz/}{payment-layer.tex}
     \caption{Funding, commitment and revocation transactions}
@@ -104,7 +105,8 @@
   In particular, apart from the transactions of simple channels, each of the two
   endpoints also has an ``initiator'' transaction that spends the funding output
   of its only base channel and produces two outputs: one new funding output for
-  the base channel and one ``virtual'' output (c.f. Figure~\TODO{}). If the
+  the base channel and one ``virtual'' output (c.f.
+  Figure~\ref{figure:virtual-layer-endpoint}). If the
   virtual\TODO{initiator?} \orfeas{Yes. Each endpoint has only one virtual
   transaction, the initiator} transaction ends up on-chain, the latter output carries coins that
   will directly or indirectly fund the funding output of the virtual channel.
@@ -114,6 +116,12 @@
   This virtual funding output can in turn be spent by a commitment transaction
   that is negotiated and updated with direct communication between the two
   endpoints in exactly the same manner as the payments of simple channels.
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{virtual-layer-endpoint.tex}
+    \caption{$A$ - $D$ virtual channel: $A$'s initiator transaction}
+    \label{figure:virtual-layer-endpoint}
+  \end{figure}
 
   Intermediaries on the other hand store three sets of virtual transactions:
   ``initiator'', ``extend-interval'' and ``merge-intervals'' (c.f.

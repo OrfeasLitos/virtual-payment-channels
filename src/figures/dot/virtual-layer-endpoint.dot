@@ -1,0 +1,12 @@
+digraph G {
+  virtual_in [style=invisible]
+  virtual [label="V"]
+  virtual_out_1 [style=invisible]
+  virtual_out_2 [style=invisible]
+
+  virtual_in -> virtual [label="\sigma_{A, F} \wedge \sigma_{B, F}"]
+  virtual -> virtual_out_1 [label="2/\{\pk{A, F'}, \pk{B, F'}\}"]
+  virtual -> virtual_out_2 [label="n/\{\pk{j}\}_{j \in [n]} \vee (2/\{\pk{A, V}, \pk{D, V}\} + t)"]
+
+  rankdir=LR
+}

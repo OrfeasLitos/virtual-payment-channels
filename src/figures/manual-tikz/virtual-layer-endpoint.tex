@@ -1,0 +1,18 @@
+\begin{tikzpicture}[>=latex,line join=bevel,]
+  \coordinate (virtual_in) at (54.595bp,49.714bp);
+  \node (virtual) at (105.69bp,49.714bp) [draw,ellipse] {$V$};
+  \coordinate (virtual_out_1) at (240.68bp,76.714bp);
+  \coordinate (virtual_out_2) at (240.68bp,22.714bp);
+  \draw [->] (virtual_in) -- (virtual);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (76.19bp,57.714bp) node {$c_A + c_B$};
+  \draw (76.19bp,40.714bp) node {$\sigma_{A, F} \wedge \sigma_{B, F}$};
+  \draw [->] (virtual) .. controls (120bp,72bp) .. (virtual_out_1);
+  \draw (179.19bp,80.714bp) node {$c_A + c_B - c_{\mathrm{virt}}$};
+  \draw (179.19bp,64.714bp) node {$2/\{\pk{A, F'}, \pk{B, F'}\}$};
+  \draw [->] (virtual) .. controls (120bp,24bp) .. (virtual_out_2);
+  \draw (174.19bp,29.214bp) node {$c_{\mathrm{virt}}$};
+  \draw (184.19bp,14.214bp) node {$n/\{\pk{j}\}_{j \in [n]} \vee (2/\{\pk{A, V}, \pk{D, V}\} + t)$};
+\end{tikzpicture}
+
