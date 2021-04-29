@@ -128,7 +128,7 @@
   (Figure~\ref{code:virtual-layer:mid-txs}): ``initiator''
   (Figure~\ref{figure:virtual-layer-initiator}), ``extend-interval''
   (Figure~\ref{figure:virtual-layer-extend-interval}) and ``merge-intervals''
-  . Each intermediary has one
+  (Figure~\ref{figure:virtual-layer-merge-intervals}). Each intermediary has one
   initiator tx, which spends the party's two funding outputs and produces four:
   one funding output for each base channel, one output that directly pays the
   intermediary coins equal to the total value in the virtual channel, and one
@@ -147,6 +147,13 @@
     \caption{$A$ - $E$ virtual channel: One of $B$'s extend interval
     transactions}
     \label{figure:virtual-layer-extend-interval}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-merge-intervals.tex}
+    \caption{$A$ - $E$ virtual channel: One of $B$'s merge intervals
+    transactions}
+    \label{figure:virtual-layer-merge-intervals}
   \end{figure}
 
 
