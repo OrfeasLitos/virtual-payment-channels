@@ -9,7 +9,7 @@
   \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
   \pgfsetstrokecolor{strokecol}
   \draw (73.19bp,79.714bp) node {$c_{\mathrm{virt}}$};
-  \draw (73.19bp,64.714bp) node {$\bigwedge_{j=1}^n \sigma_{[1], j}$};
+  \draw (73.19bp,64.714bp) node {$\bigwedge_{j=1}^n \sigma_{\{A\}, j}$};
   \draw [->] (virtual_in_2) .. controls (97bp,28bp) .. (virtual);
   \draw (73.19bp,32.714bp) node {$c_B + c_C$};
   \draw (73.19bp,16.714bp) node {$\sigma_{B, F} \wedge \sigma_{C, F}$};
@@ -18,7 +18,7 @@
   \draw (179.19bp,75.714bp) node {$\pk{B, \mathrm{out}}$};
   \draw [->] (virtual) -- (virtual_out_2);
   \draw (174.19bp,54.214bp) node {$c_{\mathrm{virt}}$};
-  \draw (188.19bp,38.214bp) node {$n/\{\pk{[1, 2], j}\}_{j \in [n]} \vee (2/\{\pk{A, V}, \pk{E, V}\} + t)$};
+  \draw (188.19bp,38.214bp) node {$n/\{\pk{\{A, B\}, j}\}_{j \in [n]} \vee (2/\{\pk{A, V}, \pk{E, V}\} + t)$};
   \draw [->] (virtual) .. controls (105bp,13bp) .. (virtual_out_3);
   \draw (174.19bp,19.214bp) node {$c_B + c_C - c_{\mathrm{virt}}$};
   \draw (174.19bp,4.214bp) node {$2/\{\pk{B_r, F'}, \pk{C_l, F'}\}$};
