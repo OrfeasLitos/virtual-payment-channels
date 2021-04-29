@@ -124,13 +124,22 @@
   \end{figure}
 
   Intermediaries on the other hand store three sets of virtual transactions:
-  ``initiator'', ``extend-interval'' and ``merge-intervals'' (c.f.
-  Figure~\TODO{}). Each intermediary has one initiator tx, which spends the
-  party's two funding outputs and produces four: one funding output for each
-  base channel, one output that directly pays the intermediary coins equal to
-  the total value in the virtual channel, and one virtual output. If both
-  funding outputs are still unspent, publishing its initiator tx is the only way
-  for an intermediary to close either of its channels.
+  ``initiator'' (Figure~\ref{figure:virtual-layer-initiator}),
+  ``extend-interval'' and
+  ``merge-intervals''. Each
+  intermediary has one initiator tx, which spends the party's two funding
+  outputs and produces four: one funding output for each base channel, one
+  output that directly pays the intermediary coins equal to the total value in
+  the virtual channel, and one virtual output. If both funding outputs are still
+  unspent, publishing its initiator tx is the only way for an intermediary to
+  close either of its channels.
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-initiator.tex}
+    \caption{$A$ - $E$ virtual channel: $B$'s initiator transaction}
+    \label{figure:virtual-layer-initiator}
+  \end{figure}
+
 
   Furthermore, each intermediary has $O(n)$ extend-interval transactions. If
   exactly one of the party's two base channels' funding outputs is unspent,
