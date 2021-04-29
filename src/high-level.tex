@@ -106,7 +106,8 @@
   endpoints also has an ``initiator'' transaction that spends the funding output
   of its only base channel and produces two outputs: one new funding output for
   the base channel and one ``virtual'' output (c.f.
-  Figure~\ref{figure:virtual-layer-endpoint}). If the
+  Figures~\ref{figure:virtual-layer-endpoint},~\ref{code:virtual-layer:endpoint-txs}).
+  If the
   virtual\TODO{initiator?} \orfeas{Yes. Each endpoint has only one virtual
   transaction, the initiator} transaction ends up on-chain, the latter output carries coins that
   will directly or indirectly fund the funding output of the virtual channel.
@@ -123,16 +124,17 @@
     \label{figure:virtual-layer-endpoint}
   \end{figure}
 
-  Intermediaries on the other hand store three sets of virtual transactions:
-  ``initiator'' (Figure~\ref{figure:virtual-layer-initiator}),
-  ``extend-interval'' and
-  ``merge-intervals''. Each
-  intermediary has one initiator tx, which spends the party's two funding
-  outputs and produces four: one funding output for each base channel, one
-  output that directly pays the intermediary coins equal to the total value in
-  the virtual channel, and one virtual output. If both funding outputs are still
-  unspent, publishing its initiator tx is the only way for an intermediary to
-  close either of its channels.
+  Intermediaries on the other hand store three sets of virtual transactions
+  (Figure~\ref{code:virtual-layer:mid-txs}): ``initiator''
+  (Figure~\ref{figure:virtual-layer-initiator}), ``extend-interval''
+   and ``merge-intervals''
+  . Each intermediary has one
+  initiator tx, which spends the party's two funding outputs and produces four:
+  one funding output for each base channel, one output that directly pays the
+  intermediary coins equal to the total value in the virtual channel, and one
+  virtual output. If both funding outputs are still unspent, publishing its
+  initiator tx is the only way for an intermediary to close either of its
+  channels.
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{intermediary-initiator.tex}
