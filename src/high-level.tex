@@ -127,7 +127,7 @@
   Intermediaries on the other hand store three sets of virtual transactions
   (Figure~\ref{code:virtual-layer:mid-txs}): ``initiator''
   (Figure~\ref{figure:virtual-layer-initiator}), ``extend-interval''
-   and ``merge-intervals''
+  (Figure~\ref{figure:virtual-layer-extend-interval}) and ``merge-intervals''
   . Each intermediary has one
   initiator tx, which spends the party's two funding outputs and produces four:
   one funding output for each base channel, one output that directly pays the
@@ -140,6 +140,13 @@
     \subimport{./figures/manual-tikz/}{intermediary-initiator.tex}
     \caption{$A$ - $E$ virtual channel: $B$'s initiator transaction}
     \label{figure:virtual-layer-initiator}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-extend-interval.tex}
+    \caption{$A$ - $E$ virtual channel: One of $B$'s extend interval
+    transactions}
+    \label{figure:virtual-layer-extend-interval}
   \end{figure}
 
 
