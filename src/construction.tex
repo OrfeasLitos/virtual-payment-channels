@@ -25,8 +25,8 @@
   leaking all messages. This simplifies the functionality and facilitates the
   indistinguishability argument by having \simulator simply running internally
   the real world protocols of the channel parties \pchan with no modifications.
-  \fchan internally maintains a state machine (c.f. Figure~\TODO{state machine})
-  that keeps track of which internal parties are corrupted or negligent, whether
+  \fchan internally maintains two state machines, one per channel party (c.f. Figure~\TODO{state machine})
+  that keep track of which internal parties are corrupted or negligent, whether
   the channel has opened, whether a payment is underway, which external parties
   are to be considered trusted (as they correspond to other channels owned by
   the same player) and whether the channel has closed. The single security check
