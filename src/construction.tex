@@ -25,13 +25,59 @@
   leaking all messages. This simplifies the functionality and facilitates the
   indistinguishability argument by having \simulator simply running internally
   the real world protocols of the channel parties \pchan with no modifications.
-  \fchan internally maintains two state machines, one per channel party (c.f. Figure~\TODO{state machine})
+  \fchan internally maintains two state machines, one per channel party (c.f.
+  Figures~\ref{figure:fchan-state-init},~\ref{figure:fchan-state-open-funder},~\ref{figure:fchan-state-open-fundee},~\ref{figure:fchan-state-fund},~\ref{figure:fchan-state-pay},~\ref{figure:fchan-state-close},~\ref{figure:fchan-state-corruption})
   that keep track of which internal parties are corrupted or negligent, whether
   the channel has opened, whether a payment is underway, which external parties
   are to be considered trusted (as they correspond to other channels owned by
   the same player) and whether the channel has closed. The single security check
   performed is whether the on-chain coins are at least equal to the expected
   balance once the channel closes. If this check fails, \fchan halts.
+
+  \begin{figure*}
+    \label{figure:fchan-state-init}
+    \subimport{./figures/auto-tikz/}{fchan-init.tex}
+    \caption{\fchan state machine up to \textsc{init} (both parties)}
+  \end{figure*}
+
+  \begin{figure*}
+    \label{figure:fchan-state-open-funder}
+    \subimport{./figures/auto-tikz/}{fchan-open-funder.tex}
+    \caption{\fchan state machine from \textsc{init} up to \textsc{open}
+    (funder)}
+  \end{figure*}
+
+  \begin{figure*}
+    \label{figure:fchan-state-open-fundee}
+    \subimport{./figures/auto-tikz/}{fchan-open-fundee.tex}
+    \caption{\fchan state machine from \textsc{init} up to \textsc{open}
+    (fundee)}
+  \end{figure*}
+
+  \begin{figure*}
+    \label{figure:fchan-state-fund}
+    \subimport{./figures/manual-tikz/}{fchan-fund.tex}
+    \caption{\fchan state machine for funding new virtuals (both parties)}
+  \end{figure*}
+
+  \begin{figure*}
+    \label{figure:fchan-state-pay}
+    \subimport{./figures/auto-tikz/}{fchan-pay.tex}
+    \caption{\fchan state machine for payments (both parties)}
+  \end{figure*}
+
+  \begin{figure*}
+    \label{figure:fchan-state-close}
+    \subimport{./figures/auto-tikz/}{fchan-close.tex}
+    \caption{\fchan state machine for channel closure (both parties)}
+  \end{figure*}
+
+  \begin{figure*}
+    \label{figure:fchan-state-corruption}
+    \subimport{./figures/auto-tikz/}{fchan-corruption.tex}
+    \caption{\fchan state machine for corruption, negligence or punishment of
+    the counterparty of a lower layer (both parties)}
+  \end{figure*}
 
   Our real world protocol \pchan, ran by party $P$, consists of two
   subprotocols: the Lightning-inspired part, dubbed \textsc{ln}

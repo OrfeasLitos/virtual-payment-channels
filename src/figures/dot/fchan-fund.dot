@@ -1,0 +1,27 @@
+digraph G {
+  open [texlbl="\textsc{open}"]
+  thf [texlbl="\textsc{tentative} \textsc{help fund}"]
+  open -> thf [texlbl="intercept ``define \textsc{virt} ITI `$\texttt{host}_P$'{}''"]
+
+  shf [texlbl="\textsc{sync} \textsc{help fund}"]
+  thf -> shf [label="\simulator: (\textsc{fund})"]
+
+  check_shf [label="\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, \textsc{sync fund}\}",style=diamond]
+  shf -> check_shf [label="\environment"]
+  check_shf -> shf [texlbl="False"]
+  check_shf -> open [texlbl="True"]
+
+  pf [texlbl="\textsc{pending fund}"]
+  open -> pf [label="R: (\textsc{fund me}, f)"]
+
+  tf [texlbl="\textsc{tentative fund}"]
+  pf -> tf [texlbl="intercept ``define \textsc{virt} ITI `$\texttt{host}_P$'{}''"]
+
+  sf [texlbl="\textsc{sync fund}"]
+  tf -> sf [label="\simulator: (\textsc{fund})"]
+
+  check_sf [label="\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, \textsc{sync help fund}\}",style=diamond]
+  sf -> check_sf [label="\environment"]
+  check_sf -> sf [texlbl="False"]
+  check_sf -> open [texlbl="True; $\text{bal}_P \gets \text{bal}_P - f$"]
+}

@@ -1,0 +1,15 @@
+digraph G {
+  open [texlbl="\textsc{open}"]
+  closing [texlbl="\textsc{closing}"]
+  open -> closing [label="\environment: \textsc{close}"]
+
+  check_bal [label="\text{bal}_P \overset{?}{\geq} \text{coins}_P^{\ledger}",style=diamond]
+  open -> check_bal [label="\simulator: (\textsc{close}, P)"]
+  closing -> check_bal [label="\simulator: (\textsc{close}, P)"]
+
+  closed [texlbl="\textsc{closed}"]
+  check_bal -> closed [texlbl="True"]
+
+  halt [texlbl="halt",style=rectangle]
+  check_bal -> halt [texlbl="False"]
+}

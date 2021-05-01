@@ -1,0 +1,24 @@
+digraph G {
+  open [texlbl="\textsc{open}"]
+  tp [texlbl="\textsc{tentative pay}"]
+  open -> tp [label="\environment: (\textsc{pay}, d)"]
+
+  sp [texlbl="\textsc{sync} \textsc{pay}"]
+  tp -> sp [label="\simulator: (\textsc{pay})"]
+
+  check_sp [label="\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, \textsc{sync get paid}\}",style=diamond]
+  sp -> check_sp [label="\environment"]
+  check_sp -> sp [texlbl="False"]
+  check_sp -> open [texlbl="True; $\text{bal}_P \gets \text{bal}_P - d$"]
+
+  tgp [texlbl="\textsc{tentative get paid}"]
+  open -> tgp [label="\environment: (\textsc{get paid}, d)"]
+
+  sgp [texlbl="\textsc{sync get paid}, $d$"]
+  tgp -> sgp [label="\simulator: (\textsc{pay})"]
+
+  check_sgp [label="\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, (\textsc{sync pay}, d)\}",style=diamond]
+  sgp -> check_sgp [label="\environment"]
+  check_sgp -> sgp [texlbl="False"]
+  check_sgp -> open [texlbl="True; $\text{bal}_P \gets \text{bal}_P + f$"]
+}
