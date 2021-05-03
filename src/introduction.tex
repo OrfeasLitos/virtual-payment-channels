@@ -1,43 +1,90 @@
 \section{Introduction}
-  The popularity of blockchains in recent years has stretched their
-  performance to its limits. Due to their need for synchronisation their latency
-  is large (e.g. Bitcoin has a latency of 1h~\cite{bitcoin}) and due to the need
-  for massive redundancy their throughput is low (Bitcoin can handle at most 7
-  transactions per second~\cite{scaling}). To circumvent these inherent
-  limitations of blockchains, a prominent solution is to optimistically handle
-  payments off-chain via a Payment Channel Network
-  (PCN)~\cite{DBLP:conf/fc/GudgeonMRMG20} and only use the blockchain as an
+  The popularity of blockchain protocols 
+  in recent years has stretched their
+  performance  exposing a number of scalability considerations. 
+In particular, 
+Bitcoin and related blockchain protocols exhibit very high
+  latency (e.g. Bitcoin has a latency of 1h~\cite{bitcoin}) 
+  and a very low throughput (e.g., Bitcoin can handle at most 7
+  transactions per second~\cite{scaling}), 
+both significant shortcomings that jeopardize wider 
+use and adoption and are to a certain extend inherent~\cite{scaling}. 
+To address these considerations
+a prominent approach is to optimistically handle
+  transactions off-chain via a ``Payment Channel Network'' 
+  (PCN) (see, e.g.,~\cite{DBLP:conf/fc/GudgeonMRMG20} for a survey)
+  and only use the underlying blockchain protocol as an
   arbiter in case of dispute.
 
-  The most popular PCN is the Lightning Network (LN)~\cite{lightning}, which
-  works on top of Bitcoin. With this, parties can open a pairwise channel with a
-  single on-chain transaction and subsequently pay each other an unlimited
-  number of times, only limited by the speed of their internet connection. What
-  is more, a party can pay another even if they do not have a direct channel.
-  They can instead leverage a path of channels for a fee and perform a so-called
-  multi-hop payment in an atomic manner. Unfortunately a multi-hop payment needs
-  active cooperation by all intermediaries, therefore increasing the latency and
-  the probability of failure of the payment.
+The key primitive of PCN protocols is a 
+payment (or more generally state) channel. 
+Two parties initiate the channel by locking
+some funds on chain and subsequently
+exchange transactions to update the state of the channel. 
+The key feature is that state updates are not posted on chain
+and hence they remain unencumbered by the performance limitations
+of the underlying blockchain protocol. 
+Given this primitive, multiple overlapping payment
+channels can be combined and form the PCN. 
+
+Closing a channel is an operation that involves posting the 
+state of the channel on chain; it is essential that any party
+individually can close a channel as otherwise a malicious counterparty
+could prevent an honest party  from
+accessing their funds. This functionality
+however raises an important design consideration: how to prevent malicious parties from posting old states of the channel.
+%
+Addressing this issue can be done with some suitable use
+of  transaction ``time-locks'', a feature that prevents a transaction
+or a specific script from being processed on chain
+prior to a specific time. 
+%
+For instance, diminishing transaction time-locks 
+facilitated the Duplex Micropayment Channels (DMC)~\cite{decker}
+at the expense of bounding the overall lifetime of a channel. 
+Using script time-locks, the Lightning Network (LN)~\cite{lightning}
+provided a better solution that enabled channels staying open
+for an arbitrary length of time: the key idea was to duplicate the
+state of the channel between the two counterparties, say Alice and Bob, and facilitate a punishment mechanism that can be triggered by Bob whenever Alice posts an old state update and vice-versa. The script time-locking is essential to allow an honest counterparty some time to act. 
+
+Interconnecting state channels in LN, enables any two parties to transmit funds to each other as long as they can find a route of payment channels that connects them. The downside of this mechanism is that it requires the direct involvement of all the parties along the path for each payment. Instead, ``virtual payment channels'', suggest the more attractive approach of putting a one-time initialization step to setup a virtual payment channel, which subsequently can be used for direct payments with complexity  ---in the optimistic case---  independent of the length of the path. 
+Initial constructions for virtual channels essentially capitalized on the extended functionality of Ethereum, e.g., 
+Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more recent work, \cite{cryptoeprint:2020:554}  \TODO{put SP2021 citation, here and below} brought them closer to bitcoin-compatibility (by assuming adaptor signatures, to be available with the Taproot update). 
+
+A virtual channel constructor can be thought of as an  {\em operator} over the underlying primitive of a state channel. We can identify three   natural desiderata for this operator. 
+
+\begin{itemize}
+\item Recursive. A recursive virtual channel constructor can operate over channels that themselves could be the results of previous applications of the operator. This is important in the context of PCNs since it allows building virtual channels on top of pre-existing virtual channels.
+\item Variadic. A variadic virtual channel constructor can virtualize any number of input state channels. This is important in the context of PCNs since it enables applying the operator to build virtual channels of arbitrary length.
+\item Symmetric. A symmetric virtual channel constructor offers operations that are symmetric between the two endpoints and the intermediaries during setup (for the optimistic and pessimistic execution paths). This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
+\end{itemize}
+
+We note that recursiveness, while identified already as an important design property (e.g., see \cite{DBLP:conf/ccs/DziembowskiFH18}) it has not been achieved in the context of Bitcoin-compatible channels 
+(it was achieved only for DCN-like fixed lifetime channels in \cite{cans20} and left as an open question for LN-type channels in \cite{cryptoeprint:2020:554}). 
+The reason behind this are the severe limitations imposed in the design by the scripting language of Bitcoin-compatible systems. 
+%
+With respect to the other two properties, observe that successive applications of a recursive {\em binary} virtual channel operator to make it variadic will break symmetry (since the sequence of operator applications will impact the participants' functions with respect to the resulting channel). This is of particular concern since all previous virtual channel constructors proposed are binary, cf. \cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,cans20}. 
+
+\paragraph{Our Contributions.}  We present  the first  bitcoin-suitable recursive virtual channel constructor that is recursive and supports channels with an indefinite lifetime. In addition, our constructor is variadic and symmetric. In our constructor, both optimistic and pessimistic execution paths are optimal in terms of round complexity: issuing payments between the two end-points requires just two messages of size independent of the length of the channel while
+closing the channel requires a single transaction for any involved party (endpoint or intermediary) also independent of the channel's length. 
+
+We achieve the above by leveraging on a sophisticated virtual channel setup protocol which, on the one hand, enables end-points to use an interface that is invariant between base and virtual channels, 
+while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each. 
+
+  We formally prove the security of the constructor protocol in the  UC~\cite{uc} setting. The construction relies on the \texttt{ANYPREVOUT}   signature type, which does not sign the hash of the transaction it spends, therefore allowing for a single pre-signed transaction to spend any output
+  with a suitable script. We conjecture that this primitive cannot be achieved without \texttt{ANYPREVOUT}. \TODO{We need a stronger argument to support \texttt{ANYPREVOUT}.}
+ 
+\ignore{  %%%%%%% --------- OLD TEXT INTRO -----------
+  The most popular PCN is the Lightning Network (LN)~\cite{lightning}, which   works on top of Bitcoin. With LN, parties can open a pairwise channel with a   single on-chain transaction and subsequently pay each other an unlimited   number of times, only limited by the speed of their internet connection. What   is more, a party can pay another even if they do not have a direct channel.   They can instead leverage a path of channels for a fee and perform a so-called   multi-hop payment in an atomic manner. Unfortunately a multi-hop payment needs   active cooperation by all intermediaries, therefore increasing the latency and the probability of failure of the payment.
+
 
   To mitigate this issue, virtual payment channels have been proposed
-  \TODO{cite}. These enable two parties, say Alice and Bob, to open a payment
-  channel over two preexisting channels, one between Alice and Charlie and
-  another between Charlie and Bob. \TODO{check if recursive channels exist}
+  \TODO{cite}. These enable two parties, say Alice and Bob, to open a payment channel over two preexisting channels, one between Alice and Charlie and   another between Charlie and Bob. \TODO{check if recursive channels exist}
 
-  However, due to the limited scripting language of Bitcoin, it has proved
-  challenging to build a secure protocol that allows virtual channels to be
-  opened over more than two underlying channels, \TODO{delete following phrase
-  if the previous's TODO answer is affirmative} as well as to make this
-  construction recursive in the sense that further virtual channels can be
-  opened on top of other virtual channels.
+  However, due to the limited scripting language of Bitcoin, it has proved   challenging to build a secure protocol that allows virtual channels to be   opened over more than two underlying channels, \TODO{delete following phrase   if the previous's TODO answer is affirmative} as well as to make this   construction recursive in the sense that further virtual channels can be opened on top of other virtual channels.
 
-  This work fills this gap by providing a concrete protocol that allows for
-  arbitrarily many channels to be opened on top of arbitrarily long channel
-  paths, where the underlying channels may themselves be virtual. This is
-  achieved using standard Bitcoin script and an elaborate transaction
-  configuration. We formally prove the security of the protocol in the
-  UC~\cite{uc} setting. The construction relies on the \texttt{ANYPREVOUT}
-  signature type, which does not sign the hash of the transaction it spends,
-  therefore allowing for a single pre-signed transaction to spend any output
-  with a suitable script. We conjecture that this primitive cannot be achieved
-  without \texttt{ANYPREVOUT}.
+  This work fills this gap by providing a concrete protocol that allows for   arbitrarily many channels to be opened on top of arbitrarily long channel   paths, where the underlying channels may themselves be virtual. This is   achieved using standard Bitcoin script and an elaborate transaction
+  configuration. 
+} %% END OF IGNORE 
+  
+  

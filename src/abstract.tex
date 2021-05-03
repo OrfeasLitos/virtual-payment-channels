@@ -1,4 +1,19 @@
 \begin{abstract}
+A dominant approach towards the solution of the scalability problem
+in blockchain systems has been the development of layer 2
+protocols and specifically payment channel networks (PCNs) such as the Lightning Network (LN). 
+%
+Routing payments over a PCN requires the coordination of all path intermediaries encumbering the layer 2 solution both in terms of responsiveness as well as privacy. 
+%
+The issue is resolved by ``virtual channel'' protocols that, capitalizing on a suitable setup operation, enable the two end-points to engage as if they had a direct payment channel between them. 
+
+Beyond communication 
+efficiency, virtual channel constructions 
+have three natural desiderata. 
+A virtual channel constructor is {\em recursive} if it can also be applied on pre-existing virtual channels, {\em variadic} if it can be applied on any number of pre-existing channels and {\em symmetric} if it encumbers in an egalitarian fashion all channel participants both in optimistic and pessimistic execution paths. 
+We put forth the first bitcoin-suitable recursive virtual channel constructor. Furthermore our constructor is variadic and symmetric and offers optimal round complexity both in the optimistic and pessimistic execution paths.  Our virtual channels can be implemented over bitcoin assuming the \texttt{ANYPREVOUT} signature type. We express and prove the security of our construction in the universal composition setting. 
+%
+\ignore{  
   Blockchains are slow. Layer-2 largely solves this problem. PCNs constitute the
   most prominent layer-2/off-chain protocols. LN is the most widely used PCN and
   works on Bitcoin. Opening a channel requires 1 on-chain transaction, which can
@@ -13,4 +28,6 @@
   question of feasibility in the affirmative.
 
   Our construction relies on the proposed \texttt{ANYPREVOUT} signature type.
+  }%%%%
+%
 \end{abstract}

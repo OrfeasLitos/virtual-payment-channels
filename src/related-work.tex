@@ -1,20 +1,11 @@
-\section{Related Work}
-  Due to massive replication and pervasive synchronisation requirements,
-  blockchains have inherently low throughput and high latency~\cite{scaling}.
-  The most prominent solution is Payment Channel Networks
-  (PCNs)~\cite{DBLP:conf/fc/GudgeonMRMG20}. A number of constructions have been
-  proposed, each with its own features and limitations. The first such
-  proposal~\cite{spilman} only enabled unidirectional payment channels. One of
-  the oldest PCNs is Duplex Micropayment Channels (DMC)~\cite{decker}, which
-  uses a decrementing timelock for each new channel state, ensuring that only
-  the latest state can be put on-chain first. The Lightning
-  Network~\cite{lightning} was proposed to allow channels to stay open for an
-  arbitrary length of time, leveraging the punishment mechanism that is used in
-  the current work as well. Lightning is now implemented and functional for
+
+\paragraph{Related work}
+ The first proposal for PCNs was due to~\cite{spilman} which only enabled unidirectional payment channels. As mentioned,  DMCs~\cite{decker} with their decrementing timelocks have the shortcoming of limited channel lifetime. This was ameliorated by LN~\cite{lightning} which as become the dominant paradigm for designing PCNs for bitcoin-compatible systems. 
+ Lightning is now implemented and functional for
   Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, where
   it is known as the Raiden Network~\cite{raiden}.
 
-  The design comes with some weaknesses. The wormhole
+A number of attacks have been identified against LN. The wormhole
   attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against Lightning allows
   colluding parties in a multi-hop payment to steal the fees of the
   intermediaries between them and Flood \& Loot~\cite{10.1145/3419614.3423248}
@@ -22,11 +13,8 @@
   close in a short amount of time, reducing the blockchain liveness and enabling
   a malicious party to steal off-chain funds.
 
-  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another
-  research area that aims to improve the network efficiency without sacrificing
-  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
-  further increase network efficiency by preventing routes from becoming
-  unavailable due to lack of well-balanced funds.
+  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve the network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
+  further increase network efficiency by preventing routes from becoming   unavailable due to lack of well-balanced funds.
 
   An alternantive payment channel construction that aspires to be the successor
   of Lightning is eltoo~\cite{eltoo}. It has a conceptually simpler
@@ -44,25 +32,19 @@
   channels, i.e. channels that can open without an on-chain transaction and that
   allow for arbitrary scripts to be executed off-chain. Similar features are
   provided by Celer~\cite{dong2018celer}. Hydra~\cite{cryptoeprint:2020:299}
-  provides state channels for the Cardano~\cite{cardano} blockchain.
+  provides state channels for the Cardano~\cite{cardano} blockchain which combines a UTXO type of model with general purpose smart contract functionality that are also isomorphic.
 
-  BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be
-  funded with no on-chain transactions by allowing parties to form groups that
-  can pool their funds together off-chain and then use those funds to open
-  channels. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic
-  payments with reduced collateral, enabling new applications such as
-  crowdfunding conditional on reaching a funding target.
+  BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be   funded with no on-chain transactions by allowing parties to form groups that   can pool their funds together off-chain and then use those funds to open   channels. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic   payments with reduced collateral, enabling new applications such as   crowdfunding conditional on reaching a funding target.
 
   TEE-based~\cite{zhao2019sok}
-  solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster,lee2020routee}
+solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster,lee2020routee}
   improve the throughput and efficiency of PCNs by an order of magnitude or
   more, at the cost of having to trust TEEs. Brick~\cite{avarikioti2020brick}
   uses a partially trusted committee to extend PCNs to fully asynchronous
   networks.
 
   Solutions alternative to PCNs include sidechains~\cite{cryptoeprint:2020:175}
-  and partially centralised payment networks that entirely avoid using a
-  blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}.
+  and partially centralised payment networks that entirely avoid using a blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}. \TODO{Mention also non-custodial chains}
 
   Last but not least, a number of works propose virtual channel constructions
   for Bitcoin. Lightweight Virtual Payment
@@ -71,8 +53,9 @@
   Bitcoin-Compatible Virtual Channels~\cite{cryptoeprint:2020:554} also enables
   virtual channels on top of two preexisting simple (i.e. non-virtual) channels
   and offers two protocols, the first of which guarantees that the channel will
-  stay off-chain for an agreed period, while the second allows the intermediary
-  to turn the virtual into a simple channel.
+  stay off-chain for an agreed period, while the second allows the single intermediary
+  to turn the virtual into a simple channel. 
+We remark that the above strategy has the shortcoming that even if it is made recursive (a direction left open in \cite{cryptoeprint:2020:554}) after $k$ applications of the constructor there will be $k-1$ specific intermediaries that have to act in a specific order to close the channel. \TODO{double check the previous sentence}. 
 
   \cite{DBLP:conf/fc/GudgeonMRMG20}, \cite{spider}, \cite{lightning},
   \cite{eltoo}, \cite{raiden}, \cite{bitcoin}, \cite{scaling}, \cite{decker},
