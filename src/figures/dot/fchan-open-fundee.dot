@@ -1,0 +1,9 @@
+digraph G {
+  init [texlbl="\textsc{init}"]
+  tvo [texlbl="\textsc{tentative} \textsc{virtual open}"]
+  init -> tvo [label="\text{enabler}_B: (\textsc{funded}, \text{host}_B)"]
+
+  open [texlbl="\textsc{open}"]
+  init -> open [label="\simulator: (\textsc{base open}), \text{bal}_B \gets 0"]
+  tvo -> open [label="\simulator: (\textsc{virtual open}), \text{bal}_B \gets 0"]
+}

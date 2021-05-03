@@ -1,0 +1,11 @@
+digraph G {
+  epsilon [style=invisible]
+  first_act [texlbl="1st activation"]
+  epsilon -> first_act
+
+  uninit [texlbl="\textsc{uninit}"]
+  first_act -> uninit [label="\environment"]
+
+  init [texlbl="\textsc{init}"]
+  uninit -> init [label="(\textsc{init}, \pk{})"]
+}

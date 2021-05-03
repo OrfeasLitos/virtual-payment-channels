@@ -1,9 +1,11 @@
-\begin{abstract}
+\begin{abstract} 
 A dominant approach towards the solution of the scalability problem
 in blockchain systems has been the development of layer 2
-protocols and specifically payment channel networks (PCNs) such as the Lightning Network (LN). 
+protocols and specifically payment channel networks (PCNs) such as the Lightning Network (LN) over Bitcoin. 
 %
-Routing payments over a PCN requires the coordination of all path intermediaries encumbering the layer 2 solution both in terms of responsiveness as well as privacy. 
+Routing payments over LN requires the coordination of all path intermediaries
+in a multi-hop round trip that 
+encumbers the layer 2 solution both in terms of responsiveness as well as privacy. 
 %
 The issue is resolved by ``virtual channel'' protocols that, capitalizing on a suitable setup operation, enable the two end-points to engage as if they had a direct payment channel between them. 
 
@@ -14,20 +16,25 @@ A virtual channel constructor is {\em recursive} if it can also be applied on pr
 We put forth the first bitcoin-suitable recursive virtual channel constructor. Furthermore our constructor is variadic and symmetric and offers optimal round complexity both in the optimistic and pessimistic execution paths.  Our virtual channels can be implemented over bitcoin assuming the \texttt{ANYPREVOUT} signature type. We express and prove the security of our construction in the universal composition setting. 
 %
 \ignore{  
-  Blockchains are slow. Layer-2 largely solves this problem. PCNs constitute the
-  most prominent layer-2/off-chain protocols. LN is the most widely used PCN and
-  works on Bitcoin. Opening a channel requires 1 on-chain transaction, which can
-  at times be avoided by performing a multi-hop payment. Then however fees to
-  the intermediaries must be paid, routing becomes an issue, payment
-  delay is proportional to the number of intermediaries and per-payment privacy
-  suffers.
+  Blockchains have inherently limited throughput and latency. A variety of
+  so-called Layer 2 technologies attempt to solve this problem in a number of
+  independent ways. Payment Channel Networks (PCNs) constitute one of the most
+  prominent such approaches. The Lightning Network (LN), which uses Bitcoin as
+  its blockchain, is currently the most widely used PCN. In LN, payments to a
+  new recipient either need opening a new channel with a single on-chain
+  transaction, or can be done through a number of completely off-chain multi-hop
+  payments. Multi-hop payments however may fail due to faults by the
+  intermediaries, routing becomes an issue, payment delay is proportional to the
+  number of intermediaries and per-payment privacy suffers.
 
-  We propose Recursive Channels, which allow for new channels to be opened on
-  top of an arbitrarily long path of existing channels in a recursive manner
-  (i.e. the preexisting channels may themselves be virtual), answering the
-  question of feasibility in the affirmative.
-
-  Our construction relies on the proposed \texttt{ANYPREVOUT} signature type.
-  }%%%%
+  We propose Recursive Channels, which allow for new channels to be trustlessly
+  opened on top of an arbitrarily long path of existing channels, therefore
+  allowing the parties to directly pay each other multiple times, without
+  implicating the intermediaries for every payment. Such channels can be also
+  opened in a recursive manner, i.e. the preexisting channels may themselves be
+  virtual, thus answering the previously posed question of feasibility in the
+  affirmative.
 %
+%  Our construction relies on the proposed \texttt{ANYPREVOUT} sighash flag.
+}%%%%
 \end{abstract}

@@ -16,7 +16,7 @@ transactions-overview.pdf: src/transactions-overview/* src/transactions.tex
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode transactions-overview.tex; \
 	rm -rf transactions-overview.aux transactions-overview.log transactions-overview.out transactions-overview.toc transactions-overview.lof transactions-overview.lot transactions-overview.bbl transactions-overview.blg transactions-overview-autopp.out transactions-overview-pics.pdf transactions-overview-autopp.log
 
-bib: src/*
+bib: figures src/*
 	export TEXINPUTS=.:./src//:; \
 	pdflatex --shell-escape -halt-on-error -interaction=nonstopmode virtual-channels.tex; \
 	bibtex virtual-channels.aux; \
@@ -29,7 +29,7 @@ figures: $(TIKZS)
 src/figures/manual-tikz/*:
 
 src/figures/auto-tikz/%.tex: src/figures/dot/%.dot
-	dot2tex --texmode math --format tikz --figonly --autosize --usepdflatex --nominsize $< > $@
+	dot2tex --texmode math --format tikz --figonly --autosize --usepdflatex --nominsize --prog dot $< > $@
 
 clean:
 	rm -rf *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.pdf src/figures/auto-tikz/*.tex

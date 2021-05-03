@@ -1,0 +1,15 @@
+digraph G {
+  init [texlbl="\textsc{init}"]
+  pvo [texlbl="\textsc{pending} \textsc{virtual open}"]
+  init -> pvo [label="\environment: (\textsc{open}, \text{bal}_A, \text{enabler}_A)"]
+
+  tbo [texlbl="\textsc{tentative} \textsc{base open}"]
+  init -> tbo [texlbl="$\environment: (\textsc{open}, \text{bal}_A, \ledger)$"]
+
+  tvo [texlbl="\textsc{tentative} \textsc{virtual open}"]
+  pvo -> tvo [label="\text{enabler}_A: (\textsc{funded}, \text{host}_A)"]
+
+  open [texlbl="\textsc{open}"]
+  tbo -> open [label="\simulator: (\textsc{base open})"]
+  tvo -> open [label="\simulator: (\textsc{virtual open})"]
+}

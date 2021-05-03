@@ -1,0 +1,5 @@
+digraph G {
+  any [texlbl="<any state>"]
+  ignored [texlbl="\textsc{ignored}"]
+  any -> ignored [texlbl="$\simulator: \textsc{ignore}$ or $\text{host}_P: (\textsc{enabler punished})$"]
+}

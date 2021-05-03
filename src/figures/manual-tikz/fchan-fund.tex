@@ -1,0 +1,60 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,scale=0.88]
+%%
+\node (open) at (232.5bp,637.5bp) [draw,ellipse] {\textsc{open}};
+  \node (thf) at (148.5bp,562.5bp) [draw,ellipse] {\textsc{tentative} \textsc{help fund}};
+  \node (pf) at (316.5bp,562.5bp) [draw,ellipse] {\textsc{pending fund}};
+  \node (shf) at (140.5bp,486.0bp) [draw,ellipse] {\textsc{sync} \textsc{help fund}};
+  \node (check_shf) at (84.5bp,333.5bp) [draw,ellipse,diamond] {$\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, \textsc{sync fund}\}$};
+  \node (tf) at (330.5bp,486.0bp) [draw,ellipse] {\textsc{tentative fund}};
+  \node (sf) at (371.5bp,333.5bp) [draw,ellipse] {\textsc{sync fund}};
+  \node (check_sf) at (427.5bp,97.5bp) [draw,ellipse,diamond] {$\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, \textsc{sync help fund}\}$};
+  \draw [->] (open) ..controls (187.65bp,630.27bp) and (147.44bp,622.68bp)  .. (138.5bp,611.0bp) .. controls (131.81bp,602.26bp) and (134.55bp,590.07bp)  .. (thf);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (222.0bp,600.0bp) node {intercept ``define \textsc{virt} ITI `$\texttt{host}_P$'{}''};
+  \draw (206.5bp,627.92bp) node {$$};
+  \draw (137.54bp,577.07bp) node {$$};
+  \draw [->] (open) ..controls (269.61bp,632.09bp) and (292.14bp,625.89bp)  .. (305.5bp,611.0bp) .. controls (312.65bp,603.03bp) and (315.42bp,591.34bp)  .. (pf);
+  \draw (358.5bp,600.0bp) node {$R: (\textsc{fund me}, f)$};
+  \draw (259.1bp,628.66bp) node {$$};
+  \draw (310.86bp,577.27bp) node {$$};
+  \draw [->] (thf) ..controls (146.44bp,542.32bp) and (144.08bp,520.36bp)  .. (shf);
+  \draw (171.0bp,525.0bp) node {$\simulator: (\textsc{fund})$};
+  \draw (141.67bp,547.81bp) node {$$};
+  \draw (135.33bp,500.76bp) node {$$};
+  \draw [->] (shf) ..controls (133.59bp,466.43bp) and (125.71bp,445.24bp)  .. (check_shf);
+  \draw (136.5bp,447.0bp) node {$\environment$};
+  \draw (131.65bp,471.33bp) node {$$};
+  \draw (107.7bp,418.97bp) node {$$};
+  \draw [->] (check_shf) ..controls (42.273bp,461.42bp) and (35.271bp,523.39bp)  .. (62.5bp,571.0bp) .. controls (90.091bp,619.24bp) and (159.89bp,632.12bp)  .. (open);
+  \draw (65.5bp,525.0bp) node {True};
+  \draw (49.287bp,418.85bp) node {$$};
+  \draw (204.99bp,642.12bp) node {$$};
+  \draw [->] (check_shf) ..controls (74.197bp,431.8bp) and (77.911bp,445.93bp)  .. (85.5bp,458.0bp) .. controls (89.919bp,465.03bp) and (96.755bp,470.28bp)  .. (shf);
+  \draw (102.0bp,447.0bp) node {False};
+  \draw (66.857bp,423.49bp) node {$$};
+  \draw (107.6bp,472.45bp) node {$$};
+  \draw [->] (pf) ..controls (297.84bp,549.79bp) and (290.93bp,543.57bp)  .. (287.5bp,536.0bp) .. controls (283.47bp,527.09bp) and (282.77bp,522.56bp)  .. (287.5bp,514.0bp) .. controls (290.88bp,507.88bp) and (296.29bp,502.97bp)  .. (tf);
+  \draw (371.0bp,525.0bp) node {intercept ``define \textsc{virt} ITI `$\texttt{host}_P$'{}''};
+  \draw (298.05bp,548.19bp) node {$$};
+  \draw (304.87bp,500.14bp) node {$$};
+  \draw [->] (tf) ..controls (338.87bp,454.29bp) and (357.67bp,385.25bp)  .. (sf);
+  \draw (369.0bp,447.0bp) node {$\simulator: (\textsc{fund})$};
+  \draw (326.59bp,471.33bp) node {$$};
+  \draw (363.37bp,348.34bp) node {$$};
+  \draw [->] (sf) ..controls (380.98bp,308.31bp) and (396.57bp,266.89bp)  .. (405.5bp,231.0bp) .. controls (407.67bp,222.28bp) and (409.69bp,213.17bp)  .. (check_sf);
+  \draw (416.5bp,222.0bp) node {$\environment$};
+  \draw (380.48bp,318.98bp) node {$$};
+  \draw (407.5bp,200.05bp) node {$$};
+  \draw [->] (check_sf) ..controls (460.48bp,234.61bp) and (468.5bp,285.79bp)  .. (468.5bp,332.5bp) .. controls (468.5bp,563.5bp) and (468.5bp,563.5bp)  .. (468.5bp,563.5bp) .. controls (468.5bp,598.57bp) and (437.85bp,597.47bp)  .. (405.5bp,611.0bp) .. controls (359.05bp,630.43bp) and (300.18bp,635.39bp)  .. (open);
+  \draw (524.0bp,486.0bp) node {True; $\text{bal}_P \gets \text{bal}_P - f$};
+  \draw (445.53bp,198.06bp) node {$$};
+  \draw (260.18bp,642.69bp) node {$$};
+  \draw [->] (check_sf) ..controls (374.61bp,192.24bp) and (371.0bp,202.68bp)  .. (368.5bp,213.0bp) .. controls (359.93bp,248.36bp) and (364.5bp,291.33bp)  .. (sf);
+  \draw (385.0bp,222.0bp) node {False};
+  \draw (372.82bp,188.09bp) node {$$};
+  \draw (363.94bp,318.8bp) node {$$};
+%
+\end{tikzpicture}
+

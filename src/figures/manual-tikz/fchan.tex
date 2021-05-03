@@ -1,0 +1,31 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\coordinate (epsilon);
+  \node (first_act) [draw,ellipse] {1st activation};
+  \node (uninit) [draw,ellipse] {\textsc{uninit}};
+  \node (init_1) [draw,ellipse] {\textsc{init}};
+  \node (init_2) [draw,ellipse] {\textsc{init}};
+  \node (pvo) [draw,ellipse] {\textsc{pending} \textsc{virtual open}};
+  \node (tbo) [draw,ellipse] {\textsc{tentative} \textsc{base open}};
+  \node (tvo) [draw,ellipse] {\textsc{tentative} \textsc{virtual open}};
+  \node (open_1) [draw,ellipse] {\textsc{open}};
+  \draw [->] (epsilon) -- (first_act);
+  \draw [->] (first_act) -- (uninit);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (495.89bp,24.0bp) node {$\environment$};
+  \draw [->] (uninit) -- (init_1);
+  \draw (826.39bp,29.0bp) node {$(\textsc{init}, \pk{})$};
+  \draw [->] (init_2) -- (pvo);
+  \draw (163.89bp,112.0bp) node {$\environment: (\textsc{open}, \text{bal}_A, \text{enabler}_A)$};
+  \draw [->] (init_2) -- (tbo);
+  \draw (163.89bp,77.0bp) node {$\environment: (\textsc{open}, \text{bal}_A, \ledger)$};
+  \draw [->] (pvo) -- (tvo);
+  \draw (495.89bp,122.0bp) node {$\text{enabler}_A: (\textsc{funded}, \text{host}_A)$};
+  \draw [->] (tbo) -- (open_1);
+  \draw (677.89bp,84.0bp) node {$\simulator: (\textsc{base open})$};
+  \draw [->] (tvo) -- (open_1);
+  \draw (826.39bp,109.0bp) node {$\simulator: (\textsc{virtual open}$};
+\end{tikzpicture}
+
