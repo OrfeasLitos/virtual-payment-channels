@@ -1,0 +1,93 @@
+\section{On the use of \texttt{ANYPREVOUT}}
+  As our protocol relies on the \texttt{ANYPREVOUT} sighash flag, it cannot be
+  deployed on Bitcoin until it is introduced. We here argue that any efficient
+  protocol that achieves goals similar to ours needs the proposed sighash flag.
+
+  \begin{theorem}[\texttt{ANYPREVOUT} is necessary]
+    \label{theorem:anyprevout}
+    Consider $n$ independent ordered off-chain ``base'' protocols over Bitcoin
+    (i.e. generalisations of pairwise channels to more than $2$ participants)
+    such that every pair of consecutive protocols $(\Pi_{i-1}, \Pi_i)$ for $i
+    \in \{2, \dots, n-1\}$ has a common party $P_i$. Also consider a protocol
+    that establishes a virtual channel (i.e. a payment channel with $0$ on-chain
+    txs when opening) between two parties $P_1, P_n$ that take part in the first
+    and last off-chain protocols respectively. If this protocol guarantees that
+    each honest protocol party (both endpoints and intermediaries) needs to put
+    at most $O(1)$ transactions on-chain for unilateral closure and needs to
+    have at most a subexponential number of transactions available off-chain,
+    then the protocol needs the \texttt{ANYPREVOUT} sighash flag.
+  \end{theorem}
+
+  \begin{proof}[Proof of Theorem~\ref{theorem:anyprevout}]
+    When an off-chain protocol is closed, there has to be some form of
+    information and coin flow to its $2$ or $2$ neighbouring protocols in order
+    to ensure that the virtual channel will be funded exactly once if at least
+    one of its participants is honest and that no honest intermediary will be
+    charged. Such flow can happen either with simultaneous closures (e.g. our
+    initiator txs) or with special outputs that will be consumed when neighbours
+    close (e.g. our virtual outputs). There is no other possible manner of
+    on-chain enforceable information and coin flow that is compatible with the
+    theorem requirements. This includes adaptor
+    signatures~\cite{cryptoeprint:2020:476}, as they facilitate coin exchange
+    only if the parties and all base protocols for this particular virtual
+    channel were known when the off-chain protocols were opened (contradicting
+    off-chain protocol independence) or if new on-chain transactions are
+    introduced when opening the virtual channel (contradicting off-chain
+    opening).
+
+    Therefore each party must have different transactions available to close its
+    off-chain protocol(s), each corresponding to a different order of actions
+    taken by participants of other off-chain protocols. This is true because if
+    a party could close its protocol in an identical way whether one of its
+    neighbouring protocols had already closed or not, it would then fail to make
+    use of and possibly propagate to the other side the relevant coins and
+    information. We will now prove by induction in the number $m = n - 1$ of
+    base protocols that the number of these transactions is exponential if
+    \texttt{ANYPREVOUT} is not available, by calculating a lower bound.
+
+    If $m = 2$, then there is a single intermediary $P_2$. It needs at least $2$
+    different transactions: one if it moves first and one if it moves second,
+    after a member in the off-chain protocol to its right, e.g. $P_3$.
+
+    If $m = k > 2$, then assume that $P_2$ needs to have $f$ transactions
+    available to be able to unilaterally close its protocols in all scenarios in
+    which all parties $P_i$ for $i \in \{3, \dots, k+1\}$ act before $P_2$. Each
+    of those transactions corresponds to one or more orderings of the closing
+    actions of the parties of the other base protocols. No two transactions
+    correspond to the same ordering.
+
+    For the induction step, consider a virtual channel over $m = k + 1$ base
+    protocols. $P_2$ would still need $f$ different transactions, each
+    corresponding to the same orderings of parties' actions as in the induction
+    hypothesis. These transactions are possibly different to the ones they
+    correspond to in the case of the induction hypothesis, but their total
+    number is the same. For each of these orderings we produce two new
+    orderings: one in which the new party $P_{k+2}$ acts right before and one in
+    which it acts right after $P_{k+1}$. Consider any other party $P_i$ which
+    acts after $P_{k+2}$ and $P_{k+1}$ and at least one of its neighbours
+    belongs to the transitive closure of parties that (i) have already acted and
+    (ii) either are $P_{k+1}$ or neighbour some party in the transitive closure.
+    Since $P_{k+1}$ must necessarily use a different transaction for each of the
+    two orderings with $P_{k+2}$, and since there is a continuous chain of
+    parties between $P_{k+1}$ and $P_i$ that have already acted, it is the case
+    that $P_i$ must have a different transaction for each of these two cases as
+    well, as without \texttt{ANYPREVOUT}, an input of a transaction can only
+    spend a specific output of a specific transaction. Since $P_2$ belongs to
+    the aforementioned transitive closure, we deduce that $P_2$ needs to have at
+    least $2f$ transactions available.
+
+    On aggregate, $P_2$ needs at least $2^{(m-1)} \in O(2^n)$ transactions to be
+    able to unilaterally close its protocol.
+  \end{proof}
+
+  Note that in case of a protocol that resembles ours but does not make use of
+  \texttt{ANYPREVOUT}, the situation is further complicated in two distinct
+  ways: First, virtual channel parties would have to generate and sign an at
+  least exponential number of new commitment transactions on each update, one
+  for each possible virtual output, therefore making virtual channel payments
+  unrealistic. Second, if one of the base channels of a virtual channel is
+  itself virtual, then the new channel needs a different set of virtual
+  transactions for each of the (exponentially many) possible funding outputs of
+  the base virtual channel, thus further compounding the issue.
+
+  \TODO{future work}
