@@ -59,7 +59,7 @@ A virtual channel constructor can be thought of as an  {\em operator} over the u
 \begin{itemize}
 \item Recursive. A recursive virtual channel constructor can operate over channels that themselves could be the results of previous applications of the operator. This is important in the context of PCNs since it allows building virtual channels on top of pre-existing virtual channels.
 \item Variadic. A variadic virtual channel constructor can virtualize any number of input state channels. This is important in the context of PCNs since it enables applying the operator to build virtual channels of arbitrary length.
-\item Symmetric. A symmetric virtual channel constructor offers operations that are symmetric between the two endpoints and the intermediaries during setup (for the optimistic and pessimistic execution paths). This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
+\item Symmetric. A symmetric virtual channel constructor offers operations that are symmetric in terms of cost between the two endpoints and the intermediaries during setup (for the optimistic and pessimistic execution paths). This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
 \end{itemize}
 
 We note that recursiveness, while identified already as an important design property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}) it has not been achieved in the context of Bitcoin-compatible channels 
