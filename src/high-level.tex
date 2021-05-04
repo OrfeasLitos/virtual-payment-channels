@@ -1,4 +1,3 @@
-\TODO{add exact timelock equations}
 \section{High Level Explanation}
   Conceptually, our protocol is split into three main actions: channel opening,
   payments and closing. A channel $(P_1, P_n)$ between parties $P_1$ and $P_n$
@@ -229,6 +228,7 @@
   discussed later in more detail, a further virtual channel must take the delay
   of its virtual base channels into account to determine the timelocks needed
   for its own virtual outputs.
+  \TODO{add exact timelock equations}
 
   As for the actual protocol needed to establish a virtual channel, $6$ chains
   of messages are exchanged, starting from the funder and hop by hop reaching
