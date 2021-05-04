@@ -49,7 +49,10 @@ state of the channel between the two counterparties, say Alice and Bob, and faci
 
 Interconnecting state channels in LN enables any two parties to transmit funds to each other as long as they can find a route of payment channels that connects them. The downside of this mechanism is that it requires the direct involvement of all the parties along the path for each payment. Instead, ``virtual payment channels'', suggest the more attractive approach of putting a one-time initialization step to setup a virtual payment channel, which subsequently can be used for direct payments with complexity  ---in the optimistic case---  independent of the length of the path. 
 Initial constructions for virtual channels essentially capitalized on the extended functionality of Ethereum, e.g., 
-Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more recent work, \cite{cryptoeprint:2020:554}  \TODO{put SP2021 citation, here and below} brought them closer to bitcoin-compatibility (by assuming adaptor signatures, to be available with the Taproot update). 
+Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more
+recent work,~\cite{cryptoeprint:2020:554}  \TODO{put SP2021 citation, here and
+below} brought them closer to bitcoin-compatibility (by assuming adaptor
+signatures~\cite{cryptoeprint:2020:476}, to be available with the Taproot update). 
 
 A virtual channel constructor can be thought of as an  {\em operator} over the underlying primitive of a state channel. We can identify three   natural desiderata for this operator. 
 
@@ -59,11 +62,11 @@ A virtual channel constructor can be thought of as an  {\em operator} over the u
 \item Symmetric. A symmetric virtual channel constructor offers operations that are symmetric between the two endpoints and the intermediaries during setup (for the optimistic and pessimistic execution paths). This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
 \end{itemize}
 
-We note that recursiveness, while identified already as an important design property (e.g., see \cite{DBLP:conf/ccs/DziembowskiFH18}) it has not been achieved in the context of Bitcoin-compatible channels 
-(it was achieved only for DCN-like fixed lifetime channels in \cite{cans20} and left as an open question for LN-type channels in \cite{cryptoeprint:2020:554}). 
+We note that recursiveness, while identified already as an important design property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}) it has not been achieved in the context of Bitcoin-compatible channels 
+(it was achieved only for DCN-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{cryptoeprint:2020:554}). 
 The reason behind this are the severe limitations imposed in the design by the scripting language of Bitcoin-compatible systems. 
 %
-With respect to the other two properties, observe that successive applications of a recursive {\em binary} virtual channel operator to make it variadic will break symmetry (since the sequence of operator applications will impact the participants' functions with respect to the resulting channel). This is of particular concern since all previous virtual channel constructors proposed are binary, cf. \cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,cans20}. 
+With respect to the other two properties, observe that successive applications of a recursive {\em binary} virtual channel operator to make it variadic will break symmetry (since the sequence of operator applications will impact the participants' functions with respect to the resulting channel). This is of particular concern since all previous virtual channel constructors proposed are binary, cf.~\cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,10.1007/978-3-030-65411-5_18}. 
 
 \paragraph{Our Contributions.}  We present  the first  bitcoin-suitable recursive virtual channel constructor that is recursive and supports channels with an indefinite lifetime. In addition, our constructor is variadic and symmetric. In our constructor, both optimistic and pessimistic execution paths are optimal in terms of round complexity: issuing payments between the two end-points requires just two messages of size independent of the length of the channel while
 closing the channel requires a single transaction for any involved party (endpoint or intermediary) also independent of the channel's length. 
