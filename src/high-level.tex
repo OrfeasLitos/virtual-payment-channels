@@ -201,11 +201,19 @@
   suitable virtual transaction before the timelock expires to avoid losing
   funds. What is more, all virtual outputs need the signature of all parties to
   be spent before the timelock (i.e. they have an $n$-of-$n$ multisig) in order
-  to prevent colluding parties from faking the intervals progression. The only
-  exception are virtual outputs that correspond to an interval that includes all
-  parties, which can only be used as funding outputs for the virtual channel as
-  its interval cannot be further extended, therefore the two separate spending
-  methods and the associated timelock are dropped.
+  to prevent colluding parties from faking the intervals progression. To ensure
+  that parties have enough time to react, the timelock of a virtual output is
+  the maximum of the required timelocks of the intermediaries that can spend it,
+  where the required timelock of a party is $p + s$ if its channel is simple
+  ($p$ being a global constant representing the maximum number of blocks between
+  activations of non-negligent parties, $s = (2 + q)\texttt{windowSize}$,
+  stemming from Proposition~\ref{prop:liveness}), or $p + \sum\limits_{j = 2}^{n
+  - 1}(s - 1 + t_j)$ if the intermediary's channel is itself virtual, where
+  $t_j$ is the required timelock of the $j$th base channel of the intermediary's
+  channel. The only exception are virtual outputs that correspond to an interval
+  that includes all parties, which can only be used as funding outputs for the
+  virtual channel as its interval cannot be further extended, therefore the two
+  separate spending methods and the associated timelock are dropped.
 
   Many extend-interval and merge-intervals transactions have to be able to spend
   different outputs, depending on the order other base parties publish their
@@ -225,10 +233,9 @@
   Note also that the newly established virtual channel can itself act as a base
   for further virtual channels, as its funding output can be unilaterally put
   on-chain in a pre-agreed maximum number of blocks. This in turn means that, as
-  discussed later in more detail, a further virtual channel must take the delay
-  of its virtual base channels into account to determine the timelocks needed
-  for its own virtual outputs.
-  \TODO{add exact timelock equations}
+  we discussed above, a further virtual channel must take the delay of its
+  virtual base channels into account to determine the timelocks needed for its
+  own virtual outputs.
 
   As for the actual protocol needed to establish a virtual channel, $6$ chains
   of messages are exchanged, starting from the funder and hop by hop reaching
