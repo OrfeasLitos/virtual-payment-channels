@@ -1,0 +1,33 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\node (open) at (71.5bp,304.5bp) [draw,ellipse] {\textsc{open}};
+  \node (closing) at (31.5bp,232.0bp) [draw,ellipse] {\textsc{closing}};
+  \node (check_bal) at (65.5bp,117.0bp) [draw,ellipse,diamond] {$\text{bal}_P \overset{?}{\geq} \text{coins}_P^{\ledger}$};
+  \node (closed) at (36.5bp,8.5bp) [draw,ellipse] {\textsc{closed}};
+  \node (halt) at (95.5bp,8.5bp) [draw,ellipse,rectangle] {halt};
+  \draw [->] (open) ..controls (57.281bp,291.54bp) and (50.768bp,284.98bp)  .. (46.5bp,278.0bp) .. controls (41.366bp,269.6bp) and (37.757bp,259.23bp)  .. (closing);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (69.0bp,269.5bp) node {$\environment: \textsc{close}$};
+  \draw (56.59bp,290.26bp) node {$$};
+  \draw (26.969bp,246.78bp) node {$$};
+  \draw [->] (open) ..controls (83.834bp,291.58bp) and (89.076bp,285.02bp)  .. (91.5bp,278.0bp) .. controls (105.57bp,237.25bp) and (99.883bp,223.29bp)  .. (91.5bp,181.0bp) .. controls (90.685bp,176.89bp) and (89.597bp,172.71bp)  .. (check_bal);
+  \draw (133.0bp,232.0bp) node {$\simulator: (\textsc{close}, P)$};
+  \draw (73.325bp,290.29bp) node {$$};
+  \draw (79.08bp,164.96bp) node {$$};
+  \draw [->] (closing) ..controls (26.149bp,213.45bp) and (22.347bp,195.6bp)  .. (26.5bp,181.0bp) .. controls (28.209bp,174.99bp) and (30.673bp,169.0bp)  .. (check_bal);
+  \draw (59.0bp,192.0bp) node {$\simulator: (\textsc{close}, P)$};
+  \draw (23.011bp,217.39bp) node {$$};
+  \draw (32.342bp,160.37bp) node {$$};
+  \draw [->] (check_bal) ..controls (45.514bp,67.38bp) and (43.219bp,60.05bp)  .. (41.5bp,53.0bp) .. controls (39.468bp,44.667bp) and (38.256bp,35.23bp)  .. (closed);
+  \draw (57.5bp,44.0bp) node {True};
+  \draw (42.003bp,68.442bp) node {$$};
+  \draw (30.811bp,23.303bp) node {$$};
+  \draw [->] (check_bal) ..controls (82.497bp,55.662bp) and (87.573bp,37.641bp)  .. (halt);
+  \draw (105.0bp,44.0bp) node {False};
+  \draw (71.789bp,66.375bp) node {$$};
+  \draw (87.801bp,21.53bp) node {$$};
+%
+\end{tikzpicture}
+

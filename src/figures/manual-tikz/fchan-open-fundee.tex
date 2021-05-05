@@ -1,0 +1,23 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\node (init) at (162.5bp,163.5bp) [draw,ellipse] {\textsc{init}};
+  \node (tvo) at (87.5bp,86.0bp) [draw,ellipse] {\textsc{tentative} \textsc{virtual open}};
+  \node (open) at (161.5bp,8.5bp) [draw,ellipse] {\textsc{open}};
+  \draw [->] (init) ..controls (128.78bp,159.45bp) and (104.23bp,153.65bp)  .. (91.5bp,137.0bp) .. controls (84.585bp,127.96bp) and (83.689bp,115.11bp)  .. (tvo);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (157.0bp,126.0bp) node {$\text{enabler}_B: (\textsc{funded}, \text{host}_B)$};
+  \draw (139.41bp,167.45bp) node {$$};
+  \draw (79.765bp,100.67bp) node {$$};
+  \draw [->] (init) ..controls (193.12bp,157.81bp) and (212.88bp,151.54bp)  .. (222.5bp,137.0bp) .. controls (247.51bp,99.192bp) and (247.62bp,72.734bp)  .. (222.5bp,35.0bp) .. controls (215.46bp,24.433bp) and (203.12bp,18.237bp)  .. (open);
+  \draw (300.0bp,86.0bp) node {$\simulator: (\textsc{base open}), \text{bal}_B \gets 0$};
+  \draw (184.9bp,154.5bp) node {$$};
+  \draw (187.35bp,18.033bp) node {$$};
+  \draw [->] (tvo) ..controls (82.033bp,66.839bp) and (78.529bp,47.58bp)  .. (87.5bp,35.0bp) .. controls (97.18bp,21.426bp) and (114.58bp,15.006bp)  .. (open);
+  \draw (155.0bp,46.0bp) node {$\simulator: (\textsc{virtual open}), \text{bal}_B \gets 0$};
+  \draw (79.001bp,71.407bp) node {$$};
+  \draw (134.38bp,16.419bp) node {$$};
+%
+\end{tikzpicture}
+

@@ -1,0 +1,33 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\node (init) at (168.0bp,238.5bp) [draw,ellipse] {\textsc{init}};
+  \node (pvo) at (81.0bp,163.5bp) [draw,ellipse] {\textsc{pending} \textsc{virtual open}};
+  \node (tbo) at (256.0bp,126.0bp) [draw,ellipse] {\textsc{tentative} \textsc{base open}};
+  \node (tvo) at (88.0bp,86.0bp) [draw,ellipse] {\textsc{tentative} \textsc{virtual open}};
+  \node (open) at (161.0bp,8.5bp) [draw,ellipse] {\textsc{open}};
+  \draw [->] (init) ..controls (140.13bp,230.11bp) and (121.72bp,223.22bp)  .. (109.0bp,212.0bp) .. controls (99.624bp,203.73bp) and (92.527bp,191.53bp)  .. (pvo);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (166.5bp,201.0bp) node {$\environment: (\textsc{open}, \text{bal}_A, \text{enabler}_A)$};
+  \draw (147.0bp,227.85bp) node {$$};
+  \draw (77.793bp,178.25bp) node {$$};
+  \draw [->] (init) ..controls (195.48bp,230.54bp) and (212.98bp,223.78bp)  .. (224.0bp,212.0bp) .. controls (241.74bp,193.02bp) and (249.9bp,163.27bp)  .. (tbo);
+  \draw (277.5bp,201.0bp) node {$\environment: (\textsc{open}, \text{bal}_A, \ledger)$};
+  \draw (188.97bp,228.1bp) node {$$};
+  \draw (249.1bp,140.6bp) node {$$};
+  \draw [->] (pvo) ..controls (52.978bp,151.11bp) and (44.56bp,145.21bp)  .. (40.0bp,137.0bp) .. controls (35.251bp,128.45bp) and (35.13bp,123.48bp)  .. (40.0bp,115.0bp) .. controls (43.832bp,108.33bp) and (49.935bp,103.1bp)  .. (tvo);
+  \draw (105.0bp,126.0bp) node {$\text{enabler}_A: (\textsc{funded}, \text{host}_A)$};
+  \draw (55.005bp,149.16bp) node {$$};
+  \draw (59.636bp,100.26bp) node {$$};
+  \draw [->] (tbo) ..controls (252.24bp,100.49bp) and (243.47bp,59.124bp)  .. (220.0bp,35.0bp) .. controls (211.48bp,26.243bp) and (199.46bp,20.313bp)  .. (open);
+  \draw (287.0bp,86.0bp) node {$\simulator: (\textsc{base open})$};
+  \draw (248.95bp,111.43bp) node {$$};
+  \draw (184.83bp,19.334bp) node {$$};
+  \draw [->] (tvo) ..controls (101.29bp,67.405bp) and (115.82bp,49.036bp)  .. (130.0bp,35.0bp) .. controls (134.33bp,30.711bp) and (139.33bp,26.374bp)  .. (open);
+  \draw (175.0bp,46.0bp) node {$\simulator: (\textsc{virtual open})$};
+  \draw (87.587bp,71.515bp) node {$$};
+  \draw (145.94bp,22.235bp) node {$$};
+%
+\end{tikzpicture}
+

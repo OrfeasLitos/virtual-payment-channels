@@ -1,0 +1,14 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\node (any) at (38.5bp,85.5bp) [draw,ellipse] {<any state>};
+  \node (ignored) at (38.5bp,8.5bp) [draw,ellipse] {\textsc{ignored}};
+  \draw [->] (any) ..controls (38.5bp,62.789bp) and (38.5bp,42.469bp)  .. (ignored);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (135.5bp,46.0bp) node {$\simulator: \textsc{ignore}$ or $\text{host}_P: (\textsc{enabler punished})$};
+  \draw (32.5bp,68.695bp) node {$$};
+  \draw (32.5bp,23.257bp) node {$$};
+%
+\end{tikzpicture}
+

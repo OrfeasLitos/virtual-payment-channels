@@ -1,0 +1,21 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\coordinate (epsilon) at (46.5bp,214.0bp);
+  \node (first_act) at (46.5bp,149.5bp) [draw,ellipse] {1st activation};
+  \node (uninit) at (46.5bp,83.5bp) [draw,ellipse] {\textsc{uninit}};
+  \node (init) at (46.5bp,8.5bp) [draw,ellipse] {\textsc{init}};
+  \draw [->] (epsilon) ..controls (46.5bp,187.68bp) and (46.5bp,177.77bp)  .. (first_act);
+  \draw [->] (first_act) ..controls (46.5bp,130.35bp) and (46.5bp,114.78bp)  .. (uninit);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (52.5bp,116.0bp) node {$\environment$};
+  \draw (40.5bp,133.87bp) node {$$};
+  \draw (40.5bp,98.196bp) node {$$};
+  \draw [->] (uninit) ..controls (46.5bp,63.816bp) and (46.5bp,42.61bp)  .. (init);
+  \draw (67.5bp,46.0bp) node {$(\textsc{init}, \pk{})$};
+  \draw (40.5bp,68.963bp) node {$$};
+  \draw (40.5bp,23.106bp) node {$$};
+%
+\end{tikzpicture}
+

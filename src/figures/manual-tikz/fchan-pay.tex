@@ -1,0 +1,55 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,]
+%%
+\node (open) at (217.5bp,404.5bp) [draw,ellipse] {\textsc{open}};
+  \node (tp) at (128.5bp,329.5bp) [draw,ellipse] {\textsc{tentative pay}};
+  \node (tgp) at (272.5bp,329.5bp) [draw,ellipse] {\textsc{tentative get paid}};
+  \node (sp) at (149.5bp,252.0bp) [draw,ellipse] {\textsc{sync} \textsc{pay}};
+  \node (check_sp) at (93.5bp,93.5bp) [draw,ellipse,diamond] {$\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, \textsc{sync get paid}\}$};
+  \node (sgp) at (280.5bp,252.0bp) [draw,ellipse] {\textsc{sync get paid}, $d$};
+  \node (check_sgp) at (315.5bp,93.5bp) [draw,ellipse,diamond] {$\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, (\textsc{sync pay}, d)\}$};
+  \draw [->] (open) ..controls (200.69bp,391.79bp) and (190.83bp,384.68bp)  .. (182.5bp,378.0bp) .. controls (169.28bp,367.4bp) and (154.9bp,354.69bp)  .. (tp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (208.0bp,367.0bp) node {$\environment: (\textsc{pay}, d)$};
+  \draw (201.82bp,390.8bp) node {$$};
+  \draw (130.71bp,344.15bp) node {$$};
+  \draw [->] (open) ..controls (231.7bp,384.66bp) and (248.95bp,361.76bp)  .. (tgp);
+  \draw (291.5bp,367.0bp) node {$\environment: (\textsc{get paid}, d)$};
+  \draw (216.97bp,390.23bp) node {$$};
+  \draw (260.72bp,344.17bp) node {$$};
+  \draw [->] (tp) ..controls (140.39bp,316.04bp) and (145.14bp,309.66bp)  .. (147.5bp,303.0bp) .. controls (151.12bp,292.76bp) and (151.69bp,280.59bp)  .. (sp);
+  \draw (172.0bp,292.0bp) node {$\simulator: (\textsc{pay})$};
+  \draw (130.23bp,314.75bp) node {$$};
+  \draw (144.57bp,266.72bp) node {$$};
+  \draw [->] (sp) ..controls (143.09bp,233.09bp) and (135.98bp,213.22bp)  .. (check_sp);
+  \draw (145.5bp,214.0bp) node {$\environment$};
+  \draw (140.8bp,237.45bp) node {$$};
+  \draw (118.74bp,187.79bp) node {$$};
+  \draw [->] (check_sp) ..controls (27.952bp,213.3bp) and (15.936bp,261.29bp)  .. (32.5bp,303.0bp) .. controls (57.404bp,365.72bp) and (142.6bp,390.24bp)  .. (open);
+  \draw (88.0bp,292.0bp) node {True; $\text{bal}_P \gets \text{bal}_P - d$};
+  \draw (39.557bp,179.89bp) node {$$};
+  \draw (192.06bp,406.83bp) node {$$};
+  \draw [->] (check_sp) ..controls (86.828bp,199.59bp) and (90.748bp,212.09bp)  .. (97.5bp,223.0bp) .. controls (102.44bp,230.98bp) and (110.49bp,236.84bp)  .. (sp);
+  \draw (114.0bp,214.0bp) node {False};
+  \draw (78.807bp,192.78bp) node {$$};
+  \draw (122.15bp,239.17bp) node {$$};
+  \draw [->] (tgp) ..controls (274.46bp,310.0bp) and (276.67bp,289.16bp)  .. (sgp);
+  \draw (298.0bp,292.0bp) node {$\simulator: (\textsc{pay})$};
+  \draw (267.3bp,314.98bp) node {$$};
+  \draw (273.43bp,269.1bp) node {$$};
+  \draw [->] (sgp) ..controls (279.58bp,231.32bp) and (279.54bp,217.14bp)  .. (281.5bp,205.0bp) .. controls (282.38bp,199.55bp) and (283.46bp,194.0bp)  .. (check_sgp);
+  \draw (287.5bp,214.0bp) node {$\environment$};
+  \draw (273.92bp,234.7bp) node {$$};
+  \draw (281.06bp,184.39bp) node {$$};
+  \draw [->] (check_sgp) ..controls (355.6bp,225.87bp) and (364.32bp,285.55bp)  .. (352.5bp,338.0bp) .. controls (348.17bp,357.2bp) and (348.9bp,365.75bp)  .. (333.5bp,378.0bp) .. controls (309.64bp,396.98bp) and (274.64bp,402.54bp)  .. (open);
+  \draw (413.0bp,292.0bp) node {True; $\text{bal}_P \gets \text{bal}_P + f$};
+  \draw (349.67bp,184.72bp) node {$$};
+  \draw (245.14bp,410.18bp) node {$$};
+  \draw [->] (check_sgp) ..controls (300.9bp,196.09bp) and (297.54bp,210.03bp)  .. (293.5bp,223.0bp) .. controls (292.6bp,225.88bp) and (291.47bp,228.84bp)  .. (sgp);
+  \draw (315.0bp,214.0bp) node {False};
+  \draw (297.66bp,188.33bp) node {$$};
+  \draw (291.99bp,234.89bp) node {$$};
+%
+\end{tikzpicture}
+
