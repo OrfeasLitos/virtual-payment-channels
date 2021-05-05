@@ -82,6 +82,19 @@
   payment technique used in Lightning and allow users to choose which method to
   use in each case.
 
+  \TODO{@Aggelos: check next}
+  Moreover, the result of Theorem~\ref{theorem:anyprevout} excludes a large
+  class of variadic recursive protocols that do not make use of
+  \texttt{ANYPREVOUT} from achieving practical performance, but it does not
+  preclude the existence of such protocols entirely. In particular, there may be
+  some as of yet unknown (sufficiently secure) optimisation that allows parties
+  to generate only the transactions that they need to put on-chain during the
+  closing procedure, using only a small quantity of data that has been received
+  when opening. This would permit parties to circumvent the need for exchanging
+  and storing an exponential number of signatures and transactions. Further
+  investigation for the existence of such an optimisation is left as future
+  work.
+
   Last but not least, the current analysis gives no privacy guarantees for the
   protocol, as it does not employ onion packets~\cite{sphinx} like Lightning.
   Furthermore, \fchan leaks all messages to the ideal adversary therefore
