@@ -1,4 +1,4 @@
-\begin{figure}[H]
+\begin{center}
   \begin{systembox}{\fchan{} -- general message handling rules}
     \begin{itemize}
       \item On receiving (\texttt{msg}) by party $R$ to $P \in \{\alice, \bob\}$
@@ -28,11 +28,11 @@
       the order of execution does not matter}
     \end{itemize}
   \end{systembox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:functionality:rules}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{systembox}{\fchan{} -- open state machine, $P \in \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On first activation: \Comment{before handing the message}
@@ -124,11 +124,11 @@
       \EndIndent
     \end{algorithmic}
   \end{systembox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:functionality:open}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{systembox}{\fchan{} -- payment state machine, $P \in \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On (\textsc{pay}, $x$) by \environment when $\itistate_P =
@@ -196,11 +196,11 @@
       \EndIndent
     \end{algorithmic}
   \end{systembox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:functionality:pay}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{systembox}{\fchan{} -- funding state machine, $P \in \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, $x$, $\dots$) by ITI $R \in \{\fchan,
@@ -282,11 +282,11 @@
       \EndIndent
     \end{algorithmic}
   \end{systembox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:functionality:fund}
-\end{figure}
+\end{center} \ \\
 
-\begin{figure}[H]
+\begin{center}
   \begin{systembox}{\fchan{} -- close state machine, $P \in \{\alice,
   \bob\}$}
     \begin{algorithmic}[1]
@@ -341,6 +341,6 @@
       \EndIndent
     \end{algorithmic}
   \end{systembox}
-  \caption{}
+  \captionof{figure}{}
   \label{code:functionality:close}
-\end{figure}
+\end{center} \ \\
