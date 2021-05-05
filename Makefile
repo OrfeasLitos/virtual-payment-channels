@@ -29,7 +29,11 @@ figures: $(TIKZS)
 src/figures/manual-tikz/*:
 
 src/figures/auto-tikz/%.tex: src/figures/dot/%.dot
+ifeq (, $(shell which dot2tex))
+	
+else
 	dot2tex --texmode math --format tikz --figonly --autosize --usepdflatex --nominsize --prog dot $< > $@
+endif
 
 clean:
 	rm -rf *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.pdf src/figures/auto-tikz/*.tex
