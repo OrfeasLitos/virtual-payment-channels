@@ -25,6 +25,9 @@
 \usepackage{float}
 \usepackage{capt-of}
 \usepackage{appendix}
+\usepackage{pifont}
+\usepackage{newunicodechar}
+\usepackage{wasysym}
 
 \usepackage{pstricks,pst-node}
 \usepackage{auto-pst-pdf}
@@ -45,6 +48,10 @@
 
 % Define a "math hyphen"
 \mathchardef\mhyphen="2D
+
+% Define tick and ex
+\newunicodechar{✓}{\ding{51}}
+\newunicodechar{✗}{\ding{55}}
 
 % indentation for algorithm
 \algdef{SE}[SUBALG]{Indent}{EndIndent}{}{\algorithmicend\ }%
@@ -169,7 +176,6 @@
 \newcommand{\ledger}{\ensuremath{\mathcal{G}_{\mathrm{Ledger}}}\xspace}
 \newcommand{\perfectledger}{\ensuremath{\mathcal{F}_{\mathrm{PerfectL}}}\xspace}
 \newcommand{\perfectprot}{\ensuremath{\Pi_{\mathrm{PerfectL}}}\xspace}
-\newcommand{\clock}{\ensuremath{\mathcal{G}_{\mathrm{Clock}}}\xspace}
 \newcommand{\fpaynet}{\ensuremath{\mathcal{F}_{\mathrm{PayNet}}}\xspace}
 \newcommand{\func}{\ensuremath{\mathcal{F}}\xspace}
 \newcommand{\fchan}{\ensuremath{\mathcal{F}_{\mathrm{Chan}}}\xspace}
