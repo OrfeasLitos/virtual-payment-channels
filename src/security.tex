@@ -6,9 +6,80 @@
   and~\ref{lemma:ideal-balance} respectively. Informally, the first claims that
   an honest, non-negligent party which was implicated in an already closed
   channel on which a number of payments took place will have at least the
-  expected funds on-chain. The second lemma states that for an ideal party in a
+  expected funds on-chain.
+
+\begin{lemma}[Real world balance security]
+\label{lemma:real-balance-security}
+  Consider a real world execution with $P \in \{\alice, \bob\}$ honest
+  \textsc{ln} ITI and $\bar{P}$ the counterparty ITI. Assume that all of the
+  following are true:
+  \begin{itemize}
+    \item the internal variable \texttt{negligent} of $P$ has value ``False'',
+    \item $P$ has transitioned to the \textsc{open} \textit{State} for the first
+    time after having received $(\textsc{open}, c, \dots)$ by either
+    \environment or $\bar{P}$,
+    \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
+    \textsc{ln} ITI while \textit{State} was \textsc{open} and subsequently $P$
+    transitioned to \textsc{open} \textit{State}] $n$ times,
+    \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
+    \textit{State} was \textsc{open} and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $m$ times,
+    \item $P$ [has received $(\textsc{get paid}, e_i)$ by \environment while
+    \textit{State} was \textsc{open} and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $l$ times.
+  \end{itemize}
+  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ receives
+  $(\textsc{close})$ by \environment and, if $\texttt{host}_P \neq \ledger$ the
+  output of $\texttt{host}_P$ is (\textsc{closed}), then eventually the state
+  obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$ outputs
+  each of value $c_i$ and that has been spent or is exclusively spendable by
+  $\pk{R, \mathrm{out}}$ such that
+  \begin{equation}
+  \label{lemma:real-balance-security:ineq}
+    \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
+    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace
+  \end{equation}
+  with overwhelming probability in the security parameter, where $R$ is a local,
+  trusted machine (i.e. either $P$, $P$'s \texttt{sibling}, the party to which
+  $P$ sent \textsc{fund me} if such a message has been sent, or the
+  \texttt{sibling} of one of the transitive closure of hosts of $P$).
+\end{lemma}
+
+  The second lemma states that for an ideal party in a
   similar situation, the balance that \fchan has stored for it is at least equal
-  to the expected funds. In both cases the expected funds are (initial balance -
+  to the expected funds.
+
+\begin{lemma}[Ideal world balance]
+\label{lemma:ideal-balance}
+  Consider an ideal world execution with functionality \fchan and simulator
+  \simulator. Let $P \in \{\alice, \bob\}$ one of the two parties of \fchan.
+  Assume that all of the following are true:
+  \begin{itemize}
+    \item $\itistate_P \neq \textsc{ignored}$,
+    \item $P$ has transitioned to the \textsc{open} \textit{State} at least
+    once. Additionally, if $P = \alice$, it has received $(\textsc{open}, c,
+    \dots)$ by \environment prior to transitioning to the \textsc{open}
+    \textit{State},
+    \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
+    \fchan/\textsc{ln} ITI while $\itistate_P = \textsc{open}$ and $P$
+    subsequently transitioned to \textsc{open} \textit{State}] $n \geq 0$ times,
+    \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
+    $\itistate_P = \textsc{open}$ and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $m \geq 0$ times,
+    \item $P$ [has received $(\textsc{get paid}, e_i)$ by \environment while
+    $\itistate_P = \textsc{open}$ and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $l \geq 0$ times.
+  \end{itemize}
+  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If \fchan
+  receives $(\textsc{close}, P)$ by \simulator, then the following holds with
+  overwhelming probability on the security parameter:
+  \begin{equation}
+    \texttt{balance}_P = \phi \cdot c - \sum\limits_{i=1}^n f_i -
+    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+  \end{equation}
+\end{lemma}
+
+  In both cases the expected funds are (initial balance -
   funds for supported virtuals - outbound payments + inbound payments). Note
   that the funds for supported virtuals only refer to those funds used by the
   funder of the virtual channel, not the rest of the base parties.
@@ -30,7 +101,18 @@
 
   Subsequently we prove Lemma~\ref{lemma:no-halt}, which informally states that
   if an ideal party and all its trusted parties are honest, then \fchan does not
-  halt with overwhelming probability. This is proven by first arguing that if
+  halt with overwhelming probability.
+
+\begin{lemma}[No halt]
+\label{lemma:no-halt}
+  In an ideal execution with \fchan and \simulator, if the trusted parties of
+  the honest parties of \fchan are themselves honest, then the functionality
+  halts with negligible probability in the security parameter (i.e.
+  l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}
+  is executed negligibly often).
+\end{lemma}
+
+  This is proven by first arguing that if
   the conditions of Lemma~\ref{lemma:ideal-balance} for the ideal world hold,
   then the conditions of Lemma~\ref{lemma:real-balance-security} also hold for
   the equivalent real world execution, therefore in this case \fchan does not
@@ -39,9 +121,36 @@
   therefore concluding the proof.
 
   We then formulate and prove Theorem~\ref{theorem:security}, which states that
-  \pchan UC-realises \fchan. The corresponding proof is a simple application of
+  \pchan UC-realises \fchan.
+
+\begin{theorem}[Recursive Virtual Payment Channel Security]
+  \label{theorem:security}
+  The protocol $\pchan$ UC-realises $\fchan$ given a global functionality
+  $\ledger$ and assuming the security of the underlying digital signature.
+  Specifically,
+  \begin{gather*}
+    \forall \text{ PPT } \adversary, \exists \text{ PPT } \simulator: \forall
+    \text{ PPT } \environment \text{ it is }
+    \textsc{exec}^{\ledger}_{\pchan, \adversary, \environment} \approx
+    \textsc{exec}^{\fchan, \ledger}_{\simulator, \environment}
+  \end{gather*}
+\end{theorem}
+
+  The corresponding proof is a simple application of
   Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
   \simulator faithfully simulates \pchan internally.
+
+\begin{proof}[Proof of Theorem~\ref{theorem:security}]
+  By inspection of Figures~\ref{code:functionality:rules}
+  and~\ref{code:simulator:flow} we can deduce that for a particular
+  \environment, in the ideal world execution $\textsc{exec}^{\fchan,
+  \ledger}_{\simulator_{\adversary}, \environment}$, $\simulator_{\adversary}$
+  simulates internally the two \pchan parties exactly as they would execute
+  in the real world execution, $\textsc{exec}^{\ledger}_{\pchan,
+  \adversary, \environment}$ in case \fchan does not halt. Indeed, \fchan only
+  halts with negligible probability according to Lemma~\ref{lemma:no-halt},
+  therefore the two executions are computationally indistinguishable.
+\end{proof}
 
   Lastly we construct a ``multi-session
   extension''~\cite{DBLP:conf/crypto/CanettiR03} of \fchan and of \pchan and
@@ -50,4 +159,36 @@
   multi-session extension functionality. The proof is straightforward and
   utilises the transitivity of UC-emulation.
 
-  All formal proofs can be found in the Appendix.
+\begin{definition}[Multi-Session Extension of a Protocol]
+  Let protocol $\pi$. Its \emph{multi-session extension} $\hat{\pi}$ has the
+  same code as $\pi$ and has 2 session ids: the ``sub-session id''
+  \emph{ssid} which replaces the session id of $\pi$ and the usual session id
+  \emph{sid} which has no further function apart from what is prescribed by the
+  UC framework.
+\end{definition}
+
+\begin{theorem}[Indistinguishability of multiple sessions]
+  \label{theorem:multi-session-security}
+  Let \fchanhat the multi-session extension of \fchan and \pchanhat the
+  protocol-multi-session extension of \pchan.
+  \begin{gather*}
+    \forall \text{ PPT } \adversary, \exists \text{
+    PPT } \simulator: \forall \text{ PPT } \environment \text{ it is }
+    \textsc{exec}^{\ledger}_{\pchanhat, \adversary, \environment} \approx
+    \textsc{exec}^{\fchanhat, \ledger}_{\simulator, \environment}
+  \end{gather*}
+\end{theorem}
+
+\begin{proof}[Proof of Theorem~\ref{theorem:multi-session-security}]
+  We observe that \fchanhat uses \fchan internally. According to the UC
+  theorem~\cite{uc} and given that \pchan UC-realises \fchan
+  (Theorem~\ref{theorem:security}), $\fchanhat^{\fchan \rightarrow \pchan}$
+  UC-emulates \fchanhat. We now observe that $\fchanhat^{\fchan \rightarrow
+  \pchan}$ behaves identically to a session with \pchanhat protocols, as the
+  former routes each message to the same internal \pchan instance that would
+  handle the same message in the latter case, therefore $\fchanhat^{\fchan
+  \rightarrow \pchan}$ UC-emulates \pchanhat. By the transitivity of
+  UC-emulation, we deduce that \fchanhat UC-emulates \pchanhat.
+\end{proof}
+
+  Formal proofs for the three lemmas can be found in the Appendix.
