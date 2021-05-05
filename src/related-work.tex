@@ -33,7 +33,10 @@ A number of attacks have been identified against LN. The wormhole
   channels, i.e. channels that can open without an on-chain transaction and that
   allow for arbitrary scripts to be executed off-chain. Similar features are
   provided by Celer~\cite{dong2018celer}. Hydra~\cite{cryptoeprint:2020:299}
-  provides state channels for the Cardano~\cite{cardano} blockchain which combines a UTXO type of model with general purpose smart contract functionality that are also isomorphic.
+  provides state channels for the Cardano~\cite{cardano} blockchain which
+  combines a UTXO type of model with general purpose smart contract
+  functionality that are also isomorphic, i.e. Hydra channels can accommodate
+  any script that is compatible with the Cardano blockchain.
 
   BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be   funded with no on-chain transactions by allowing parties to form groups that   can pool their funds together off-chain and then use those funds to open   channels. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic   payments with reduced collateral, enabling new applications such as   crowdfunding conditional on reaching a funding target.
 
