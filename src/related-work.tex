@@ -60,6 +60,35 @@ solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster,lee2020routee}
   stay off-chain for an agreed period, while the second allows the single intermediary
   to turn the virtual into a simple channel. 
 We remark that the above strategy has the shortcoming that even if it is made recursive (a direction left open in \cite{cryptoeprint:2020:554}) after $k$ applications of the constructor there will be $k-1$ specific intermediaries that have to act in a specific order to close the channel. \TODO{double check the previous sentence}. 
+  We refer the reader to Table~\ref{table:comparison} for a comparison of the
+  features and limitations of virtual channel protocols, including the one put
+  forth in the current work.
+
+  \begin{table*}
+    \caption{Comparison of virtual channel protocols}
+    \label{table:comparison}
+    \begin{minipage}{\textwidth}
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|c|}
+    \hline
+              & Unlimited lifetime & Recursive & Multi-hop & no need for \texttt{ANYPREVOUT} \\
+    \hline
+    LVPC~\cite{10.1007/978-3-030-65411-5_18}
+              & ✗                  & \LEFTcircle\footnote{lacks security analysis}
+                                               & ✗         & ✓ \\
+    \hline
+    BCVC~\cite{cryptoeprint:2020:554}
+              & ✓                  & ✗         & ✗         & ✓ \\
+    \hline
+    GBCC~\cite{cryptoeprint:2020:476}
+              & ✓                  & ✓         & ✗         & ✓ \\
+    \hline
+    this work & ✓                  & ✓         & ✓         & ✗ \\
+    \hline
+    \end{tabular}
+    \end{center}
+    \end{minipage}
+  \end{table*}
 
   \cite{DBLP:conf/fc/GudgeonMRMG20}, \cite{spider}, \cite{lightning},
   \cite{eltoo}, \cite{raiden}, \cite{bitcoin}, \cite{scaling}, \cite{decker},
