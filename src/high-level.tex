@@ -108,11 +108,8 @@
   Figures~\ref{figure:virtual-layer-endpoint},~\ref{code:virtual-layer:endpoint-txs}).
   If the
   initiator 
-  %\TODO{initiator?} \orfeas{Yes. Each endpoint has only one virtual
-  % transaction, the initiator} ok fixed
   transaction ends up on-chain, the latter output carries coins that
   will directly or indirectly fund the funding output of the virtual channel.
-%  \TODO{we need to add here a couple of sentences about how updates are  performed between the two end-points in the virtual channels.} %\orfeas{check  next sentence} All ok.
   This virtual funding output can in turn be spent by a commitment transaction
   that is negotiated and updated with direct communication between the two
   endpoints in exactly the same manner as the payments of simple channels.
