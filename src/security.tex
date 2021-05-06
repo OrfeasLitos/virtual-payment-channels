@@ -145,11 +145,11 @@
   and~\ref{code:simulator:flow} we can deduce that for a particular
   \environment, in the ideal world execution $\textsc{exec}^{\fchan,
   \ledger}_{\simulator_{\adversary}, \environment}$, $\simulator_{\adversary}$
-  simulates internally the two \pchan parties exactly as they would execute
-  in the real world execution, $\textsc{exec}^{\ledger}_{\pchan,
-  \adversary, \environment}$ in case \fchan does not halt. Indeed, \fchan only
-  halts with negligible probability according to Lemma~\ref{lemma:no-halt},
-  therefore the two executions are computationally indistinguishable.
+  simulates internally the two \pchan parties exactly as they would execute in
+  $\textsc{exec}^{\ledger}_{\pchan, \adversary, \environment}$, the real world
+  execution, in case \fchan does not halt. Indeed, \fchan only halts with
+  negligible probability according to Lemma~\ref{lemma:no-halt}, therefore the
+  two executions are computationally indistinguishable.
 \end{proof}
 
   Lastly we construct a ``multi-session
