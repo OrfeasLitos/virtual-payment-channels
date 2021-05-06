@@ -107,12 +107,12 @@
   the base channel and one ``virtual'' output (c.f.
   Figures~\ref{figure:virtual-layer-endpoint},~\ref{code:virtual-layer:endpoint-txs}).
   If the
-  virtual\TODO{initiator?} \orfeas{Yes. Each endpoint has only one virtual
-  transaction, the initiator} transaction ends up on-chain, the latter output carries coins that
+  initiator 
+  %\TODO{initiator?} \orfeas{Yes. Each endpoint has only one virtual
+  % transaction, the initiator} ok fixed
+  transaction ends up on-chain, the latter output carries coins that
   will directly or indirectly fund the funding output of the virtual channel.
-  \TODO{we need to add here a couple of sentences about how updates are
-  performed between the two end-points in the virtual channels.} \orfeas{check
-  next sentence}
+%  \TODO{we need to add here a couple of sentences about how updates are  performed between the two end-points in the virtual channels.} %\orfeas{check  next sentence} All ok.
   This virtual funding output can in turn be spent by a commitment transaction
   that is negotiated and updated with direct communication between the two
   endpoints in exactly the same manner as the payments of simple channels.
@@ -206,10 +206,9 @@
   the maximum of the required timelocks of the intermediaries that can spend it,
   where the required timelock of a party is $p + s$ if its channel is simple
   ($p$ being a global constant representing the maximum number of blocks between
-  activations of non-negligent parties, $s = (2 + q)\texttt{windowSize}$,
-  stemming from Proposition~\ref{prop:liveness} of Appendix), or $p +
-  \sum\limits_{j = 2}^{n - 1}(s - 1 + t_j)$ if the intermediary's channel is
-  itself virtual, where $t_j$ is the required timelock of the $j$th base channel
+  activations of non-negligent parties and $s = (2 + q)\texttt{windowSize}$,
+  stemming from Proposition~\ref{prop:liveness} of Appendix \TODO{define windowsize briefly}),  or $p +
+  \sum\limits_{j = 2}^{n - 1}(s - 1 + t_j)$ if the channel is virtual, where $t_j$ is the required timelock of the $j$th base channel
   of the intermediary's channel. The only exception are virtual outputs that
   correspond to an interval that includes all parties, which can only be used as
   funding outputs for the virtual channel as its interval cannot be further
@@ -229,7 +228,7 @@
   previously proposed \texttt{ANYPREVOUT} sighash flag~\cite{anyprevout} is
   needed to be added to Bitcoin. We show in Theorem~\ref{theorem:anyprevout}
   that variadic recursive virtual channels with $O(1)$ on-chain and
-  subexponential off-chain transactions for each party cannot be constructed in
+  subexponential number of off-chain transactions for each party cannot be constructed in
   Bitcoin without this flag. We hope this work provides additional motivation
   for this flag to be included in the future.
 
@@ -241,7 +240,7 @@
   own virtual outputs.
 
   As for the actual protocol needed to establish a virtual channel, $6$ chains
-  of messages are exchanged, starting from the funder and hop by hop reaching
+  of messages are exchanged \TODO{you mean $6$ rounds of communication?}, starting from the funder and hop by hop reaching
   the fundee and back (c.f.~\ref{code:ln:prepare-base}). The first communicates
   parties' identities, their funding keys and their neighbours' channel
   balances, the second creates new commitment transactions, the third circulates
