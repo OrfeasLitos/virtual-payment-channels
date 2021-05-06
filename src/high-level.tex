@@ -215,10 +215,9 @@
   where the required timelock of a party is $p + s$ if its channel is simple
   ($p$ being a global constant representing the maximum number of blocks between
   activations of non-negligent parties and $s = (2 + q)\texttt{windowSize}$,
-  stemming from Proposition~\ref{prop:liveness} of Appendix --
+  stemming from Proposition~\ref{prop:liveness} of Appendix; note
   \texttt{windowSize} is the maximum number of blocks a party may be missing
-  from the latest blockchain state at any given time) \orfeas{explained
-  windowSize, PTAL},  or $p +
+  from the latest blockchain state at any given time),  or $p +
   \sum\limits_{j = 2}^{n - 1}(s - 1 + t_j)$ if the channel is virtual, where $t_j$ is the required timelock of the $j$th base channel
   of the intermediary's channel. The only exception are virtual outputs that
   correspond to an interval that includes all parties, which can only be used as
@@ -251,8 +250,7 @@
   own virtual outputs.
 
   As for the actual protocol needed to establish a virtual channel, $6$ rounds
-  of communication are needed
-  \TODO{you mean $6$ rounds of communication?}\orfeas{fixed}, starting from the funder and hop by hop reaching
+  of communication are needed, starting from the funder and hop by hop reaching
   the fundee and back (c.f.~\ref{code:ln:prepare-base}). The first communicates
   parties' identities, their funding keys and their neighbours' channel
   balances, the second creates new commitment transactions, the third circulates
