@@ -10,12 +10,12 @@
     (i.e. generalisations of pairwise channels to more than $2$ participants)
     such that every pair of consecutive protocols $(\Pi_{i-1}, \Pi_i)$ for $i
     \in \{2, \dots, n-1\}$ has a common party $P_i$. Also consider a protocol
-    that establishes a virtual channel (i.e. a payment channel with $0$ on-chain
+    that establishes a virtual channel (i.e. a payment channel without any on-chain
     txs when opening) between two parties $P_1, P_n$ that take part in the first
     and last off-chain protocols respectively. If this protocol guarantees that
     each honest protocol party (both endpoints and intermediaries) needs to put
     at most $O(1)$ transactions on-chain for unilateral closure and needs to
-    have at most a subexponential number of transactions available off-chain,
+    have at most a subexponential number of transactions in $n$ available off-chain,
     then the protocol needs the \texttt{ANYPREVOUT} sighash flag.
   \end{theorem}
 
@@ -44,14 +44,16 @@
     neighbouring protocols had already closed or not, it would then fail to make
     use of and possibly propagate to the other side the relevant coins and
     information. We will now prove by induction in the number $m = n - 1$ of
-    base protocols that the number of these transactions is exponential if
-    \texttt{ANYPREVOUT} is not available, by calculating a lower bound.
+    base protocols that the number of these transactions $T_m$ is exponential if
+    \texttt{ANYPREVOUT} is not available, by calculating a lower bound, specifically,
+    that $T_m \geq 2^{m-1}$. 
 
     If $m = 2$, then there is a single intermediary $P_2$. It needs at least $2$
     different transactions: one if it moves first and one if it moves second,
     after a member in the off-chain protocol to its right, e.g. $P_3$.
+    From this it follows immediately that $T_2 \geq 2$. 
 
-    If $m = k > 2$, then assume that $P_2$ needs to have $f$ transactions
+    If $m = k > 2$, then assume that $P_2$ needs to have $f\geq 2^{m-1}$ transactions
     available to be able to unilaterally close its protocols in all scenarios in
     which all parties $P_i$ for $i \in \{3, \dots, k+1\}$ act before $P_2$. Each
     of those transactions corresponds to one or more orderings of the closing
@@ -67,11 +69,11 @@
     orderings: one in which the new party $P_{k+2}$ acts right before and one in
     which it acts right after $P_{k+1}$.  Given such an ordering $o$, consider the
     neighbor relation between the set of parties that have been activated 
-    and take its reflexive and transitive closure $\tilde_o$. 
+    and take its reflexive and transitive closure $\sim_o$. 
     Now consider any party $P_i$ with the following properties: 
     (i) it acts after $P_{k+2}$ and $P_{k+1}$ (e.g., $P_2$ is such a party), and
     (ii)  at least one of its neighbours belongs to the equivalence class of 
-    $\tilde_o$ that contains $P_{k+1}$. Observe that such party $P_i$ is always
+    $\sim_o$ that contains $P_{k+1}$. Observe that such party $P_i$ is always
     well defined. 
     %
     Since $P_{k+1}$ must necessarily use a different transaction for each of the
@@ -79,13 +81,13 @@
     parties between $P_{k+1}$ and $P_i$ that have already acted, it is the case
     that $P_i$ must have a different transaction for each of these two cases as
     well, as without \texttt{ANYPREVOUT}, an input of a transaction can only
-    spend a specific output of a specific transaction. 
-    
-    Since $P_2$ belongs to
-    the aforementioned transitive closure, we deduce that $P_2$ needs to have at
-    least $2f$ transactions available.
+    spend a specific output of a specific transaction.  Finally, 
+    given that $P_2$ will have to act in response to at least as many of the above
+    options, we deduce that $P_2$ needs to have at
+    least $2f\geq 2^{m}$ transactions available. This completes the induction step.
 
-    On aggregate, $P_2$ needs at least $2^{(m-1)} \in O(2^n)$ transactions to be
+    As a result, we conclude that party $P_2$ needs at least
+    $2^{m-1} \in O(2^n)$ transactions to be
     able to unilaterally close its protocol.  
   \end{proof}
 
