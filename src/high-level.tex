@@ -231,17 +231,17 @@
   virtual transactions. For example, $P_3$'s extend-interval tx that extends the
   interval $\{P_1, P_2\}$ to $\{P_1, P_2, P_3\}$ must be able to spend both
   the virtual output of $P_2$'s initiator transaction and $P_2$'s
-  extend-interval transaction which has spent $P_1$'s initiator transaction
-  (Figure~\TODO{}). The same issue is faced by commitment transactions of
-  a virtual channel, as any virtual output can potentially be used as the
-  funding ouput for the channel. In order for the received signatures for
-  virtual and commitment txs to be valid for multiple previous outputs, the
-  previously proposed \texttt{ANYPREVOUT} sighash flag~\cite{anyprevout} is
-  needed to be added to Bitcoin. We show in Theorem~\ref{theorem:anyprevout}
-  that variadic recursive virtual channels with $O(1)$ on-chain and
-  subexponential number of off-chain transactions for each party cannot be constructed in
-  Bitcoin without this flag. We hope this work provides additional motivation
-  for this flag to be included in the future.
+  extend-interval transaction which has spent $P_1$'s initiator transaction. The
+  same issue is faced by commitment transactions of a virtual channel, as any
+  virtual output can potentially be used as the funding ouput for the channel.
+  In order for the received signatures for virtual and commitment txs to be
+  valid for multiple previous outputs, the previously proposed
+  \texttt{ANYPREVOUT} sighash flag~\cite{anyprevout} is needed to be added to
+  Bitcoin. We show in Theorem~\ref{theorem:anyprevout} that variadic recursive
+  virtual channels with $O(1)$ on-chain and subexponential number of off-chain
+  transactions for each party cannot be constructed in Bitcoin without this
+  flag. We hope this work provides additional motivation for this flag to be
+  included in the future.
 
   Note also that the newly established virtual channel can itself act as a base
   for further virtual channels, as its funding output can be unilaterally put
