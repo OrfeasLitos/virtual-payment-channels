@@ -75,13 +75,13 @@ We achieve the above by leveraging on a sophisticated virtual channel setup prot
 while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each. 
 
   We formally prove the security of the constructor protocol in the  UC~\cite{uc} setting. The construction relies on the \texttt{ANYPREVOUT}   signature type, which does not sign the hash of the transaction it spends, therefore allowing for a single pre-signed transaction to spend any output
-  with a suitable script. We further discuss the limitations of a similar
+  with a suitable script. We further discuss the limitations of any constructor
   primitive that does not rely on \texttt{ANYPREVOUT} in
-  Section~\ref{section:anyprevout} and in particular in Theorem~\ref{theorem:anyprevout},
-  where we prove that any virtual channel constructor protocol that, as in LN, it 
-  has parties store transactions in their local state
-  and offers efficient closing via a single transaction, it 
-  will have an exponentially large state in the number of intermediaries, unless \texttt{ANYPREVOUT} is available. 
+  Section~\ref{section:anyprevout}. In particular in Theorem~\ref{theorem:anyprevout},
+  we prove that any virtual channel constructor protocol that, as in LN, it 
+  has participants store transactions in their local state
+  and offers an efficient closing operation via $O(1)$ transactions, 
+ it will have an exponentially large state in the number of intermediaries, unless \texttt{ANYPREVOUT} is available. 
  \TODO{check previous}
  
 \ignore{  %%%%%%% --------- OLD TEXT INTRO -----------
