@@ -74,10 +74,10 @@
   aggregate, which has constant size. As this work is mainly a proof of
   feasibility, we leave these optimisations as future work.
 
-  Additionally, our protocol does not enable a one-off multi-hop payment without
-  setting up a virtual channel first. This however is a useful feature in case
-  two parties know that they will only transact once, as opening a virtual
-  channel needs substantially more network messages than performing an one-of
+  Additionally, our protocol does not feature one-off multi-hop payments like
+  those possible in Lightning. This however is a useful feature in case two
+  parties know that they will only transact once, as opening a virtual channel
+  needs substantially more network communication than performing an one-off
   multi-hop payment. It would be therefore fruitful to also enable the multi-hop
   payment technique used in Lightning and allow users to choose which method to
   use in each case.
@@ -98,7 +98,7 @@
   Last but not least, the current analysis gives no privacy guarantees for the
   protocol, as it does not employ onion packets~\cite{sphinx} like Lightning.
   Furthermore, \fchan leaks all messages to the ideal adversary therefore
-  theoretically to privacy is offered at all. Nevertheless, onion packets can be
+  theoretically no privacy is offered at all. Nevertheless, onion packets can be
   incorporated in the current construction and intuitively our construction
   leaks less data than Lightning for the same multi-hop payments, as
   intermediaries in our case do not learn the new balance after every payment,
