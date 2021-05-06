@@ -1,0 +1,60 @@
+digraph G {
+  rankdir=BT
+  subgraph in {
+    rank="same"
+    AB_funding_in [style=invisible]
+    BC_funding_in [style=invisible]
+    CD_funding_in [style=invisible]
+    DE_funding_in [style=invisible]
+  }
+
+  subgraph out {
+    rank="same"
+    AB_funding_out [style=invisible]
+    BC_funding_out [style=invisible]
+    CD_funding_out [style=invisible]
+    DE_funding_out [style=invisible]
+  }
+
+  AB_funding_in -> AB_funding_out [label="2/\{\pk{A, F}, \pk{B, F}\}"]
+  BC_funding_in -> BC_funding_out [label="2/\{\pk{B, F}, \pk{C, F}\}"]
+  CD_funding_in -> CD_funding_out [label="2/\{\pk{C, F}, \pk{D, F}\}"]
+  DE_funding_in -> DE_funding_out [label="2/\{\pk{D, F}, \pk{E, F}\}"]
+
+  A_virt [label="A"]
+  AB_funding_out -> A_virt
+  A_fund [style=invisible]
+  A_virt -> A_fund [label="2/\{\pk{A, F'}, \pk{B, F'}\}"]
+  A_virt_out [style=invisible]
+  A_virt -> A_virt_out [label="\{A\}"]
+
+  B_virt [label="B"]
+  BC_funding_out -> B_virt
+  B_fund [style=invisible]
+  B_virt -> B_fund [label="2/\{\pk{B, F'}, \pk{C, F'}\}"]
+  A_virt_out -> B_virt
+  B_self [style=invisible]
+  B_virt -> B_self [label="\pk{B, \mathrm{out}}"]
+  B_virt_out [style=invisible]
+  B_virt -> B_virt_out [label="\{A, B\}"]
+
+  C_virt [label="C"]
+  CD_funding_out -> C_virt
+  C_fund [style=invisible]
+  C_virt -> C_fund [label="2/\{\pk{C, F'}, \pk{D, F'}\}"]
+  B_virt_out -> C_virt
+  C_self [style=invisible]
+  C_virt -> C_self [label="\pk{C, \mathrm{out}}"]
+  C_virt_out [style=invisible]
+  C_virt -> C_virt_out [label="\{A, B, C\}"]
+
+  D_virt [label="D"]
+  DE_funding_out -> D_virt
+  D_fund [style=invisible]
+  D_virt -> D_fund [label="2/\{\pk{D, F'}, \pk{E, F'}\}"]
+  C_virt_out -> D_virt
+  D_self [style=invisible]
+  D_virt -> D_self [label="\pk{D, \mathrm{out}}"]
+  D_virt_out [style=invisible]
+  D_virt -> D_virt_out [label="2/\{\pk{A, V}, \pk{E, V}\}"]
+}

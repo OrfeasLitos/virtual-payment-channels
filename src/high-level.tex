@@ -260,3 +260,34 @@
   fifth circulate signatures for the virtual transactions (signatures for
   virtual outputs and funding outputs respectively) and the sixth circulates
   revocation signatures for the old channel states.
+
+  In order to better grasp the manner in which the construction described
+  achieves its intended goals, let us now turn to an example. Consider an
+  established virtual channel on top of $4$ preexisting simple base channels.
+  Let $A$, $B$, $C$, $D$ and $E$ the relevant parties, which control the $(A,
+  B)$, $(B, C)$, $(C, D)$ and $(D, E)$ base channels, along with the $(A, E)$
+  virtual channel. After carrying out some payments, $A$ decides to close the
+  virtual channel. It therefore publishes its initiator transaction, thus
+  consuming the funding output of $(A, B)$ and producing (among others) a
+  virtual output with the interval $\{A\}$. $B$ notices this before the timelock
+  of the virtual output expires and publishes its extend-interval interval
+  transaction that consumes the aforementioned virtual output and the funding
+  output of $(B, C)$, producing a virtual output with the interval $\{A, B\}$.
+  $C$ in turn publishes the corresponding extend-interval transaction, consuming
+  the virtual output of $B$ and the funding output of $(C, D)$ while producing a
+  virtual output with the interval $\{A, B, C\}$. Finally $D$ publishes the last
+  extend-interval transaction, thus producing an interval with all players.
+  Instead of a virtual output, it produces the funding output for the virtual
+  channel $(A, E)$. Now $A$ can spend this funding output with its latest
+  commitment transaction. The entire process is depicted schematically in
+  Figure~\ref{figure:example-start-end}. Note that if any of $B$, $C$ or $D$ do
+  not act within the timelock prescribed in their consumed virtual output, then
+  $A$ or $E$ can spend the virtual output with their latest commitment
+  transaction, thus eventually $A$ can close its virtual channel in all cases.
+
+  \begin{figure*}
+    \subimport{./figures/manual-tikz/}{example-start-end.tex}
+    \caption{$4$ simple channels supporting a virtual. $A$ initiates the closing
+    procedure and no party is negligent.}
+    \label{figure:example-start-end}
+  \end{figure*}

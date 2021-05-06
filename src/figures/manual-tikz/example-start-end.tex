@@ -1,0 +1,114 @@
+
+\begin{tikzpicture}[>=latex,line join=bevel,scale=0.65]
+%%
+\begin{scope}
+  \pgfsetstrokecolor{black}
+  \definecolor{strokecol}{rgb}{1.0,1.0,1.0};
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{1.0,1.0,1.0};
+  \pgfsetfillcolor{fillcol}
+  \filldraw (0.0bp,0.0bp) -- (0.0bp,730.0bp) -- (788.69bp,730.0bp) -- (788.69bp,0.0bp) -- cycle;
+\end{scope}
+\begin{scope}
+  \pgfsetstrokecolor{black}
+  \definecolor{strokecol}{rgb}{1.0,1.0,1.0};
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{1.0,1.0,1.0};
+  \pgfsetfillcolor{fillcol}
+  \filldraw (0.0bp,0.0bp) -- (0.0bp,730.0bp) -- (788.69bp,730.0bp) -- (788.69bp,0.0bp) -- cycle;
+\end{scope}
+  \coordinate (AB_funding_in) at (83.193bp,18.0bp);
+  \coordinate (BC_funding_in) at (277.19bp,18.0bp);
+  \coordinate (CD_funding_in) at (463.19bp,18.0bp);
+  \coordinate (DE_funding_in) at (658.19bp,18.0bp);
+  \coordinate (AB_funding_out) at (83.193bp,112.0bp);
+  \coordinate (BC_funding_out) at (277.19bp,112.0bp);
+  \coordinate (CD_funding_out) at (463.19bp,112.0bp);
+  \coordinate (DE_funding_out) at (658.19bp,112.0bp);
+  \node (A_virt) at (83.193bp,176.5bp) [draw,ellipse] {$A$};
+  \node (B_virt) at (278.19bp,326.5bp) [draw,ellipse] {$B$};
+  \node (C_virt) at (453.19bp,476.5bp) [draw,ellipse] {$C$};
+  \node (D_virt) at (615.19bp,626.5bp) [draw,ellipse] {$D$};
+  \coordinate (A_fund) at (74.193bp,262.0bp);
+  \coordinate (A_virt_out) at (192.19bp,262.0bp);
+  \coordinate (B_fund) at (163.19bp,412.0bp);
+  \coordinate (B_self) at (396.19bp,412.0bp);
+  \coordinate (B_virt_out) at (282.19bp,412.0bp);
+  \coordinate (C_fund) at (453.19bp,562.0bp);
+  \coordinate (C_self) at (354.19bp,562.0bp);
+  \coordinate (C_virt_out) at (572.19bp,562.0bp);
+  \coordinate (D_fund) at (510.19bp,712.0bp);
+  \coordinate (D_self) at (615.19bp,712.0bp);
+  \coordinate (D_virt_out) at (730.19bp,712.0bp);
+  \draw [->] (AB_funding_in) ..controls (83.193bp,49.54bp) and (83.193bp,68.053bp)  .. (AB_funding_out);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+  \pgfsetstrokecolor{strokecol}
+  \draw (131.19bp,65.0bp) node {$2/\{\pk{A, F}, \pk{B, F}\}$};
+  \draw (77.193bp,42.304bp) node {$$};
+  \draw (77.193bp,87.773bp) node {$$};
+  \draw [->] (BC_funding_in) ..controls (277.19bp,49.54bp) and (277.19bp,68.053bp)  .. (BC_funding_out);
+  \draw (325.19bp,65.0bp) node {$2/\{\pk{B, F}, \pk{C, F}\}$};
+  \draw (271.19bp,42.304bp) node {$$};
+  \draw (271.19bp,87.773bp) node {$$};
+  \draw [->] (CD_funding_in) ..controls (463.19bp,49.54bp) and (463.19bp,68.053bp)  .. (CD_funding_out);
+  \draw (511.19bp,65.0bp) node {$2/\{\pk{C, F}, \pk{D, F}\}$};
+  \draw (457.19bp,42.304bp) node {$$};
+  \draw (457.19bp,87.773bp) node {$$};
+  \draw [->] (DE_funding_in) ..controls (658.19bp,49.54bp) and (658.19bp,68.053bp)  .. (DE_funding_out);
+  \draw (706.69bp,65.0bp) node {$2/\{\pk{D, F}, \pk{E, F}\}$};
+  \draw (652.19bp,42.304bp) node {$$};
+  \draw (652.19bp,87.773bp) node {$$};
+  \draw [->] (AB_funding_out) ..controls (83.193bp,138.32bp) and (83.193bp,148.23bp)  .. (A_virt);
+  \draw [->] (BC_funding_out) ..controls (277.46bp,169.2bp) and (277.91bp,265.45bp)  .. (B_virt);
+  \draw [->] (CD_funding_out) ..controls (462.5bp,142.79bp) and (462.19bp,160.2bp)  .. (462.19bp,175.5bp) .. controls (462.19bp,175.5bp) and (462.19bp,175.5bp)  .. (462.19bp,413.0bp) .. controls (462.19bp,427.94bp) and (459.64bp,444.69bp)  .. (C_virt);
+  \draw [->] (DE_funding_out) ..controls (658.19bp,142.79bp) and (658.19bp,160.2bp)  .. (658.19bp,175.5bp) .. controls (658.19bp,175.5bp) and (658.19bp,175.5bp)  .. (658.19bp,563.0bp) .. controls (658.19bp,582.9bp) and (643.21bp,601.09bp)  .. (D_virt);
+  \draw [->] (A_virt) ..controls (81.062bp,197.26bp) and (78.914bp,217.19bp)  .. (A_fund);
+  \draw (127.69bp,240.0bp) node {$2/\{\pk{A, F'}, \pk{B, F'}\}$};
+  \draw (76.263bp,192.12bp) node {$$};
+  \draw (70.034bp,237.91bp) node {$$};
+  \draw [->] (A_virt) ..controls (109.67bp,180.31bp) and (142.56bp,186.26bp)  .. (163.19bp,204.0bp) .. controls (172.48bp,211.98bp) and (179.14bp,223.66bp)  .. (A_virt_out);
+  \draw (191.69bp,215.0bp) node {$\{A\}$};
+  \draw (99.237bp,172.38bp) node {$$};
+  \draw (181.36bp,237.8bp) node {$$};
+  \draw [->] (A_virt_out) ..controls (228.93bp,289.7bp) and (248.62bp,304.01bp)  .. (B_virt);
+  \draw [->] (B_virt) ..controls (250.54bp,330.12bp) and (216.14bp,335.91bp)  .. (194.19bp,354.0bp) .. controls (184.54bp,361.95bp) and (177.43bp,373.73bp)  .. (B_fund);
+  \draw (227.69bp,381.0bp) node {$2/\{\pk{B, F'}, \pk{C, F'}\}$};
+  \draw (261.71bp,322.3bp) node {$$};
+  \draw (162.51bp,388.0bp) node {$$};
+  \draw [->] (B_virt) ..controls (296.8bp,336.64bp) and (313.1bp,345.16bp)  .. (326.19bp,354.0bp) .. controls (342.0bp,364.68bp) and (358.61bp,378.09bp)  .. (B_self);
+  \draw (372.19bp,365.0bp) node {$\pk{B, \mathrm{out}}$};
+  \draw (292.96bp,337.74bp) node {$$};
+  \draw (373.31bp,389.81bp) node {$$};
+  \draw [->] (B_virt) ..controls (279.14bp,347.26bp) and (280.09bp,367.19bp)  .. (B_virt_out);
+  \draw (301.19bp,372.0bp) node {$\{A, B\}$};
+  \draw (272.61bp,342.12bp) node {$$};
+  \draw (275.37bp,387.91bp) node {$$};
+  \draw [->] (B_virt_out) ..controls (353.77bp,439.16bp) and (406.08bp,458.28bp)  .. (C_virt);
+  \draw [->] (C_virt) ..controls (453.19bp,497.26bp) and (453.19bp,517.19bp)  .. (C_fund);
+  \draw (490.59bp,524.0bp) node {$2/\{\pk{C, F'}, \pk{D, F'}\}$};
+  \draw (447.19bp,492.12bp) node {$$};
+  \draw (447.19bp,537.91bp) node {$$};
+  \draw [->] (C_virt) ..controls (435.68bp,487.19bp) and (421.97bp,495.39bp)  .. (411.19bp,504.0bp) .. controls (398.52bp,514.12bp) and (385.65bp,526.76bp)  .. (C_self);
+  \draw (412.19bp,528.0bp) node {$\pk{C, \mathrm{out}}$};
+  \draw (438.45bp,476.25bp) node {$$};
+  \draw (362.34bp,539.04bp) node {$$};
+  \draw [->] (C_virt) ..controls (480.98bp,480.05bp) and (516.34bp,485.8bp)  .. (539.19bp,504.0bp) .. controls (549.22bp,511.99bp) and (556.8bp,523.92bp)  .. (C_virt_out);
+  \draw (582.19bp,515.0bp) node {$\{A, B, C\}$};
+  \draw (469.59bp,472.27bp) node {$$};
+  \draw (560.28bp,537.97bp) node {$$};
+  \draw [->] (C_virt_out) ..controls (590.07bp,588.98bp) and (597.91bp,600.38bp)  .. (D_virt);
+  \draw [->] (D_virt) ..controls (585.96bp,628.9bp) and (549.97bp,633.69bp)  .. (529.19bp,654.0bp) .. controls (521.14bp,661.87bp) and (516.5bp,673.25bp)  .. (D_fund);
+  \draw (560.19bp,665.0bp) node {$2/\{\pk{D, F'}, \pk{E, F'}\}$};
+  \draw (598.08bp,621.8bp) node {$$};
+  \draw (505.75bp,687.84bp) node {$$};
+  \draw [->] (D_virt) ..controls (615.19bp,647.26bp) and (615.19bp,667.19bp)  .. (D_self);
+  \draw (637.69bp,675.0bp) node {$\pk{D, \mathrm{out}}$};
+  \draw (609.19bp,642.12bp) node {$$};
+  \draw (609.19bp,687.91bp) node {$$};
+  \draw [->] (D_virt) ..controls (632.78bp,637.61bp) and (646.7bp,645.95bp)  .. (658.19bp,654.0bp) .. controls (673.55bp,664.75bp) and (689.99bp,677.66bp)  .. (D_virt_out);
+  \draw (713.19bp,652.0bp) node {$2/\{\pk{A, V}, \pk{E, V}\}$};
+  \draw (629.95bp,638.49bp) node {$$};
+  \draw (705.11bp,688.88bp) node {$$};
+%
+\end{tikzpicture}
+
