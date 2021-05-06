@@ -1,4 +1,4 @@
-\section{On the use of \texttt{ANYPREVOUT}}
+\section{On the necessity of \texttt{ANYPREVOUT}}
   \label{section:anyprevout}
   As our protocol relies on the \texttt{ANYPREVOUT} sighash flag, it cannot be
   deployed on Bitcoin until it is introduced. We here argue that any efficient
@@ -21,7 +21,8 @@
 
   \begin{proof}[Proof of Theorem~\ref{theorem:anyprevout}]
     When an off-chain protocol is closed, there has to be some form of
-    information and coin flow to its $2$ or $2$ neighbouring protocols in order
+    information and coin flow to its %$2$ or $2$
+    neighbouring protocols in order
     to ensure that the virtual channel will be funded exactly once if at least
     one of its participants is honest and that no honest intermediary will be
     charged. Such flow can happen either with simultaneous closures (e.g. our
@@ -64,21 +65,28 @@
     correspond to in the case of the induction hypothesis, but their total
     number is the same. For each of these orderings we produce two new
     orderings: one in which the new party $P_{k+2}$ acts right before and one in
-    which it acts right after $P_{k+1}$. Consider any other party $P_i$ which
-    acts after $P_{k+2}$ and $P_{k+1}$ and at least one of its neighbours
-    belongs to the transitive closure of parties that (i) have already acted and
-    (ii) either are $P_{k+1}$ or neighbour some party in the transitive closure.
+    which it acts right after $P_{k+1}$.  Given such an ordering $o$, consider the
+    neighbor relation between the set of parties that have been activated 
+    and take its reflexive and transitive closure $\tilde_o$. 
+    Now consider any party $P_i$ with the following properties: 
+    (i) it acts after $P_{k+2}$ and $P_{k+1}$ (e.g., $P_2$ is such a party), and
+    (ii)  at least one of its neighbours belongs to the equivalence class of 
+    $\tilde_o$ that contains $P_{k+1}$. Observe that such party $P_i$ is always
+    well defined. 
+    %
     Since $P_{k+1}$ must necessarily use a different transaction for each of the
     two orderings with $P_{k+2}$, and since there is a continuous chain of
     parties between $P_{k+1}$ and $P_i$ that have already acted, it is the case
     that $P_i$ must have a different transaction for each of these two cases as
     well, as without \texttt{ANYPREVOUT}, an input of a transaction can only
-    spend a specific output of a specific transaction. Since $P_2$ belongs to
+    spend a specific output of a specific transaction. 
+    
+    Since $P_2$ belongs to
     the aforementioned transitive closure, we deduce that $P_2$ needs to have at
     least $2f$ transactions available.
 
     On aggregate, $P_2$ needs at least $2^{(m-1)} \in O(2^n)$ transactions to be
-    able to unilaterally close its protocol.
+    able to unilaterally close its protocol.  
   \end{proof}
 
   Note that in case of a protocol that resembles ours but does not make use of
@@ -90,5 +98,4 @@
   itself virtual, then the new channel needs a different set of virtual
   transactions for each of the (exponentially many) possible funding outputs of
   the base virtual channel, thus further compounding the issue.
-
-  \TODO{future work}
+ 
