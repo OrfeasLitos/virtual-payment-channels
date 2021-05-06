@@ -75,19 +75,22 @@ solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster,lee2020routee}
     \begin{center}
     \begin{tabular}{|l|c|c|c|c|}
     \hline
-              & Unlimited lifetime & Recursive & Multi-hop & no need for \texttt{ANYPREVOUT} \\
+              & Unlimited lifetime & Recursive & Variadic & Script requirements \\
     \hline
     LVPC~\cite{10.1007/978-3-030-65411-5_18}
               & ✗                  & \LEFTcircle\footnote{lacks security analysis}
-                                               & ✗         & ✓ \\
+                                               & ✗         & Bitcoin \\
     \hline
     BCVC~\cite{cryptoeprint:2020:554}
-              & ✓                  & ✗         & ✗         & ✓ \\
+              & ✓                  & ✗         & ✗         & Bitcoin \\
     \hline
-    GBCC~\cite{cryptoeprint:2020:476}
-              & ✓                  & ✓         & ✗         & ✓ \\
+    Perun~\cite{perun}
+              & ✓                  & ✗         & ✗         & Ethereum \\
     \hline
-    this work & ✓                  & ✓         & ✓         & ✗ \\
+    GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}
+              & ✓                  & ✓         & ✗         & Ethereum \\
+    \hline
+    this work & ✓                  & ✓         & ✓         & Bitcoin + \texttt{ANYPREVOUT} \\
     \hline
     \end{tabular}
     \end{center}
