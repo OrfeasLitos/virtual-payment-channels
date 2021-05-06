@@ -77,7 +77,12 @@ while on the other, intermediaries can act following any arbitrary activation se
   We formally prove the security of the constructor protocol in the  UC~\cite{uc} setting. The construction relies on the \texttt{ANYPREVOUT}   signature type, which does not sign the hash of the transaction it spends, therefore allowing for a single pre-signed transaction to spend any output
   with a suitable script. We further discuss the limitations of a similar
   primitive that does not rely on \texttt{ANYPREVOUT} in
-  Section~\ref{section:anyprevout} and in particular in Theorem~\ref{theorem:anyprevout}.
+  Section~\ref{section:anyprevout} and in particular in Theorem~\ref{theorem:anyprevout},
+  where we prove that any virtual channel constructor protocol that, as in LN, it 
+  has parties store transactions in their local state
+  and offers efficient closing via a single transaction, it 
+  will have an exponentially large state in the number of intermediaries, unless \texttt{ANYPREVOUT} is available. 
+ \TODO{check previous}
  
 \ignore{  %%%%%%% --------- OLD TEXT INTRO -----------
   The most popular PCN is the Lightning Network (LN)~\cite{lightning}, which   works on top of Bitcoin. With LN, parties can open a pairwise channel with a   single on-chain transaction and subsequently pay each other an unlimited   number of times, only limited by the speed of their internet connection. What   is more, a party can pay another even if they do not have a direct channel.   They can instead leverage a path of channels for a fee and perform a so-called   multi-hop payment in an atomic manner. Unfortunately a multi-hop payment needs   active cooperation by all intermediaries, therefore increasing the latency and the probability of failure of the payment.

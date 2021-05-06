@@ -2,12 +2,12 @@
 \paragraph{Related work}
  The first proposal for PCNs was due to~\cite{spilman} which only enabled
  unidirectional payment channels. As mentioned previously, DMCs~\cite{decker} with their decrementing timelocks have the shortcoming of limited channel lifetime. This was ameliorated by LN~\cite{lightning} which as become the dominant paradigm for designing PCNs for bitcoin-compatible systems. 
- Lightning is now implemented and functional for
+ LN is currently implemented and operational for
   Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, where
   it is known as the Raiden Network~\cite{raiden}.
 
 A number of attacks have been identified against LN. The wormhole
-  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against Lightning allows
+  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against LN allows
   colluding parties in a multi-hop payment to steal the fees of the
   intermediaries between them and Flood \& Loot~\cite{10.1145/3419614.3423248}
   analyses the feasibility of an attack in which too many channels are forced to
@@ -36,7 +36,7 @@ A number of attacks have been identified against LN. The wormhole
   provides state channels for the Cardano~\cite{cardano} blockchain which
   combines a UTXO type of model with general purpose smart contract
   functionality that are also isomorphic, i.e. Hydra channels can accommodate
-  any script that is compatible with the Cardano blockchain.
+  any script that is compatible with the underlying blockchain.
 
   BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be   funded with no on-chain transactions by allowing parties to form groups that   can pool their funds together off-chain and then use those funds to open   channels. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic   payments with reduced collateral, enabling new applications such as   crowdfunding conditional on reaching a funding target.
 
