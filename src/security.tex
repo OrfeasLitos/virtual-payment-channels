@@ -40,7 +40,7 @@
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace
   \end{equation}
   with overwhelming probability in the security parameter, where $R$ is a local,
-  trusted machine (i.e. either $P$, $P$'s \texttt{sibling}, the party to which
+  kindred machine (i.e. either $P$, $P$'s \texttt{sibling}, the party to which
   $P$ sent \textsc{fund me} if such a message has been sent, or the
   \texttt{sibling} of one of the transitive closure of hosts of $P$).
 \end{lemma}
@@ -100,12 +100,12 @@
   paradigm.
 
   Subsequently we prove Lemma~\ref{lemma:no-halt}, which informally states that
-  if an ideal party and all its trusted parties are honest, then \fchan does not
+  if an ideal party and all its kindred parties are honest, then \fchan does not
   halt with overwhelming probability.
 
 \begin{lemma}[No halt]
 \label{lemma:no-halt}
-  In an ideal execution with \fchan and \simulator, if the trusted parties of
+  In an ideal execution with \fchan and \simulator, if the kindred parties of
   the honest parties of \fchan are themselves honest, then the functionality
   halts with negligible probability in the security parameter (i.e.
   l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}

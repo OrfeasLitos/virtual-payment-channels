@@ -94,7 +94,7 @@
       \Indent
         \State store $x$
         \State $\texttt{enabler}_A \gets \texttt{hops}[0].\texttt{left}$
-        \State add $\texttt{enabler}_A$ to \alice's trusted parties
+        \State add $\texttt{enabler}_A$ to \alice's kindred parties
         \State $\itistate_A \gets \textsc{pending virtual open}$
       \EndIndent
       \Statex
@@ -111,7 +111,7 @@
       $R \in \{\fchan, \textsc{ln}\}$ when $\itistate_B = \textsc{init}$:
       \Indent
         \State $\texttt{enabler}_B \gets R$
-        \State add $\texttt{enabler}_B$ to \bob's trusted parties
+        \State add $\texttt{enabler}_B$ to \bob's kindred parties
         \State $\texttt{host}_B \gets \texttt{host}$
         \State $\itistate_B \gets \textsc{tentative virtual open}$
       \EndIndent
@@ -210,7 +210,7 @@
       \label{code:functionality:fund:when-fund}
       \Indent
         \State store $x$
-        \State add $R$ to $P$'s trusted parties
+        \State add $R$ to $P$'s kindred parties
         \State $\itistate_P \gets \textsc{pending fund}$
       \EndIndent
       \Statex
@@ -244,7 +244,7 @@
         \If{we receive a \textsc{relay} message with \texttt{msg} =
         (\textsc{init}, $\dots$, \texttt{fundee}) addressed from $P$ by
         \adversary}
-          \State add \texttt{fundee} to $P$'s trusted parties
+          \State add \texttt{fundee} to $P$'s kindred parties
           \State continue executing \adversary's command
         \EndIf
       \EndIndent
@@ -299,7 +299,7 @@
       \EndIndent
       \Statex
 
-      \State On input (\textsc{balance}) to $P$ by $R$ where $R$ is trusted by
+      \State On input (\textsc{balance}) to $P$ by $R$ where $R$ is kindred with
       $P$:
       \Indent
         \If{$\itistate_P \notin$ \{\textsc{uninit}, \textsc{init},
@@ -326,7 +326,7 @@
         in $\Sigma$
         \label{code:functionality:close:coins}
         \State $\subbalance{} \gets \subbalance{P}$
-        \ForAll{$P$'s trusted parties $R$}
+        \ForAll{$P$'s kindred parties $R$}
           \State input (\textsc{balance}) to $R$ as $P$ and extract
           $\subbalance{R}$, $\pk{R}$ from response
           \State $\subbalance{} \gets \subbalance{} + \subbalance{R}$

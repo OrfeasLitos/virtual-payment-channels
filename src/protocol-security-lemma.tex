@@ -120,7 +120,7 @@
   all the following (the facts to be proven are shown with emphasis for
   clarity):
   \begin{itemize}
-    \item If $P$ receives (\textsc{fund me}, $f$, $\dots$) by a (local, trusted)
+    \item If $P$ receives (\textsc{fund me}, $f$, $\dots$) by a (local, kindred)
     \textsc{ln} ITI $R$, subsequently transitions back to the \textsc{open}
     state (therefore moving to history $(F, C')$ where $C' = C + [-f]$) and
     finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
@@ -158,7 +158,7 @@
     (\textsc{funded}, $\dots$) to some party $R$
     (Fig.~\ref{code:ln:virtualise:start-end},
     l.~\ref{code:ln:virtualise:start-end:helper-output-funded}), the latter
-    party is the (local, trusted) \texttt{fundee} of a new virtual channel. If
+    party is the (local, kindred) \texttt{fundee} of a new virtual channel. If
     subsequently the state of $R$ transitions to \textsc{open} (therefore
     obtaining history $(F_R, C_R)$ where $F_R = F + C$ and $C_R = [[0]]$), and
     finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
@@ -378,7 +378,7 @@
 
   In case $P$ is not the \texttt{funder} ($1<i<n$), then we only need to prove
   the first statement of the second bullet. By the induction hypothesis and
-  since \texttt{sibling} is trusted, we know that both $P$'s and
+  since \texttt{sibling} is kindred, we know that both $P$'s and
   \texttt{sibling}'s funding outputs either are or can be eventually put
   on-chain and that $P$'s funding output has at least $c_P = \sum\limits_{s \in
   C} \sum\limits_{x \in s} x$ coins. If $P$ is on the ``left'' of its
