@@ -1,14 +1,17 @@
 \section{Model \& Construction}
   In this section we will examine the architecture and the details of our model,
-  along with possible attacks and their mitigations. Following the UC
-  framework~\cite{uc}, we define an ideal-world functionality \fchan
+  along with possible attacks and their mitigations. We follow the UC
+  framework~\cite{uc} to formulate the protocol and its security. For completeness,
+  and due to lack of space, we list in the appendix the ideal-world functionality \fchan
   (Figures~\ref{code:functionality:rules}-\ref{code:functionality:close}) and a
   simulator \simulator (Figures~\ref{code:simulator:flow}-\ref{code:simulator}),
   along with a real-world protocol \pchan
   (Figures~\ref{code:ln:init}-\ref{code:virtual-layer:punishment}) that
-  UC-realizes \fchan (Theorem~\ref{theorem:security}).
-
-  Similarly to~\cite{DBLP:conf/csfw/KiayiasL20}, the role of \environment
+  UC-realizes \fchan (Theorem~\ref{theorem:security}). We give a self-contained
+  description in this section, while pointing to figures in the appendix, in case
+  the reader is interested in a pseudocode style specification. 
+ 
+  As in previous formulations, (e.g.,~\cite{DBLP:conf/csfw/KiayiasL20}), the role of \environment
   corresponds to two distinct actors in a real world implementation. On the one
   hand \environment passes inputs that correspond to the desires of end-users
   (e.g. open a channel, pay, close), on the other hand \environment is
@@ -108,8 +111,8 @@
   If the channel is virtual, each party also checks that its upcoming balance is
   lower than the balance of its sibling's counterparty and that the upcoming
   balance of the counterparty is higher than the balance of its own sibling,
-  otherwise it rejects the payment. This is to mitigate a ``griefing'' (i.e.
-  that does not lead to financial gain) attack where a malicious counterparty
+  otherwise it rejects the payment. This is to mitigate a ``griefing'' attack (i.e.
+  one that does not lead to financial gain) where a malicious counterparty
   uses an old commitment transaction to spend the base funding output, therefore
   blocking the honest party from using its initiator virtual transaction. This
   check ensures that the coins gained by the punishment are sufficient to cover
@@ -141,7 +144,7 @@
   the channel is open, \textsc{ln} checks if the party has been activated within
   the last $p$ blocks (where $p$ is an implementation-dependent global
   constant). If a party is marked as negligent, no balance security guarantees
-  are given (c.f. Lemma~\ref{lemma:real-balance-security}). Note that this does
+  are given (cf. Lemma~\ref{lemma:real-balance-security}). Note that this does
   not affect indistinguishability with the ideal world, as \fchan is notified by
   our \simulator if a party becomes negligent and does not perform the balance
   security check.
@@ -186,8 +189,9 @@
   other parties. Each party generates and circulates $S = \sum\limits_{i =
   2}^{n-2} (n-3 + \chi_{i = 2} + \chi_{i = n - 1} + 2(i - 2 + \chi_{i = 2})(n -
   i - 1 + \chi_{i = n - 1})) \in O(n^3)$ signatures (where $\chi_A$ is the
-  characteristic function that equals $1$ if $A$ is true and $0$ else), for a
-  total of $nS \in O(n^4)$ signatures in this phase. On a related note, the
+  characteristic function that equals $1$ if $A$ is true and $0$ else).
+%  , for a   total of $nS \in O(n^4)$ signatures in this phase. 
+On a related note, the
   number of virtual transactions stored by each party is $1$ for the two
   endpoints (Figure~\ref{code:virtual-layer:endpoint-txs}) and $n - 2 + \chi_{i
   = 2} + \chi_{i = n - 1} +  (i - 2 + \chi_{i = 2}) (n - i - 1 + \chi_{i = n-1})
