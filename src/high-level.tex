@@ -185,7 +185,7 @@
   whole. The first party $P_i$ that wishes to close a base channel observes that
   its funding output(s) remain(s) unspent and publishes its initiator
   transaction. First, this allows $P_i$ to use its commitment transaction to
-  close the channel. Second, in case $P_i$ is an intermediary, it directly
+  close the base channel. Second, in case $P_i$ is an intermediary, it directly
   regains the coins it has locked for the virtual channel. Third, it produces a
   virtual output that can only be consumed by $P_{i-1}$ and $P_{i+1}$, the
   parties adjacent to $P_i$ (if any) with specific extend-interval transactions.
