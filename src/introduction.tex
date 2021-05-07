@@ -20,7 +20,7 @@ The key primitive of PCN protocols is a
 payment (or more generally state) channel. 
 Two parties initiate the channel by locking
 some funds on-chain and subsequently
-exchange transactions to update the state of the channel. 
+exchange direct messages to update the state of the channel.
 The key feature is that state updates are not posted on-chain
 and hence they remain unencumbered by the performance limitations
 of the underlying blockchain protocol. 
@@ -71,8 +71,8 @@ With respect to the other two properties, observe that successive applications o
 \paragraph{Our Contributions.}  We present  the first  Bitcoin-suitable
 recursive virtual channel constructor that is recursive and supports channels
 with an indefinite lifetime. In addition, our constructor, Elmo (named after St.
-Elmo's fire), is variadic and symmetric. In our constructor, both optimistic and pessimistic execution paths are optimal in terms of round complexity: issuing payments between the two endpoints requires just two messages of size independent of the length of the channel while
-closing the channel requires a single transaction for any involved party (endpoint or intermediary) also independent of the channel's length. 
+Elmo's fire), is variadic and symmetric. In our constructor, both optimistic and pessimistic execution paths are optimal in terms of round complexity: issuing payments between the two endpoints requires just three messages of size independent of the length of the channel while
+closing the channel requires up to two on-chain transactions for any involved party (endpoint or intermediary) also independent of the channel's length.
 
 We achieve the above by leveraging on a sophisticated virtual channel setup protocol which, on the one hand, enables endpoints to use an interface that is invariant between base and virtual channels, 
 while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each. 
