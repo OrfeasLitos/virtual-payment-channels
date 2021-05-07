@@ -19,16 +19,16 @@ a prominent approach is to optimistically handle
 The key primitive of PCN protocols is a 
 payment (or more generally state) channel. 
 Two parties initiate the channel by locking
-some funds on chain and subsequently
+some funds on-chain and subsequently
 exchange transactions to update the state of the channel. 
-The key feature is that state updates are not posted on chain
+The key feature is that state updates are not posted on-chain
 and hence they remain unencumbered by the performance limitations
 of the underlying blockchain protocol. 
 Given this primitive, multiple overlapping payment
 channels can be combined and form the PCN. 
 
 Closing a channel is an operation that involves posting the 
-state of the channel on chain; it is essential that any party
+state of the channel on-chain; it is essential that any party
 individually can close a channel as otherwise a malicious counterparty
 could prevent an honest party  from
 accessing their funds. This functionality
@@ -36,7 +36,7 @@ however raises an important design consideration: how to prevent malicious parti
 %
 Addressing this issue can be done with some suitable use
 of  transaction ``time-locks'', a feature that prevents a transaction
-or a specific script from being processed on chain
+or a specific script from being processed on-chain
 prior to a specific time. 
 %
 For instance, diminishing transaction time-locks 
