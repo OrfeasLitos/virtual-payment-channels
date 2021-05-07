@@ -15,27 +15,4 @@ have three natural desiderata.
 A virtual channel constructor is {\em recursive} if it can also be applied on pre-existing virtual channels, {\em variadic} if it can be applied on any number of pre-existing channels and {\em symmetric} if it encumbers in an egalitarian fashion all channel participants both in optimistic and pessimistic execution paths. 
 We put forth the first Bitcoin-suitable recursive variadic virtual channel construction. Furthermore our virtual channel constructor is symmetric and offers optimal round complexity both in the optimistic and pessimistic execution paths.  Our virtual channels can be implemented over Bitcoin assuming the \texttt{ANYPREVOUT} signature type, a feature that we prove necessary for any efficient protocol that, as in the case of LN, it has parties maintain a set of
 Bitcoin transactions in their local state. We express and prove the security of our construction in the universal composition setting. 
-%
-\ignore{  
-  Blockchains have inherently limited throughput and latency. A variety of
-  so-called Layer 2 technologies attempt to solve this problem in a number of
-  independent ways. Payment Channel Networks (PCNs) constitute one of the most
-  prominent such approaches. The Lightning Network (LN), which uses Bitcoin as
-  its blockchain, is currently the most widely used PCN. In LN, payments to a
-  new recipient either need opening a new channel with a single on-chain
-  transaction, or can be done through a number of completely off-chain multi-hop
-  payments. Multi-hop payments however may fail due to faults by the
-  intermediaries, routing becomes an issue, payment delay is proportional to the
-  number of intermediaries and per-payment privacy suffers.
-
-  We propose Recursive Channels, which allow for new channels to be trustlessly
-  opened on top of an arbitrarily long path of existing channels, therefore
-  allowing the parties to directly pay each other multiple times, without
-  implicating the intermediaries for every payment. Such channels can be also
-  opened in a recursive manner, i.e. the preexisting channels may themselves be
-  virtual, thus answering the previously posed question of feasibility in the
-  affirmative.
-%
-%  Our construction relies on the proposed \texttt{ANYPREVOUT} sighash flag.
-}%%%%
 \end{abstract}
