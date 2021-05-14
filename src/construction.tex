@@ -1,14 +1,15 @@
 \section{Model \& Construction}
   In this section we will examine the architecture and the details of our model,
   along with possible attacks and their mitigations. We follow the UC
-  framework~\cite{uc} to formulate the protocol and its security. For completeness,
-  and due to lack of space, we list in the appendix the ideal-world functionality \fchan
+  framework~\cite{uc} to formulate the protocol and its security. We list the
+  ideal-world functionality \fchan in Section~\ref{sec:functionality}
   (Figures~\ref{code:functionality:rules}-\ref{code:functionality:close}) and a
   simulator \simulator (Figures~\ref{code:simulator:flow}-\ref{code:simulator}),
   along with a real-world protocol \pchan
   (Figures~\ref{code:ln:init}-\ref{code:virtual-layer:punishment}) that
   UC-realizes \fchan (Theorem~\ref{theorem:security}). We give a self-contained
-  description in this section, while pointing to figures in the appendix, in case
+  description in this section, while pointing to figures in
+  Sections~\ref{sec:functionality} and~\ref{sec:protocol}, in case
   the reader is interested in a pseudocode style specification. 
  
   As in previous formulations, (e.g.,~\cite{DBLP:conf/csfw/KiayiasL20}), the role of \environment
