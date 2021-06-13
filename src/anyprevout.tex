@@ -4,11 +4,20 @@
   deployed on Bitcoin until it is introduced. We here argue that any efficient
   protocol that achieves goals similar to ours and has parties maintain 
   Bitcoin transactions in their local state requires  the proposed sighash flag. 
-  
+
+  \begin{definition}[Off-chain base protocol]
+    An \emph{off-chain base protocol of $n \geq 2$ parties} is a generalisation
+    of pairwise channels to $n$ participants, in which a number of coins are
+    locked in one or more outputs, each of which requires an $n$-of-$n$ multisig
+    in order to be spent (with $1$ signature per participant) and where each
+    party can unilaterally spend these outputs with one or more alternative
+    transactions specified by the protocol, thus terminating (closing) the
+    protocol.
+  \end{definition}
+
   \begin{theorem}[\texttt{ANYPREVOUT} is necessary]
     \label{theorem:anyprevout}
-    Consider $n$ independent ordered off-chain ``base'' protocols over Bitcoin
-    (i.e. generalisations of pairwise channels to more than $2$ participants)
+    Consider $n$ independent, ordered off-chain base protocols
     such that every pair of consecutive protocols $(\Pi_{i-1}, \Pi_i)$ for $i
     \in \{2, \dots, n-1\}$ has a common party $P_i$. Also consider a protocol
     that establishes a virtual channel (i.e. a payment channel without any on-chain

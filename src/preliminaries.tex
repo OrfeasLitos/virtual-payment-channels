@@ -11,10 +11,10 @@
   knows which parties are corrupted, therefore it normally can achieve the
   intention of the protocol in a much more straightforward manner. At a high
   level, once we have the protocol and the functionality defined, our goal is to
-  prove that no probabilistic polynomial-time (PPT) ITM can distinguish whether
-  it is interacting with the real world protocol or the ideal world
-  functionality. If this is true we then say that the protocol UC-realises the
-  functionality.
+  prove that no probabilistic polynomial-time (PPT) Interactive Turing Machine
+  (ITM) can distinguish whether it is interacting with the real world protocol
+  or the ideal world functionality. If this is true we then say that the
+  protocol UC-realises the functionality.
 
   The principal contribution of UC is the following: Once a functionality that
   corresponds to a particular protocol is found, any other higher level protocol
@@ -24,20 +24,22 @@
   that uses it, therefore vastly improving the efficiency and scalability of the
   effort of cryptographic proofs.
 
-  In UC, a number of Interactive Turing Machines (ITMs) execute and send
-  messages to each other. At each moment only one ITM is executing (has the
-  ``execution token'') and when it sends a message to another ITM, it transfers
+  An Interactive Turing Instance (ITI) is a single instantiation of an ITM. In
+  UC, a number of ITIs execute and send
+  messages to each other. At each moment only one ITI is executing (has the
+  ``execution token'') and when it sends a message to another ITI, it transfers
   the execution token to the receiver. Messages can be sent either locally
   (inputs, outputs) or over the network.
 
-  The first ITM to be activated is the environment \environment. This can be any
-  PPT ITM. This ITM encompasses everything that happens around the protocol
+  The first ITI to be activated is the environment \environment. This can be an
+  instance of any
+  PPT ITM. This ITI encompasses everything that happens around the protocol
   under scrutiny, including the players that send instructions to the protocol.
-  It also is the ITM that tries to distinguish whether it is in the real or the
+  It also is the ITI that tries to distinguish whether it is in the real or the
   ideal world. Put otherwise, it plays the role of the distinguisher.
 
   After activating and executing some code, \environment may input a message to
-  any party. If this execution is in the real world, then each party is an ITM
+  any party. If this execution is in the real world, then each party is an ITI
   running the protocol \prot. Otherwise if the execution takes place in the
   ideal world, then each party is a dummy that simply relays messages to the
   functionality \func. An activated real world party then follows its code,
@@ -45,7 +47,7 @@
   via the network.
 
   In UC the network is fully controlled by the so called adversary \adversary,
-  which may be any PPT ITM. Once activated by any network message, this machine
+  which may be any PPT ITI. Once activated by any network message, this machine
   can read the message contents and act adaptively, freely communicate with
   \environment bidirectionally, choose to deliver the message right away, delay
   its delivery arbitrarily long, even corrupt it or drop it entirely. Crucially,
@@ -68,8 +70,9 @@
   can communicate freely with \func and completely engulfs the real world
   \adversary. It can therefore internally simulate real world parties and
   generate suitable messages so that \adversary remains oblivious to the fact
-  that this is the ideal world. Normally it just relays messages between
-  \adversary and \environment.
+  that this is the ideal world. Normally messages between \adversary and
+  \environment are just relayed by \simulator, without modification or special
+  handling.
 
   From the point of view of the functionality, \simulator is untrusted,
   therefore any information that \func leaks to \simulator has to be carefully

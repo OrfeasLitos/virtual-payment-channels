@@ -8,6 +8,7 @@
   channel on which a number of payments took place will have at least the
   expected funds on-chain.
 
+% TODO: maybe move this definition to appendix and provide here an informal one
 \begin{lemma}[Real world balance security]
 \label{lemma:real-balance-security}
   Consider a real world execution with $P \in \{\alice, \bob\}$ honest
@@ -49,6 +50,7 @@
   similar situation, the balance that \fchan has stored for it is at least equal
   to the expected funds.
 
+% TODO: maybe move this definition to appendix and provide here an informal one
 \begin{lemma}[Ideal world balance]
 \label{lemma:ideal-balance}
   Consider an ideal world execution with functionality \fchan and simulator
@@ -153,7 +155,7 @@
 \end{proof}
 
   Lastly we construct a ``multi-session
-  extension''~\cite{DBLP:conf/crypto/CanettiR03} of \fchan and of \pchan and
+  extension'' (as defined in~\cite{DBLP:conf/crypto/CanettiR03}) of \fchan and of \pchan and
   prove Theorem~\ref{theorem:multi-session-security}, which claims that the
   real-world multi-session extension protocol UC-realises the ideal-world
   multi-session extension functionality. The proof is straightforward and
