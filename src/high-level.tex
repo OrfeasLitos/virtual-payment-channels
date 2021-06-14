@@ -166,13 +166,10 @@
 
   Furthermore, each intermediary has $O(n)$ extend-interval transactions.
   Being an intermediary, the party is involved in two base channels, each having
-  its own funding output. In case exactly one of these two outputs is spent
-  honestly and the other is unspent,
+  its own funding output. In case exactly one of these two outputs has been spent
+  honestly and the other is still unspent,
   publishing an extend-interval transaction is the only way for the party to
   close the base channel corresponding to the unspent output.
-  Publishing and extend-interval transaction is the only way for the party to
-  close one of its two base channels, of which the funding output is unspent
-
   Such a transaction consumes two outputs: the only
   available funding output and a suitable virtual output, as discussed below. An
   extend-interval tx has three outputs: A funding output replacing the one just
@@ -180,7 +177,7 @@
   value of the virtual channel, and one virtual output.
 
   Last, each intermediary has $O(n^2)$ merge-intervals transactions. If both
-  base channels' funding outputs of the party are spent honestly, publishing a merge-intervals
+  base channels' funding outputs of the party have been spent honestly, publishing a merge-intervals
   transaction is the only way for the party to close either base channel. Such a
   transaction consumes two suitable virtual outputs, as discussed below. It has
   two outputs: One that directly pays the intermediary coins equal to the total
