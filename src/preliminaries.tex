@@ -1,4 +1,5 @@
 \section{Preliminaries}
+  \subsection{Universal Composition Framework}
   In this work we embrace the Universal Composition (UC) framework~\cite{uc} to
   model parties, network interactions, adversarial influence and corruptions, as
   well as formalise and prove security.
@@ -88,3 +89,31 @@
   distributions over the machines' random tapes of the outputs of \environment
   in the two worlds is negligibly small. Note the order of quantifiers:
   \simulator depends on \adversary, but not on \environment.
+
+  \subsection{\ledger Functionality}
+  In this work we choose to model the Bitcoin ledger with the \ledger
+  functionality as defined in~\cite{BMTZ17} and further refined
+  in~\cite{genesis}. \ledger formalizes an ideal data structure that is
+  distributed and append-only, akin to a blockchain. Participants can read from
+  \ledger, which returns an ordered list of transactions. Additionally a party
+  can submit a new transaction which, if valid, will eventually be added to the
+  ledger when the adversary decides, but necessarily within a predefined time
+  window. This property is named liveness. Once a transaction becomes part of
+  the ledger, it then becomes visible to all parties at the discretion of the
+  adversary, but necessarily within another predefined time window, and it
+  cannot be reordered or removed. This is named persistence.
+
+  Moreover, \ledger needs the \gFclock
+  functionality~\cite{DBLP:conf/tcc/KatzMTZ13}, which models the notion of time.
+  Any \gFclock participant can request to read the current time (which is
+  initially 0) and inform \gFclock that her round is over. \gFclock increments the
+  time by one once all parties have declared the end of their round.
+
+  % TODO: discuss time separately
+  The protocol and functionality defined in this work do not use \gFclock
+  directly. Indeed, the only notion of time in our work is provided by the
+  blockchain height, as reported by \ledger. We therefore omit it in the
+  statement of our lemmas and theorems for simplicity of notation; it should
+  normally appear as a hybrid together with \ledger. We further note that both
+  \ledger and \gFclock are global functionalities~\cite{globaluc} and therefore
+  can be accessed directly by the environment, whereas \fchan is not.
