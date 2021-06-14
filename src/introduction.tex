@@ -58,7 +58,10 @@ A virtual channel constructor can be thought of as an  {\em operator} over the u
 
 \begin{itemize}
 \item Recursive. A recursive virtual channel constructor can operate over channels that themselves could be the results of previous applications of the operator. This is important in the context of PCNs since it allows building virtual channels on top of pre-existing virtual channels.
-\item Variadic. A variadic virtual channel constructor can virtualize any number of input state channels. This is important in the context of PCNs since it enables applying the operator to build virtual channels of arbitrary length.
+\item Variadic. A variadic virtual channel constructor can virtualize any number
+of input state channels directly, i.e. without leveraging recursion. This is
+important in the context of PCNs since it enables applying the operator to build
+virtual channels of arbitrary length without undue overhead.
 \item Symmetric. A symmetric virtual channel constructor offers setup and closing operations that are symmetric in terms of cost between the two endpoints or the intermediaries (but not a mix of both) for the optimistic and pessimistic execution paths. This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
 \end{itemize}
 
