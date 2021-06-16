@@ -103,16 +103,16 @@
   adversary, but necessarily within another predefined time window, and it
   cannot be reordered or removed. This is named persistence.
 
-  Moreover, \ledger needs the \gFclock
+  Moreover, \ledger needs the \Fclock
   functionality~\cite{DBLP:conf/tcc/KatzMTZ13}, which models the notion of time.
-  Any \gFclock participant can request to read the current time (which is
-  initially 0) and inform \gFclock that her round is over. \gFclock increments the
+  Any \Fclock participant can request to read the current time (which is
+  initially 0) and inform \Fclock that her round is over. \Fclock increments the
   time by one once all parties have declared the end of their round. We further note that both
-  \ledger and \gFclock are global functionalities~\cite{globaluc} and therefore
+  \ledger and \Fclock are global functionalities~\cite{globaluc} and therefore
   can be accessed directly by the environment.
 
   \subsection{Modelling time}
-  The protocol and functionality defined in this work do not use \gFclock
+  The protocol and functionality defined in this work do not use \Fclock
   directly. Indeed, the only notion of time in our work is provided by the
   blockchain height, as reported by \ledger. We therefore omit it in the
   statement of our lemmas and theorems for simplicity of notation; it should
