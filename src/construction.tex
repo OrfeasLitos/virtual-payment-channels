@@ -10,19 +10,29 @@
   UC-realizes \fchan (Theorem~\ref{theorem:security}). We give a self-contained
   description in this section, while pointing to figures in
   Sections~\ref{sec:functionality} and~\ref{sec:protocol}, in case
-  the reader is interested in a pseudocode style specification. 
- 
-  As in previous formulations, (e.g.,~\cite{DBLP:conf/csfw/KiayiasL20}), the role of \environment
-  corresponds to two distinct actors in a real world implementation. On the one
-  hand \environment passes inputs that correspond to the desires of end-users
-  (e.g. open a channel, pay, close), on the other hand \environment is
-  responsible with periodically waking up parties to check the ledger and act
-  upon any detected counterparty misbehaviour, similar to an always-on
-  ``daemon'' that periodically nudges the implementation to perform these
-  checks. Since it is possible that \environment fails to wake up a party often
-  enough, \pchan explicitly checks whether it has become ``negligent'' every
-  time it is activated and all security guarantees are conditioned on the party
-  not being negligent.
+  the reader is interested in a pseudocode style specification.
+
+  As in previous formulations, (e.g.,~\cite{DBLP:conf/csfw/KiayiasL20}), the
+  role of \environment corresponds to two distinct actors in a real world
+  implementation. On the one hand \environment passes inputs that correspond to
+  the desires of end-users (e.g. open a channel, pay, close), on the other hand
+  \environment is responsible with periodically waking up parties to check the
+  ledger and act upon any detected counterparty misbehaviour, similar to an
+  always-on ``daemon'' of real-life software that periodically nudges the
+  implementation to perform these checks.
+
+  Since it is possible that \environment fails to wake up a party often enough,
+  \pchan explicitly checks whether it has become ``negligent'' every time it is
+  activated and all security guarantees are conditioned on the party not being
+  negligent. A party is deemed negligent if more than $p$ blocks have been added
+  to \ledger between any consecutive pair of activations. The need for explicit
+  negligence checking stems from the fact that party activation is entirely
+  controlled by \environment and no synchrony limitations are imposed (e.g. via
+  the use of \Fclock), therefore it can happen that an otherwise honest party is
+  not activated in time to prevent a malicious counterparty from successfully
+  using an old commitment transaction. If a party is marked as negligent, no
+  balance security guarantees are given (cf.
+  Lemma~\ref{lemma:real-balance-security}).
 
   Our ideal world functionality \fchan represents a single channel, either
   simple or virtual. It acts as a relay between \adversary and \environment,
@@ -33,10 +43,14 @@
   Figures~\ref{figure:fchan-state-init},~\ref{figure:fchan-state-open-funder},~\ref{figure:fchan-state-open-fundee},~\ref{figure:fchan-state-fund},~\ref{figure:fchan-state-pay},~\ref{figure:fchan-state-close},~\ref{figure:fchan-state-corruption})
   that keep track of which internal parties are corrupted or negligent, whether
   the channel has opened, whether a payment is underway, which external parties
-  are to be considered \emph{kindred} (as they correspond to other channels owned by
-  the same user, discussed below) and whether the channel has closed. The single security check
-  performed is whether the on-chain coins are at least equal to the expected
-  balance once the channel closes. If this check fails, \fchan halts.
+  are to be considered \emph{kindred} (as they correspond to other channels
+  owned by the same user, discussed below) and whether the channel has closed.
+  The single security check performed is whether the on-chain coins are at least
+  equal to the expected balance once the channel closes. If this check fails,
+  \fchan halts. Note that this check is not performed for negligent parties, as
+  \simulator notifies \fchan if a party becomes negligent and the latter omits
+  the check. Thus indistinguishability between the real and the ideal world is
+  not violated in case of negligence.
 
   Observe that an actual user may participate in various channels, therefore it
   corresponds to more than one ITMs. This is the case for example for the funder
@@ -155,18 +169,11 @@
   counterparty and publishes the corresponding revocation transaction in case
   one is found (Figure~\ref{code:ln:poll}). It also keeps track of whether the
   party is activated often enough and marks it as negligent otherwise
-  (Figure~\ref{code:ln:init}). The need for explicit negligence marking stems
-  from the fact that party activation is entirely controlled by \environment,
-  therefore it can happen that an otherwise honest party is not activated in
-  time to prevent a malicious counterparty from successfully using an old
-  commitment transaction. Therefore at the beginning of every activation while
-  the channel is open, \textsc{ln} checks if the party has been activated within
-  the last $p$ blocks (where $p$ is an implementation-dependent global
-  constant). If a party is marked as negligent, no balance security guarantees
-  are given (cf. Lemma~\ref{lemma:real-balance-security}). Note that this does
-  not affect indistinguishability with the ideal world, as \fchan is notified by
-  our \simulator if a party becomes negligent and does not perform the balance
-  security check.
+  (Figure~\ref{code:ln:init}). In particular, at the beginning of every activation
+  while the channel is open, \textsc{ln} checks if the party has been activated
+  within the last $p$ blocks (where $p$ is an implementation-dependent global
+  constant) by reading from \ledger and comparing the current block height with
+  that of the last activation.
 
   When either party is instructed by \environment to close the channel
   (Figure~\ref{code:ln:close}), it first asks its host to close (details on the
