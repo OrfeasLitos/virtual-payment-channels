@@ -117,12 +117,15 @@
   in any case.
 
   Once the channel is open, \alice and \bob can carry out an unlimited number of
-  payments in either direction with a speed that is bounded only by network
-  delay. The payment procedure is identical for simple and virtual channels and
-  crucially it does not implicate the intermediaries. For a payment to be
-  carried out, the payee is first notified by \environment
-  (Figure~\ref{code:ln:get-paid}) and subsequently the payer is instructed by
-  \environment to commence the payment (Figure~\ref{code:ln:pay}).
+  payments in either direction, only needing to exchange $3$ direct network
+  messages with each other per payment, therefore avoiding the slow and costly
+  on-chain validation. The payment procedure is identical for simple and virtual
+  channels and crucially it does not implicate the intermediaries (and therefore
+  \alice and \bob do not incur any delays such an interaction with
+  intermediaries would introduce). For a payment to be carried out, the payee is
+  first notified by \environment (Figure~\ref{code:ln:get-paid}) and
+  subsequently the payer is instructed by \environment to commence the payment
+  (Figure~\ref{code:ln:pay}).
 
   If the channel is virtual, each party also checks that its upcoming balance is
   lower than the balance of its sibling's counterparty and that the upcoming
