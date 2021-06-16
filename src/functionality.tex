@@ -4,7 +4,7 @@
 \begin{center}
   \begin{systembox}{\fchan{} -- general message handling rules}
     \begin{itemize}
-      \item On receiving (\texttt{msg}) by party $R$ to $P \in \{\alice, \bob\}$
+      \item On receiving (\texttt{msg}) by party $R$ addressed to $P \in \{\alice, \bob\}$
       by means of $\texttt{mode} \in \{\mathrm{input}, \mathrm{output},
       \mathrm{network}\}$, handle it according to the corresponding rule in
       Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:close},
@@ -56,7 +56,7 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{init}, $\pk{}$) to $P$ by \environment when
+      \State On (\textsc{init}, $\pk{}$) by $P$ when
       $\itistate_P = \textsc{uninit}$:
       \Indent
         \State $\pk{P} \gets \pk{}$
@@ -64,8 +64,8 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $x$, ``\texttt{ledger}'', $\dots$) to \alice by
-      \environment when $\itistate_A = \textsc{init}$:
+      \State On (\textsc{open}, $x$, ``\texttt{ledger}'', $\dots$) by \alice
+      when $\itistate_A = \textsc{init}$:
       \Indent
         \State store $x$
         \label{code:functionality:open:store}
@@ -91,7 +91,7 @@
       \Statex
 
       \State On (\textsc{open}, $x$, $\texttt{hops} \neq ``\texttt{ledger}''$,
-      $\dots$) to \alice by \environment when $\itistate_A = \textsc{init}$:
+      $\dots$) by \alice when $\itistate_A = \textsc{init}$:
       \Indent
         \State store $x$
         \State $\texttt{enabler}_A \gets \texttt{hops}[0].\texttt{left}$
@@ -134,7 +134,7 @@
 \begin{center}
   \begin{systembox}{\fchan{} -- payment state machine, $P \in \{\alice, \bob\}$}
     \begin{algorithmic}[1]
-      \State On (\textsc{pay}, $x$) by \environment when $\itistate_P =
+      \State On (\textsc{pay}, $x$) by $P$ when $\itistate_P =
       \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
       \label{code:functionality:pay:when-tent-pay}
       \Indent
@@ -152,7 +152,7 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{get paid}, $y$) by \environment when $\itistate_P =
+      \State On (\textsc{get paid}, $y$) by $P$ when $\itistate_P =
       \textsc{open}$: \Comment{$\bar{P}$ pays $P$}
       \label{code:functionality:pay:when-tent-get-paid}
       \Indent
@@ -293,14 +293,14 @@
   \begin{systembox}{\fchan{} -- close state machine, $P \in \{\alice,
   \bob\}$}
     \begin{algorithmic}[1]
-      \State On (\textsc{close}) by \environment when $\itistate_P =
+      \State On (\textsc{close}) by $P$ when $\itistate_P =
       \textsc{open}$:
       \Indent
         \State $\itistate_P \gets \textsc{closing}$
       \EndIndent
       \Statex
 
-      \State On input (\textsc{balance}) to $P$ by $R$ where $R$ is kindred with
+      \State On input (\textsc{balance}) by $R$ addressed to $P$ where $R$ is kindred with
       $P$:
       \Indent
         \If{$\itistate_P \notin$ \{\textsc{uninit}, \textsc{init},
