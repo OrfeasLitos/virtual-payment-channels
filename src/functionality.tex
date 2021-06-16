@@ -64,7 +64,7 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $x$, $\ledger$, $\dots$) to \alice by
+      \State On (\textsc{open}, $x$, ``\texttt{ledger}'', $\dots$) to \alice by
       \environment when $\itistate_A = \textsc{init}$:
       \Indent
         \State store $x$
@@ -90,8 +90,8 @@
       \EndIndent
       \Statex
 
-      \State On (\textsc{open}, $x$, $\texttt{hops} \neq \ledger$, $\dots$) to
-      \alice by \environment when $\itistate_A = \textsc{init}$:
+      \State On (\textsc{open}, $x$, $\texttt{hops} \neq ``\texttt{ledger}''$,
+      $\dots$) to \alice by \environment when $\itistate_A = \textsc{init}$:
       \Indent
         \State store $x$
         \State $\texttt{enabler}_A \gets \texttt{hops}[0].\texttt{left}$

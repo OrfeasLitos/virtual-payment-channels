@@ -149,7 +149,7 @@
       \mathrm{out}}$}
       \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
       $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
-      \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base
+      \If{\remotecode{\texttt{hops} = ``\texttt{ledger}''}} \Comment{opening base
       channel}
         \State \remotecode{$\texttt{layer} \gets 0$}
         \State \remotecode{$t_P \gets s + p$} \Comment{$s$ is the upper bound of
@@ -175,11 +175,11 @@
 \begin{center}
   \begin{processbox}{\textsc{ln.prepareBase}()}
     \begin{algorithmic}[1]
-      \If{\texttt{hops} = \ledger} \Comment{opening base channel}
+      \If{\texttt{hops} = ``\texttt{ledger}''} \Comment{opening base channel}
         \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
         2/\{\pk{A, F}, \pk{B, F}\})$\}
         \label{code:ln:base:create-funding}
-        \State $\texttt{host}_P \gets \ledger$
+        \State $\texttt{host}_P \gets ``\texttt{ledger}''$
         \State $\texttt{layer} \gets 0$
         \State $t_P \gets s + p$
       \Else \: \Comment{opening virtual channel}
@@ -221,7 +221,7 @@
       (\textsc{funded}, \texttt{host\_fundee}) by
       \texttt{hops}[-1].\texttt{right} (Fig~\ref{code:ln:bob},
       l.~\ref{code:ln:bob:host})}
-      \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
+      \If{\remotecode{\texttt{hops} = ``\texttt{ledger}''}} \Comment{opening base channel}
         \State \remotecode{$F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$,
         output: $(c, 2/\{\pk{A, F}, \pk{B, F}\})$\}}
       \EndIf
@@ -237,7 +237,7 @@
       \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A, 0},
       \sk{B, F})$}
       \label{code:ln:exchange-open-sigs:b-sign}
-      \If{\remotecode{\texttt{hops} = \ledger}} \Comment{opening base channel}
+      \If{\remotecode{\texttt{hops} = ``\texttt{ledger}''}} \Comment{opening base channel}
         \State \remotecode{$\itistate \gets \textsc{waiting to check
         funding}$}
       \Else \: \Comment{opening virtual channel}
@@ -328,7 +328,7 @@
       \label{code:ln:open:alice-open}
       \State ensure we run the code of \alice{} \Comment{activated party is the
       funder}
-      \If{\texttt{hops} = \ledger} \Comment{opening base channel}
+      \If{\texttt{hops} = ``\texttt{ledger}''} \Comment{opening base channel}
         \State ensure $\itistate = \textsc{topped up}$
         \State ensure $c = c_{A, \mathrm{chain}}$
       \Else \: \Comment{opening virtual channel}
@@ -338,7 +338,7 @@
       \State \textsc{ln.exchangeOpenKeys}()
       \State \textsc{ln.prepareBase}()
       \State \textsc{ln.exchangeOpenSigs}()
-      \If{\texttt{hops} = \ledger}
+      \If{\texttt{hops} = ``\texttt{ledger}''}
         \State \textsc{ln.commitBase}()
       \EndIf
       \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
@@ -597,7 +597,7 @@
       \State $c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} + x$; $i \gets
       i + 1$
       \State $\itistate \gets \textsc{open}$
-      \If{$\texttt{host}_P \neq \ledger \: \wedge$ we have a
+      \If{$\texttt{host}_P \neq ``\texttt{ledger}'' \: \wedge$ we have a
       \texttt{host\_sibling}} \Comment{we are intermediary channel}
         \State input (\textsc{new balance}, $c_P$, $c_{\bar{P}}$) to
         $\texttt{host}_P$
@@ -628,7 +628,7 @@
       \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
       x$; $i \gets i + 1$}
       \State \remotecode{$\itistate \gets \textsc{open}$}
-      \If{\remotecode{$\texttt{host}_P \neq \ledger \wedge \bar{P}$ has a
+      \If{\remotecode{$\texttt{host}_P \neq ``\texttt{ledger}'' \wedge \bar{P}$ has a
       \texttt{host\_sibling}}} \Comment{we are intermediary channel}
         \State \remotecode{input (\textsc{new balance}, $c_{\bar{P}}$, $c_P$)
         to $\texttt{host}_{\bar{P}}$}
@@ -653,7 +653,7 @@
   \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_P \geq x$
-      \If{$\texttt{host}_P \neq \ledger \wedge P$ has a \texttt{host\_sibling}}
+      \If{$\texttt{host}_P \neq ``\texttt{ledger}'' \wedge P$ has a \texttt{host\_sibling}}
       \Comment{we are intermediary channel}
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x \wedge
         c_{\bar{P}} + x \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by
@@ -673,7 +673,7 @@
   \begin{processbox}{\textsc{ln} -- On (\textsc{get paid}, $y$):}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_{\bar{P}} \geq y$
-      \If{$\texttt{host}_{P} \neq \ledger \wedge P$ has a
+      \If{$\texttt{host}_{P} \neq ``\texttt{ledger}'' \wedge P$ has a
       \texttt{host\_sibling}} \Comment{we are intermediary channel}
         \State ensure $c_P + y \leq c_{\mathrm{sib}, \mathrm{rem}} \wedge
         c_{\mathrm{sib}} \leq c_{\bar{P}} - y$ \Comment{avoid value loss by
@@ -691,7 +691,7 @@
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{check for lateral close}):}
     \begin{algorithmic}[1]
-      \If{$\texttt{host}_P \neq \ledger$}
+      \If{$\texttt{host}_P \neq ``\texttt{ledger}''$}
         \State input (\textsc{check for lateral close}) to
         $\texttt{host}_P$
       \EndIf
@@ -740,7 +740,7 @@
         \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
       \EndWhile
       \State $c_P \gets c_P + c_{\bar{P}}$
-      \If{$\texttt{host}_P \neq \ledger$}
+      \If{$\texttt{host}_P \neq ``\texttt{ledger}''$}
         \State input (\textsc{used revocation}) to $\texttt{host}_P$
       \EndIf
     \end{algorithmic}
@@ -754,14 +754,14 @@
     \begin{algorithmic}[1]
       \State ensure $\itistate \notin \{\bot, \textsc{init}, \textsc{topped up},
       \textsc{closed}, \textsc{base punished}\}$ \Comment{channel open}
-      \If{$\texttt{host}_P \neq \ledger$} \Comment{we have a virtual channel}
+      \If{$\texttt{host}_P \neq ``\texttt{ledger}''$} \Comment{we have a virtual channel}
         \State $\itistate \gets \textsc{host closing}$
         \State input (\textsc{close}) to $\texttt{host}_P$ and keep relaying any
         (\textsc{check if closing}) or (\textsc{close}) input to
         $\texttt{host}_P$ until receiving output (\textsc{closed}) by
         $\texttt{host}_P$
         \label{code:ln:close:relay}
-        \State $\texttt{host}_P \gets \ledger$
+        \State $\texttt{host}_P \gets ``\texttt{ledger}''$
       \EndIf
       \State $\itistate \gets \textsc{closing}$
       \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
