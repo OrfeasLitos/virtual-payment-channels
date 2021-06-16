@@ -107,7 +107,9 @@
   functionality~\cite{DBLP:conf/tcc/KatzMTZ13}, which models the notion of time.
   Any \gFclock participant can request to read the current time (which is
   initially 0) and inform \gFclock that her round is over. \gFclock increments the
-  time by one once all parties have declared the end of their round.
+  time by one once all parties have declared the end of their round. We further note that both
+  \ledger and \gFclock are global functionalities~\cite{globaluc} and therefore
+  can be accessed directly by the environment.
 
   \subsection{Modelling time}
   The protocol and functionality defined in this work do not use \gFclock
