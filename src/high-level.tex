@@ -36,6 +36,24 @@
   limitation simplifies the execution model and the analysis, but can be lifted
   at the cost of additional protocol complexity.
 
+  Let us now introduce some notation used in figures with transactions.
+  Reflecting the UTXO model, each transaction is represented by a cylindrical,
+  named node with one incoming edge per input and one outgoing edge per output.
+  Each output can be connected with at most one input of another transaction;
+  cycles are not allowed. Above an input or an output edge we note the number of
+  coins it carries. In some figures the coins are omitted. Below an input we
+  place the data carried and below an output its spending conditions. For
+  a connected input-output pair, we omit the data carried by the input.
+  $\sigma_K$ is a signature on the transaction by $\sk{K}$. An output marked
+  with $\pk{K}$ needs a signature by $\sk{K}$ to be spent. $n/\{\pk{1}, \dots,
+  \pk{m}\}$ is an $m$-of-$n$ multisig ($n \leq m$) that needs signatures from
+  $n$ distinct keys among $\sk{1}, \dots, \sk{m}$. If $k$ is a spending
+  condition, $k + t$ is the same spending condition but with a relative timelock
+  of $t$. Spending conditions or data can be combined with logical ``AND''
+  ($\wedge$) and ``OR'' ($\vee$), so an output $a \vee b$ can be spent either by
+  matching the condition $a$ or the condition $b$, and an input $\sigma_a \wedge
+  \sigma_b$ carries signatures from $\sk{a}$ and $\sk{b}$.
+
 \subsection{Simple Channels}
   In a similar vein to earlier UTXO-based PCN proposals, having an open channel essentially
   means having very specific keys, transactions and signatures at hand, as well
@@ -293,6 +311,7 @@
   \begin{figure*}
     \subimport{./figures/manual-tikz/}{example-start-end.tex}
     \caption{$4$ simple channels supporting a virtual. $A$ initiates the closing
-    procedure and no party is negligent.}
+    procedure and no party is negligent. Virtual outputs are marked with their
+    interval.}
     \label{figure:example-start-end}
   \end{figure*}
