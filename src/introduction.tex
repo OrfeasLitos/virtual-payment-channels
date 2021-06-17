@@ -81,7 +81,9 @@ construction is also compatible with the current version of any blockchain that
 supports Turing-complete smart contracts, such as
 Ethereum~\cite{wood2014ethereumethereum}.
 
-We achieve the above by leveraging on a sophisticated virtual channel setup protocol which, on the one hand, enables endpoints to use an interface that is invariant between base and virtual channels, 
+We achieve the above by leveraging on a sophisticated virtual channel setup
+protocol which, on the one hand, enables endpoints to use an interface that is
+invariant between on-chain and off-chain (i.e. virtual) channels,
 while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each. 
 
   We formally prove the security of the constructor protocol in the  UC~\cite{uc} setting. The construction relies on the \texttt{ANYPREVOUT}   signature type, which does not sign the hash of the transaction it spends, therefore allowing for a single pre-signed transaction to spend any output

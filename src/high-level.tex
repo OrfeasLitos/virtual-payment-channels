@@ -23,6 +23,12 @@
   augmented with a more efficient optimistic collaborative closing procedure,
   which however is left as future work.
 
+  Note that a virtual channel is built on top of two or more so-called ``base''
+  channels, which, due to the recursive property, may themselves be simple or
+  virtual. The parties that control the base channels are called ``base
+  parties''. The fact that more than two base channels can be used by a single
+  virtual channel is ensured by the variadic property.
+
   In more detail, to open a channel (c.f. Figure~\ref{code:ln:open}) the two
   counterparties (a.k.a. ``endpoints'') first create new keypairs and exchange
   the resulting public keys ($2$ messages), then prepare the underlying base
@@ -30,11 +36,13 @@
   $6$ outgoing messages per endpoint and $12$ outgoing messages per
   intermediary, for $n-2$ intermediaries), next they exchange signatures for
   their respective initial commitment transactions ($2$ messages) and lastly, if
-  the channel is simple (i.e. not virtual), the ``funder'' signs and publishes
-  the ``funding'' transaction on-chain.  We here note that like LN, only one of
-  the two parties, the funder, provides coins for a new channel.  This
-  limitation simplifies the execution model and the analysis, but can be lifted
-  at the cost of additional protocol complexity.
+  the channel is to be opened directly on-chain, the ``funder'' signs and publishes
+  the ``funding'' transaction to the ledger. As we alluded to earlier, a channel
+  with its funding transaction on-chain is called ``simple''. A channel is
+  either simple or virtual, not both. We here note that like LN, only one of the
+  two parties, the funder, provides coins for a new channel. This limitation
+  simplifies the execution model and the analysis, but can be lifted at the cost
+  of additional protocol complexity.
 
   Let us now introduce some notation used in figures with transactions.
   Reflecting the UTXO model, each transaction is represented by a cylindrical,
