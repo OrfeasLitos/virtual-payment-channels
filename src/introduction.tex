@@ -29,7 +29,8 @@ channels can be combined and form the PCN.
 
 Closing a channel is an operation that involves posting the 
 state of the channel on-chain; it is essential that any party
-individually can close a channel as otherwise a malicious counterparty
+individually can close a channel as otherwise a malicious counterparty (i.e. the
+other channel participant)
 could prevent an honest party  from
 accessing their funds. This functionality
 however raises an important design consideration: how to prevent malicious parties from posting old states of the channel.
@@ -62,8 +63,13 @@ A virtual channel constructor can be thought of as an  {\em operator} over the u
 of input state channels directly, i.e. without leveraging recursion. This is
 important in the context of PCNs since it enables applying the operator to build
 virtual channels of arbitrary length without undue overhead.
-\item Symmetric. A symmetric virtual channel constructor offers setup and closing operations that are symmetric in terms of cost between the two endpoints or the intermediaries (but not a mix of both) for the optimistic and pessimistic execution paths. This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
+\item Symmetric. A symmetric virtual channel constructor offers setup and
+closing operations that are symmetric in terms of cost between the two
+``endpoints'' or the ``intermediaries'' (but not a mix of both) for the optimistic and pessimistic execution paths. This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
 \end{itemize}
+
+Endpoints are the two parties that share the virtual channel, intermediaries are
+the parties that take part in any of underlying channels.
 
 We note that recursiveness, while identified already as an important design property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}) it has not been achieved in the context of Bitcoin-compatible channels 
 (it was achieved only for DCN-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{cryptoeprint:2020:554}). 

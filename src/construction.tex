@@ -15,7 +15,7 @@
   As in previous formulations, (e.g.,~\cite{DBLP:conf/csfw/KiayiasL20}), the
   role of \environment corresponds to two distinct actors in a real world
   implementation. On the one hand \environment passes inputs that correspond to
-  the desires of end-users (e.g. open a channel, pay, close), on the other hand
+  the desires of human users (e.g. open a channel, pay, close), on the other hand
   \environment is responsible with periodically waking up parties to check the
   ledger and act upon any detected counterparty misbehaviour, similar to an
   always-on ``daemon'' of real-life software that periodically nudges the
@@ -44,7 +44,7 @@
   that keep track of which internal parties are corrupted or negligent, whether
   the channel has opened, whether a payment is underway, which external parties
   are to be considered \emph{kindred} (as they correspond to other channels
-  owned by the same user, discussed below) and whether the channel has closed.
+  owned by the same human user, discussed below) and whether the channel has closed.
   The single security check performed is whether the on-chain coins are at least
   equal to the expected balance once the channel closes. If this check fails,
   \fchan halts. Note that this check is not performed for negligent parties, as
@@ -52,7 +52,7 @@
   the check. Thus indistinguishability between the real and the ideal world is
   not violated in case of negligence.
 
-  Observe that an actual user may participate in various channels, therefore it
+  Observe that a human user may participate in various channels, therefore it
   corresponds to more than one ITMs. This is the case for example for the funder
   of a virtual channel and the corresponding party of the first base channel.
   Such parties are called \emph{kindred}. They communicate locally (i.e. via
@@ -118,7 +118,7 @@
   successful channel opening.
 
   There are two facts that should be noted: Firstly, in case the opened channel
-  is virtual, each intermediary base party necessarily partakes in two channels.
+  is virtual, each intermediary necessarily partakes in two channels.
   However each protocol instance only represents a party in a single channel,
   therefore each intermediary is in practice realised by two kindred
   \pchan instances that communicate locally, called ``siblings''. Secondly, our

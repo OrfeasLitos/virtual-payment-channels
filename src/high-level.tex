@@ -156,9 +156,9 @@
   initiator tx, which spends the party's two funding outputs and produces four:
   one funding output for each base channel, one output that directly pays the
   intermediary coins equal to the total value in the virtual channel, and one
-  virtual output. If both funding outputs are still unspent, publishing its
-  initiator tx is the only way for an intermediary to close either of its
-  channels.
+  ``virtual output'', which carries coins that can potentially fund the virtual
+  channel. If both funding outputs are still unspent, publishing its initiator
+  tx is the only way for an intermediary to close either of its channels.
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{intermediary-initiator.tex}
@@ -188,7 +188,6 @@
     and not any other of its virtual transactions.}
     \label{figure:virtual-layer-merge-intervals}
   \end{figure}
-
 
   Furthermore, each intermediary has $O(n)$ extend-interval transactions.
   Being an intermediary, the party is involved in two base channels, each having
