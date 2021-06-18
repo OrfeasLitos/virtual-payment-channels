@@ -31,21 +31,39 @@
 
   \begin{proof}[Proof of Theorem~\ref{theorem:anyprevout}]
     When an off-chain protocol is closed, there has to be some form of
-    information and coin flow to its %$2$ or $2$
-    neighbouring protocols in order
-    to ensure that the virtual channel will be funded exactly once if at least
-    one of its participants is honest and that no honest intermediary will be
-    charged. Such flow can happen either with simultaneous closures (e.g. our
-    initiator txs) or with special outputs that will be consumed when neighbours
-    close (e.g. our virtual outputs). There is no other possible manner of
-    on-chain enforceable information and coin flow that is compatible with the
-    theorem requirements. This includes adaptor
-    signatures~\cite{cryptoeprint:2020:476}, as they facilitate coin exchange
-    only if the parties and all base protocols for this particular virtual
-    channel were known when the off-chain protocols were opened (contradicting
-    off-chain protocol independence) or if new on-chain transactions are
-    introduced when opening the virtual channel (contradicting off-chain
-    opening).
+    on-chain enforceable information and coin flow to both its neighbouring
+    protocols. This is to ensure that the virtual channel will be funded exactly
+    once if at least one of its participants is honest and that no honest
+    intermediary will be charged. If such information flow is lacking, then we
+    have a partition of the path, making it possible to have no common party in
+    the two partitions. In that case, there is no party that has to either
+    provide its signature to both partitions in order for the protocol to
+    progress or risk losing coins. This in turn, combined with the fact that all
+    payments in the $(P_1, P_n)$ virtual channel happen without the need to
+    inform any intermediary, means that the participants of the partition that
+    contains $P_1$ (w.l.o.g.) can collude and give to $P_1$ any sum of money
+    they agree on, without giving an opportunity to $P_n$ to object in case this
+    sum does not correspond to the $(P_1, P_n)$ channel balance, therefore
+    violating the rules of the virtual channel.
+
+    Due to the way the UTXO model works, such information or coin flow can
+    happen only by having intermediaries atomically spend the outputs of one of
+    their base protocols together with the outputs of the other base protocol.
+    This need for atomic spending also holds for any outputs that carry the
+    relevant information or coins and are created when other protocol
+    participants spend the base protocol outputs -- such ``successor'' outputs
+    must exist in order to permit the required information/coin flow. Such
+    atomic spends can only be carried out via a single transaction that consumes
+    all relevant outputs. There is no other possible manner of on-chain
+    enforceable information and coin flow that is compatible with the theorem
+    requirements. Indeed, coins can only cross from one base protocol to the
+    next via a transaction that involves both protocols. Note that adaptor
+    signatures~\cite{cryptoeprint:2020:476} do not constitute an exception, as
+    they facilitate coin exchange only if the parties and all base protocols for
+    this particular virtual channel were known when the off-chain protocols were
+    opened (contradicting off-chain protocol independence) or if new on-chain
+    transactions are introduced when opening the virtual channel (contradicting
+    off-chain opening).
 
     Therefore each party must have different transactions available to close its
     off-chain protocol(s), each corresponding to a different order of actions
