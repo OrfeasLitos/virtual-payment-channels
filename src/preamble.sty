@@ -6,6 +6,7 @@
 \algrenewcommand\textproc{\texttt}
 \usepackage[english]{babel}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{multirow}
 \usepackage[T1]{fontenc}
@@ -178,10 +179,12 @@
 \newcommand{\fpaynet}{\ensuremath{\mathcal{F}_{\mathrm{PayNet}}}\xspace}
 \newcommand{\func}{\ensuremath{\mathcal{F}}\xspace}
 \newcommand{\fchan}{\ensuremath{\mathcal{F}_{\mathrm{Chan}}}\xspace}
+\NewDocumentCommand{\fchansup}{m}{\mathcal{F}_{\mathrm{Chan}}^{#1}\xspace}
 \newcommand{\fchanhat}{\ensuremath{\hat{\mathcal{F}}_{\mathrm{Chan}}}\xspace}
 \newcommand{\gtrust}{\ensuremath{\mathcal{G}_{\mathrm{Trust}}}\xspace}
 \newcommand{\prot}{\ensuremath{\Pi}\xspace}
 \newcommand{\pchan}{\ensuremath{\Pi_{\mathrm{Chan}}}\xspace}
+\NewDocumentCommand{\pchansup}{m}{\Pi_{\mathrm{Chan}}^{#1}\xspace}
 \newcommand{\pchanhat}{\ensuremath{\hat{\Pi}_{\mathrm{Chan}}}\xspace}
 \newcommand{\simulator}{\ensuremath{\mathcal{S}}\xspace}
 \newcommand{\adversary}{\ensuremath{\mathcal{A}}\xspace}

@@ -123,19 +123,39 @@
   Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
   therefore concluding the proof.
 
-  We then formulate and prove Theorem~\ref{theorem:security}, which states that
-  \pchan UC-realises \fchan.
+  A salient observation regarding an instance $s$ of \pchan is that, in order to
+  open a virtual channel, it passes inputs to another \pchan instance $s'$ that
+  belongs to a different extended session. This means that $s$ (and therefore
+  \pchan) is not \emph{subroutine respecting}, as defined in~\cite{uc}. To
+  address this issue, we first annotate \pchan with a numeric superscript, i.e.
+  $\pchansup{n}$. $\pchansup{1}$ is always a simple (i.e. on-chain) channel. To
+  achieve this, \pchan undergoes a modification under which it ignores all
+  (\textsc{open}, $x$, $\texttt{hops} \neq$ ``\texttt{ledger}'', $\dots$)
+  messages. Likewise we define $\fchansup{1}$ as a version of \fchan that
+  ignores (\textsc{open}, $x$, $\texttt{hops} \neq$ ``\texttt{ledger}'',
+  $\dots$) messages. As for the rest of the superscripts, $\forall n \in
+  \mathbb{N}^*, \pchansup{n+1}$ is a virtual channel protocol \pchan of which
+  the base channels have a maximum superscript $n$. It then holds that $\forall
+  n \in \mathbb{N}^*, \pchansup{n}$ is $(\pchansup{1}, \dots,
+  \pchansup{n-1})$-subroutine respecting, as defined
+  in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. Likewise, $\fchansup{n+1}$ is a
+  virtual channel functionality \fchan of which the base channels have a maximum
+  superscript $n$. It then holds that $\forall n \in \mathbb{N}^*, \fchansup{n}$
+  is $(\fchansup{1}, \dots, \fchansup{n-1})$-subroutine respecting.
 
-\begin{theorem}[Recursive Virtual Payment Channel Security]
-  \label{theorem:security}
-  The protocol $\pchan$ UC-realises $\fchan$ given a global functionality
-  $\ledger$ and assuming the security of the underlying digital signature.
-  Specifically,
+  We now formulate and prove Theorem~\ref{theorem:security:simple}, which states
+  that $\pchansup{1}$ UC-realises $\fchansup{1}$.
+
+\begin{theorem}[Simple Payment Channel Security]
+  \label{theorem:security:simple}
+  The protocol $\pchansup{1}$ UC-realises $\fchansup{1}$ in the presence of a
+  global functionality $\ledger$ and assuming the security of the underlying
+  digital signature. Specifically,
   \begin{gather*}
     \forall \text{ PPT } \adversary, \exists \text{ PPT } \simulator: \forall
     \text{ PPT } \environment \text{ it is }
-    \textsc{exec}^{\ledger}_{\pchan, \adversary, \environment} \approx
-    \textsc{exec}^{\fchan, \ledger}_{\simulator, \environment}
+    \textsc{exec}^{\ledger}_{\pchansup{1}, \adversary, \environment} \approx
+    \textsc{exec}^{\fchansup{1}, \ledger}_{\simulator, \environment}
   \end{gather*}
 \end{theorem}
 
@@ -143,55 +163,41 @@
   Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
   \simulator faithfully simulates \pchan internally.
 
-\begin{proof}[Proof of Theorem~\ref{theorem:security}]
+\begin{proof}[Proof of Theorem~\ref{theorem:security:simple}]
   By inspection of Figures~\ref{code:functionality:rules}
   and~\ref{code:simulator:flow} we can deduce that for a particular
-  \environment, in the ideal world execution $\textsc{exec}^{\fchan,
+  \environment, in the ideal world execution $\textsc{exec}^{\fchansup{1},
   \ledger}_{\simulator_{\adversary}, \environment}$, $\simulator_{\adversary}$
-  simulates internally the two \pchan parties exactly as they would execute in
-  $\textsc{exec}^{\ledger}_{\pchan, \adversary, \environment}$, the real world
-  execution, in case \fchan does not halt. Indeed, \fchan only halts with
+  simulates internally the two $\pchansup{1}$ parties exactly as they would execute in
+  $\textsc{exec}^{\ledger}_{\pchansup{1}, \adversary, \environment}$, the real world
+  execution, in case $\fchansup{1}$ does not halt. Indeed, $\fchansup{1}$ only halts with
   negligible probability according to Lemma~\ref{lemma:no-halt}, therefore the
   two executions are computationally indistinguishable.
 \end{proof}
 
-  Lastly we construct a ``multi-session
-  extension'' (as defined in~\cite{DBLP:conf/crypto/CanettiR03}) of \fchan and of \pchan and
-  prove Theorem~\ref{theorem:multi-session-security}, which claims that the
-  real-world multi-session extension protocol UC-realises the ideal-world
-  multi-session extension functionality. The proof is straightforward and
-  utilises the transitivity of UC-emulation.
+  Lastly we prove that $\forall$ integers $n \geq 2, \pchansup{n}$ UC-realises
+  $\fchansup{n}$ in the presence of $\fchansup{1}, \dots, \fchansup{n-1}$
+  (leveraging the relevant definition
+  from~\cite{DBLP:conf/tcc/BadertscherCHTZ20}).
 
-\begin{definition}[Multi-Session Extension of a Protocol]
-  Let protocol $\pi$. Its \emph{multi-session extension} $\hat{\pi}$ has the
-  same code as $\pi$ and has 2 session ids: the ``sub-session id''
-  \emph{ssid} which replaces the session id of $\pi$ and the usual session id
-  \emph{sid} which has no further function apart from what is prescribed by the
-  UC framework.
-\end{definition}
-
-\begin{theorem}[Indistinguishability of multiple sessions]
-  \label{theorem:multi-session-security}
-  Let \fchanhat be the multi-session extension of \fchan and \pchanhat the
-  protocol-multi-session extension of \pchan.
+\begin{theorem}[Recursive Virtual Payment Channel Security]
+  \label{theorem:security:virtual}
+  $\forall n \in \mathbb{N}^* \setminus \{1\}$, the protocol $\pchansup{n}$
+  UC-realises $\fchansup{n}$ in the presence of $\fchansup{1}, \dots,
+  \fchansup{n-1}$ and \ledger, assuming the security of the underlying digital
+  signature. Specifically,
   \begin{gather*}
-    \forall \text{ PPT } \adversary, \exists \text{
-    PPT } \simulator: \forall \text{ PPT } \environment \text{ it is }
-    \textsc{exec}^{\ledger}_{\pchanhat, \adversary, \environment} \approx
-    \textsc{exec}^{\fchanhat, \ledger}_{\simulator, \environment}
+    \forall n \in \mathbb{N}^* \setminus \{1\}, \forall \text{ PPT } \adversary,
+    \exists \text{ PPT } \simulator: \forall \text{ PPT } \environment \text{ it
+    is } \\
+    \textsc{exec}^{\ledger}_{\pchansup{n}, \adversary, \environment} \approx
+    \textsc{exec}^{\fchansup{n}, \ledger}_{\simulator, \environment}
   \end{gather*}
 \end{theorem}
 
-\begin{proof}[Proof of Theorem~\ref{theorem:multi-session-security}]
-  We observe that \fchanhat uses \fchan internally. According to the UC
-  theorem~\cite{uc} and given that \pchan UC-realises \fchan
-  (Theorem~\ref{theorem:security}), $\fchanhat^{\fchan \rightarrow \pchan}$
-  UC-emulates \fchanhat. We now observe that $\fchanhat^{\fchan \rightarrow
-  \pchan}$ behaves identically to a session with \pchanhat protocols, as the
-  former routes each message to the same internal \pchan instance that would
-  handle the same message in the latter case, therefore $\fchanhat^{\fchan
-  \rightarrow \pchan}$ UC-emulates \pchanhat. By the transitivity of
-  UC-emulation, we deduce that \fchanhat UC-emulates \pchanhat.
+\begin{proof}[Proof of Theorem~\ref{theorem:security:virtual}]
+  The proof is exactly the same as that of
+  Theorem~\ref{theorem:security:simple}, replacing superscripts $1$ for $n$.
 \end{proof}
 
   Formal proofs for the three lemmas can be found in Section~\ref{sec:proofs}.
