@@ -58,6 +58,9 @@
   Such parties are called \emph{kindred}. They communicate locally (i.e. via
   inputs and outputs, without using the adversarially controlled network), they
   get corrupted as a group and balance guarantees concern their aggregate coins.
+  Formally this communication is modelled by having a virtual channel using its
+  base channels as global subroutines, as defined
+  in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}.
 
   Our real world protocol \pchan, ran by party $P$, consists of two
   subprotocols: the Lightning-inspired part, dubbed \textsc{ln}
