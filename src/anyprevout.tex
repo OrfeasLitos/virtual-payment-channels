@@ -24,7 +24,7 @@
     need to add any txs on-chain when opening) between two parties $P_1, P_n$
     that take part in the first and last off-chain protocols respectively. If
     this protocol:
-    \begin{itemize}
+    \begin{enumerate}
     \item guarantees that each honest protocol party (either endpoint or
     intermediary) needs to put at most $O(1)$ transactions on-chain for
     unilateral closure,
@@ -35,13 +35,13 @@
     outputs of the base protocol(s) in which it is implicated and
     \item needs to have at most a subexponential (in $n$) number of transactions
     available off-chain,
-    \end{itemize}
+    \end{enumerate}
     then the protocol needs the \texttt{ANYPREVOUT} sighash flag.
   \end{theorem}
 
   \begin{proof}[Proof of Theorem~\ref{theorem:anyprevout}]
     When an off-chain protocol is closed, there has to be some form of
-    on-chain enforceable information and coin flow to both its neighbouring
+    on-chain enforceable information and coin flow to at least one of its neighbouring
     protocols. This is to ensure that the virtual channel will be funded exactly
     once if at least one of its participants is honest and that no honest
     intermediary will be charged. If such information flow is lacking, then we
@@ -56,7 +56,8 @@
     sum does not correspond to the $(P_1, P_n)$ channel balance, therefore
     violating the rules of the virtual channel.
 
-    Due to the way the UTXO model works, such information or coin flow can
+    Due to the way the UTXO model works and respecting the second theorem rule,
+    such information or coin flow can
     happen only by having intermediaries atomically spend the outputs of one of
     their base protocols together with the outputs of the other base protocol.
     This need for atomic spending also holds for any outputs that carry the
