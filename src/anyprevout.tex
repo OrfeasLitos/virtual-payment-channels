@@ -20,12 +20,22 @@
     Consider $n$ independent, ordered off-chain base protocols
     such that every pair of consecutive protocols $(\Pi_{i-1}, \Pi_i)$ for $i
     \in \{2, \dots, n-1\}$ has a common party $P_i$. Also consider a protocol
-    that establishes a virtual channel (i.e. a payment channel without any on-chain
-    txs when opening) between two parties $P_1, P_n$ that take part in the first
-    and last off-chain protocols respectively. If this protocol guarantees that
-    each honest protocol party (both endpoints and intermediaries) needs to put
-    at most $O(1)$ transactions on-chain for unilateral closure and needs to
-    have at most a subexponential (in $n$) number of transactions  available off-chain,
+    that establishes a virtual channel (i.e. a payment channel that does not
+    need to add any txs on-chain when opening) between two parties $P_1, P_n$
+    that take part in the first and last off-chain protocols respectively. If
+    this protocol:
+    \begin{itemize}
+    \item guarantees that each honest protocol party (either endpoint or
+    intermediary) needs to put at most $O(1)$ transactions on-chain for
+    unilateral closure,
+    \item ensures that for each honest party $P$, if after establishing the
+    virtual channel, no other party communicates off-chain with $P$, then in all
+    scenarios $P$ will regain its fair share of coins exclusively from one or
+    more transactions that are descendants of one or more of the multisig
+    outputs of the base protocol(s) in which it is implicated and
+    \item needs to have at most a subexponential (in $n$) number of transactions
+    available off-chain,
+    \end{itemize}
     then the protocol needs the \texttt{ANYPREVOUT} sighash flag.
   \end{theorem}
 
