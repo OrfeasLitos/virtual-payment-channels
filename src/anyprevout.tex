@@ -40,6 +40,7 @@
   \end{theorem}
 
   \begin{proof}[Proof of Theorem~\ref{theorem:anyprevout}]
+    \orfeas{the next paragraph is wrong}
     When an off-chain protocol is closed, there has to be some form of
     on-chain enforceable information and coin flow to at least one of its neighbouring
     protocols. This is to ensure that the virtual channel will be funded exactly
@@ -56,6 +57,9 @@
     sum does not correspond to the $(P_1, P_n)$ channel balance, therefore
     violating the rules of the virtual channel.
 
+    \orfeas{the next sentence is wrong: it would be more correct if it asked for
+    atomic spending of the two base protocol outputs \emph{or} their
+    ``descendants''}
     Due to the way the UTXO model works and respecting the second theorem rule,
     such information or coin flow can
     happen only by having intermediaries atomically spend the outputs of one of
