@@ -110,7 +110,7 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   output in order to spend an honest one just introduces more coins to the
   protocol in a way that does not allow it to gain value.
   \item \emph{What if a malicious party publishes an old commitment transaction
-  (i.e. consumes a funding output without using any of the initiator,
+  (i.e.\ consumes a funding output without using any of the initiator,
   extend-interval or merge-intervals txs)?}
   \item Its counterparty $A_i$ won't be able to close honestly its other
   adjacent channel, but it will be able to punish the malicious party with the
@@ -135,7 +135,7 @@ $x'$, funded by $A_1$. At a high level, these transactions are as follows:
   Each such timelock should be long enough for each of the entitled
   intermediaries to have enough time to consume the virtual output, plus give a
   little leeway in case the party goes offline for a short period. Our
-  construction allows the creation of ``recursive'' virtual channels, i.e.
+  construction allows the creation of ``recursive'' virtual channels, i.e.\
   virtual channels that are built on top of other virtual channels. The funding
   outputs of the virtual channels exist off-chain and they need some time to
   reach the chain. The deeper an intermediary's channel is nested and the larger

@@ -42,7 +42,7 @@
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace
   \end{equation}
   with overwhelming probability in the security parameter, where $R$ is a local,
-  kindred machine (i.e. either $P$, $P$'s \texttt{sibling}, the party to which
+  kindred machine (i.e.\ either $P$, $P$'s \texttt{sibling}, the party to which
   $P$ sent \textsc{fund me} if such a message has been sent, or the
   \texttt{sibling} of one of the transitive closure of hosts of $P$).
 \end{lemma}
@@ -110,7 +110,7 @@
 \label{lemma:no-halt}
   In an ideal execution with \fchan and \simulator, if the kindred parties of
   the honest parties of \fchan are themselves honest, then the functionality
-  halts with negligible probability in the security parameter (i.e.
+  halts with negligible probability in the security parameter (i.e.\
   l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}
   is executed negligibly often).
 \end{lemma}
@@ -127,8 +127,8 @@
   open a virtual channel, it passes inputs to another \pchan instance $s'$ that
   belongs to a different extended session. This means that $s$ (and therefore
   \pchan) is not \emph{subroutine respecting}, as defined in~\cite{uc}. To
-  address this issue, we first annotate \pchan with a numeric superscript, i.e.
-  $\pchansup{n}$. $\pchansup{1}$ is always a simple (i.e. on-chain) channel. To
+  address this issue, we first annotate \pchan with a numeric superscript, i.e.\
+  $\pchansup{n}$. $\pchansup{1}$ is always a simple (i.e.\ on-chain) channel. To
   achieve this, \pchan undergoes a modification under which it ignores all
   (\textsc{open}, $x$, $\texttt{hops} \neq$ ``\texttt{ledger}'', $\dots$)
   messages. Likewise we define $\fchansup{1}$ as a version of \fchan that

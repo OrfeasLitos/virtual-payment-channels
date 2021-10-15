@@ -341,7 +341,7 @@
   funding of a new channel then it can close its channel for a ($c_P - f$,
   $\pk{P, \mathrm{out}}$) output that is a descendant of an output with spending
   method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ and that lower bound of value holds
-  for the duration of the funding procedure, i.e. we have proven the first claim
+  for the duration of the funding procedure, i.e.\ we have proven the first claim
   of the first bullet.
 
   We will now prove that the newly funded party $R$ can close its channel
@@ -359,11 +359,11 @@
   transaction that uses it (as it is reserved for revocation, which has not
   taken place yet) so the timelock will expire and the desired spending method
   will be available. We have now proven that if $R$'s channel is funded to
-  completion (i.e. $R$ moves to the \textsc{open} state for the first time) then
+  completion (i.e.\ $R$ moves to the \textsc{open} state for the first time) then
   it can close its channel for a ($f$, $\pk{R, \mathrm{out}}$) output that is a
   descendant of $o_R$. We have therefore proven the first bullet.
 
-  We now move on to the second bullet. In case $P$ is the \texttt{funder} (i.e.
+  We now move on to the second bullet. In case $P$ is the \texttt{funder} (i.e.\
   $i=n$), then the same arguments as in the previous bullet hold here with
   ``\textsc{waiting for inbound revocation}'' replaced with ``\textsc{waiting
   for outbound revocation}'', $o_{1, 2}$ with $o_{n-1, n}$, $\mathrm{TX}_{1, 1}$
@@ -383,7 +383,7 @@
   \texttt{sibling}'s funding outputs either are or can be eventually put
   on-chain and that $P$'s funding output has at least $c_P = \sum\limits_{s \in
   C} \sum\limits_{x \in s} x$ coins. If $P$ is on the ``left'' of its
-  \texttt{sibling} (i.e. there is an untrusted party that sent the
+  \texttt{sibling} (i.e.\ there is an untrusted party that sent the
   (\textsc{virtualising}, $\dots$) message to $P$ which triggered the latter to
   move to the \textsc{virtualising} state and to send a (\textsc{virtualising},
   $\dots$) message to its own \texttt{sibling}), the ``left'' funding output
@@ -397,7 +397,7 @@
   spending method and no other spending method can be used (as $P$ has not
   signed the ``revocation'' spending method of $C_{P, 0}$).
 
-  In the case that $P$ is to the right of its \texttt{sibling} (i.e. $P$
+  In the case that $P$ is to the right of its \texttt{sibling} (i.e.\ $P$
   receives by \texttt{sibling} the (\textsc{virtualising}, $\dots$) message that
   causes $P$'s transition to the \textsc{virutalising} state), the ``right''
   funding output $o_{\mathrm{right}}$ (the one held with the untrusted party to

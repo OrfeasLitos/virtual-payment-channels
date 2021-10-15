@@ -29,10 +29,10 @@
   parties''. The fact that more than two base channels can be used by a single
   virtual channel is ensured by the variadic property.
 
-  In more detail, to open a channel (c.f. Figure~\ref{code:ln:open}) the two
-  counterparties (a.k.a. ``endpoints'') first create new keypairs and exchange
+  In more detail, to open a channel (c.f.\ Figure~\ref{code:ln:open}) the two
+  counterparties (a.k.a.\ ``endpoints'') first create new keypairs and exchange
   the resulting public keys ($2$ messages), then prepare the underlying base
-  channels if the new channel is virtual ($12 \cdot (n-1)$ total messages, i.e.
+  channels if the new channel is virtual ($12 \cdot (n-1)$ total messages, i.e.\
   $6$ outgoing messages per endpoint and $12$ outgoing messages per
   intermediary, for $n-2$ intermediaries), next they exchange signatures for
   their respective initial commitment transactions ($2$ messages) and lastly, if
@@ -71,7 +71,7 @@
   $c_B$ coins. There are three sets of transactions at play: A ``funding''
   transaction that is put on-chain, off-chain ``commitment'' transactions that
   spend the funding output on channel closure and off-chain ``revocation''
-  transactions that spend commitment outputs in case of misbehaviour (c.f.
+  transactions that spend commitment outputs in case of misbehaviour (c.f.\
   Figure~\ref{figure:payment-layer}).
 
   \begin{figure}
@@ -88,7 +88,7 @@
   funding tx and produce two outputs with $c_A$ and $c_B$ coins each. The two
   txs differ in the outputs' spending conditions: The $c_A$ output in \alice's
   commitment tx can be spent either by \alice after it has been on-chain for a
-  pre-agreed period (i.e. it is encumbered with a ``timelock''), or by a
+  pre-agreed period (i.e.\ it is encumbered with a ``timelock''), or by a
   ``revocation'' transaction (discussed below) via a $2$-of-$2$ multisig between
   the counterparties, whereas the $c_B$ output can be spent only by \bob without
   a timelock. \bob's commitment tx is symmetric: the $c_A$ output can be spent
@@ -130,7 +130,7 @@
   In particular, apart from the transactions of simple channels, each of the two
   endpoints also has an ``initiator'' transaction that spends the funding output
   of its only base channel and produces two outputs: one new funding output for
-  the base channel and one ``virtual'' output (c.f.
+  the base channel and one ``virtual'' output (c.f.\
   Figures~\ref{figure:virtual-layer-endpoint},~\ref{code:virtual-layer:endpoint-txs}).
   If the
   initiator 
@@ -236,7 +236,7 @@
   observes either of its funding outputs being spent, it has to publish its
   suitable virtual transaction before the timelock expires to avoid losing
   funds. What is more, all virtual outputs need the signature of all parties to
-  be spent before the timelock (i.e. they have an $n$-of-$n$ multisig) in order
+  be spent before the timelock (i.e.\ they have an $n$-of-$n$ multisig) in order
   to prevent colluding parties from faking the intervals progression. To ensure
   that parties have an opportunity to react, the timelock of a virtual output is
   the maximum of the required timelocks of the intermediaries that can spend it.
@@ -281,10 +281,10 @@
 
   As for the actual protocol needed to establish a virtual channel, $6$ rounds
   of communication are needed, each starting from the funder and hop by hop reaching
-  the fundee and back (c.f. Figure~\ref{code:ln:prepare-base}). The first communicates
+  the fundee and back (c.f.\ Figure~\ref{code:ln:prepare-base}). The first communicates
   parties' identities, their funding keys and their neighbours' channel
   balances, the second creates new commitment transactions, the third
-  communicates keys for virtual transactions (a.k.a virtual keys), all parties'
+  communicates keys for virtual transactions (a.k.a.\ virtual keys), all parties'
   coins and desired timelocks, the fourth and the
   fifth communicate signatures for the virtual transactions (signatures for
   virtual outputs and funding outputs respectively) and the sixth shares

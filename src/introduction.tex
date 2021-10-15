@@ -4,7 +4,7 @@
   performance  exposing a number of scalability considerations. 
 In particular, 
 Bitcoin and related blockchain protocols exhibit very high
-  latency (e.g. Bitcoin has a latency of 1h~\cite{bitcoin}) 
+  latency (e.g.\ Bitcoin has a latency of 1h~\cite{bitcoin})
   and a very low throughput (e.g., Bitcoin can handle at most 7
   transactions per second~\cite{scaling}), 
 both significant shortcomings that jeopardize wider 
@@ -29,7 +29,7 @@ channels can be combined and form the PCN.
 
 Closing a channel is an operation that involves posting the 
 state of the channel on-chain; it is essential that any party
-individually can close a channel as otherwise a malicious counterparty (i.e. the
+individually can close a channel as otherwise a malicious counterparty (i.e.\ the
 other channel participant)
 could prevent an honest party  from
 accessing their funds. This functionality
@@ -60,7 +60,7 @@ A virtual channel constructor can be thought of as an  {\em operator} over the u
 \begin{itemize}
 \item Recursive. A recursive virtual channel constructor can operate over channels that themselves could be the results of previous applications of the operator. This is important in the context of PCNs since it allows building virtual channels on top of pre-existing virtual channels.
 \item Variadic. A variadic virtual channel constructor can virtualize any number
-of input state channels directly, i.e. without leveraging recursion. This is
+of input state channels directly, i.e.\ without leveraging recursion. This is
 important in the context of PCNs since it enables applying the operator to build
 virtual channels of arbitrary length without undue overhead.
 \item Symmetric. A symmetric virtual channel constructor offers setup and
@@ -89,7 +89,7 @@ Ethereum~\cite{wood2014ethereum}.
 
 We achieve the above by leveraging on a sophisticated virtual channel setup
 protocol which, on the one hand, enables endpoints to use an interface that is
-invariant between on-chain and off-chain (i.e. virtual) channels,
+invariant between on-chain and off-chain (i.e.\ virtual) channels,
 while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each. 
 
   We formally prove the security of the constructor protocol in the  UC~\cite{uc} setting. The construction relies on the \texttt{ANYPREVOUT}   signature type, which does not sign the hash of the transaction it spends, therefore allowing for a single pre-signed transaction to spend any output

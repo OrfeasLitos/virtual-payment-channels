@@ -833,7 +833,7 @@
         \State \Return \textsc{virt.hostFunderSigs}()
       \ElsIf{$i = n$} \Comment{we are \texttt{host\_fundee}}
         \State \Return \textsc{virt.hostFundeeSigs}()
-      \EndIf \: \Comment{it is always $1 \leq i \leq n$ -- c.f.
+      \EndIf \: \Comment{it is always $1 \leq i \leq n$ -- c.f.\
       Fig.~\ref{code:virtual-layer:keys},
       l.~\ref{code:virtual-layer:keys:init:check-i} and
       l.~\ref{code:virtual-layer:keys:host-me:set-i}}
@@ -967,7 +967,7 @@
           $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndFor
         \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
-      \EndIf \: \Comment{it is always $1 \leq i \leq n$ -- c.f.
+      \EndIf \: \Comment{it is always $1 \leq i \leq n$ -- c.f.\
       Fig.~\ref{code:virtual-layer:keys},
       l.~\ref{code:virtual-layer:keys:init:check-i} and
       l.~\ref{code:virtual-layer:keys:host-me:set-i}}
@@ -1205,7 +1205,7 @@
         $\Sigma$ \Comment{virtual funding output}
       \Else \: \Comment{we are intermediary}
         \IfThenElse{$\mathtt{side} = \text{``left''}$}{$j \gets i-1$}{$j \gets
-        i+1$} \Comment{\texttt{side} is defined for all intermediaries -- c.f.
+        i+1$} \Comment{\texttt{side} is defined for all intermediaries -- c.f.\
         Fig.~\ref{code:virtual-layer:keys},
         l.~\ref{code:virtual-layer:keys:init}}
         \State ensure that there exists an output with $c_P + c_{\bar{P}} -

@@ -11,7 +11,7 @@
       $\texttt{out\_mode} \in$ \{input, output, network\}, send (\textsc{relay},
       \texttt{out\_msg}, $P$, $R'$, \texttt{out\_mode}) to \fchan.
       \item On receiving by \fchan a message to be sent by $P$ to $R$ via the
-      network, carry on with this action (i.e. send this message via the
+      network, carry on with this action (i.e.\ send this message via the
       internal \adversary).
       \item Relay any other incoming message to the internal \adversary
       unmodified.
@@ -43,8 +43,8 @@
       \label{code:simulator:when-corrupted}
       \Indent
         \State \Comment{After executing this code and getting control back from
-        \fchan (which always happens, c.f. Fig.~\ref{code:functionality:rules}),
-        deliver (\textsc{corrupt}) to simulated $P$ (c.f.
+        \fchan (which always happens, c.f.\ Fig.~\ref{code:functionality:rules}),
+        deliver (\textsc{corrupt}) to simulated $P$ (c.f.\
         Fig.~\ref{code:simulator:flow}.}
         \State send (\textsc{info}, \textsc{became corrupted or negligent}, $P$)
         to \fchan
