@@ -57,6 +57,10 @@
   messages. This simplifies the functionality and facilitates the
   indistinguishability argument by having \simulator simply running internally
   the real world protocols of the channel parties \pchan with no modifications.
+  Furthermore, the communication of parties with \ledger is handled by \fchan:
+  when a simulated honest party in \simulator needs to send a message to
+  \ledger, \simulator instructs \fchan to send this message to \ledger on this
+  party's behalf.
   \fchan internally maintains two state machines, one per channel party (c.f.\
   Figures~\ref{figure:fchan-state-init},~\ref{figure:fchan-state-open-funder},~\ref{figure:fchan-state-open-fundee},~\ref{figure:fchan-state-fund},~\ref{figure:fchan-state-pay},~\ref{figure:fchan-state-close},~\ref{figure:fchan-state-corruption})
   that keep track of which internal parties are corrupted or negligent, whether
