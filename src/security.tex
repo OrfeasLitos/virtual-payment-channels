@@ -1,4 +1,5 @@
 \section{Security}
+  \label{section:security}
   The first step to formally arguing about the security of Elmo is to
   clearly delineate the exact security guarantees it provides. To that end, we
   first prove two similar claims regarding the conservation of funds in the real
@@ -136,12 +137,12 @@
   $\dots$) messages. As for the rest of the superscripts, $\forall n \in
   \mathbb{N}^*, \pchansup{n+1}$ is a virtual channel protocol \pchan of which
   the base channels have a maximum superscript $n$. It then holds that $\forall
-  n \in \mathbb{N}^*, \pchansup{n}$ is $(\pchansup{1}, \dots,
+  n \in \mathbb{N}^*, \pchansup{n}$ is $(\ledger, \pchansup{1}, \dots,
   \pchansup{n-1})$-subroutine respecting, as defined
   in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. Likewise, $\fchansup{n+1}$ is a
   virtual channel functionality \fchan of which the base channels have a maximum
   superscript $n$. It then holds that $\forall n \in \mathbb{N}^*, \fchansup{n}$
-  is $(\fchansup{1}, \dots, \fchansup{n-1})$-subroutine respecting.
+  is $(\ledger, \fchansup{1}, \dots, \fchansup{n-1})$-subroutine respecting.
 
   We now formulate and prove Theorem~\ref{theorem:security:simple}, which states
   that $\pchansup{1}$ UC-realises $\fchansup{1}$.

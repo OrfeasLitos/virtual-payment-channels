@@ -1,8 +1,10 @@
 \section{Model \& Construction}
+  \subsection{Model}
   In this section we will examine the architecture and the details of our model,
-  along with possible attacks and their mitigations. We follow the UC
-  framework~\cite{uc} to formulate the protocol and its security. We list the
-  ideal-world functionality \fchan in Section~\ref{sec:functionality}
+  along with possible attacks and their mitigations. We follow the UCGS
+  framework~\cite{DBLP:conf/tcc/BadertscherCHTZ20} to formulate the protocol and
+  its security. We list the
+  ideal-world global functionality \fchan in Section~\ref{sec:functionality}
   (Figures~\ref{code:functionality:rules}-\ref{code:functionality:close}) and a
   simulator \simulator (Figures~\ref{code:simulator:flow}-\ref{code:simulator}),
   along with a real-world protocol \pchan
@@ -34,9 +36,25 @@
   balance security guarantees are given (cf.
   Lemma~\ref{lemma:real-balance-security}).
 
+  \subsection{Ideal world functionality \fchan}
   Our ideal world functionality \fchan represents a single channel, either
-  simple or virtual. It acts as a relay between \adversary and \environment,
-  leaking all messages. This simplifies the functionality and facilitates the
+  simple or virtual. We could instead contain all the channels in a single,
+  monolithic functionality (following the approach
+  of~\cite{DBLP:conf/csfw/KiayiasL20}) and we believe that we could still carry
+  out the security proof. Nevertheless, having the functionality correspond to a
+  single channel has no drawbacks, as all desired security guarantees are
+  provided by our modular architecture, and instead brings two benefits.
+  Firstly, the functionality is easier to intuitively grasp, as it handles less
+  tasks. Having a simple and intuitive functionality aids in its reusability and
+  is an informal goal of the simulation-based paradigm. In the realm of software
+  engineering, simple components with clear boundaries and explicit interactions
+  are easier to contemplate and reason about and therefore more likely to be
+  adopted, as well as used securely and correctly; we desire these properties
+  for our model. Secondly, this approach permits our functionality to be global,
+  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}.
+
+  \fchan acts as a relay between \adversary and \environment, leaking all
+  messages. This simplifies the functionality and facilitates the
   indistinguishability argument by having \simulator simply running internally
   the real world protocols of the channel parties \pchan with no modifications.
   \fchan internally maintains two state machines, one per channel party (c.f.\
@@ -44,13 +62,17 @@
   that keep track of which internal parties are corrupted or negligent, whether
   the channel has opened, whether a payment is underway, which external parties
   are to be considered \emph{kindred} (as they correspond to other channels
-  owned by the same human user, discussed below) and whether the channel has closed.
-  The single security check performed is whether the on-chain coins are at least
-  equal to the expected balance once the channel closes. If this check fails,
-  \fchan halts. Note that this check is not performed for negligent parties, as
-  \simulator notifies \fchan if a party becomes negligent and the latter omits
-  the check. Thus indistinguishability between the real and the ideal world is
-  not violated in case of negligence.
+  owned by the same human user, discussed below) and whether the channel has
+  closed. The single security check performed is \emph{whether the on-chain
+  coins are at least equal to the expected balance once the channel closes}. If
+  this check fails, \fchan halts. Since the protocol \pchan (which realises
+  \fchan, c.f.\ Theorems~\ref{theorem:security:simple}
+  and~\ref{theorem:security:virtual}) never halts, this ideal world check
+  corresponds to the security guarantee offered by \pchan. Note that this check
+  is not performed for negligent parties, as \simulator notifies \fchan if a
+  party becomes negligent and the latter omits the check. Thus
+  indistinguishability between the real and the ideal world is not violated in
+  case of negligence.
 
   Observe that a human user may participate in various channels, therefore it
   corresponds to more than one ITMs. This is the case for example for the funder
@@ -62,6 +84,22 @@
   base channels as global subroutines, as defined
   in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}.
 
+  If we were using plain UC, the above would constitute a violation of the
+  subroutine respecting property that functionalities have to fulfill. We
+  leverage the concept of global functionalities put forth
+  in~\cite{DBLP:conf/tcc/BadertscherCHTZ20} to circumvent the issue. More
+  specifically, we say that a simple channel functionality is of ``level'' $1$,
+  which is written as $\fchansup{1}$. Inductively, a virtual channel
+  functionality that is based on channels of any ``level'' up to and including
+  $n-1$ has a ``level'' $n$, which write as $\fchansup{n}$. Then $\fchansup{n}$
+  is $(\ledger, \fchansup{1}, \dots, \fchansup{n-1})$-subroutine respecting,
+  according to the definition of~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The
+  same structure is used in the real world between protocols as well. This
+  technique ensures that the necessary conditions for the validity of the
+  functionality and the protocol are met and that the realisability proof can go
+  through, as we will see in Section~\ref{section:security} in more detail.
+
+  \subsection{Real world protocol \pchan}
   Our real world protocol \pchan, ran by party $P$, consists of two
   subprotocols: the Lightning-inspired part, dubbed \textsc{ln}
   (Figures~\ref{code:ln:init}-\ref{code:ln:used-revocation}) and the novel
@@ -71,7 +109,7 @@
   \textsc{ln}, whereas a channel that is virtual or simple and base leverages
   both \textsc{ln} and \textsc{virt}.
 
-\subsection{\textsc{ln} subprotocol}
+  \subsubsection{\textsc{ln} subprotocol}
   \label{construction:ln}
   The \textsc{ln} subprotocol has two variations depending on whether $P$ is the
   channel funder (\alice) or the fundee (\bob). It performs a number of tasks:
@@ -153,7 +191,7 @@
   blocking the honest party from using its initiator virtual transaction. This
   check ensures that the coins gained by the punishment are sufficient to cover
   the losses from the blocked initiator transaction. If the attack takes place,
-  other local channels based directly or indirectly on it are informed and they
+  other local channels based directly or indirectly on it are informed and are
   moved to a failed state. Note that this does not bring a risk of losing any of
   the total coins of all local channels. We conjecture that this balance
   constraint can be lifted if the current Lightning-inspired payment method is
@@ -192,7 +230,7 @@
   commitment transaction spends the funding output after all
   (Figure~\ref{code:ln:poll}).
 
-\subsection{\textsc{virt} subprotocol}
+  \subsubsection{\textsc{virt} subprotocol}
   This subprotocol acts as a mediator between the base channels and the
   Lightning-based logic. Put otherwise, its responsibility is putting on-chain
   the funding output of the channel when needed. When first initialised by a
