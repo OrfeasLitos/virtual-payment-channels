@@ -248,8 +248,8 @@
   Section~\ref{sec:liveness}.
   The required timelock of a party is $p + s$ if its channel is simple,  or $p +
   \sum\limits_{j = 2}^{n - 1}(s - 1 + t_j)$ if the channel is virtual, where
-  $t_j$ is the required timelock of the $j$th base channel
-  of the intermediary's channel. The only exception are virtual outputs that
+  $t_j$ is the required timelock of the base channel
+  of the $j$th intermediary's channel. The only exception are virtual outputs that
   correspond to an interval that includes all parties, which can only be used as
   funding outputs for the virtual channel as its interval cannot be further
   extended, therefore the two separate spending methods and the associated
