@@ -125,7 +125,7 @@
 
   After initialisation, the funder \alice is ready to open the channel. Once
   \environment gives to \alice the identity of \bob, the initial channel balance
-  $c$ and,
+  $c$ and, (looking forward to Subsubsection~\ref{construction:virt})
   in case it is a virtual, the identities of the base channel owners
   (Figure~\ref{code:ln:open}), \alice generates and sends \bob her funding and
   revocation public keys ($\pk{A, F}$, $\pk{A, R}$, used for the funding and
@@ -232,6 +232,7 @@
   (Figure~\ref{code:ln:poll}).
 
   \subsubsection{\textsc{virt} subprotocol}
+  \label{construction:virt}
   This subprotocol acts as a mediator between the base channels and the
   Lightning-based logic. Put otherwise, its responsibility is putting on-chain
   the funding output of the channel when needed. When first initialised by a
