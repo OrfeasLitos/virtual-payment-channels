@@ -106,8 +106,9 @@
   virtual layer subprotocol, named \textsc{virt}
   (Figures~\ref{code:virtual-layer:keys}-\ref{code:virtual-layer:punishment}). A
   simple channel that is not the base of any virtual channel leverages only
-  \textsc{ln}, whereas a channel that is virtual or simple and base leverages
-  both \textsc{ln} and \textsc{virt}.
+  \textsc{ln}, whereas a simple channel that is the base of at least one virtual
+  channel does leverage both \textsc{ln} and \textsc{virt}. A virtual channel
+  uses both \textsc{ln} and \textsc{virt}.
 
   \subsubsection{\textsc{ln} subprotocol}
   \label{construction:ln}
