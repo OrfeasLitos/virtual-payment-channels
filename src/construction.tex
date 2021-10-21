@@ -63,9 +63,9 @@
   party's behalf.
   \fchan internally maintains two state machines, one per channel party (c.f.\
   Figures~\ref{figure:fchan-state-init},~\ref{figure:fchan-state-open-funder},~\ref{figure:fchan-state-open-fundee},~\ref{figure:fchan-state-fund},~\ref{figure:fchan-state-pay},~\ref{figure:fchan-state-close},~\ref{figure:fchan-state-corruption})
-  that keep track of which internal parties are corrupted or negligent, whether
-  the channel has opened, whether a payment is underway, which external parties
-  are to be considered \emph{kindred} (as they correspond to other channels
+  that keep track of whether the parties are corrupted or negligent, whether the
+  channel has opened, whether a payment is underway, which ITIs are to be
+  considered \emph{kindred} parties (as they correspond to other channels
   owned by the same human user, discussed below) and whether the channel has
   closed. The single security check performed is \emph{whether the on-chain
   coins are at least equal to the expected balance once the channel closes}. If
