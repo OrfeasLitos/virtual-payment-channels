@@ -1,6 +1,6 @@
 TIKZS = $(patsubst src/figures/dot/%.dot, src/figures/auto-tikz/%.tex, $(wildcard src/figures/dot/*.dot))
 
-all: figures virtual-channels.pdf transactions-overview.pdf
+all: figures virtual-channels.pdf
 
 #.ONESHELL:
 virtual-channels.pdf: src/* src/figures/auto-tikz/* src/figures/manual-tikz/*
