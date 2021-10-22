@@ -32,6 +32,7 @@ src/figures/auto-tikz/%.tex: src/figures/dot/%.dot
 ifeq (, $(shell which dot2tex))
 	
 else
+	mkdir -p src/figures/auto-tikz/
 	dot2tex --texmode math --format tikz --figonly --autosize --usepdflatex --nominsize --prog dot $< > $@
 endif
 
