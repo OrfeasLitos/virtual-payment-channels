@@ -30,7 +30,9 @@
   messages to each other. At each moment only one ITI is executing (has the
   ``execution token'') and when it sends a message to another ITI, it transfers
   the execution token to the receiver. Messages can be sent either locally
-  (inputs, outputs) or over the network.
+  (inputs, outputs) or over the network. There is no notion of time built in UC
+  -- the only requirement is that the total number of execution steps each ITI
+  takes throughout the experiment is polynomial in the security parameter.
 
   The first ITI to be activated is the environment \environment. This can be an
   instance of any
