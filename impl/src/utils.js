@@ -1,8 +1,8 @@
 'use strict'
 
 const bcoin = require('bcoin')
-const bcrypto = require('bcrypto')
-const assert = require('bsert')
+const bcrypto = require('bcoin/node_modules/bcrypto')
+const assert = require('bcoin/node_modules/bsert')
 
 const secp256k1 = bcrypto.secp256k1
 const Script = bcoin.Script

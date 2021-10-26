@@ -1,8 +1,9 @@
 'use strict'
 
 const bcoin = require('bcoin').set('regtest')
-const sha256 = require('bcrypto/lib/sha256')
-const assert = require('bsert')
+const bcrypto = require('bcoin/node_modules/bcrypto')
+const sha256 = bcrypto.SHA256
+const assert = require('bcoin/node_modules/bsert')
 
 const KeyRing = bcoin.KeyRing
 const Amount = bcoin.Amount
