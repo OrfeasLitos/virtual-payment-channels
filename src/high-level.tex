@@ -76,7 +76,14 @@
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{payment-layer.tex}
-    \caption{Funding, commitment and revocation transactions}
+    \caption{Funding, commitment and revocation transactions. Notation: Each
+    output of a transaction is connected to at most one input of another. The
+    text on an output describes its spending conditions (a.k.a.\ script).
+    Spending condition ``$\pk{1}$'' requires a signature from $\sk{1}$,
+    ``$2/\{\pk{1}, \pk{2}\}$'' requires signatures from both $\sk{1}$ and
+    $\sk{2}$ ($2$-of-$2$ multisig), ``$A + t$'' can be spent according to $A$
+    after a timelock $t$, ``$A \vee B$'' can be spent either via $A$ or via
+    $B$.}
     \label{figure:payment-layer}
   \end{figure}
 
@@ -144,7 +151,9 @@
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint.tex}
     \caption{$A$ - $E$ virtual channel: $A$'s initiator transaction. Spends the
     funding output of the $A$-$B$ channel. Can be used if $B$ has not published
-    a virtual transaction yet.}
+    a virtual transaction yet. Notation: Signatures are denoted with $\sigma$,
+    associated coins are above inputs and outputs, spending conditions are
+    above outputs, required witnesses are above inputs.}
     \label{figure:virtual-layer-endpoint}
   \end{figure}
 
