@@ -191,7 +191,8 @@
     \forall n \in \mathbb{N}^* \setminus \{1\}, \forall \text{ PPT } \adversary,
     \exists \text{ PPT } \simulator: \forall \text{ PPT } \environment \text{ it
     is } \\
-    \textsc{exec}^{\ledger}_{\pchansup{n}, \adversary, \environment} \approx
+    \textsc{exec}^{\ledger, \fchansup{1}, \dots, \fchansup{n-1}}_{\pchansup{n},
+    \adversary, \environment} \approx
     \textsc{exec}^{\fchansup{n}, \ledger}_{\simulator, \environment}
   \end{gather*}
 \end{theorem}
