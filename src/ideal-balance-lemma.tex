@@ -1,3 +1,33 @@
+\begin{lemma}[Ideal world balance]
+\label{lemma:ideal-balance}
+  Consider an ideal world execution with functionality \fchan and simulator
+  \simulator. Let $P \in \{\alice, \bob\}$ one of the two parties of \fchan.
+  Assume that all of the following are true:
+  \begin{itemize}
+    \item $\itistate_P \neq \textsc{ignored}$,
+    \item $P$ has transitioned to the \textsc{open} \textit{State} at least
+    once. Additionally, if $P = \alice$, it has received $(\textsc{open}, c,
+    \dots)$ by \environment prior to transitioning to the \textsc{open}
+    \textit{State},
+    \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
+    \fchan/\textsc{ln} ITI while $\itistate_P$ was $\textsc{open}$ and $P$
+    subsequently transitioned to \textsc{open} \textit{State}] $n$ times,
+    \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
+    $\itistate_P$ was $\textsc{open}$ and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $m$ times,
+    \item $P$ [has received $(\textsc{get paid}, e_i)$ by \environment while
+    $\itistate_P$ was $\textsc{open}$ and $P$ subsequently transitioned to
+    \textsc{open} \textit{State}] $l$ times.
+  \end{itemize}
+  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If \fchan
+  receives $(\textsc{close}, P)$ by \simulator, then the following holds with
+  overwhelming probability on the security parameter:
+  \begin{equation}
+    \texttt{balance}_P = \phi \cdot c - \sum\limits_{i=1}^n f_i -
+    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+  \end{equation}
+\end{lemma}
+
 \begin{proof}[Proof of Lemma~\ref{lemma:ideal-balance}]
   We will prove the Lemma by following the evolution of the $\subbalance{P}$
   variable.
