@@ -149,8 +149,8 @@
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint.tex}
-    \caption{$A$ - $E$ virtual channel: $A$'s initiator transaction. Spends the
-    funding output of the $A$-$B$ channel. Can be used if $B$ has not published
+    \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
+    funding output of the $A-B$ channel. Can be used if $B$ has not published
     a virtual transaction yet. Notation: Signatures are denoted with $\sigma$,
     associated coins are above inputs and outputs, spending conditions are
     above outputs, required witnesses are above inputs.}
@@ -171,15 +171,15 @@
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{intermediary-initiator.tex}
-    \caption{$A$ - $E$ virtual channel: $B$'s initiator transaction. Spends the
-    funding outputs of the $A$-$B$ and $B$-$C$ channels. Can be used if neither
+    \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
+    funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
     $A$ nor $C$ have published a virtual transaction yet.}
     \label{figure:virtual-layer-initiator}
   \end{figure}
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval.tex}
-    \caption{$A$ - $E$ virtual channel: One of $B$'s extend interval
+    \caption{$A-E$ virtual channel: One of $B$'s extend interval
     transactions. $\sigma$ is the signature. Spends the virtual output of $A$'s
     initiator transaction and the funding output of the $B$-$C$ channel. Can be
     used if $A$ has already published its initiator transaction and $C$ has not
