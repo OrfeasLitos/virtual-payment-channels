@@ -38,22 +38,8 @@
 
   \subsection{Ideal world functionality \fchan}
   Our ideal world functionality \fchan represents a single channel, either
-  simple or virtual. We could instead contain all the channels in a single,
-  monolithic functionality (following the approach
-  of~\cite{DBLP:conf/csfw/KiayiasL20}) and we believe that we could still carry
-  out the security proof. Nevertheless, having the functionality correspond to a
-  single channel has no drawbacks, as all desired security guarantees are
-  provided by our modular architecture, and instead brings two benefits.
-  Firstly, the functionality is easier to intuitively grasp, as it handles less
-  tasks. Having a simple and intuitive functionality aids in its reusability and
-  is an informal goal of the simulation-based paradigm. In the realm of software
-  engineering, simple components with clear boundaries and explicit interactions
-  are easier to contemplate and reason about and therefore more likely to be
-  adopted, as well as used securely and correctly; we desire these properties
-  for our model. Secondly, this approach permits our functionality to be global,
-  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}.
-
-  \fchan acts as a relay between \adversary and \environment, leaking all
+  simple or virtual.
+  It acts as a relay between \adversary and \environment, leaking all
   messages. This simplifies the functionality and facilitates the
   indistinguishability argument by having \simulator simply running internally
   the real world protocols of the channel parties \pchan with no modifications.
@@ -102,6 +88,17 @@
   technique ensures that the necessary conditions for the validity of the
   functionality and the protocol are met and that the realisability proof can go
   through, as we will see in Section~\ref{section:security} in more detail.
+
+  Note that we could instead contain all the channels in a single, monolithic
+  functionality (following the approach of~\cite{DBLP:conf/csfw/KiayiasL20}) and
+  we believe that we could still carry out the security proof. Nevertheless,
+  having the functionality correspond to a single channel has no drawbacks, as
+  all desired security guarantees are provided by our modular architecture, and
+  instead brings two benefits. Firstly, the functionality is easier to
+  intuitively grasp, as it handles less tasks. Having a simple and intuitive
+  functionality aids in its reusability and is an informal goal of the
+  simulation-based paradigm. Secondly, this approach permits our functionality
+  to be global, as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}.
 
   \subsection{Real world protocol \pchan}
   Our real world protocol \pchan, ran by party $P$, consists of two
