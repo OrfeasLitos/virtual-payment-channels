@@ -50,13 +50,15 @@
   Each output can be connected with at most one input of another transaction;
   cycles are not allowed. Above an input or an output edge we note the number of
   coins it carries. In some figures the coins are omitted. Below an input we
-  place the data carried and below an output its spending conditions. For
+  place the data carried and below an output its spending conditions (a.k.a\
+  script). For
   a connected input-output pair, we omit the data carried by the input.
-  $\sigma_K$ is a signature on the transaction by $\sk{K}$. An output marked
-  with $\pk{K}$ needs a signature by $\sk{K}$ to be spent. $n/\{\pk{1}, \dots,
-  \pk{m}\}$ is an $m$-of-$n$ multisig ($n \leq m$) that needs signatures from
-  $n$ distinct keys among $\sk{1}, \dots, \sk{m}$. If $k$ is a spending
-  condition, $k + t$ is the same spending condition but with a relative timelock
+  $\sigma_K$ is a signature on the transaction by $\sk{K}$; in all cases, signatures
+  are carried by inputs. An output marked
+  with $\pk{K}$ needs a signature by $\sk{K}$ to be spent. $m/\{\pk{1}, \dots,
+  \pk{n}\}$ is an $m$-of-$n$ multisig ($m \leq n$) that needs signatures from
+  $m$ distinct keys among $\sk{1}, \dots, \sk{n}$. If $k$ is a spending
+  condition, then $k + t$ is the same spending condition but with a relative timelock
   of $t$. Spending conditions or data can be combined with logical ``AND''
   ($\wedge$) and ``OR'' ($\vee$), so an output $a \vee b$ can be spent either by
   matching the condition $a$ or the condition $b$, and an input $\sigma_a \wedge
@@ -76,14 +78,7 @@
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{payment-layer.tex}
-    \caption{Funding, commitment and revocation transactions. Notation: Each
-    output of a transaction is connected to at most one input of another. The
-    text on an output describes its spending conditions (a.k.a.\ script).
-    Spending condition ``$\pk{1}$'' requires a signature from $\sk{1}$,
-    ``$2/\{\pk{1}, \pk{2}\}$'' requires signatures from both $\sk{1}$ and
-    $\sk{2}$ ($2$-of-$2$ multisig), ``$A + t$'' can be spent according to $A$
-    after a timelock $t$, ``$A \vee B$'' can be spent either via $A$ or via
-    $B$.}
+    \caption{Funding, commitment and revocation transactions}
     \label{figure:payment-layer}
   \end{figure}
 
@@ -151,9 +146,7 @@
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint.tex}
     \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
     funding output of the $A-B$ channel. Can be used if $B$ has not published
-    a virtual transaction yet. Notation: Signatures are denoted with $\sigma$,
-    associated coins are above inputs and outputs, spending conditions are
-    above outputs, required witnesses are above inputs.}
+    a virtual transaction yet.}
     \label{figure:virtual-layer-endpoint}
   \end{figure}
 
