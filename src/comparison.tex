@@ -4,13 +4,13 @@
   \label{section:comparison}
   We offer here a comparison of this work with
   LVPC~\cite{10.1007/978-3-030-65411-5_18}, BCVC~\cite{cryptoeprint:2020:554}
-  and Donner~\cite{donner} in terms of communication efficiency and on-chain
-  footprint (both in size and number of transactions) for all parties when
-  opening, updating and non-cooperatively closing a virtual channel. The
-  comparison is performed both for channels of length $2$ and for channels of
-  length $n$. In the second comparison BCVC is not included, since only LVPC and
-  Donner offer a way to open virtual channels of length greater than $2$ (since
-  LVPC is recursive and Donner is variadic).
+  and Donner~\cite{donner} in terms of communication efficiency when opening and
+  updating and in terms of on-chain footprint when non-cooperatively closing a
+  virtual channel, both in size and number of transactions, aggregated for all
+  parties. The comparison is performed both for channels of length $2$ and for
+  channels of length $n$. In the second comparison BCVC is not included, since
+  only LVPC and Donner offer a way to open virtual channels of length greater
+  than $2$ (since LVPC is recursive and Donner is variadic).
 
   BCVC proposes $4$ configurations, each with different efficiency
   characteristics: over Generalised Channels~\cite{cryptoeprint:2020:476} (GC)
@@ -18,50 +18,34 @@
   all of them here. We refer the reader to~\cite{cryptoeprint:2020:554} for more
   details.
 
-  As all constructions instantiate virtual channels, opening them does not
-  interact with the chain, therefore the on-chain section columns of ``Open''
-  are omitted (as they would all be $0$).
-
   \begin{table*}
     \caption{Efficiency comparison of virtual channel protocols with $3$
     parties}
     \label{table:comparison:overhead:3-parties}
     \begin{minipage}{\textwidth}
     \begin{center}
-    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline
-              & \multicolumn{2}{|c|}{Open} & \multicolumn{4}{|c|}{Update} &
-              \multicolumn{4}{|c|}{Close} \\
+              & \multicolumn{2}{|c|}{Open} & \multicolumn{2}{|c|}{Update} &
+              \multicolumn{2}{|c|}{Close} \\
     \hline
-              & \multicolumn{2}{|c|}{off-chain} & \multicolumn{2}{|c|}{on-chain}
-              & \multicolumn{2}{|c|}{off-chain} & \multicolumn{2}{|c|}{on-chain}
-              & \multicolumn{2}{|c|}{off-chain} \\
+              & \#txs & size & \#txs & size & \#txs & size \\
     \hline
-              & \#txs & size & \#txs & size & \#txs & size & \#txs & size &
-              \#txs & size \\
-    \hline
-    LVPC       & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-               1000 & 100000 \\
+    LVPC       & 14 & 100000 & 2 & 100000 & 10 & 100000 \\
     \hline
     BCVC-GC-NV
-              & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+              & 7 & 2829 & 2 & 695 & 7 & 2829 \\
     \hline
-    BCVC-GC-V & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+    BCVC-GC-V & 8 & 2803 & 2 & 695 & 6 & 2108 \\
     \hline
     BCVC-LN-NV
-              & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+              & 16 & 7704 & 8 & 2824 & 3 & 1800 \\
     \hline
-    BCVC-LN-V & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+    BCVC-LN-V & 14 & 5722 & 4 & 1412 & 4 & 1778 \\
     \hline
-    Donner    & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+    Donner    & 14 & 4721 & 2 & 695 & 10 & 3438 \\
     \hline
-    this work & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+    this work & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 \\
     \hline
     \end{tabular}
     \end{center}
@@ -74,28 +58,21 @@
     \label{table:comparison:overhead:n-parties}
     \begin{minipage}{\textwidth}
     \begin{center}
-    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline
-              & \multicolumn{2}{|c|}{Open} & \multicolumn{4}{|c|}{Update} &
-              \multicolumn{4}{|c|}{Close} \\
+              & \multicolumn{2}{|c|}{Open} & \multicolumn{2}{|c|}{Update} &
+              \multicolumn{2}{|c|}{Close} \\
     \hline
-              & \multicolumn{2}{|c|}{off-chain} & \multicolumn{2}{|c|}{on-chain}
-              & \multicolumn{2}{|c|}{off-chain} & \multicolumn{2}{|c|}{on-chain}
-              & \multicolumn{2}{|c|}{off-chain} \\
+              & \#txs & size & \#txs & size & \#txs & size \\
     \hline
-              & \#txs & size & \#txs & size & \#txs & size & \#txs & size &
-              \#txs & size \\
+    LVPC      & $7(n-1)$ & $34n^2+1240n+695$ & $2$ & $695$ & $5n-5$ &
+              $1082n+192$ \\
     \hline
-    LVPC      & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+    Donner    & $4n-2$ & 100000 & $2$ & 100000 & $3n+1$ & 100000 \\
     \hline
-    Donner    & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
-    \hline
-    this work & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 &
-              1000 & 100000 \\
+    this work & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 \\
     \hline
     \end{tabular}
     \end{center}
     \end{minipage}
-  \end{table*}
+  \end{table*}\TODO{lpvc values don't seem right}
