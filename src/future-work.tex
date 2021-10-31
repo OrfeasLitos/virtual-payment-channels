@@ -56,13 +56,15 @@
   avoiding closing the channel where possible, especially when the problem stems
   from network issues and not from malicious behaviour.
 
-  Furthermore, any deployment of the protocol
-  has to explicitly handle the issue of
-   transaction fees. These include miner fees for on-chain transactions and intermediary fees
-  for the parties that own base channels and facilitate opening virtual
-  channels. Our protocol is compatible with any such fee parameterization and 
-  we leave for future work the incentive analyses that can determine concrete
-  values for such intermediary fees. 
+  Furthermore, any deployment of the protocol has to explicitly handle the issue
+  of transaction fees. These include miner fees for on-chain transactions and
+  intermediary fees for the parties that own base channels and facilitate
+  opening virtual channels. These fees should take into account the fact that
+  each intermediary has quadratic storage requirements, whereas endpoints only
+  need constant storage, creating an opportunity for amplification attacks. Our
+  protocol is compatible with any such fee parameterization and we leave for
+  future work the incentive analyses that can determine concrete values for such
+  intermediary fees.
 
   In order to increase readability and to keep focus on the salient points of
   the construction, our protocol does not exploit a number of possible
