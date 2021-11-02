@@ -38,7 +38,18 @@
   \end{systembox}
   \captionof{figure}{}
   \label{code:functionality:rules}
-\end{center} \ \\
+\end{center}
+Note that in UCGS~\cite{DBLP:conf/tcc/BadertscherCHTZ20}, just like in UC, every
+message to an ITI may arrive via one of three channels: input, output and
+network. In the session of interest, input messages come from the environment
+\environment in the real world, whereas in the ideal world each input message
+comes from the corresponding dummy party, which forwards it as received by
+\environment. Outputs may be received from any subroutine (local or global).
+This means that the ``sender field'' of inputs and outputs cannot be tampered
+with by \environment or \adversary. Network messages only come from \adversary;
+they may have been sent from any machine but are relayed (and possibly delayed,
+reordered, modified or even dropped) by \adversary. Therefore, in contrast to
+inputs and outputs, network messages may have a tampered ``sender field''.
 
 \begin{center}
   \begin{systembox}{\fchan{} -- open state machine, $P \in \{\alice, \bob\}$}
