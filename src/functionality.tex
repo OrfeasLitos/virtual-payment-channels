@@ -57,9 +57,13 @@ inputs and outputs, network messages may have a tampered ``sender field''.
       \State On first activation: \Comment{before handing the message}
       \label{code:functionality:open:boot}
       \Indent
-        \State $\pk{P} \gets \bot$; $\texttt{host}_P \gets \bot$;
-        $\texttt{enabler}_P \gets \bot$; $\subbalance{P} \gets 0$;
-        \State $\itistate_P \gets \textsc{uninit}$
+        \State $\pk{P} \gets \bot$; $\subbalance{P} \gets 0$; $\itistate_P \gets
+        \textsc{uninit}$
+        \State $\texttt{enabler}_P \gets \bot$ \Comment{if we are a virtual
+        channel, the ITI of $P$'s base channel}
+        \State $\texttt{host}_P \gets \bot$ \Comment{if we are a virtual
+        channel, the ITI of the common host of this channel and $P$'s base
+        channel}
       \EndIndent
       \Statex
 
