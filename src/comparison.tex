@@ -6,19 +6,34 @@
   LVPC~\cite{10.1007/978-3-030-65411-5_18}, BCVC~\cite{cryptoeprint:2020:554}
   and Donner~\cite{donner} in terms of communication efficiency when opening and
   updating aggregated for all parties \TODO{decide on previous}. We also compare
-  the on-chain cost for an endpoint to unilaterally close its virtual channel
-  and for an intermediary to unilaterally disentangle itself from said virtual
-  channel, in terms of size (virtual bytes) and number of transactions. The
-  comparison is performed both for channels of length $2$ and for channels of
-  length $n$. In the second comparison BCVC is not included, since only LVPC and
-  Donner offer a way to open virtual channels of length greater than $2$ (since
-  LVPC is recursive and Donner is variadic).
+  the on-chain cost for an endpoint to unilaterally close its virtual channel.
+  Furthermore, we compare the on-chain cost for an intermediary to close its
+  base channel. In order to only show the costs caused by supporting a virtual
+  channel, we subtract the cost the intermediary would pay to close its channel
+  if it was not supporting any virtual channel. On-chain cost is measured in
+  terms of size\footnote{Transaction size is calculated in so-called ``virtual
+  bytes'', which map directly to on-chain fees and thus are preferred to raw
+  bytes. We used the tool found in
+  \url{https://jlopp.github.io/bitcoin-transaction-size-calculator/} to aid size
+  calculation.} and number of transactions. The comparison is performed both for
+  channels of length $2$ and for channels of length $n$. In the second
+  comparison BCVC is not included, since only LVPC and Donner offer a way to
+  open virtual channels of length greater than $2$ (since LVPC is recursive and
+  Donner is variadic). For a virtual channel between $P_1$ and $P_n$ over $n-1$
+  base channels via LVPC, we consider the case in which the funder $P_1$
+  initially has a channel with $P_2$ and then opens one virtual channel with
+  party $P_i$ on top of its channel with party $P_{i-1}$ for $i \in \{3, \dots,
+  n\}$. We choose this topology, as $P_1$ cannot assume that there exist any
+  virtual channels between other parties (which could be used as shortcuts).
 
   BCVC proposes $4$ configurations, each with different efficiency
   characteristics: over Generalised Channels~\cite{cryptoeprint:2020:476} (GC)
   or Lightning, and with or without validity (V or NV respectively); we include
   all of them here. We refer the reader to~\cite{cryptoeprint:2020:554} for more
   details.
+
+  \TODO{decide if this will be included} Some results disagree with those of the
+  tables found in related work.
 
   \begin{table*}
     \caption{Efficiency comparison of virtual channel protocols with $3$
@@ -60,25 +75,31 @@
     \label{table:comparison:overhead:n-parties}
     \begin{minipage}{\textwidth}
     \begin{center}
-    \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
     \hline
               & \multicolumn{2}{|c|}{Open} & \multicolumn{2}{|c|}{Update} &
-              \multicolumn{4}{|c|}{Close} \\
+              \multicolumn{6}{|c|}{Close} \\
     \hline
               & \multicolumn{2}{|c|}{TODO} & \multicolumn{2}{|c|}{TODO} &
-              \multicolumn{2}{|c|}{intermediary} & \multicolumn{2}{|c|}{endpoint} \\
+              \multicolumn{2}{|c|}{intermediary} & \multicolumn{2}{|c|}{funder}
+              & \multicolumn{2}{|c|}{fundee} \\
     \hline
-              & \#txs & size & \#txs & size & \#txs & size & \#txs & size \\
+              & \#txs & size & \#txs & size & \#txs & size & \#txs & size &
+              \#txs & size \\
     \hline
-    LVPC      & $7(n-1)$ & $34n^2+1240n+695$ & $2$ & $695$ & $5n-5$ &
-              $1082n+192$ & 10000 & 100 \\
+    LVPC      & $7(n-1)$ & $34n^2+1240n+695$ & $2$ & $695$ & $3$ &
+              $626.25$ & $2$ & $383$ & $2$ & $359$ \\
     \hline
-    Donner    & $4n-2$ & 100000 & $2$ & 100000 & $3n+1$ & 100000 & 10000 & 100 \\
+    Donner    & $4n-2$ & 100000 & $2$ & 100000 & $1$ & $204.5$ & $3$ & $493.5 +
+    43n$ & $1$ & $136.5$ \\
     \hline
     this work & 1000 & 100000 & 1000 & 100000 & $1$ & $263.75 + 26.75n$ & $2$ &
-    $371.0$ \\
+    $371$ & $2$ & $371$\\
     \hline
     \end{tabular}
     \end{center}
     \end{minipage}
   \end{table*}\TODO{lpvc values don't seem right}
+  We note that the linear factor when the intermediary closes can be eliminated
+  with the aid of Taproot in our case, whereas the same cannot be said for the
+  linear factor when the funder closes in Donner.
