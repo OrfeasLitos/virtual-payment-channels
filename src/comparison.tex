@@ -5,12 +5,14 @@
   We offer here a comparison of this work with
   LVPC~\cite{10.1007/978-3-030-65411-5_18}, BCVC~\cite{cryptoeprint:2020:554}
   and Donner~\cite{donner} in terms of communication efficiency when opening and
-  updating and in terms of on-chain footprint when non-cooperatively closing a
-  virtual channel, both in size and number of transactions, aggregated for all
-  parties. The comparison is performed both for channels of length $2$ and for
-  channels of length $n$. In the second comparison BCVC is not included, since
-  only LVPC and Donner offer a way to open virtual channels of length greater
-  than $2$ (since LVPC is recursive and Donner is variadic).
+  updating aggregated for all parties \TODO{decide on previous}. We also compare
+  the on-chain cost for an endpoint to unilaterally close its virtual channel
+  and for an intermediary to unilaterally disentangle itself from said virtual
+  channel, in terms of size (virtual bytes) and number of transactions. The
+  comparison is performed both for channels of length $2$ and for channels of
+  length $n$. In the second comparison BCVC is not included, since only LVPC and
+  Donner offer a way to open virtual channels of length greater than $2$ (since
+  LVPC is recursive and Donner is variadic).
 
   BCVC proposes $4$ configurations, each with different efficiency
   characteristics: over Generalised Channels~\cite{cryptoeprint:2020:476} (GC)
@@ -58,19 +60,23 @@
     \label{table:comparison:overhead:n-parties}
     \begin{minipage}{\textwidth}
     \begin{center}
-    \begin{tabular}{|l|c|c|c|c|c|c|}
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
     \hline
               & \multicolumn{2}{|c|}{Open} & \multicolumn{2}{|c|}{Update} &
-              \multicolumn{2}{|c|}{Close} \\
+              \multicolumn{4}{|c|}{Close} \\
     \hline
-              & \#txs & size & \#txs & size & \#txs & size \\
+              & \multicolumn{2}{|c|}{TODO} & \multicolumn{2}{|c|}{TODO} &
+              \multicolumn{2}{|c|}{intermediary} & \multicolumn{2}{|c|}{endpoint} \\
+    \hline
+              & \#txs & size & \#txs & size & \#txs & size & \#txs & size \\
     \hline
     LVPC      & $7(n-1)$ & $34n^2+1240n+695$ & $2$ & $695$ & $5n-5$ &
-              $1082n+192$ \\
+              $1082n+192$ & 10000 & 100 \\
     \hline
-    Donner    & $4n-2$ & 100000 & $2$ & 100000 & $3n+1$ & 100000 \\
+    Donner    & $4n-2$ & 100000 & $2$ & 100000 & $3n+1$ & 100000 & 10000 & 100 \\
     \hline
-    this work & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 \\
+    this work & 1000 & 100000 & 1000 & 100000 & $1$ & $263.75 + 26.75n$ & $2$ &
+    $371.0$ \\
     \hline
     \end{tabular}
     \end{center}
