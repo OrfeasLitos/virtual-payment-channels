@@ -78,9 +78,9 @@ non-custo\-dial chains (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lowe
   is based on), so a party that has all its coins in channels cannot fund a
   Donner channel; additionally, we conjecture that using external coins
   precludes variadic virtual channel designs that are not encumbered with
-  limited lifetime. Furthermore, due to its incentive structure, none of the
-  base channels may close before either the funder of the virtual channel closes
-  it, or its limited lifetime expires. Donner also relies on placeholder outputs
+  limited lifetime. Furthermore, due to its incentive structure, all of the
+  base channels are forced to close if the virtual channel is closed.
+  Donner also relies on placeholder outputs
   which, due to the minimum coins they need to carry to exceed Bitcoin's ``dust
   limit'', may skew the incentives of rational players and adds to the
   opportunity cost of maintaining a channel. Furthermore, its design complicates
