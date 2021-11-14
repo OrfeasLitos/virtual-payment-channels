@@ -79,13 +79,14 @@
   is counted as the sum of the relevant channel identifiers ($8$ bytes each, as
   defined by the Lightning Network
   specification\footnote{\url{https://github.com/lightning/bolts/blob/master/07-routing-gossip.md\#definition-of-short_channel_id}}),
-  secret keys ($32$ bytes each), public keys ($33$ bytes each, compressed form
-  -- these double as party identifiers), signatures ($71$ bytes each), coins
-  ($8$ bytes each), times and timelocks (both $4$ bytes each). UC-specific data
-  is ignored. \TODO{add "auxiliary data", or specifically what other kind of
-  data is counted, if needed} \TODO{see if any optimisations are used by other
-  papers, decide if it makes sense to ignore them and change the next phrase}
-  Optimisations are not considered.
+  transaction output identifiers ($36$ bytes), secret keys ($32$ bytes each),
+  public keys ($33$ bytes each, compressed form -- these double as party
+  identifiers), signatures ($71$ bytes each), coins ($8$ bytes each), times and
+  timelocks (both $4$ bytes each). UC-specific data is ignored. \TODO{add
+  "auxiliary data", or specifically what other kind of data is counted, if
+  needed} \TODO{see if any optimisations are used by other papers, decide if it
+  makes sense to ignore them and change the next phrase} Optimisations are not
+  considered.
 
   \begin{table*}
     \caption{Open efficiency comparison of virtual channel protocols with $n$
