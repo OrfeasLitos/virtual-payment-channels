@@ -88,6 +88,14 @@
   makes sense to ignore them and change the next phrase} Optimisations are not
   considered.
 
+  In LVPC, every intermediary, apart from the first one, acts both as a fundee
+  in a new virtual channel with the funder and as an intermediary in the
+  funder's virtual channel with the party after said intermediary. In
+  Table~\ref{table:comparison:overhead:n-parties:open} the intermediary columns
+  contain the total cost of any intermediary that is not the first one,
+  therefore the first intermediary (the party after the funder) incurs
+  [intermediary's costs - fundee's costs] for all three measured quantities.
+
   \begin{table*}
     \caption{Open efficiency comparison of virtual channel protocols with $n$
     parties}
@@ -109,11 +117,11 @@
               \multirow{2}{*}{\shortstack{comm. \\ rounds}} &
               \multicolumn{2}{|c|}{size} & \multicolumn{2}{|c|}{size} \\
     \cline{3-4} \cline{6-7} \cline{9-12}
-              & & sent & saved & & sent & saved & & sent & saved & sent & saved
-              \\
+              & & sent & stored & & sent & stored & & sent & stored & sent &
+              stored \\
     \hline
-    LVPC      & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ &
-    $1000n$ & $n!$ & $n!$ & $1000n$ \\
+    LVPC      & $8(n-2)$ & $1381(n-2)$ & $3005(n-2)$ & $7$ & $1254$ & $2936$ &
+              $16$ & $2989$ & $6385$ & $4370n-8740$ & $9390n-18780$ \\
     \hline
     Donner    & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ &
     $1000n$ & $n!$ & $n!$ & $1000n$ \\
