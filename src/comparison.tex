@@ -33,6 +33,17 @@
   all of them here. We refer the reader to~\cite{cryptoeprint:2020:554} for more
   details.
 
+  Since all constructions produce pairwise channels, updates (a.k.a. payments)
+  always implicate exactly two parties (the payer and the payee \TODO{change if
+  who is funder/fundee also plays a role for any of the constructions}) and
+  their interaction is independent of the number of underlying channels.
+  Therefore the entries in Table~\ref{table:comparison:overhead:3-parties} also
+  cover the general case of $n$ underlying channels. Note that the
+  update-related storage requirements of
+  Table~\ref{table:comparison:overhead:3-parties} take into account savings that
+  may arise by deleting old unneeded data at the end of an update. \TODO{change
+  previous if for some reason we do something else}
+
   Some results disagree with those of the tables found in related work, due to
   differences in the counting method.
 
@@ -130,9 +141,6 @@
     \hline
     \end{tabular}}
   \end{table*}
-
-  \TODO{Update: show diff size in ``stored'' (i.e.\ take advantage of any data
-  that can be deleted)}
 
   \begin{table*}
     \caption{On-chain worst-case closing efficiency comparison of virtual
