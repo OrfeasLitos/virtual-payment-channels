@@ -23,10 +23,13 @@ A number of attacks have been identified against LN. The wormhole
   of Lightning is eltoo~\cite{eltoo}. It has a conceptually simpler
   construction, smaller on-chain footprint and a more forgiving attitude towards
   submitting an old channel state than Lightning, but it needs the
-  \texttt{ANYPREVOUT} sighash flag to be added to Bitcoin. Generalized
-  Bitcoin-Compatible Channels~\cite{cryptoeprint:2020:476} enable the creation
-  of state channels on Bitcoin, extending channel functionality from simple
-  payments to arbitrary Bitcoin scripts.
+  \texttt{ANYPREVOUT} sighash flag to be added to Bitcoin.
+  Bolt~\ref{10.1145/3133956.3134093} constructs privacy-preserving payment
+  channels enabling both direct payments and payments with a single untrusted
+  intermediary. Generalized Bitcoin-Compatible
+  Channels~\cite{cryptoeprint:2020:476} enable the creation of state channels on
+  Bitcoin, extending channel functionality from simple payments to arbitrary
+  Bitcoin scripts.
 
   Sprites~\cite{sprites} leverages the scripting language of Ethereum to
   decrease the time collateral is locked up compared to Lightning.
