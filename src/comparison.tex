@@ -54,28 +54,38 @@
     \label{table:comparison:overhead:3-parties}
     \begin{minipage}{\textwidth}
     \begin{center}
-    \begin{tabular}{|l|c|c|c|c|c|c|}
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
     \hline
-              & \multicolumn{2}{|c|}{Open} & \multicolumn{2}{|c|}{Update} &
+              & \multicolumn{2}{|c|}{Open} & \multicolumn{5}{|c|}{Update} &
               \multicolumn{2}{|c|}{Close} \\
     \hline
-              & \#txs & size & \#txs & size & \#txs & size \\
+              & \#txs & size & \multicolumn{2}{|c|}{Payer} &
+              \multicolumn{2}{|c|}{Payee} & \multirow{2}{*}{\shortstack{comm. \\
+              rounds}} & \#txs & size \\
+    \cline{1-7} \cline{9-10}
+               & TODO & TODO & sent & stored & sent & stored & & TODO & TODO \\
     \hline
-    LVPC       & 14 & 100000 & 2 & 100000 & 10 & 100000 \\
+    LVPC       & 14 & 100000 & fill & fill & fill & fill & fill & 10 & 100000 \\
     \hline
     BCVC-GC-NV
-              & 7 & 2829 & 2 & 695 & 7 & 2829 \\
+              & 7 & 2829 & fill & 695 check & fill & 695 check & fill & 7 & 2829
+              \\
     \hline
-    BCVC-GC-V & 8 & 2803 & 2 & 695 & 6 & 2108 \\
+    BCVC-GC-V & 8 & 2803 & fill & 695 check & fill & 695 check & fill & 6 & 2108
+              \\
     \hline
     BCVC-LN-NV
-              & 16 & 7704 & 8 & 2824 & 3 & 1800 \\
+              & 16 & 7704 & fill & 2824 check & fill & 2824 check & fill & 3 &
+              1800 \\
     \hline
-    BCVC-LN-V & 14 & 5722 & 4 & 1412 & 4 & 1778 \\
+    BCVC-LN-V & 14 & 5722 & fill & 1412 check & fill & 1412 check & fill & 4 &
+              1778 \\
     \hline
-    Donner    & 14 & 4721 & 2 & 695 & 10 & 3438 \\
+    Donner    & 14 & 4721 & fill & 695 check & fill & 695 check & fill & 10 &
+              3438 \\
     \hline
-    this work & 1000 & 100000 & 1000 & 100000 & 1000 & 100000 \\
+    Elmo      & 1000 & 100000 & fill & fill & fill & fill & fill & 1000 & 100000
+              \\
     \hline
     \end{tabular}
     \end{center}
