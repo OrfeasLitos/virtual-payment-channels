@@ -55,7 +55,8 @@
   that keep track of whether the parties are corrupted or negligent, whether the
   channel has opened, whether a payment is underway, which ITIs are to be
   considered \emph{kindred} parties (as they correspond to other channels
-  owned by the same human user, discussed below) and whether the channel has
+  owned by the same human user, discussed below) and whether the channel is
+  currently closing collaboratively or has already
   closed. The single security check performed is \emph{whether the on-chain
   coins are at least equal to the expected balance once the channel closes}. If
   this check fails, \fchan halts. Since the protocol \pchan (which realises
