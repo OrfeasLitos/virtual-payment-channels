@@ -133,7 +133,7 @@
   After initialisation, the funder \alice is ready to open the channel. Once
   \environment gives to \alice the identity of \bob, the initial channel balance
   $c$ and, (looking forward to Subsubsection~\ref{construction:virt})
-  in case it is a virtual, the identities of the base channel owners
+  in case it is a virtual channel, the identities of the base channel owners
   (Figure~\ref{code:ln:open}), \alice generates and sends \bob her funding and
   revocation public keys ($\pk{A, F}$, $\pk{A, R}$, used for the funding and
   revocation outputs respectively) along with $c$, $\pk{A,
@@ -142,7 +142,8 @@
   \alice with $\pk{B, F}$, $\pk{B, R}$, and $\pk{B, \mathrm{out}}$
   (Figure~\ref{code:ln:exchange-open-keys}).
 
-  The next step prepares the base channels (Figure~\ref{code:ln:prepare-base}).
+  The next step prepares the base channels (Figure~\ref{code:ln:prepare-base})
+  if needed.
   If our channel is a simple one, then \alice simply generates the funding tx.
   If it is a virtual and assuming all base parties (running \textsc{ln})
   cooperate, a chain of messages from \alice to \bob and back via all base
@@ -157,8 +158,8 @@
   \textsc{virt} host, which will be discussed later in detail. If the virtual
   layer is successful, each base party is informed by its host accordingly,
   intermediaries return to the \textsc{open} state (i.e., they have completed
-  their part and are ready to accept instructions for, e.g., new payments) and \alice and
-  \bob continue
+  their part and are in standby, ready to accept instructions for, e.g., new
+  payments) and \alice and \bob continue
   the opening procedure. In particular, \alice and \bob exchange signatures on
   the initial commitment transactions, therefore ensuring that the funding
   output can be spent (Figure~\ref{code:ln:exchange-open-sigs}). After that, in
