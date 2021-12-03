@@ -375,7 +375,12 @@ inputs and outputs, network messages may have a tampered ``sender field''.
   \{\alice, \bob\}$}
     \begin{algorithmic}[1]
       \State \TODO{fill in, or, if removed, remove all refs to
-      \{code:functionality:coop-close\}}
+      \{code:functionality:coop-close\}. Possible approach: there will be an
+      alternative message from \adversary, e.g.\ (\textsc{coopClose}, $P$),
+      which will not check on-chain, but tell the host, e.g.\ via
+      (\textsc{coopClosed}, $x$) to demand our money. Of course the handling of
+      \textsc{coopClosed} must be added as well. Maybe the whole thing will fit
+      in the previous box.}
     \end{algorithmic}
   \end{systembox}
   \captionof{figure}{}

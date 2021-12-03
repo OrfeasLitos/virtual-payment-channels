@@ -137,6 +137,10 @@
       \Indent
         \State send (\textsc{info}, \textsc{close}, $P$) to \fchan
       \EndIndent
+      \Statex
+
+      \State \TODO{Add message to \fchan in case of cooperative close, e.g.\ $P$
+      moving to the \textsc{coopClosed} state}
     \end{algorithmic}
   \end{simulatorbox}
   \captionof{figure}{}
