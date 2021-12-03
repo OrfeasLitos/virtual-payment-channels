@@ -225,8 +225,8 @@
   constant) by reading from \ledger and comparing the current block height with
   that of the last activation.
 
-  When either party is instructed by \environment to close the channel
-  (Figure~\ref{code:ln:close}), it first asks its host to close (details on the
+  When either party is instructed by \environment to unilaterally close the channel
+  (Figure~\ref{code:ln:close}), it first asks its host to unilaterally close (details on the
   exact steps are discussed later) and once that is done, the ledger is checked
   for any transaction spending the funding output. In case the latest remote
   commitment tx is on-chain, then the channel is already closed and no further
@@ -295,9 +295,9 @@ On a related note, the
   the newly created virtual transactions to spend their funding outputs. In this
   step each party exchanges a single signature with each of its neighbours.
 
-  When \textsc{virt} is instructed to close by party $R$
+  When \textsc{virt} is instructed to unilaterally close by party $R$
   (Figure~\ref{code:virtual-layer:close}), it first notifies its \textsc{virt}
-  host (if any) and waits for it to close. After that, it signs and publishes
+  host (if any) and waits for it to unilaterally close. After that, it signs and publishes
   the unique valid virtual transaction. It then repeatedly checks the chain to
   see if the transaction is included
   (Figure~\ref{code:virtual-layer:check-chain-close}). If it is included, the
