@@ -34,7 +34,10 @@
   not activated in time to prevent a malicious counterparty from successfully
   using an old commitment transaction. If a party is marked as negligent, no
   balance security guarantees are given (c.f.\
-  Lemma~\ref{lemma:real-balance-security-informal}).
+  Lemma~\ref{lemma:real-balance-security-informal}). Note that in realistic
+  software the aforementioned daemon is local and trustworthy, therefore it
+  would never allow \pchan to become negligent, as long as the machine is
+  powered on and in good order.
 
   \subsection{Ideal world functionality \fchan}
   Our ideal world functionality \fchan represents a single channel, either
