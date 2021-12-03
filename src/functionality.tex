@@ -6,14 +6,14 @@
     \begin{itemize}
       \item On receiving input (\texttt{msg}) by \environment addressed to $P
       \in \{\alice, \bob\}$, handle it according to the corresponding rule in
-      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:fund},
-      or~\ref{code:functionality:close} (if any) and subsequently send
+      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:fund},~\ref{code:functionality:close}
+      or~\ref{code:functionality:coop-close} (if any) and subsequently send
       (\textsc{relay}, \texttt{msg}, $P$, \environment, input) to \adversary.
       \item On receiving (\texttt{msg}) by party $R$ addressed to $P \in \{\alice, \bob\}$
       by means of $\texttt{mode} \in \{\mathrm{output},
       \mathrm{network}\}$, handle it according to the corresponding rule in
-      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:fund},
-      or~\ref{code:functionality:close} (if any) and subsequently send
+      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:fund},~\ref{code:functionality:close}
+      or~\ref{code:functionality:coop-close} (if any) and subsequently send
       (\textsc{relay}, \texttt{msg}, $P$, \environment, \texttt{mode}) to
       \adversary. \Comment{all messages are relayed to \adversary}
       \item On receiving (\textsc{relay}, \texttt{msg}, $P$, $R$, \texttt{mode})
@@ -23,8 +23,8 @@
       outgoing messages by \fchan}
       \item On receiving (\textsc{info}, \texttt{msg}) by \adversary, handle
       (\texttt{msg}) according to the corresponding rule in
-      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:fund},
-      or~\ref{code:functionality:close} (if any). After handling the message or
+      Fig.~\ref{code:functionality:open},~\ref{code:functionality:pay},~\ref{code:functionality:fund},~\ref{code:functionality:close}
+      or~\ref{code:functionality:coop-close} (if any). After handling the message or
       after an ``ensure'' fails, send (\textsc{handled}, \texttt{msg}) to
       \adversary. \Comment{(\textsc{info}, \texttt{msg}) messages by \simulator
       always return control to \simulator without any side-effect to any other
@@ -366,6 +366,18 @@ inputs and outputs, network messages may have a tampered ``sender field''.
   \end{systembox}
   \captionof{figure}{}
   \label{code:functionality:close}
+\end{center} \ \\
+
+\begin{center}
+  \begin{systembox}{\fchan{} -- cooperative close state machine, $P \in
+  \{\alice, \bob\}$}
+    \begin{algorithmic}[1]
+      \State \TODO{fill in, or, if removed, remove all refs to
+      \{code:functionality:coop-close\}}
+    \end{algorithmic}
+  \end{systembox}
+  \captionof{figure}{}
+  \label{code:functionality:coop-close}
 \end{center} \ \\
 
 \begin{figure*}
