@@ -6,8 +6,8 @@
   and ideal world, Lemmas~\ref{lemma:real-balance-security}
   and~\ref{lemma:ideal-balance} respectively. Informally, the first establishes
   that if an honest, non-negligent party was implicated in a channel on which a
-  number of payments took place and has now been closed, then the party will
-  have at least the expected funds on-chain.
+  number of payments took place and has now been unilaterally closed, then the
+  party will have at least the expected funds on-chain.
 
 \begin{lemma}[Real world balance security (informal)]
 \label{lemma:real-balance-security-informal}
@@ -24,7 +24,7 @@
     \item $P$ has successfully received $l$ payments, where the $i$-th payment
     involved $c_i$ coins.
   \end{itemize}
-  If $P$ closes its channel, eventually its view of \ledger will contain $h$
+  If $P$ unilaterally closes its channel, eventually its view of \ledger will contain $h$
   outputs spendable only by $P$ or another kindred party, each of value $c_i$,
   such that
   \begin{equation}
@@ -57,7 +57,8 @@ the Appendix.
     involved $c_i$ coins.
   \end{itemize}
   Let $\texttt{balance}_P$ be the balance that \fchan stores internally for $P$.
-  If the channel is closed, then the following holds with overwhelming
+  If the channel is closed (either unilaterally or cooperatively \TODO{check
+  that this is true and relevant}), then the following holds with overwhelming
   probability on the security parameter:
   \begin{equation}
     \texttt{balance}_P = c - \sum\limits_{i=1}^n f_i -
