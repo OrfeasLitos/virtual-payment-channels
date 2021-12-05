@@ -280,18 +280,6 @@
 \begin{center}
   \begin{processbox}{\textsc{ln} -- external open messages for \bob}
     \begin{algorithmic}[1]
-      \State On input (\textsc{check funding}):
-      \Indent
-        \State ensure $\itistate = \textsc{waiting to check funding}$
-        \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
-        \If{$F \in \Sigma$}
-          \State $\itistate \gets \textsc{open}$
-          \label{code:ln:bob:state-open}
-          \State reply (\textsc{open ok})
-        \EndIf
-      \EndIndent
-      \Statex
-
       \State On output (\textsc{funded}, $\texttt{host}_P$,
       \texttt{funder\_layer}, $t_P$) by \texttt{hops}[-1].\texttt{right}:
       \label{code:ln:bob:funded}
@@ -313,6 +301,18 @@
         \State ensure $\pk{1} = \pk{A, F} \wedge \pk{2} = \pk{B, F}$
         \State $\itistate \gets \textsc{waiting for fudned}$
         \State reply (\textsc{keys ok})
+      \EndIndent
+      \Statex
+
+      \State On input (\textsc{check funding}):
+      \Indent
+        \State ensure $\itistate = \textsc{waiting to check funding}$
+        \State input (\textsc{read}) to \ledger and assign output to $\Sigma$
+        \If{$F \in \Sigma$}
+          \State $\itistate \gets \textsc{open}$
+          \label{code:ln:bob:state-open}
+          \State reply (\textsc{open ok})
+        \EndIf
       \EndIndent
     \end{algorithmic}
   \end{processbox}
