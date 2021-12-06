@@ -999,7 +999,7 @@
         \texttt{guest}.\textsc{processRemoteRevocation}(\texttt{revoc\_by\_next})
         returns (\textsc{ok}) \Comment{If the ``ensure'' fails, the opening
         process freezes, this is intentional. The channel can still close via
-        (\textsc{close})}
+        (\textsc{forceClose})}
         \label{code:virtual-layer:revocation:funder:proc-remote}
         \State \Return (\textsc{ok})
       \EndIf
@@ -1118,7 +1118,7 @@
 \end{center} \ \\
 
 \begin{center}
-  \begin{processbox}{\textsc{virt} -- On input (\textsc{close}) by $R$:}
+  \begin{processbox}{\textsc{virt} -- On input (\textsc{forceClose}) by $R$:}
     \begin{algorithmic}[1]
       \State \Comment{At most one of \texttt{funder}, \texttt{fundee} is
       defined}
@@ -1135,8 +1135,8 @@
       \label{code:virtual-layer:close:if-nested-host}
         \State ignore all messages except for output (\textsc{closed}) by
         $\texttt{host}_P$. Also relay to $\texttt{host}_P$ any (\textsc{check if
-        closing}) or (\textsc{close}) input received
-        \State input (\textsc{close}) to $\texttt{host}_P$
+        closing}) or (\textsc{forceClose}) input received
+        \State input (\textsc{forceClose}) to $\texttt{host}_P$
       \EndIf
       \State \Comment{if we have a $\texttt{host}_P$, continue from here on
       output (\textsc{closed}) by it}
@@ -1148,7 +1148,7 @@
       our counterparty has closed -- 1st subscript of TX is $2$ if $i=1$ and
       $n-1$ if $i=n$}
         \State ignore all messages except for (\textsc{check if closing}) and
-        (\textsc{close}) by $R$
+        (\textsc{forceClose}) by $R$
         \State $\textit{State} \gets \textsc{closing}$
         \State give up execution token \Comment{control goes to \environment}
       \EndIf

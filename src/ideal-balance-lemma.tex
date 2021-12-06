@@ -20,7 +20,7 @@
     \textsc{open} \textit{State}] $l$ times.
   \end{itemize}
   Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If \fchan
-  receives $(\textsc{close}, P)$ by \simulator, then the following holds with
+  receives $(\textsc{forceClose}, P)$ by \simulator, then the following holds with
   overwhelming probability on the security parameter:
   \begin{equation}
     \texttt{balance}_P = \phi \cdot c - \sum\limits_{i=1}^n f_i -
@@ -75,7 +75,7 @@
     $\sum\limits_{i=1}^l e_i$ in total.
   \end{itemize}
   On aggregate, after the above are completed and then \fchan receives
-  (\textsc{close}, $P$) by \simulator, it is $\subbalance{P} = c -
+  (\textsc{forceClose}, $P$) by \simulator, it is $\subbalance{P} = c -
   \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$
   if $P = \alice$, or else if $P = \bob$, $\subbalance{P} = - \sum\limits_{i=1}^n
   f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$.

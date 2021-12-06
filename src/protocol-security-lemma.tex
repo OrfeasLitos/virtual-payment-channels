@@ -22,7 +22,7 @@
     \textsc{open} \textit{State}] $l$ times.
   \end{itemize}
   Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ receives
-  $(\textsc{close})$ by \environment and, if $\texttt{host}_P \neq$
+  $(\textsc{forceClose})$ by \environment and, if $\texttt{host}_P \neq$
   ``\texttt{ledger}'' the
   output of $\texttt{host}_P$ is (\textsc{closed}), then eventually the state
   obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$ outputs
@@ -145,7 +145,7 @@
   (Fig.~\ref{code:ln:exchange-open-sigs},
   l.~\ref{code:ln:exchange-open-sigs:a-tx}
   or~\ref{code:ln:exchange-open-sigs:b-tx}). Additionally, if $P$ receives
-  (\textsc{close}) by \environment while $H = ([], [g])$, it attempts to publish
+  (\textsc{forceClose}) by \environment while $H = ([], [g])$, it attempts to publish
   $C_{P, 0}$ (Fig.~\ref{code:ln:close}, l.~\ref{code:ln:close:submit}), and will
   either succeed or $C_{\bar{P}, 0}$ will be published instead. We therefore
   conclude that in every case \ledger will eventually have a state $\Sigma$ that
@@ -162,7 +162,7 @@
     \item If $P$ receives (\textsc{fund me}, $f$, $\dots$) by a (local, kindred)
     \textsc{ln} ITI $R$, subsequently transitions back to the \textsc{open}
     state (therefore moving to history $(F, C')$ where $C' = C + [-f]$) and
-    finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
+    finally receives (\textsc{forceClose}) by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
     each of value $c_i$ exclusively spendable or already spent by $\pk{P,
@@ -175,7 +175,7 @@
     l.~\ref{code:ln:virtualise:start-end:funder-funded}). If subsequently the
     state of $R$ transitions to \textsc{open} (therefore obtaining history
     $(F_R, C_R)$ where $F_R = F + C$ and $C_R = [[f]]$), and finally receives
-    (\textsc{close}) by \environment and (\textsc{closed}) by $\texttt{host}_R$
+    (\textsc{forceClose}) by \environment and (\textsc{closed}) by $\texttt{host}_R$
     ($\texttt{host}_R = \texttt{host}_P$ -- Fig.~\ref{code:ln:bob},
     l.~\ref{code:ln:bob:host}) before any further change to its history, then
     \emph{eventually $R$'s \ledger state will contain $k$ transaction outputs
@@ -185,7 +185,7 @@
     \sum\limits_{s \in C_R} \sum\limits_{x \in s} x$}.
     \item If $P$ receives (\textsc{virtualising}, $\dots$) by $\bar{P}$,
     subsequently transitions back to \textsc{open} (therefore moving to history
-    $(F, C')$ where $C' = C + [0]$) and finally receives \textsc{close} by
+    $(F, C')$ where $C' = C + [0]$) and finally receives \textsc{forceClose} by
     \environment and (\textsc{closed}) by $\texttt{host}_P$ before any further
     change to its history, then \emph{eventually $P$'s \ledger state will
     contain $h$ transaction outputs each of value $c_i$ exclusively spendable or
@@ -200,7 +200,7 @@
     party is the (local, kindred) \texttt{fundee} of a new virtual channel. If
     subsequently the state of $R$ transitions to \textsc{open} (therefore
     obtaining history $(F_R, C_R)$ where $F_R = F + C$ and $C_R = [[0]]$), and
-    finally receives (\textsc{close}) by \environment and (\textsc{closed}) by
+    finally receives (\textsc{forceClose}) by \environment and (\textsc{closed}) by
     $\texttt{host}_R$ ($\texttt{host}_R = \texttt{host}_P$ --
     Fig.~\ref{code:ln:bob}, l.~\ref{code:ln:bob:host}) before any further change
     to its history, then \emph{eventually $R$'s \ledger state will contain an
@@ -208,7 +208,7 @@
     \item If $P$ receives (\textsc{pay}, $d$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $-d$ appended to the last list of $C$) and finally
-    receives \textsc{close} by \environment and (\textsc{closed}) by
+    receives \textsc{forceClose} by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
     equivalently $F \neq []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
@@ -219,7 +219,7 @@
     \item If $P$ receives (\textsc{get paid}, $e$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $e$ appended to the last list of $C$) and finally
-    receives \textsc{close} by \environment and (\textsc{closed}) by
+    receives \textsc{forceClose} by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
     equivalently $F = []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
@@ -258,8 +258,8 @@
   note that the use of the \texttt{ANYPREVOUT} flag in all signatures that
   correspond to transaction inputs that may spend various different transaction
   outputs ensures that this is possible, as it avoids tying each input to a
-  specific, predefined output. When $P$ receives (\textsc{close}) by
-  \environment, it inputs (\textsc{close}) to $\texttt{host}_P$
+  specific, predefined output. When $P$ receives (\textsc{forceClose}) by
+  \environment, it inputs (\textsc{forceClose}) to $\texttt{host}_P$
   (Fig.~\ref{code:ln:close}, l.~\ref{code:ln:close:relay}). As per the Lemma
   conditions, $\texttt{host}_P$ will output (\textsc{closed}). This can happen
   only when \ledger contains a suitable output for both $P$'s and $R$'s channel
@@ -273,13 +273,13 @@
   $P, \bar{P}$ channel is already on-chain. Regarding the case in which
   $\texttt{host}_P \neq \ledger$, after the funding procedure is complete, the
   new $\texttt{host}_P$ will have as its \texttt{host} the old $\texttt{host}_P$
-  of $P$. If the (\textsc{close}) sequence is initiated, the new
+  of $P$. If the (\textsc{forceClose}) sequence is initiated, the new
   $\texttt{host}_P$ will follow the same steps that will be described below once
   the old $\texttt{host}_P$ succeeds in closing the lower layer
   (Fig.~\ref{code:virtual-layer:close},
   l.~\ref{code:virtual-layer:close:if-nested-host}). The old $\texttt{host}_P$
   however will see no difference in its interface compared to what would happen
-  if $P$ had received (\textsc{close}) before the funding procedure, therefore
+  if $P$ had received (\textsc{forceClose}) before the funding procedure, therefore
   it will successfully close by the induction hypothesis. Thereafter the process
   is identical to the one when the old $\texttt{host}_P = \ledger$.
 
@@ -311,7 +311,7 @@
   ll.~\ref{code:virtual-layer:mid-txs:initiator:left-new-fund}
   and~\ref{code:virtual-layer:mid-txs:extend-interval-right:new-fund}) which
   will end up in \ledger{} -- call this output $o_P$. We will prove that at most
-  $\sum\limits_{i=2}^{n-1}(t_i + p + s - 1)$ blocks after (\textsc{close}) is
+  $\sum\limits_{i=2}^{n-1}(t_i + p + s - 1)$ blocks after (\textsc{forceClose}) is
   received by $P$, an output $o_R$ with $c_{\mathrm{virt}}$ coins and a
   $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ spending condition without or with an
   expired timelock will be included in \ledger. In case party $\bar{P}$ is idle,
@@ -370,7 +370,7 @@
 
   In every case $o_P$ and $o_R$ end up on-chain in at most $s$ and
   $\sum\limits_{i=2}^{n-1}(t_i + p + s - 1)$ blocks respectively from the moment
-  (\textsc{close}) is received. The output $o_P$ an be spent either by $C_{P,
+  (\textsc{forceClose}) is received. The output $o_P$ an be spent either by $C_{P,
   i}$ or $C_{\bar{P}, i}$. Both these transactions have a $(c_P - f, \pk{P,
   \mathrm{out}})$ output. This output of $C_{P, i}$ is timelocked, but the
   alternative spending method cannot be used as $P$ never signed a transaction
@@ -388,7 +388,7 @@
   $\mathrm{sig}_{\bar{R}, C, 0} =$ sig($C_{R, 0}$, $\pk{\bar{R}, F}$) and sends
   $\mathrm{sig}_{R, C, 0} =$ sig($C_{\bar{R}, 0}$, $\pk{R, F}$). Both these
   transactions spend $o_R$. As we showed before, if $R$ receives
-  (\textsc{close}) by \environment then $o_R$ eventually ends up on-chain. After
+  (\textsc{forceClose}) by \environment then $o_R$ eventually ends up on-chain. After
   receiving (\textsc{closed}) from $\texttt{host}_P$, $R$ attempts to add $C_{R,
   0}$ to \ledger, which may only fail if $C_{\bar{R}, 0}$ ends up on-chain
   instead.  Similar to the case of $P$, both these transactions have an $(f,

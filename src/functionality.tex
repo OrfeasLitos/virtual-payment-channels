@@ -315,7 +315,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
   \begin{systembox}{\fchan{} -- close state machine, $P \in \{\alice,
   \bob\}$}
     \begin{algorithmic}[1]
-      \State On (\textsc{close}) by $P$ when $\itistate_P =
+      \State On (\textsc{forceClose}) by $P$ when $\itistate_P =
       \textsc{open}$:
       \Indent
         \State $\itistate_P \gets \textsc{closing}$
@@ -336,7 +336,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
       \EndIndent
       \Statex
 
-      \State On (\textsc{close}, $P$) by \adversary when $\itistate_P \notin$
+      \State On (\textsc{forceClose}, $P$) by \adversary when $\itistate_P \notin$
       \{\textsc{uninit}, \textsc{init}, \textsc{pending virtual open},
       \textsc{tentative virtual open}, \textsc{tentative base open},
       \textsc{ignored}\}:

@@ -750,14 +750,14 @@
 \end{center} \ \\
 
 \begin{center}
-  \begin{processbox}{\textsc{ln} -- On (\textsc{close}):}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{forceClose}):}
     \begin{algorithmic}[1]
       \State ensure $\itistate \notin \{\bot, \textsc{init}, \textsc{topped up},
       \textsc{closed}, \textsc{base punished}\}$ \Comment{channel open}
       \If{$\texttt{host}_P \neq$ ``\texttt{ledger}''} \Comment{we have a virtual channel}
         \State $\itistate \gets \textsc{host closing}$
-        \State input (\textsc{close}) to $\texttt{host}_P$ and keep relaying any
-        (\textsc{check if closing}) or (\textsc{close}) input to
+        \State input (\textsc{forceClose}) to $\texttt{host}_P$ and keep relaying any
+        (\textsc{check if closing}) or (\textsc{forceClose}) input to
         $\texttt{host}_P$ until receiving output (\textsc{closed}) by
         $\texttt{host}_P$
         \label{code:ln:close:relay}
