@@ -48,9 +48,14 @@
         \If{$\texttt{side} = \text{``left''}$}
           \State $\texttt{side}' \gets \text{``right''}$; $\texttt{myRem}
           \gets i-1$; $\texttt{sibRem} \gets i+1$
+          \State $\pk{i, \mathrm{out}} \gets \pk{\mathrm{loc}, \mathrm{out}}$
+          \State $(\sk{i, j, k}, \pk{i, j, k})_{j \in \{2, \dots, n-1\}, k \in
+          [n] \setminus \{j\}} \gets \textsc{keyGen}()^{(n-2)(n-1)}$
         \Else \: \Comment{$\texttt{side} = \text{``right''}$}
           \State $\texttt{side}' \gets \text{``left''}$; $\texttt{myRem} \gets
           i+1$; $\texttt{sibRem} \gets i-1$
+          \State \Comment{\texttt{sibling} will send keys in \textsc{keys and
+          coins forward}}
         \EndIf
         \State $(\sk{i, \texttt{side}, \mathrm{fund}, \mathrm{old}}, \pk{i,
         \texttt{side}, \mathrm{fund}, \mathrm{old}}) \gets (\sk{\mathrm{loc},
@@ -58,17 +63,9 @@
         \mathrm{old}})$
         \State $\pk{\mathrm{myRem}, \texttt{side}', \mathrm{fund}, \mathrm{old}}
         \gets \pk{\mathrm{rem}, \mathrm{fund}, \mathrm{old}}$
-        \If{\texttt{side} = ``left''}
-          \State $\pk{i, \mathrm{out}} \gets \pk{\mathrm{loc}, \mathrm{out}}$
-        \EndIf \: \Comment{otherwise \texttt{sibling} will send $\pk{i,
-        \mathrm{out}}$ in \textsc{keys and coins forward}}
         \State $(c_{i, \texttt{side}}, c_{\texttt{myRem}, \texttt{side}'}, t_{i,
         \texttt{side}}) \gets (c_P, c_{\bar{P}}, t_P)$
         \State $\texttt{last\_poll} \gets \bot$
-        \If{$\texttt{side} = \text{``left''}$}
-          \State $(\sk{i, j, k}, \pk{i, j, k})_{j \in \{2, \dots, n-1\}, k \in
-          [n] \setminus \{j\}} \gets \textsc{keyGen}()^{(n-2)(n-1)}$
-        \EndIf
         \State output (\textsc{host init ok}) to \texttt{guest}
       \EndIndent
       \Statex
