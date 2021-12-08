@@ -51,6 +51,9 @@
           \State $\pk{i, \mathrm{out}} \gets \pk{\mathrm{loc}, \mathrm{out}}$
           \State $(\sk{i, j, k}, \pk{i, j, k})_{j \in \{2, \dots, n-1\}, k \in
           [n] \setminus \{j\}} \gets \textsc{keyGen}()^{(n-2)(n-1)}$
+          \State $(\sk{i, \mathrm{loc}, \mathrm{rev}}, \pk{i, \mathrm{loc},
+          \mathrm{rev}}), (\sk{i, \mathrm{rem}, \mathrm{rev}}, \pk{i,
+          \mathrm{rem}, \mathrm{rev}}) \gets \textsc{keyGen}()^2$
         \Else \: \Comment{$\texttt{side} = \text{``right''}$}
           \State $\texttt{side}' \gets \text{``left''}$; $\texttt{myRem} \gets
           i+1$; $\texttt{sibRem} \gets i-1$
@@ -87,6 +90,9 @@
         \label{code:virtual-layer:keys:host-me:set-i}
         \State $(\sk{1, j, k}, \pk{1, j, k})_{j \in \{2, \dots, n-1\}, k \in [n]
         \setminus \{j\}} \gets \textsc{keyGen}()^{(n-2)(n-1)}$
+          \State $(\sk{1, \mathrm{loc}, \mathrm{rev}}, \pk{1, \mathrm{loc},
+          \mathrm{rev}}), (\sk{1, \mathrm{rem}, \mathrm{rev}}, \pk{1,
+          \mathrm{rem}, \mathrm{rev}}) \gets \textsc{keyGen}()^2$
         \State ensure \textsc{virt.circulateKeysCoinsTimes}() returns
         (\textsc{ok})
         \State ensure \textsc{virt.circulateVirtualSigs}() returns (\textsc{ok})
@@ -115,15 +121,18 @@
         \mathrm{right}})_{j \in [i-1]}$, $(t_j)_{j \in [i-1]}$,
         $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
         \mathrm{virt}}$, $(\pk{h, j, k})_{h \in [i-1], j \in \{2, \dots, n-1\},
-        k \in [n] \setminus \{j\}}$)
+        k \in [n] \setminus \{j\}}$, $(\pk{h, \mathrm{loc}, \mathrm{rev}})_{h
+        \in [i-1]}$, $(\pk{h, \mathrm{rem}, \mathrm{rev}})_{h \in [i-1]}$)
         \If{we have a \texttt{sibling}} \Comment{we are not
         \texttt{host\_fundee}}
           \State input (\textsc{keys and coins forward}, (\texttt{left\_data},
           ($\sk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{i,
           \mathrm{left}, \mathrm{fund}, \mathrm{old}}$), $\pk{i, \mathrm{out}}$,
           $c_{i, \mathrm{left}}$, $t_{i, \mathrm{left}}$, $(\sk{i, j, k}, \pk{i,
-          j, k})_{j \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$) to
-          \texttt{sibling}
+          j, k})_{j \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$,
+          $(\sk{i, \mathrm{loc}, \mathrm{rev}}, \pk{i, \mathrm{loc},
+          \mathrm{rev}})$, $(\sk{i, \mathrm{rem}, \mathrm{rev}}, \pk{i,
+          \mathrm{rem}, \mathrm{rev}})$) to \texttt{sibling}
           \State \trustedcode{store input as \texttt{left\_data} and parse it as
           ($(\pk{j, \mathrm{fund}, \mathrm{new}})_{j \in [i-1]}$, $(\pk{j,
           \mathrm{left}, \mathrm{fund}, \mathrm{old}})_{j \in \{2, \dots, i\}}$,
@@ -134,14 +143,18 @@
           $t_{i, \mathrm{left}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
           $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{h, j, k})_{h \in [i], j
           \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$, $(\sk{i, j, k})_{j
-          \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$}
+          \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$, $(\pk{h,
+          \mathrm{loc}, \mathrm{rev}})_{h \in [i]}$, $\sk{i, \mathrm{loc},
+          \mathrm{rev}}$, $(\pk{h, \mathrm{rem}, \mathrm{rev}})_{h \in [i]}$,
+          $\sk{i, \mathrm{rem}, \mathrm{rev}}$}
           \State \trustedcode{$t_i \gets \max{(t_{i, \mathrm{left}}, t_{i,
           \mathrm{right}})}$}
           \State \trustedcode{replace $t_{i, \mathrm{left}}$ in
           \texttt{left\_data} with $t_i$}
           \State \trustedcode{remove $\sk{i, \mathrm{left}, \mathrm{fund},
-          \mathrm{old}}$ and $(\sk{i, j, k})_{j \in \{2, \dots, n-1\}, k \in [n]
-          \setminus \{j\}}$ from \texttt{left\_data}}
+          \mathrm{old}}$, $(\sk{i, j, k})_{j \in \{2, \dots, n-1\}, k \in [n]
+          \setminus \{j\}}$, $\sk{i, \mathrm{loc}, \mathrm{rev}}$ and $\sk{i,
+          \mathrm{rem}, \mathrm{rev}}$ from \texttt{left\_data}}
           \State \trustedcode{call
           \textsc{virt.circulateKeysCoinsTimes}(\texttt{left\_data}) of
           $\bar{P}$ and assign returned value to \texttt{right\_data}}
@@ -153,7 +166,9 @@
           n\}}$, $(c_{j, \mathrm{left}})_{j \in \{i+1, \dots, n\}}$, $(c_{j,
           \mathrm{right}})_{j \in \{i+1, \dots, n-1\}}$, $(t_j)_{j \in \{i+1,
           \dots, n\}}$, $(\pk{h, j, k})_{h \in \{i+1, \dots, n\}, j
-          \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$}
+          \in \{2, \dots, n-1\}, k \in [n] \setminus \{j\}}$, $(\pk{h,
+          \mathrm{loc}, \mathrm{rev}})_{h \in \{i+1, \dots, n\}}$, $(\pk{h,
+          \mathrm{rem}, \mathrm{rev}})_{h \in \{i+1, \dots, n\}}$}
           \State \trustedcode{output (\textsc{keys and coins back},
           \texttt{right\_data}, ($\sk{i, \mathrm{right}, \mathrm{fund},
           \mathrm{old}}$, $\pk{i, \mathrm{right}, \mathrm{fund},
@@ -166,7 +181,9 @@
           n\}}$, $(c_{j, \mathrm{left}})_{j \in \{i+1, \dots, n\}}$, $(c_{j,
           \mathrm{right}})_{j \in \{i, \dots, n-1\}}$, $(t_j)_{j \in \{i, \dots,
           n\}}$, $(\pk{h, j, k})_{h \in \{i+1, \dots, n\}, j \in \{2, \dots,
-          n-1\}, k \in [n] \setminus \{j\}}$, $\sk{i, \mathrm{right},
+          n-1\}, k \in [n] \setminus \{j\}}$, $(\pk{h, \mathrm{loc},
+          \mathrm{rev}})_{h \in \{i+1, \dots, n\}}$, $(\pk{h, \mathrm{rem},
+          \mathrm{rev}})_{h \in \{i+1, \dots, n\}}$, $\sk{i, \mathrm{right},
           \mathrm{fund}, \mathrm{old}}$)
           \State remove $\sk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$
           from \texttt{right\_data}
@@ -180,7 +197,8 @@
           \State \Return ($\pk{n, \mathrm{fund}, \mathrm{new}}$, $\pk{n,
           \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{n, \mathrm{out}}$,
           $c_{n, \mathrm{left}}$, $t_n$, $(\pk{n, j, k})_{j \in \{2, \dots,
-          n-1\}, k \in [n] \setminus \{j\}}$)
+          n-1\}, k \in [n] \setminus \{j\}}$, $\pk{n, \mathrm{loc},
+          \mathrm{rev}}$, $\pk{n, \mathrm{rem}, \mathrm{rev}}$)
         \EndIf
       \Else \: \Comment{we are \texttt{host\_funder}}
         \State call \textsc{virt.circulateKeysCoinsTimes}($\pk{1, \mathrm{fund},
@@ -188,7 +206,8 @@
         $\pk{1, \mathrm{out}}$, $c_{1, \mathrm{right}}$, $t_1$,
         $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
         \mathrm{virt}}$, $(\pk{1, j, k})_{j \in \{2, \dots, n-1\}, k \in [n]
-        \setminus \{j\}}$) of $\bar{P}$ and assign returned value to
+        \setminus \{j\}}$, $\pk{1, \mathrm{loc}, \mathrm{rev}}$, $\pk{1,
+        \mathrm{rem}, \mathrm{rev}}$) of $\bar{P}$ and assign returned value to
         \texttt{right\_data}
         \State parse \texttt{right\_data} as ($(\pk{j, \mathrm{fund},
         \mathrm{new}})_{j \in \{2, \dots, n\}}$, $(\pk{j, \mathrm{left},
@@ -198,7 +217,8 @@
         \mathrm{left}})_{j \in \{2, \dots, n\}}$, $(c_{j, \mathrm{right}})_{j
         \in \{2, \dots, n-1\}}$, $(t_j)_{j \in \{2, \dots, n\}}$, $(\pk{h, j,
         k})_{h \in \{2, \dots, n\}, j \in \{2, \dots, n-1\}, k \in [n] \setminus
-        \{j\}}$)
+        \{j\}}$, $(\pk{h, \mathrm{loc}, \mathrm{rev}})_{h \in \{2, \dots, n\}}$,
+        $(\pk{h, \mathrm{rem}, \mathrm{rev}})_{h \in \{2, \dots, n\}}$)
         \State \Return (\textsc{ok})
       \EndIf
     \end{algorithmic}
