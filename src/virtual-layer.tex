@@ -179,7 +179,8 @@
           \texttt{fundee} and expect reply (\textsc{keys ok})
           \State \Return ($\pk{n, \mathrm{fund}, \mathrm{new}}$, $\pk{n,
           \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{n, \mathrm{out}}$,
-          $c_{n, \mathrm{left}}$, $t_n$)
+          $c_{n, \mathrm{left}}$, $t_n$, $(\pk{n, j, k})_{j \in \{2, \dots,
+          n-1\}, k \in [n] \setminus \{j\}}$)
         \EndIf
       \Else \: \Comment{we are \texttt{host\_funder}}
         \State call \textsc{virt.circulateKeysCoinsTimes}($\pk{1, \mathrm{fund},
