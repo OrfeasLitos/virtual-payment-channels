@@ -242,9 +242,11 @@
       \mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{rem},
       \mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
       \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-      \mathrm{out}}$, $(\pk{h,j,k})_{h \in [n], j \in [n-1] \setminus \{1\}, k
-      \in [n-1] \setminus \{1, j\}}$, $(\pk{h, 2, 1})_{h \in [n]}$, $(\pk{h,
-      n-1, n})_{h \in [n]}$, $(t_j)_{j \in [n-1] \setminus \{1\}}$):
+      \mathrm{out}}$, $\pk{\mathrm{left}, \mathrm{rev}}$, $\pk{\mathrm{loc},
+      \mathrm{rev}}$, $\pk{\mathrm{right}, \mathrm{rev}}$, $(\pk{h,j,k})_{h \in
+      [n], j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}}$,
+      $(\pk{h, 2, 1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_j)_{j
+      \in [n-1] \setminus \{1\}}$):
       \Indent
         \State ensure $1 < i < n$
         \State ensure $c_{\mathrm{rem}, \mathrm{left}} \geq c_{\mathrm{virt}}
@@ -262,14 +264,21 @@
         \State $\texttt{right\_old\_fund} \gets 2/\{\pk{\mathrm{loc},
         \mathrm{right}, \mathrm{fund}, \mathrm{old}}, \pk{\mathrm{rem},
         \mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
-        \State $\texttt{left\_new\_fund} \gets 2/\{\pk{\mathrm{rem},
+        \State $\texttt{left\_new\_fund} \gets (2/\{\pk{\mathrm{rem},
         \mathrm{left}, \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{loc},
-        \mathrm{left}, \mathrm{fund}, \mathrm{new}}\}$
-        \State $\texttt{right\_new\_fund} \gets 2/\{\pk{\mathrm{loc},
+        \mathrm{left}, \mathrm{fund}, \mathrm{new}}\} + (p + s)) \vee
+        (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
+        \mathrm{rev}}\})$
+        \State $\texttt{right\_new\_fund} \gets (2/\{\pk{\mathrm{loc},
         \mathrm{right}, \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{rem},
-        \mathrm{right}, \mathrm{fund}, \mathrm{new}}\}$
+        \mathrm{right}, \mathrm{fund}, \mathrm{new}}\} + (p + s)) \vee
+        (2/\{\pk{\mathrm{loc}, \mathrm{rev}}, \pk{\mathrm{right},
+        \mathrm{rev}}\})$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
         \pk{\mathrm{right}, \mathrm{virt}}\}$
+        \State $\texttt{refund} \gets (\pk{\mathrm{loc}, \mathrm{out}} + (p +
+        s)) \vee (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
+        \mathrm{rev}}\})$
 
         \ForAll{$j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}$}
           \State $\mathit{all}_{j, k} \gets n/\{\pk{1, j, k}, \dots,
@@ -304,7 +313,7 @@
             \label{code:virtual-layer:mid-txs:initiator:left-new-fund}
             \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
             \texttt{right\_new\_fund}),
-            \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+            \State ($c_{\mathrm{virt}}$, \texttt{refund}),
             \State ($c_{\mathrm{virt}}$,
             \Indent
               \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, i}$ else False)
@@ -343,7 +352,7 @@
             \Indent
               \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
               \texttt{right\_new\_fund}),
-              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$, \texttt{refund}),
               \State ($c_{\mathrm{virt}}$,
               \Indent
                 \State if $(n > 3)$ then $(\mathit{all}_{3, 2}
@@ -367,7 +376,7 @@
             \Indent
               \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
               \texttt{left\_new\_fund}),
-              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$, \texttt{refund}),
               \State ($c_{\mathrm{virt}}$,
               \Indent
                 \State if $(n-2 > 1)$ then $(\mathit{all}_{n-2, n-1} \vee
@@ -392,7 +401,7 @@
             \Indent
               \State ($c_{\mathrm{right}} - c_{\mathrm{virt}}$,
               \texttt{right\_new\_fund}),
-              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$, \texttt{refund}),
               \State ($c_{\mathrm{virt}}$,
               \Indent
                 \State (if $(k-1 > 1)$ then $\mathit{all}_{k-1, i}$ else False)
@@ -428,7 +437,7 @@
               \State ($c_{\mathrm{left}} - c_{\mathrm{virt}}$,
               \texttt{left\_new\_fund}),
               \label{code:virtual-layer:mid-txs:extend-interval-right:new-fund}
-              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$, \texttt{refund}),
               \State ($c_{\mathrm{virt}}$,
               \Indent
                 \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, k}$ else False)
@@ -465,7 +474,7 @@
             \EndIndent
             \State outputs:
             \Indent
-              \State ($c_{\mathrm{virt}}$, $\pk{\mathrm{loc}, \mathrm{out}}$),
+              \State ($c_{\mathrm{virt}}$, \texttt{refund}),
               \State ($c_{\mathrm{virt}}$,
               \Indent
                 \State (if $(k_1-1 > 1)$ then $\mathit{all}_{k_1-1, \min{(k_2,
@@ -518,7 +527,8 @@
       \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund},
       \mathrm{old}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$,
       $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
-      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{\mathrm{all},
+      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
+      \mathrm{rev}}$, $\pk{\mathrm{right}, \mathrm{rev}}$, $(\pk{\mathrm{all},
       j})_{j \in [n]}$, $t$):
       \Indent
         \State ensure $i \in \{1, n\}$
@@ -527,8 +537,10 @@
         \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
         \State $\texttt{old\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
         \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
-        \State $\texttt{new\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
-        \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\}$
+        \State $\texttt{new\_fund} \gets (2/\{\pk{\mathrm{left}, \mathrm{fund},
+        \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\} + (p +
+        s)) \vee (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{right},
+        \mathrm{rev}}\})$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
         \If{$i = 1$} \Comment{funder's tx}
