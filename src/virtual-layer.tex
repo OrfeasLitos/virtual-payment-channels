@@ -592,9 +592,11 @@
       \mathrm{new}}$, $\pk{i, \mathrm{fund}, \mathrm{new}}$, $\pk{i,
       \mathrm{fund}, \mathrm{new}}$, $\pk{i+1, \mathrm{fund}, \mathrm{new}}$,
       $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
-      $\pk{i, \mathrm{out}}$, $(\pk{h,j,k})_{h \in [n], j \in [n-1] \setminus
-      \{1\}, k \in [n-1] \setminus \{1, j\}}$, $(\pk{h, 2, 1})_{h \in [n]}$,
-      $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1] \setminus \{1\}}$)
+      $\pk{i, \mathrm{out}}$, $\pk{i-1, \mathrm{rem}, \mathrm{rev}}$, $\pk{i,
+      \mathrm{loc}, \mathrm{rev}}$, $\pk{i+1, \mathrm{rem}, \mathrm{rev}}$,
+      $(\pk{h,j,k})_{h \in [n], j \in [n-1] \setminus \{1\}, k \in [n-1]
+      \setminus \{1, j\}}$, $(\pk{h, 2, 1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h
+      \in [n]}$, $(t_h)_{h \in [n-1] \setminus \{1\}}$)
       \Statex
       \State \Comment{notation: $\mathrm{sig}(\mathrm{TX}, \pk{}) :=$ sig with
       \texttt{ANYPREVOUT} flag such that $\textsc{verify}(\mathrm{TX},
@@ -641,10 +643,12 @@
         \mathrm{new}}$, $\pk{j, \mathrm{fund}, \mathrm{new}}$, $\pk{j,
         \mathrm{fund}, \mathrm{new}}$, $\pk{j+1, \mathrm{fund}, \mathrm{new}}$,
         $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
-        \mathrm{virt}}$, $\pk{j, \mathrm{out}}$, $(\pk{k, p,
-        s})_{k \in [n], p \in [n-1] \setminus \{1\}, s \in [n-1] \setminus \{1,
-        p\}}$, $(\pk{k, 2, 1})_{k \in [n]}$, $(\pk{k, n-1, n})_{k \in [n]}$,
-        $(t_k)_{k \in [n-1] \setminus \{1\}}$)
+        \mathrm{virt}}$, $\pk{j, \mathrm{out}}$, $\pk{j-1, \mathrm{rem},
+        \mathrm{rev}}$, $\pk{j, \mathrm{loc}, \mathrm{rev}}$, $\pk{j+1,
+        \mathrm{rem}, \mathrm{rev}}$, $(\pk{k, p, s})_{k \in [n], p \in [n-1]
+        \setminus \{1\}, s \in [n-1] \setminus \{1, p\}}$, $(\pk{k, 2, 1})_{k
+        \in [n]}$, $(\pk{k, n-1, n})_{k \in [n]}$, $(t_k)_{k \in [n-1] \setminus
+        \{1\}}$)
         \IfThenElse{$j < i$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toLeft}}$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toRight}}$}
@@ -666,8 +670,9 @@
         \mathrm{old}}$, $\pk{n, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
         $\pk{n-1, \mathrm{fund}, \mathrm{new}}$, $\pk{n, \mathrm{fund},
         \mathrm{new}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
-        $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, n-1, n})_{j \in [n]}$,
-        $t_{n-1}$)
+        $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{n-1, \mathrm{rem},
+        \mathrm{rev}}$, $\pk{n, \mathrm{loc}, \mathrm{rev}}$, $(\pk{j, n-1,
+        n})_{j \in [n]}$, $t_{n-1}$)
       \EndIf
       \Statex
       \State call
@@ -722,9 +727,11 @@
       \mathrm{new}}$, $\pk{i, \mathrm{fund}, \mathrm{new}}$, $\pk{i,
       \mathrm{fund}, \mathrm{new}}$, $\pk{i+1, \mathrm{fund}, \mathrm{new}}$,
       $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$,
-      $\pk{i, \mathrm{out}}$, $(\pk{h,j,k})_{h \in [n], j \in [n-1] \setminus
-      \{1\}, k \in [n-1] \setminus \{1, j\}}$, $(\pk{h, 2, 1})_{h \in [n]}$,
-      $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1] \setminus \{1\}}$)
+      $\pk{i, \mathrm{out}}$, $\pk{i-1, \mathrm{rem}, \mathrm{rev}}$, $\pk{i,
+      \mathrm{loc}, \mathrm{rev}}$, $\pk{i+1, \mathrm{rem}, \mathrm{rev}}$,
+      $(\pk{h,j,k})_{h \in [n], j \in [n-1] \setminus \{1\}, k \in [n-1]
+      \setminus \{1, j\}}$, $(\pk{h, 2, 1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h
+      \in [n]}$, $(t_h)_{h \in [n-1] \setminus \{1\}}$)
       \State \Comment{not verifying our signatures in
       $\mathrm{sigs}_{\mathrm{byLeft}}$, our (trusted) \texttt{sibling} will do
       that}
@@ -740,7 +747,8 @@
         $\pk{2, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$, $\pk{1,
         \mathrm{fund}, \mathrm{new}}$, $\pk{2, \mathrm{fund}, \mathrm{new}}$,
         $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
-        \mathrm{virt}}$, $(\pk{j, 2, 1})_{j \in [n]}$, $t_2$)
+        \mathrm{virt}}$, $\pk{1, \mathrm{loc}, \mathrm{rev}}$, $\pk{2,
+        \mathrm{rem}, \mathrm{rev}}$, $(\pk{j, 2, 1})_{j \in [n]}$, $t_2$)
       \EndIf
       \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
     \end{algorithmic}
@@ -758,8 +766,9 @@
       \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{n, \mathrm{right},
       \mathrm{fund}, \mathrm{old}}$, $\pk{n-1, \mathrm{fund}, \mathrm{new}}$,
       $\pk{n, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
-      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, n-1,
-      n})_{j \in [n]}$, $t_{n-1}$)
+      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{n-1,
+      \mathrm{rem}, \mathrm{rev}}$, $\pk{n, \mathrm{loc}, \mathrm{rev}}$,
+      $(\pk{j, n-1, n})_{j \in [n]}$, $t_{n-1}$)
       \label{code:virtual-layer:fundee-sigs:tx}
       \ForAll{$j \in [n-1] \setminus \{1\}$}
         \IfThenElse{$j = 2$}{$m \gets 1$}{$m \gets 2$}
@@ -776,10 +785,12 @@
         \mathrm{new}}$, $\pk{j, \mathrm{fund}, \mathrm{new}}$, $\pk{j,
         \mathrm{fund}, \mathrm{new}}$, $\pk{j+1, \mathrm{fund}, \mathrm{new}}$,
         $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
-        \mathrm{virt}}$, $\pk{j, \mathrm{out}}$, $(\pk{h,s,k})_{h \in [n], s \in
-        [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, s\}}$, $(\pk{h, 2,
-        1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1]
-        \setminus \{1\}}$)
+        \mathrm{virt}}$, $\pk{j, \mathrm{out}}$, $\pk{j-1, \mathrm{rem},
+        \mathrm{rev}}$, $\pk{j, \mathrm{loc}, \mathrm{rev}}$, $\pk{j+1,
+        \mathrm{rem}, \mathrm{rev}}$, $(\pk{h,s,k})_{h \in [n], s \in [n-1]
+        \setminus \{1\}, k \in [n-1] \setminus \{1, s\}}$, $(\pk{h, 2, 1})_{h
+        \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1] \setminus
+        \{1\}}$)
         \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
         \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{n, j, k}$,
@@ -817,10 +828,12 @@
         \mathrm{new}}$, $\pk{j, \mathrm{fund}, \mathrm{new}}$, $\pk{j,
         \mathrm{fund}, \mathrm{new}}$, $\pk{j+1, \mathrm{fund}, \mathrm{new}}$,
         $\pk{\mathrm{left}, \mathrm{virt}}$, $\pk{\mathrm{right},
-        \mathrm{virt}}$, $\pk{j, \mathrm{out}}$, $(\pk{h,s,k})_{h \in [n], s \in
-        [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, s\}}$, $(\pk{h, 2,
-        1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1]
-        \setminus \{1\}}$)
+        \mathrm{virt}}$, $\pk{j, \mathrm{out}}$, $\pk{j-1, \mathrm{rem},
+        \mathrm{rev}}$, $\pk{j, \mathrm{loc}, \mathrm{rev}}$, $\pk{j+1,
+        \mathrm{rem}, \mathrm{rev}}$, $(\pk{h,s,k})_{h \in [n], s \in [n-1]
+        \setminus \{1\}, k \in [n-1] \setminus \{1, s\}}$, $(\pk{h, 2, 1})_{h
+        \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1] \setminus
+        \{1\}}$)
         \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
         \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{1, j, k}$,
@@ -837,13 +850,14 @@
       \textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
       of $\bar{P}$ and assign output to $\mathrm{sigs}_{\mathrm{byRight}}$
       \State $\mathrm{TX}_{1, 1} \gets$
-      \textsc{virt}.\textsc{getEndpointTX}($1$, $n$, $c_{\mathrm{virt}}$,
-      $c_{1, \mathrm{right}}$, $c_{2, \mathrm{left}}$, $\pk{1,
-      \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, $\pk{2, \mathrm{left},
-      \mathrm{fund}, \mathrm{old}}$, $\pk{1, \mathrm{fund}, \mathrm{new}}$,
-      $\pk{2, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
-      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{j, 2,
-      1})_{j \in [n]}$, $t_2$)
+      \textsc{virt}.\textsc{getEndpointTX}($1$, $n$, $c_{\mathrm{virt}}$, $c_{1,
+      \mathrm{right}}$, $c_{2, \mathrm{left}}$, $\pk{1, \mathrm{right},
+      \mathrm{fund}, \mathrm{old}}$, $\pk{2, \mathrm{left}, \mathrm{fund},
+      \mathrm{old}}$, $\pk{1, \mathrm{fund}, \mathrm{new}}$, $\pk{2,
+      \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left}, \mathrm{virt}}$,
+      $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{1, \mathrm{loc},
+      \mathrm{rev}}$, $\pk{2, \mathrm{rem}, \mathrm{rev}}$, $(\pk{j, 2, 1})_{j
+      \in [n]}$, $t_2$)
       \label{code:virtual-layer:fundee-sigs:tx}
       \label{code:virtual-layer:funder-sigs:tx-none}
       \State \Return (\textsc{ok})
