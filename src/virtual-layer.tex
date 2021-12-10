@@ -277,8 +277,8 @@
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
         \pk{\mathrm{right}, \mathrm{virt}}\}$
         \State $\texttt{refund} \gets (\pk{\mathrm{loc}, \mathrm{out}} + (p +
-        s)) \vee (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
-        \mathrm{rev}}\})$
+        s)) \vee (3/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
+        \mathrm{rev}}, \pk{\mathrm{right}, \mathrm{rev}}\})$
 
         \ForAll{$j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}$}
           \State $\mathit{all}_{j, k} \gets n/\{\pk{1, j, k}, \dots,
