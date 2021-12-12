@@ -800,3 +800,36 @@
   \captionof{figure}{}
   \label{code:ln:used-revocation}
 \end{center} \ \\
+
+\begin{center}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{coopClose}):}
+    \Comment{any endpoint or intermediary can initiate virtual channel closing}
+    \begin{algorithmic}[1]
+      \State ensure $\texttt{host}_P \neq$ ``\texttt{ledger}''
+      \State ensure $\itistate = \textsc{open}$
+      \State $\itistate \gets \textsc{coop closing}$
+      \If{we are not \texttt{fundee}}
+        \State send (\textsc{coop close balance}) to \texttt{fundee} and expect
+        output (\textsc{coopClosed}) by $\texttt{host}_P$
+      \Else \: \Comment{we are \texttt{fundee}}
+        \State execute code of Fig.~\ref{code:ln:coop-close-fundee}
+        \label{code:ln:coop-close:goto}
+      \EndIf
+    \end{algorithmic}
+  \end{processbox}
+  \captionof{figure}{}
+  \label{code:ln:coop-close}
+\end{center} \ \\
+
+\begin{center}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{coop close balance}) by $R$}
+    \Comment{also executed when we are instructed to close a channel
+    cooperatively by \environment -- c.f.\ Fig.~\ref{code:ln:coop-close},
+    l.~\ref{code:ln:coop-close:goto}}
+    \begin{algorithmic}[1]
+      \State ensure we are \texttt{fundee}
+    \end{algorithmic}
+  \end{processbox}
+  \captionof{figure}{}
+  \label{code:ln:coop-close-fundee}
+\end{center} \ \\
