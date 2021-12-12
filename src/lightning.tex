@@ -183,10 +183,10 @@
         \State $\texttt{layer} \gets 0$
         \State $t_P \gets s + p$
       \Else \: \Comment{opening virtual channel}
-        \State input (\textsc{fund me}, \alice, \bob, \texttt{hops}, $c$,
-        $\pk{A, F}$, $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect
-        output (\textsc{funded}, $\texttt{host}_P$, \texttt{funder\_layer},
-        $t_P$) \Comment{ignore any other message}
+        \State input (\textsc{fund me}, \bob, \texttt{hops}, $c$, $\pk{A, F}$,
+        $\pk{B, F}$) to \texttt{hops}[0].\texttt{left} and expect output
+        (\textsc{funded}, $\texttt{host}_P$, \texttt{funder\_layer}, $t_P$)
+        \Comment{ignore any other message}
         \label{code:ln:prepare-base:fund-me}
         \State $\texttt{layer} \gets \texttt{funder\_layer}$
       \EndIf
@@ -390,8 +390,8 @@
 \begin{center}
   \begin{processbox}{\textsc{ln} -- virtualise start and end}
     \begin{algorithmic}[1]
-      \State On input (\textsc{fund me}, $c_{\mathrm{virt}}$, \texttt{fundee},
-      \texttt{hops}, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
+      \State On input (\textsc{fund me}, \texttt{fundee}, \texttt{hops},
+      $c_{\mathrm{virt}}$, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
       \Indent
         \State ensure $\itistate = \textsc{open}$
         \State ensure $c_P - \texttt{locked}_P \geq c_{\mathrm{virt}}$
