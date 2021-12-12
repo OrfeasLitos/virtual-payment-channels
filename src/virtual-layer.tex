@@ -266,12 +266,12 @@
         \mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
         \State $\texttt{left\_new\_fund} \gets (2/\{\pk{\mathrm{rem},
         \mathrm{left}, \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{loc},
-        \mathrm{left}, \mathrm{fund}, \mathrm{new}}\} + (p + s)) \vee
+        \mathrm{left}, \mathrm{fund}, \mathrm{new}}\}) \vee
         (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
         \mathrm{rev}}\})$
         \State $\texttt{right\_new\_fund} \gets (2/\{\pk{\mathrm{loc},
         \mathrm{right}, \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{rem},
-        \mathrm{right}, \mathrm{fund}, \mathrm{new}}\} + (p + s)) \vee
+        \mathrm{right}, \mathrm{fund}, \mathrm{new}}\}) \vee
         (2/\{\pk{\mathrm{loc}, \mathrm{rev}}, \pk{\mathrm{right},
         \mathrm{rev}}\})$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
@@ -538,8 +538,8 @@
         \State $\texttt{old\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
         \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
         \State $\texttt{new\_fund} \gets (2/\{\pk{\mathrm{left}, \mathrm{fund},
-        \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\} + (p +
-        s)) \vee (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{right},
+        \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\}) \vee
+        (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{right},
         \mathrm{rev}}\})$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
