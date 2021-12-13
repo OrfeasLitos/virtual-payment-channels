@@ -1276,6 +1276,19 @@
 \end{center} \ \\
 
 \begin{center}
+  \begin{processbox}{\textsc{virt} -- On input (\textsc{coop close}, $(c_1,
+  c_2)$) by \texttt{fundee}:}
+    \begin{algorithmic}[1]
+      \State output (\textsc{coop close}, $(c_1, c_2)$) to \texttt{guest} and
+      expect input (\textsc{new comm tx}, $C_{\bar{P}, i+1}$, $\mathrm{sig}_{P,
+      C, i+1}$, $\pk{P, R, i+2}$)
+    \end{algorithmic}
+  \end{processbox}
+  \captionof{figure}{}
+  \label{code:virtual-layer:start-balance-loop}
+\end{center} \ \\
+
+\begin{center}
   \begin{processbox}{\textsc{virt} -- punishment handling}
     \begin{algorithmic}[1]
       \State On input (\textsc{used revocation}) by \texttt{guest}:
