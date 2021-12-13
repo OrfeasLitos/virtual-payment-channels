@@ -82,7 +82,7 @@
         \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$P$,
         output: ($C_{P, i}$.outputs.$P$.value, $pk_{\bar{P}, \mathrm{out}}$)\}
         \State $\mathrm{sig}_{A, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
-        \sk{P, R})$
+        \sk{P, R, i})$
         \If{$\itistate = \textsc{waiting for revocation}$}
           \State $\itistate \gets \textsc{waiting for inbound revocation}$
         \Else \: \Comment{$\itistate = \textsc{waiting for outbound
@@ -107,7 +107,7 @@
         output: ($C_{\bar{P}, i}$.outputs.$\bar{P}$.value, $pk_{P,
         \mathrm{out}}$)\}
         \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
-        i}$, $\pk{\bar{P}, R}$) = True
+        i}$, $\pk{\bar{P}, R, i}$) = True
         \If{$\itistate = \textsc{waiting for revocation}$}
           \State $\itistate \gets \textsc{waiting for outbound
           revocation}$
@@ -135,20 +135,20 @@
 \begin{center}
   \begin{processbox}{\textsc{ln.exchangeOpenKeys}()}
     \begin{algorithmic}[1]
-      \State $(\sk{A, F}, \pk{A, F}) \gets \textsc{keyGen}()$;
-      $(\sk{A, R}, \pk{A, R}) \gets \textsc{keyGen}()$
+      \State $(\sk{A, F}, \pk{A, F}), (\sk{A, R, 1}, \pk{A, R, 1}), (\sk{A, R,
+      2}, \pk{A, R, 2}) \gets \textsc{keyGen}()^3$
       \State $\itistate \gets \textsc{waiting for opening keys}$
-      \State send (\textsc{open}, $c$, \texttt{hops}, $\pk{A, F}$, $\pk{A, R}$,
-      $\pk{A, \mathrm{out}}$) to \texttt{fundee}
+      \State send (\textsc{open}, $c$, \texttt{hops}, $\pk{A, F}$, $\pk{A, R,
+      1}$, $\pk{A, R, 2}$, $\pk{A, \mathrm{out}}$) to \texttt{fundee}
       \label{code:ln:exchange-open-keys:bob-open}
       \State \Comment{colored code is run by honest \texttt{fundee}.
       Validation is implicit}
       \State \remotecode{ensure we run the code of \bob}
       \State \remotecode{ensure $\itistate = \textsc{init}$}
-      \State \remotecode{store $\pk{A, F}$, $\pk{A, R}$, $\pk{A,
-      \mathrm{out}}$}
-      \State \remotecode{$(\sk{B, F}, \pk{B, F}) \gets \textsc{keyGen}()$;
-      $(\sk{B, R}, \pk{B, R}) \gets \textsc{keyGen}()$}
+      \State \remotecode{store $\pk{A, F}$, $\pk{A, R, 1}$, $\pk{A, R, 2}$,
+      $\pk{A, \mathrm{out}}$}
+      \State \remotecode{$(\sk{B, F}, \pk{B, F}), (\sk{B, R, 1}, \pk{B, R, 1}),
+      (\sk{B, R, 2}, \pk{B, R, 2}) \gets \textsc{keyGen}()^3$}
       \If{\remotecode{\texttt{hops} = ``\texttt{ledger}''}} \Comment{opening base
       channel}
         \State \remotecode{$\texttt{layer} \gets 0$}
@@ -161,10 +161,11 @@
         check keys}$}
       \EndIf
       \State \remotecode{reply (\textsc{accept channel}, $\pk{B, F}$,
-      $\pk{B, R}$, $\pk{B, \mathrm{out}}$)}
+      $\pk{B, R, 1}$, $\pk{B, R, 2}$, $\pk{B, \mathrm{out}}$)}
       \label{code:ln:exchange-open-keys:accept-channel}
       \State ensure $\itistate = \textsc{waiting for opening keys}$
-      \State store $\pk{B, F}$, $\pk{B, R}$, $\pk{B, \mathrm{out}}$
+      \State store $\pk{B, F}$, $\pk{B, R, 1}$, $\pk{B, R, 2}$, $\pk{B,
+      \mathrm{out}}$
       \State $\itistate \gets \textsc{opening keys ok}$
     \end{algorithmic}
   \end{processbox}
@@ -203,12 +204,12 @@
       \State \Comment{$s = (2 + q)\texttt{windowSize}$, where $q$ and
       \texttt{windowSize} are defined in Proposition~\ref{prop:liveness}}
       \State $C_{A, 0} \gets$ TX \{input: $(c, 2/\{\pk{A, F}, \pk{B, F}\})$,
-      outputs: ($c$, ($\pk{A, \mathrm{out}} + (p + s)$) $\vee$ $2/\{\pk{A, R},
-      \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
+      outputs: ($c$, ($\pk{A, \mathrm{out}} + (p + s)$) $\vee$ $2/\{\pk{A, R,
+      1}, \pk{B, R, 1}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}
       \label{code:ln:exchange-open-sigs:a-tx}
       \State $C_{B, 0} \gets$ TX \{input: $(c, 2/\{\pk{A, F}, \pk{B, F}\})$,
       outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B, \mathrm{out}} + (p
-      + s)$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}
+      + s)$) $\vee$ $2/\{\pk{A, R, 1}, \pk{B, R, 1}\}$)\}
       \label{code:ln:exchange-open-sigs:b-tx}
       \State $\mathrm{sig}_{A, C, 0} \gets \textsc{sign}(C_{B, 0}, \sk{A, F})$
       \label{code:ln:exchange-open-sigs:a-sign}
@@ -227,13 +228,13 @@
       \EndIf
       \State \remotecode{$C_{B, 0} \gets$ TX \{input: $(c, 2/\{\pk{A, F}, \pk{B,
       F}\})$, outputs: ($c$, $\pk{A, \mathrm{out}}$), ($0$, ($\pk{B,
-      \mathrm{out}} + (p + s)$) $\vee$ $2/\{\pk{A, R}, \pk{B, R}\}$)\}}
+      \mathrm{out}} + (p + s)$) $\vee$ $2/\{\pk{A, R, 1}, \pk{B, R, 1}\}$)\}}
       \State \remotecode{ensure \textsc{verify}($C_{B, 0}$, $\mathrm{sig}_{A, C,
       0}$, $\pk{A, F}$) = True}
       \label{code:ln:exchange-open-sigs:b-verify}
       \State \remotecode{$C_{A, 0} \gets$ TX \{input: $(c, 2/\{\pk{A, F}, \pk{B,
       F}\})$, outputs: ($c$, ($\pk{A, \mathrm{out}} + (p + s)$) $\vee$
-      $2/\{\pk{A, R}, \pk{B, R}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
+      $2/\{\pk{A, R, 1}, \pk{B, R, 1}\}$), ($0$, $\pk{B, \mathrm{out}}$)\}}
       \State \remotecode{$\mathrm{sig}_{B, C, 0} \gets \textsc{sign}(C_{A, 0},
       \sk{B, F})$}
       \label{code:ln:exchange-open-sigs:b-sign}
@@ -356,29 +357,38 @@
 \begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{updateForVirtual}()}
     \begin{algorithmic}[1]
-      \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, F}'$ and
-      $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
+      \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, F}'$,
+      $\pk{\bar{P}, F}'$, $\pk{\bar{P}, R, i+1}$ and $\pk{P, R, i+1}$ instead of
+      $\pk{P, F}$, $\pk{\bar{P}, F}$, $\pk{\bar{P}, R, i}$ and $\pk{P, R, i}$
       respectively, reducing the input and $P$'s output by $c_{\mathrm{virt}}$
       \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1})$
       \Comment{kept by $\bar{P}$}
-      \State send (\textsc{update forward}, $\mathrm{sig}_{P, C, i+1}$) to
-      $\bar{P}$ \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both
-      in local and remote code}
+      \State $(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets \textsc{keyGen}()$
+      \State send (\textsc{update forward}, $\mathrm{sig}_{P, C, i+1}$, $\pk{P,
+      R, i+2}$) to $\bar{P}$
+      \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
+      and remote code}
       \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P,
-      F}'$ and $\pk{\bar{P}, F}'$ instead of $\pk{P, F}$ and $\pk{\bar{P}, F}$
-      respectively, reducing the input and $P$'s output by $c_{\mathrm{virt}}$}
+      F}'$, $\pk{\bar{P}, F}'$, $\pk{P, R, i+1}$ and $\pk{\bar{P}, R, i+1}$
+      instead of $\pk{P, F}$, $\pk{\bar{P}, F}$, $\pk{P, R, i}$ and
+      $\pk{\bar{P}, R, i}$ respectively, reducing the input and $P$'s output by
+      $c_{\mathrm{virt}}$}
       \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
       $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}'$) = True}
-      \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and
-      $\pk{P, F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively,
-      reducing the input and $P$'s output by $c_{\mathrm{virt}}$}
+      \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$,
+      $\pk{P, F}'$, $\pk{\bar{P}, R, i+1}$ and $\pk{P, R, i+1}$ instead of
+      $\pk{\bar{P}, F}$, $\pk{P, F}$, $\pk{\bar{P}, R, i}$ and $\pk{P, R, i}$
+      respectively, reducing the input and $P$'s output by $c_{\mathrm{virt}}$}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
       \textsc{sign}(C_{P, i+1}, sk_{\bar{P}, F}')$} \Comment{kept by $P$}
+      \State \remotecode{$(\sk{\bar{P}, R, i+2}, \pk{\bar{P}, R, i+2}) \gets
+      \textsc{keyGen}()$}
       \State \remotecode{reply (\textsc{update back}, $\mathrm{sig}_{\bar{P}, C,
-      i+1}$)}
-      \State $C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$ and $\pk{P,
-      F}'$ instead of $\pk{\bar{P}, F}$ and $\pk{P, F}$ respectively, reducing
-      the input and $P$'s output by $c_{\mathrm{virt}}$
+      i+1}$, $\pk{\bar{P}, R, i+2}$)}
+      \State $C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, F}'$, $\pk{P, F}'$,
+      $\pk{\bar{P}, R, i+1}$ and $\pk{P, R, i+1}$ instead of $\pk{\bar{P}, F}$,
+      $\pk{P, F}$, $\pk{\bar{P}, R, i}$ and $\pk{P, R, i}$ respectively,
+      reducing the input and $P$'s output by $c_{\mathrm{virt}}$
       \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
       i+1}$, $\pk{\bar{P}, F}'$) = True
     \end{algorithmic}
@@ -538,38 +548,48 @@
 \begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{signaturesRoundTrip}()}
     \begin{algorithmic}[1]
-      \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$ coins moved from
-      $P$'s to $\bar{P}$'s output
+      \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, R, i+1}$ and
+      $\pk{\bar{P}, R, i+1}$ instead of $\pk{P, R, i}$ and $\pk{\bar{P}, R, i}$
+      respectively, and $x$ coins moved from $P$'s to $\bar{P}$'s output
       \label{code:ln:pay:signatures:new-comm}
       \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1},
       \sk{P, F})$ \Comment{kept by $\bar{P}$}
       \label{code:ln:pay:signatures:sign-new-comm}
+      \State $(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets \textsc{keyGen}()$
       \State $\itistate \gets \textsc{waiting for commitment signed}$
-      \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$) to $\bar{P}$
+      \State send (\textsc{pay}, $x$, $\mathrm{sig}_{P, C, i+1}$, $\pk{P, R,
+      i+2}$) to $\bar{P}$
       \label{code:ln:pay:signatures:pay}
       \State \Comment{$P$ refers to payer and $\bar{P}$ to payee both in local
       and remote code}
       \State \remotecode{ensure $\itistate = \textsc{waiting to get paid} \wedge
       x = y$}
-      \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $x$
-      coins moved from $P$'s to $\bar{P}$'s output}
+      \State \remotecode{$C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, R,
+      i+1}$ and $\pk{\bar{P}, R, i+1}$ instead of $\pk{P, R, i}$ and
+      $\pk{\bar{P}, R, i}$ respectively, and $x$ coins moved from $P$'s to
+      $\bar{P}$'s output}
       \State \remotecode{ensure \textsc{verify}($C_{\bar{P}, i+1}$,
       $\mathrm{sig}_{P, C, i+1}$, $\pk{P, F}$) = True}
       \label{code:ln:pay:signatures:verify}
-      \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from
-      $P$'s to $\bar{P}$'s output}
+      \State \remotecode{$C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, R, i+1}$
+      and $\pk{P, R, i+1}$ instead of $\pk{\bar{P}, R, i}$ and $\pk{P, R, i}$
+      respectively, and $x$ coins moved from $P$'s to $\bar{P}$'s output}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
       \textsc{sign}(C_{P, i+1}, \sk{\bar{P}, F})$} \Comment{kept by $P$}
       \State \remotecode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
       i}$.outputs.$P$, output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, R, i} \gets
-      \textsc{sign}(R_{P, i}, \sk{\bar{P}, R})$}
+      \textsc{sign}(R_{P, i}, \sk{\bar{P}, R, i})$}
+      \State \remotecode{$(\sk{\bar{P}, R, i+2}, \pk{\bar{P}, R, i+2}) \gets
+      \textsc{keyGen}()$}
       \State \remotecode{$\itistate \gets \textsc{waiting for pay revocation}$}
       \State \remotecode{reply (\textsc{commitment signed},
-      $\mathrm{sig}_{\bar{P}, C, i+1}$, $\mathrm{sig}_{\bar{P}, R, i}$)}
+      $\mathrm{sig}_{\bar{P}, C, i+1}$, $\mathrm{sig}_{\bar{P}, R, i}$,
+      $\pk{\bar{P}, R, i+2}$)}
       \State ensure $\itistate = \textsc{waiting for commitment signed}$
-      \State $C_{P, i+1} \gets C_{P, i}$ with $x$ coins moved from $P$'s to
-      $\bar{P}$'s output
+      \State $C_{P, i+1} \gets C_{P, i}$ with $\pk{\bar{P}, R, i+1}$ and $\pk{P,
+      R, i+1}$ instead of $\pk{\bar{P}, R, i}$ and $\pk{P, R, i}$ respectively,
+      and $x$ coins moved from $P$'s to $\bar{P}$'s output
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
@@ -585,12 +605,12 @@
       \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$\bar{P}$,
       output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}
       \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
-      i}$, $\pk{\bar{P}, R}$) = True
+      i}$, $\pk{\bar{P}, R, i}$) = True
       \label{code:ln:pay:revocations:verify-rev}
       \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$P$, output:
       ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}
       \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i},
-      \sk{P, R})$
+      \sk{P, R, i})$
       \label{code:ln:pay:revocations:sign-rev}
       \State add $x$ to \texttt{paid\_out}
       \label{code:ln:pay:revocations:paid-out}
@@ -621,7 +641,7 @@
       \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
       i}$.outputs.$\bar{P}$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
       \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
-      $\mathrm{sig}_{P, R, i}$, $\pk{P, R}$) = True}
+      $\mathrm{sig}_{P, R, i}$, $\pk{P, R, i}$) = True}
       \label{code:ln:pay:revocations:verify}
       \State \remotecode{add $x$ to \texttt{paid\_in}}
       \label{code:ln:pay:revocations:paid-in}
@@ -732,7 +752,8 @@
 \begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{submitAndCheckRevocation}($j$)}
     \begin{algorithmic}[1]
-      \State $\mathrm{sig}_{P, R, j} \gets \textsc{sign}(R_{P, j}, \sk{P, R})$
+      \State $\mathrm{sig}_{P, R, j} \gets \textsc{sign}(R_{P, j}, \sk{P, R,
+      j})$
       \State input (\textsc{submit}, ($R_{P, j}$, $\mathrm{sig}_{P, R, j}$,
       $\mathrm{sig}_{\bar{P}, R, j}$)) to \ledger
       \While{$\neg\exists R_{P, j} \in \Sigma$}
