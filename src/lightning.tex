@@ -435,7 +435,8 @@
       \Indent
         \State ensure $\itistate = \textsc{waiting for hosts ready}$
         \State $\itistate \gets \textsc{open}$
-        \State move $\pk{P, F}$, $\pk{\bar{P}, F}$ to list of old funding keys
+        \State move $\sk{P, F}$, $\pk{P, F}$, $\pk{\bar{P}, F}$ to list of old
+        funding keys
         \State $(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P, F}')$;
         $\pk{\bar{P}, F} \gets \pk{\bar{P}, F}'$
         \If{len(\texttt{hops}) = 1} \Comment{we are the last hop}
