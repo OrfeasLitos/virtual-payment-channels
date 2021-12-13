@@ -931,6 +931,10 @@
             $\sk{i, \mathrm{right}, \mathrm{fund}, \mathrm{old}}$,
             \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toRight}}$}
           \EndFor
+        \Else \: \trustedcode{\Comment{$i + 1 = n$}}
+          \State \trustedcode{add \textsc{sign}($\mathrm{TX}_{n, 1}$, $\sk{i,
+          \mathrm{right}, \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT}) to
+          $\mathrm{sigs}_{\mathrm{toRight}}$}
         \EndIf
         \State \trustedcode{call
         \textsc{virt.circulateFundingSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
@@ -974,6 +978,10 @@
             $\sk{i, \mathrm{left}, \mathrm{fund}, \mathrm{old}}$,
             \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
           \EndFor
+        \Else \: \Comment{$i - 1 = 1$}
+          \State add \textsc{sign}($\mathrm{TX}_{1, 1}$, $\sk{i, \mathrm{left},
+          \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT}) to
+          $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndIf
         \State \Return $\mathrm{sigs}_{\mathrm{toLeft}}$
       \ElsIf{$i = 1$} \Comment{we are \texttt{host\_funder}}
