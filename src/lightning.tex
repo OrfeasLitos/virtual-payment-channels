@@ -628,8 +628,9 @@
       \State \remotecode{$c_P \gets c_P - x; c_{\bar{P}} \gets c_{\bar{P}} +
       x$; $i \gets i + 1$}
       \State \remotecode{$\itistate \gets \textsc{open}$}
-      \If{\remotecode{$\texttt{host}_P \neq$ ``\texttt{ledger}'' $\wedge \bar{P}$ has a
-      \texttt{host\_sibling}}} \Comment{we are intermediary channel}
+      \If{\remotecode{$\texttt{host}_P \neq$ ``\texttt{ledger}'' $\wedge$
+      $\bar{P}$ has a \texttt{host\_sibling}}} \Comment{we are intermediary
+      channel}
         \State \remotecode{input (\textsc{new balance}, $c_{\bar{P}}$, $c_P$)
         to $\texttt{host}_{\bar{P}}$}
         \State \remotecode{relay message as input to \texttt{sibling}}
@@ -653,8 +654,8 @@
   \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_P \geq x$
-      \If{$\texttt{host}_P \neq$ ``\texttt{ledger}'' $\wedge P$ has a \texttt{host\_sibling}}
-      \Comment{we are intermediary channel}
+      \If{$\texttt{host}_P \neq$ ``\texttt{ledger}'' $\wedge$ $P$ has a
+      \texttt{host\_sibling}} \Comment{we are intermediary channel}
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P - x \wedge
         c_{\bar{P}} + x \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by
         griefing attack: one counterparty closes with old version, the other
@@ -673,7 +674,7 @@
   \begin{processbox}{\textsc{ln} -- On (\textsc{get paid}, $y$):}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_{\bar{P}} \geq y$
-      \If{$\texttt{host}_{P} \neq$ ``\texttt{ledger}'' $\wedge P$ has a
+      \If{$\texttt{host}_{P} \neq$ ``\texttt{ledger}'' $\wedge$ $P$ has a
       \texttt{host\_sibling}} \Comment{we are intermediary channel}
         \State ensure $c_P + y \leq c_{\mathrm{sib}, \mathrm{rem}} \wedge
         c_{\mathrm{sib}} \leq c_{\bar{P}} - y$ \Comment{avoid value loss by
