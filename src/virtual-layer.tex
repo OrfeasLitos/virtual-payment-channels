@@ -1277,14 +1277,16 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt} -- On input (\textsc{coop close},
-  $\texttt{sig\_bal}_P$, sig, \texttt{comms\_revkeys}) by $R$:}
+  \texttt{sig\_bal}, \texttt{comms\_revkeys}) by $R$:}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open}$ \TODO{decide if we should inform
       $R$ when we are in some other state}
-      \If{\texttt{funder} is defined}
+      \If{\texttt{funder} is defined} \Comment{we are endpoint}
         \State ensure $R = \texttt{funder}$
         \State output our input to \texttt{guest} and expect reply
       \Else \: \Comment{we are intermediary}
+        \State ensure $R = \texttt{guest}$ \Comment{may be redundant due to UC
+        constraints}
         \State input our input to \texttt{sibling} and expect reply
       \EndIf
     \end{algorithmic}

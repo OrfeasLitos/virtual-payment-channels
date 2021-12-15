@@ -845,7 +845,7 @@
 \end{center} \ \\
 
 \begin{center}
-  \begin{processbox}{\textsc{ln} -- On (\textsc{coop close}) by $R$}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{coop close}) by $R$:}
     \Comment{also executed when we are instructed to close a channel
     cooperatively by \environment -- c.f.\ Fig.~\ref{code:ln:coop-close},
     l.~\ref{code:ln:coop-close:goto}}
@@ -894,21 +894,22 @@
 \end{center} \ \\
 
 \begin{center}
-  \begin{processbox}{On (\textsc{coop close}, $\texttt{sig\_bal}_{\bar{P}}$,
-  $C_{n-1, \mathrm{right}}$, $\mathrm{sig}_{n-1, \mathrm{right}, C}$, $\pk{n, R,
-  i+2}$) by $\bar{P}$}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{coop close},
+  $\texttt{sig\_bal}_{\bar{P}}$, $C_{n-1, \mathrm{r}}$, $\mathrm{sig}_{n-1,
+  \mathrm{r}, C}$, $\pk{n, R, i+2}$) by $\bar{P}$:}
     \begin{algorithmic}[1]
-      \State ensure $P = \texttt{funder} \wedge \bar{P} = \texttt{fundee}$
-      \State parse $\texttt{sig\_bal}_{\bar{P}}$ as $(c_P', c_{\bar{P}}'),
-      \mathrm{sig})$
+      \State ensure we are \texttt{funder}
+      \State ensure $\itistate = \textsc{open}$
+      \State parse $\texttt{sig\_bal}_{\bar{P}}$ as $((c_P', c_{\bar{P}}'),
+      \mathrm{sig}_{\bar{P}})$
       \State ensure $c_P = c_P' \wedge c_{\bar{P}} = c_{\bar{P}}' \wedge
       \textsc{verify}((c_P', c_{\bar{P}}'), \mathrm{sig}, \pk{\bar{P}, F})$
-      \State $\texttt{sig\_bal}_P \gets ((c_P, c_{\bar{P}}), \textsc{sign}((c_P,
-      c_{\bar{P}}), \sk{P, F}))$
+      \State $\texttt{sig\_bal} \gets ((c_P, c_{\bar{P}}), \textsc{sign}((c_P,
+      c_{\bar{P}}), \sk{P, F}), \mathrm{sig}_{\bar{P}})$
       \State $\itistate \gets \textsc{waiting to revoke virt comm}$
-      \State input (\textsc{coop close}, $\texttt{sig\_bal}_P$, sig, $C_{n-1,
-      \mathrm{right}}$, $\mathrm{sig}_{n-1, \mathrm{right}, C}$, $\pk{n, R,
-      i+2}$ to $\texttt{host}_P$
+      \State input (\textsc{coop close}, $\texttt{sig\_bal}$, $C_{n-1,
+      \mathrm{r}}$, $\mathrm{sig}_{n-1, \mathrm{r}, C}$, $\pk{n, R, i+2}$) to
+      $\texttt{host}_P$
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
