@@ -242,8 +242,7 @@
       \mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{rem},
       \mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
       \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{loc},
-      \mathrm{out}}$, $\pk{\mathrm{left}, \mathrm{rev}}$, $\pk{\mathrm{loc},
-      \mathrm{rev}}$, $\pk{\mathrm{right}, \mathrm{rev}}$, $(\pk{h,j,k})_{h \in
+      \mathrm{out}}$, $(\pk{h, \mathrm{rev}})_{h \in [n]}$, $(\pk{h,j,k})_{h \in
       [n], j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}}$,
       $(\pk{h, 2, 1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_j)_{j
       \in [n-1] \setminus \{1\}}$):
@@ -277,20 +276,23 @@
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
         \pk{\mathrm{right}, \mathrm{virt}}\}$
         \State $\texttt{refund} \gets (\pk{\mathrm{loc}, \mathrm{out}} + (p +
-        s)) \vee (3/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
-        \mathrm{rev}}, \pk{\mathrm{right}, \mathrm{rev}}\})$
+        s)) \vee (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
+        \mathrm{rev}}\})$
 
         \ForAll{$j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}$}
-          \State $\mathit{all}_{j, k} \gets n/\{\pk{1, j, k}, \dots,
-          \pk{n, j, k}\} \wedge \texttt{"}k\texttt{"}$
+          \State $\mathit{all}_{j, k} \gets (n/\{\pk{1, j, k}, \dots, \pk{n, j,
+          k}\} \wedge \texttt{"}k\texttt{"}) \vee (n/\{\pk{1, \mathrm{rev}},
+          \dots, \pk{n, \mathrm{rev}}\})$
         \EndFor
         \If{$i = 2$}
-          \State $\mathit{all}_{2, 1} \gets n/\{\pk{1, 2, 1}, \dots, \pk{n, 2,
-          1}\} \wedge \texttt{"1"}$
+          \State $\mathit{all}_{2, 1} \gets (n/\{\pk{1, 2, 1}, \dots, \pk{n, 2,
+          1}\} \wedge \texttt{"1"}) \vee (n/\{\pk{1, \mathrm{rev}}, \dots,
+          \pk{n, \mathrm{rev}}\})$
         \EndIf
         \If{$i = n-1$}
-          \State $\mathit{all}_{n-1, n} \gets n/\{\pk{1, n-1, n}, \dots, \pk{n,
-          n-1, n}\} \wedge \texttt{"}n\texttt{"}$
+          \State $\mathit{all}_{n-1, n} \gets (n/\{\pk{1, n-1, n}, \dots, \pk{n,
+          n-1, n}\} \wedge \texttt{"}n\texttt{"}) \vee (n/\{\pk{1,
+          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\})$
         \EndIf
         \State \Comment{After funding is complete, $A_j$ has the signature of
         all other parties for all $\mathit{all}_{j, k}$ inputs, but other
@@ -527,9 +529,8 @@
       \mathrm{fund}, \mathrm{old}}$, $\pk{\mathrm{right}, \mathrm{fund},
       \mathrm{old}}$, $\pk{\mathrm{left}, \mathrm{fund}, \mathrm{new}}$,
       $\pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}$, $\pk{\mathrm{left},
-      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $\pk{\mathrm{left},
-      \mathrm{rev}}$, $\pk{\mathrm{right}, \mathrm{rev}}$, $(\pk{\mathrm{all},
-      j})_{j \in [n]}$, $t$):
+      \mathrm{virt}}$, $\pk{\mathrm{right}, \mathrm{virt}}$, $(\pk{h,
+      \mathrm{rev}})_{h \in [n]}$, $(\pk{\mathrm{all}, j})_{j \in [n]}$, $t$):
       \Indent
         \State ensure $i \in \{1, n\}$
         \State ensure $c_{\mathrm{left}} \geq c_{\mathrm{virt}}$ \Comment{left
@@ -544,11 +545,13 @@
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
         \If{$i = 1$} \Comment{funder's tx}
-          \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
-          \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}$
+          \State $\mathit{all} \gets (n/\{\pk{\mathrm{all}, 1}, \dots,
+          \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}) \vee (n/\{\pk{1,
+          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\})$
         \Else \: \Comment{fundee's tx}
-          \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
-          \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}$
+          \State $\mathit{all} \gets (n/\{\pk{\mathrm{all}, 1}, \dots,
+          \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}) \vee (n/\{\pk{1,
+          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\})$
         \EndIf
         \State $\mathrm{TX}_1 \gets \mathrm{TX}$: \Comment{endpoints only have
         an ``initiator'' tx}
