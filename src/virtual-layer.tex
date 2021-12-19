@@ -1317,13 +1317,53 @@
   \begin{processbox}{\textsc{virt} -- On input (\textsc{coop close}, $(c_1,
   c_2)$) by \texttt{fundee}:}
     \begin{algorithmic}[1]
-      \State output (\textsc{coop close}, $(c_1, c_2)$) to \texttt{guest},
-      expect input (\textsc{new comm tx}, $C_{\bar{P}, i+1}$, $\mathrm{sig}_{P,
-      C, i+1}$, $\pk{P, R, i+2}$) and output it to \texttt{fundee}
+      \State parse \texttt{sig\_bal} as $(c_1, c_2), \mathrm{sig}_1,
+      \mathrm{sig}_2$
+      \State ensure $c_{\mathrm{virt}} = c_1 + c_2$
+      \State ensure \textsc{verify}($(c_1, c_2), \mathrm{sig}_1,
+      \pk{\mathrm{left}, \mathrm{virt}}$) = True
+      \State ensure \textsc{verify}($(c_1, c_2), \mathrm{sig}_2,
+      \pk{\mathrm{right}, \mathrm{virt}}$) = True
+      \State extract $\mathrm{sig}_{i, \mathrm{right}, C}$, $\pk{i, R}$ from
+      \texttt{left\_comms\_revkeys}
+      \State output (\textsc{check coop close}, $(c_1, c_2)$, $\mathrm{sig}_{i,
+      \mathrm{right}, C}$, $\pk{i, R}$) to \texttt{guest}
+      \State \trustedcode{store received signature as $\mathrm{sig}_{\bar{P}, C,
+      i+1}$}
+      \State \trustedcode{store received revocation key as $\pk{\bar{P}, R,
+      i+2}$}
+      \State \trustedcode{remove most recent keys from list of old funding keys
+      and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
+      \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
+      c_1 + c_2}, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P + c_2,
+      (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{\bar{P}, R, i+1}, \pk{P, R,
+      i+1}\})$, $(c_{\bar{P}} + c_1, \pk{\bar{P}, \mathrm{out}})$\}}
+      \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
+      $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
+      \State \trustedcode{input (\textsc{coop close check ok}) to
+      $\texttt{host}_P$}
+      \State input (\textsc{coop close}, \texttt{left\_comms\_keys}) to
+      \texttt{sibling}
+      \State \trustedcode{output (\textsc{coop close sign comm}, $(c_1, c_2)$)
+      to \texttt{guest}}
+      \State \trustedcode{remove most recent keys from list of old funding keys
+      and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
+      \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
+      c_{\bar{P}} + c_1 + c_2}, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
+      $(c_P + c_1, \pk{P, \mathrm{out}})$, $(c_P + c_2, (\pk{\bar{P},
+      \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1}, \pk{\bar{P}, R,
+      i+1}\})$\}}
+      \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
+      \textsc{sign}(C_{\bar{P}, i+1}, \sk{P, F}')$}
+      \State \trustedcode{$(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets
+      \textsc{keyGen}()$}
+      \State \trustedcode{input (\textsc{new comm tx}, $\mathrm{sig}_{P, C,
+      i+1}$, $\pk{P, R, i+2}$) to $\texttt{host}_P$}
+      \State input our input to \texttt{sibling} and expect reply
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
-  \label{code:virtual-layer:start-balance-loop}
+  \label{code:virtual-layer:coop-close-intermediary}
 \end{center} \ \\
 
 \begin{center}

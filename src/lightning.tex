@@ -851,10 +851,6 @@
     l.~\ref{code:ln:coop-close:goto}}
     \begin{algorithmic}[1]
       \State ensure we are \texttt{fundee}
-      \State input (\textsc{coop close}, $(c_{\bar{P}}, c_P)$) to
-      $\texttt{host}_P$ and expect output (\textsc{new comm tx}, $C_{n-1,
-      \mathrm{right}}$, $\mathrm{sig}_{n-1, \mathrm{right}, C}$, $\pk{n, R,
-      i+2}$)
       \State $\texttt{sig\_bal} \gets ((c_{\bar{P}}, c_P),
       \textsc{sign}((c_{\bar{P}}, c_P), \sk{P, F}))$
       \State $\itistate \gets \textsc{waiting to revoke virt comm}$
