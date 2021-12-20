@@ -266,33 +266,33 @@
         \State $\texttt{left\_new\_fund} \gets (2/\{\pk{\mathrm{rem},
         \mathrm{left}, \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{loc},
         \mathrm{left}, \mathrm{fund}, \mathrm{new}}\}) \vee
-        (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
-        \mathrm{rev}}\})$
+        2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
+        \mathrm{rev}}\}$
         \State $\texttt{right\_new\_fund} \gets (2/\{\pk{\mathrm{loc},
         \mathrm{right}, \mathrm{fund}, \mathrm{new}}, \pk{\mathrm{rem},
         \mathrm{right}, \mathrm{fund}, \mathrm{new}}\}) \vee
-        (2/\{\pk{\mathrm{loc}, \mathrm{rev}}, \pk{\mathrm{right},
-        \mathrm{rev}}\})$
+        2/\{\pk{\mathrm{loc}, \mathrm{rev}}, \pk{\mathrm{right},
+        \mathrm{rev}}\}$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{virt}},
         \pk{\mathrm{right}, \mathrm{virt}}\}$
         \State $\texttt{refund} \gets (\pk{\mathrm{loc}, \mathrm{out}} + (p +
-        s)) \vee (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
-        \mathrm{rev}}\})$
+        s)) \vee 2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{loc},
+        \mathrm{rev}}\}$
 
         \ForAll{$j \in [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, j\}$}
           \State $\mathit{all}_{j, k} \gets (n/\{\pk{1, j, k}, \dots, \pk{n, j,
-          k}\} \wedge \texttt{"}k\texttt{"}) \vee (n/\{\pk{1, \mathrm{rev}},
-          \dots, \pk{n, \mathrm{rev}}\})$
+          k}\} \wedge \texttt{"}k\texttt{"}) \vee n/\{\pk{1, \mathrm{rev}},
+          \dots, \pk{n, \mathrm{rev}}\}$
         \EndFor
         \If{$i = 2$}
           \State $\mathit{all}_{2, 1} \gets (n/\{\pk{1, 2, 1}, \dots, \pk{n, 2,
-          1}\} \wedge \texttt{"1"}) \vee (n/\{\pk{1, \mathrm{rev}}, \dots,
-          \pk{n, \mathrm{rev}}\})$
+          1}\} \wedge \texttt{"1"}) \vee n/\{\pk{1, \mathrm{rev}}, \dots,
+          \pk{n, \mathrm{rev}}\}$
         \EndIf
         \If{$i = n-1$}
           \State $\mathit{all}_{n-1, n} \gets (n/\{\pk{1, n-1, n}, \dots, \pk{n,
-          n-1, n}\} \wedge \texttt{"}n\texttt{"}) \vee (n/\{\pk{1,
-          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\})$
+          n-1, n}\} \wedge \texttt{"}n\texttt{"}) \vee n/\{\pk{1,
+          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\}$
         \EndIf
         \State \Comment{After funding is complete, $A_j$ has the signature of
         all other parties for all $\mathit{all}_{j, k}$ inputs, but other
@@ -540,18 +540,18 @@
         \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
         \State $\texttt{new\_fund} \gets (2/\{\pk{\mathrm{left}, \mathrm{fund},
         \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\}) \vee
-        (2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{right},
-        \mathrm{rev}}\})$
+        2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{right},
+        \mathrm{rev}}\}$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
         \If{$i = 1$} \Comment{funder's tx}
           \State $\mathit{all} \gets (n/\{\pk{\mathrm{all}, 1}, \dots,
-          \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}) \vee (n/\{\pk{1,
-          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\})$
+          \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}) \vee n/\{\pk{1,
+          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\}$
         \Else \: \Comment{fundee's tx}
           \State $\mathit{all} \gets (n/\{\pk{\mathrm{all}, 1}, \dots,
-          \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}) \vee (n/\{\pk{1,
-          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\})$
+          \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}) \vee n/\{\pk{1,
+          \mathrm{rev}}, \dots, \pk{n, \mathrm{rev}}\}$
         \EndIf
         \State $\mathrm{TX}_1 \gets \mathrm{TX}$: \Comment{endpoints only have
         an ``initiator'' tx}
@@ -1335,7 +1335,7 @@
       \State \trustedcode{remove most recent keys from list of old funding keys
       and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
       \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
-      c_1 + c_2}, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P + c_2,
+      c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P + c_2,
       (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{\bar{P}, R, i+1}, \pk{P, R,
       i+1}\})$, $(c_{\bar{P}} + c_1, \pk{\bar{P}, \mathrm{out}})$\}}
       \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
@@ -1349,7 +1349,7 @@
       \State \trustedcode{remove most recent keys from list of old funding keys
       and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
       \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
-      c_{\bar{P}} + c_1 + c_2}, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
+      c_{\bar{P}} + c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
       $(c_P + c_1, \pk{P, \mathrm{out}})$, $(c_P + c_2, (\pk{\bar{P},
       \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1}, \pk{\bar{P}, R,
       i+1}\})$\}}
