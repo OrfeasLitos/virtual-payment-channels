@@ -103,7 +103,7 @@
       \Indent
         \State ensure $\itistate = \textsc{waiting for (inbound)
         revocation}$
-        \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$P$,
+        \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P}, i}$.outputs.$\bar{P}$,
         output: ($C_{\bar{P}, i}$.outputs.$\bar{P}$.value, $pk_{P,
         \mathrm{out}}$)\}
         \State ensure \textsc{verify}($R_{P, i}$, $\mathrm{sig}_{\bar{P}, R,
@@ -578,7 +578,7 @@
       \State \remotecode{$\mathrm{sig}_{\bar{P}, C, i+1} \gets
       \textsc{sign}(C_{P, i+1}, \sk{\bar{P}, F})$} \Comment{kept by $P$}
       \State \remotecode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
-      i}$.outputs.$P$, output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}}
+      i}$.outputs.$\bar{P}$, output: ($c_{\bar{P}}$, $\pk{P, \mathrm{out}}$)\}}
       \State \remotecode{$\mathrm{sig}_{\bar{P}, R, i} \gets
       \textsc{sign}(R_{P, i}, \sk{\bar{P}, R, i})$}
       \State \remotecode{$(\sk{\bar{P}, R, i+2}, \pk{\bar{P}, R, i+2}) \gets
@@ -640,7 +640,7 @@
       \State \remotecode{ensure $\itistate = \textsc{waiting for pay
       revocation}$}
       \State \remotecode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
-      i}$.outputs.$\bar{P}$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
+      i}$.outputs.$P$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
       \State \remotecode{ensure \textsc{verify}($R_{\bar{P}, i}$,
       $\mathrm{sig}_{P, R, i}$, $\pk{P, R, i}$) = True}
       \label{code:ln:pay:revocations:verify}
