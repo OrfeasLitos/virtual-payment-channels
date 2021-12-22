@@ -866,21 +866,34 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{coop close},
-  $\texttt{sig\_bal}_{\bar{P}}$, $C_{n-1, \mathrm{r}}$, $\mathrm{sig}_{n-1,
-  \mathrm{r}, C}$, $\pk{n, R, i+2}$) by $\bar{P}$:}
+  $\texttt{sig\_bal}_{\bar{P}}$) by $\bar{P}$:}
     \begin{algorithmic}[1]
       \State ensure we are \texttt{funder}
       \State ensure $\itistate = \textsc{open}$
       \State parse $\texttt{sig\_bal}_{\bar{P}}$ as $((c_P', c_{\bar{P}}'),
       \mathrm{sig}_{\bar{P}})$
       \State ensure $c_P = c_P' \wedge c_{\bar{P}} = c_{\bar{P}}' \wedge
-      \textsc{verify}((c_P', c_{\bar{P}}'), \mathrm{sig}, \pk{\bar{P}, F})$
+      \textsc{verify}((c_P', c_{\bar{P}}'), \mathrm{sig}_{\bar{P}}, \pk{\bar{P},
+      F}) = \mathrm{True}$
       \State $\texttt{sig\_bal} \gets ((c_P, c_{\bar{P}}), \textsc{sign}((c_P,
       c_{\bar{P}}), \sk{P, F}), \mathrm{sig}_{\bar{P}})$
-      \State $\itistate \gets \textsc{waiting to revoke virt comm}$
-      \State input (\textsc{coop close}, $\texttt{sig\_bal}$, $C_{n-1,
-      \mathrm{r}}$, $\mathrm{sig}_{n-1, \mathrm{r}, C}$, $\pk{n, R, i+2}$) to
-      $\texttt{host}_P$
+      \State $\itistate \gets \textsc{coop closing}$
+      \State input (\textsc{coop close}, $\texttt{sig\_bal}$) to
+      $\texttt{host}_P$ and expect output (\textsc{coop close revocation},
+      \texttt{comms\_revkeys})
+      \State extract $\mathrm{sig}_{\bar{P}, R, i}$ from \texttt{comms\_revkeys}
+      \State $R_{P, i} \gets$ TX \{input: $C_{\bar{P},
+      i}$.outputs.$\bar{P}$, output: $(c_{\bar{P}}, \pk{P, \mathrm{out}})$\}
+      \State ensure \textsc{verify}($R_{P, i}, \mathrm{sig}_{\bar{P}, R, i},
+      \pk{\bar{P}, R, i}$) = True
+      \State $R_{\bar{P}, i} \gets$ TX \{input: $C_{P, i}$.outputs.$P$,
+      output: $(c_P, \pk{\bar{P}, \mathrm{out}})$\}
+      \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i}, \sk{P,
+      R, i})$
+      \State input (\textsc{coop close revocation}, $\mathrm{sig}_{P, R, i}$) to
+      $\texttt{host}_P$ and expect output (\textsc{coop close done})
+      \State $\itistate \gets \textsc{coop closed}$ \Comment{only virtual
+      channels can end up in this state}
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
