@@ -955,8 +955,8 @@
       output: $(c_P, \pk{\bar{P}, \mathrm{out}})$\}
       \State $\mathrm{sig}_{P, R, i} \gets \textsc{sign}(R_{\bar{P}, i}, \sk{P,
       R, i})$
-      \State $\itistate \gets \textsc{coop closed}$ \Comment{only virtual
-      channels can end up in this state}
+      \State $\itistate \gets \textsc{coop closed}$ \Comment{in \textsc{ln},
+      only virtual channels can end up in this state}
       \State input (\textsc{coop close revocation}, $\mathrm{sig}_{P, R, i}$) to
       $\texttt{host}_P$
       \State \trustedcode{output (\textsc{coop close revocations},
