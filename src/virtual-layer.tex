@@ -1279,41 +1279,6 @@
 \end{center} \ \\
 
 \begin{center}
-  \begin{processbox}{\textsc{virt} -- On input (\textsc{coop close},
-  \texttt{sig\_bal}, \texttt{comms\_revkeys}) by $R$:}
-    \begin{algorithmic}[1]
-      \State ensure $\itistate = \textsc{open}$ \TODO{decide if we should inform
-      $R$ when we are in some other state}
-      \If{\texttt{funder} is defined} \Comment{we are endpoint}
-        \State ensure $R = \texttt{funder}$
-        \State output our input to \texttt{guest} and expect reply (\textsc{coop
-        close back}, \texttt{comms\_revkeys\_back}, \texttt{virt\_revocations})
-        \State $\mathrm{TX}_{\mathrm{punish}, \mathrm{virt}} \gets$ TX \{input:
-        $\mathrm{TX}_{1, 1}$.outputs[0], output: $\pk{1, \mathrm{out}}$\}
-        \Comment{spends output carrying $c_{\mathrm{virt}}$}
-        \State $\mathrm{TX}_{\mathrm{punish}, \mathrm{fund}} \gets$ TX
-        \{input: $\mathrm{TX}_{1, 1}$.outputs[0], output: $\pk{1,
-        \mathrm{out}}$\} \Comment{spends other output}
-        \State parse \texttt{virt\_revocations} as
-        $(\mathrm{sig}(\mathrm{TX}_{\mathrm{punish}, \mathrm{virt}}, \pk{h,
-        \mathrm{rev}}))_{h \in [n] \setminus \{1\}}$,
-        sig($\mathrm{TX}_{\mathrm{punish}, \mathrm{fund}}, \pk{2, \mathrm{rev}}$)
-        \State ensure signatures are valid
-        \State output (\textsc{coop close back}, \texttt{comms\_revkeys\_back})
-        to \texttt{funder}
-        \State output our input to \texttt{guest} and expect reply
-      \Else \: \Comment{we are intermediary}
-        \State ensure $R = \texttt{guest}$ \Comment{may be redundant due to UC
-        constraints}
-        \State input our input to \texttt{sibling} and expect reply
-      \EndIf
-    \end{algorithmic}
-  \end{processbox}
-  \captionof{figure}{}
-  \label{code:virtual-layer:coop-close}
-\end{center} \ \\
-
-\begin{center}
   \begin{processbox}{\textsc{virt} -- On input (\textsc{coop close}, $(c_1,
   c_2)$) by \texttt{fundee}:}
     \begin{algorithmic}[1]

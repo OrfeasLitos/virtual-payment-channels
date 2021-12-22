@@ -865,32 +865,6 @@
 \end{center} \ \\
 
 \begin{center}
-  \begin{processbox}{\textsc{ln} -- On output (\textsc{coop close}, $(c_1,
-  c_2)$) by $\texttt{host}_P$:}
-    \TODO{maybe extend this for base parties that are not necessarily kindred to
-    the fundee}
-    \Comment{$c_1 + c_2 = c_{\mathrm{virt}}$}
-    \begin{algorithmic}[1]
-      \State remove most recent keys from list of old funding keys and assign
-      them to $\sk{P, F}', \pk{P, F}'$ and $\pk{\bar{P}, F}'$
-      \State $C_{\bar{P}, i+1} \gets$ TX \{input: ($c_P + c_{\bar{P}} +
-      c_{\mathrm{virt}}, 2/\{\pk{\bar{P}, F}', \pk{P, F}'\}$), outputs:
-      ($c_{\bar{P}} + c_1$, $(\pk{\bar{P}, \mathrm{out}} + (p + s)) \vee
-      (2/\{\pk{\bar{P}, R, i+1}, \pk{P, R, i+1}\})$), ($c_P + c_2$, $\pk{P,
-      \mathrm{out}}$)\}
-      \State $\mathrm{sig}_{P, C, i+1} \gets \textsc{sign}(C_{\bar{P}, i+1},
-      \sk{P, F}')$
-      \State $(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets \textsc{keyGen}()$
-      \State $\itistate \gets \textsc{waiting for virtual revocation}$
-      \State input (\textsc{new comm tx}, $C_{\bar{P}, i+1}$, $\mathrm{sig}_{P,
-      C, i+1}$, $\pk{P, R, i+2}$) to $\texttt{host}_P$
-    \end{algorithmic}
-  \end{processbox}
-  \captionof{figure}{}
-  \label{code:ln:coop-close-base}
-\end{center} \ \\
-
-\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{coop close},
   $\texttt{sig\_bal}_{\bar{P}}$, $C_{n-1, \mathrm{r}}$, $\mathrm{sig}_{n-1,
   \mathrm{r}, C}$, $\pk{n, R, i+2}$) by $\bar{P}$:}
