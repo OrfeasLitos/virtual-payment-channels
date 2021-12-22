@@ -1355,12 +1355,19 @@
       \State \trustedcode{ensure \textsc{verify}($R_{\mathrm{loc},
       \mathrm{right}}$, $\mathrm{sig}_{i+1, \mathrm{right}, \mathrm{rev}}$,
       $\pk{i+1, \mathrm{rev}}$) = True}
-      \State \trustedcode{output (\textsc{verify comm rev},
-      \texttt{right\_comms\_revkeys}, \texttt{right\_revocations}) to
-      \texttt{guest}}
-      \State \trustedcode{extract $\mathrm{sig}_{\bar{P}, C, i+1}$,
-      $\pk{\bar{P}, R, i+2}$ from \texttt{right\_comms\_revkeys}}
+      \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, C}$ from
+      \texttt{right\_comms\_revkeys}}
+      \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, R}$ from
+      \texttt{right\_revocations}}
+      \State \trustedcode{extract $\pk{i+1, \mathrm{left}, R}$ from
+      \textsc{right\_comms\_revkeys}}
+      \State \trustedcode{output (\textsc{verify comm rev}, $\mathrm{sig}_{i+1,
+      \mathrm{left}, C}$, $\mathrm{sig}_{i+1, \mathrm{left}, R}$, $\pk{i+1,
+      \mathrm{left}, R}$) to \texttt{guest}}
+      \State \trustedcode{store received public key as $\pk{\bar{P}, R, i+2}$}
       \Comment{executed by \texttt{guest} of \texttt{sibling}}
+      \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, C}$ as
+      $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, R, i+2}$}
       \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
       c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P +
       c_1, (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1},
@@ -1368,8 +1375,8 @@
       \mathrm{out}})$\}}
       \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
       $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
-      \State \trustedcode{extract $\mathrm{sig}_{\bar{P}, R, i}$ from
-      \texttt{right\_revocations}}
+      \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, R}$ as
+      $\mathrm{sig}_{\bar{P}, R, i}$}
       \State \trustedcode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
       i}$.outputs.$\bar{P}$, output: ($c_P + c_{\bar{P}}$, $\pk{P,
       \mathrm{out}}$)\}}
