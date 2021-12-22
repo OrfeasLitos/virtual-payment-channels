@@ -832,9 +832,10 @@
       \State ensure $\itistate = \textsc{open}$
       \State $\itistate \gets \textsc{coop closing}$
       \If{we are not \texttt{fundee}}
-        \State send (\textsc{coop close}) to \texttt{fundee} and expect output
-        (\textsc{coopClosed}) by $\texttt{host}_P$
+        \State $\texttt{we\_are\_close\_initiator} \gets$ True
+        \State send (\textsc{coop close}) to \texttt{fundee}
       \Else \: \Comment{we are \texttt{fundee}}
+        \State $\texttt{close\_initiator} \gets P$
         \State execute code of Fig.~\ref{code:ln:coop-close-fundee}
         \label{code:ln:coop-close:goto}
       \EndIf
@@ -845,19 +846,34 @@
 \end{center} \ \\
 
 \begin{center}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{coopClosed}) by $R$:}
+    \begin{algorithmic}[1]
+      \State ensure $\itistate \in \{\textsc{open}, \textsc{coop closed}\}$
+      \State ensure $\texttt{we\_are\_close\_initiator} =$ True
+      \State ensure that the last cooperatively closed channel in which we acted
+      as a base had $R$ as its \texttt{fundee}
+      \State $\texttt{we\_are\_close\_initiator} \gets$ False
+      \State output (\textsc{coopClosed})
+    \end{algorithmic}
+  \end{processbox}
+  \captionof{figure}{}
+  \label{code:ln:coop-closed-to-initiator}
+\end{center} \ \\
+
+\begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{coop close}) by $R$:}
     \Comment{also executed when we are instructed to close a channel
     cooperatively by \environment -- c.f.\ Fig.~\ref{code:ln:coop-close},
     l.~\ref{code:ln:coop-close:goto}}
     \begin{algorithmic}[1]
       \State ensure we are \texttt{fundee}
+      \State ensure $\itistate = \textsc{open}$
+      \State $\itistate \gets \textsc{coop closing}$
+      \State $\texttt{close\_initiator} \gets R$
       \State $\texttt{sig\_bal} \gets ((c_{\bar{P}}, c_P),
       \textsc{sign}((c_{\bar{P}}, c_P), \sk{P, F}))$
       \State $\itistate \gets \textsc{waiting to revoke virt comm}$
-      \State send (\textsc{coop close}, \texttt{sig\_bal}, $C_{n-1,
-      \mathrm{right}}$, $\mathrm{sig}_{n-1, \mathrm{right}, C}$, $\pk{n, R,
-      i+2}$) to $\bar{P}$
-      \State \TODO{expect (\textsc{coop close ok}) by $\texttt{host}_P$}
+      \State send (\textsc{coop close}, \texttt{sig\_bal}) to $\bar{P}$
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}

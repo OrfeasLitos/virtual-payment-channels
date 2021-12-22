@@ -1281,7 +1281,7 @@
 \begin{center}
   \begin{processbox}{\textsc{virt} -- On (\textsc{coop close},
   \texttt{sig\_bal}, \texttt{left\_comms\_revkeys}) by $\bar{P}$:}
-    \Comment{we are left intermediary}
+    \Comment{we are left intermediary or host of fundee}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open}$
       \State $\itistate \gets \textsc{coop closing}$
@@ -1315,89 +1315,110 @@
       $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
       \State \trustedcode{input (\textsc{coop close check ok}) to
       $\texttt{host}_P$}
-      \State input (\textsc{coop close}, \texttt{left\_comms\_keys}) to
-      \texttt{sibling}
-      \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
-      by \texttt{sibling}}
-      \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
-      \State \trustedcode{output (\textsc{coop close sign comm}, $(c_1, c_2)$)
-      to \texttt{guest}}
-      \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
-      by \texttt{guest} of \texttt{sibling}}
-      \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
-      \State \trustedcode{remove most recent keys from list of old funding keys
-      and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
-      \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
-      c_{\bar{P}} + c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
-      $(c_P + c_1, \pk{P, \mathrm{out}})$, $(c_{\bar{P}} + c_2, (\pk{\bar{P},
-      \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1}, \pk{\bar{P}, R,
-      i+1}\})$\}}
-      \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
-      \textsc{sign}(C_{\bar{P}, i+1}, \sk{P, F}')$}
-      \State \trustedcode{$(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets
-      \textsc{keyGen}()$}
-      \State \trustedcode{input (\textsc{new comm tx}, $\mathrm{sig}_{P, C,
-      i+1}$, $\pk{P, R, i+2}$) to $\texttt{host}_P$}
-      \State \trustedcode{rename received signature to $\mathrm{sig}_{i,
-      \mathrm{right}, C}$} \Comment{executed by \texttt{sibling}}
-      \State \trustedcode{rename received public key to $\pk{i, \mathrm{right},
-      R}$} \Comment{in \texttt{host}s, $i$ is our hop number}
-      \State \trustedcode{send (\textsc{coop close}, \texttt{sig\_bal},
-      (\texttt{left\_comms\_keys}, $\mathrm{sig}_{i, \mathrm{right}, C}$,
-      $\pk{i, \mathrm{right}, R}$)
-      to $\bar{P}$ and expect reply (\textsc{coop close back},
-      (\texttt{right\_comms\_revkeys}, \texttt{right\_revocations}))}
-      \State \trustedcode{$R_{\mathrm{loc}, \mathrm{right}} \gets$ TX \{input:
-      $(c_{\mathrm{virt}}, 2/\{\pk{i, \mathrm{rev}}, \pk{i+1, \mathrm{rev}}\})$,
-      output: $(c_{\mathrm{virt}}, \pk{i, \mathrm{out}})$\}}
-      \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{right},
-      \mathrm{rev}}$ from \texttt{right\_revocations}}
-      \State \trustedcode{ensure \textsc{verify}($R_{\mathrm{loc},
-      \mathrm{right}}$, $\mathrm{sig}_{i+1, \mathrm{right}, \mathrm{rev}}$,
-      $\pk{i+1, \mathrm{rev}}$) = True}
-      \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, C}$ from
-      \texttt{right\_comms\_revkeys}}
-      \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, R}$ from
-      \texttt{right\_revocations}}
-      \State \trustedcode{extract $\pk{i+1, \mathrm{left}, R}$ from
-      \textsc{right\_comms\_revkeys}}
-      \State \trustedcode{output (\textsc{verify comm rev}, $\mathrm{sig}_{i+1,
-      \mathrm{left}, C}$, $\mathrm{sig}_{i+1, \mathrm{left}, R}$, $\pk{i+1,
-      \mathrm{left}, R}$) to \texttt{guest}}
-      \State \trustedcode{store received public key as $\pk{\bar{P}, R, i+2}$}
-      \Comment{executed by \texttt{guest} of \texttt{sibling}}
-      \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, C}$ as
-      $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, R, i+2}$}
-      \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
-      c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P +
-      c_1, (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1},
-      \pk{\bar{P}, R, i+1}\})$, $(c_{\bar{P}} + c_2, \pk{\bar{P},
-      \mathrm{out}})$\}}
-      \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
-      $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
-      \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, R}$ as
-      $\mathrm{sig}_{\bar{P}, R, i}$}
-      \State \trustedcode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
-      i}$.outputs.$\bar{P}$, output: ($c_P + c_{\bar{P}}$, $\pk{P,
-      \mathrm{out}}$)\}}
-      \State \trustedcode{ensure \textsc{verify}($R_{P, i}$,
-      $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
-      \State \trustedcode{input (\textsc{comm rev verified}) to
-      $\texttt{host}_P$}
-      \State \trustedcode{output (\textsc{coop close back},
-      \texttt{right\_comms\_revkeys}, \texttt{right\_revocations}) to
-      \texttt{sibling}} \Comment{executed by \texttt{sibling}}
-      \State $R_{\mathrm{loc}, \mathrm{left}} \gets$ TX \{input:
-      $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i-1, \mathrm{rev}},
-      \pk{i, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
-      $(c_{\mathrm{virt}}, \pk{i, \mathrm{out}})$\} \Comment{the input
-      corresponds to the revocation path of the virtual output of all virtual
-      txs owned by $\bar{P}$}
-      \State extract $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$ from
-      \texttt{right\_revocations}
-      \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
-      $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$, $\pk{n, \mathrm{rev}}$) =
-      True
+      \If{$i < n$} \Comment{we are intermediary}
+        \State input (\textsc{coop close}, \texttt{left\_comms\_keys}) to
+        \texttt{sibling}
+        \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
+        by \texttt{sibling}}
+        \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
+        \State \trustedcode{output (\textsc{coop close sign comm}, $(c_1, c_2)$)
+        to \texttt{guest}}
+        \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
+        by \texttt{guest} of \texttt{sibling}}
+        \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
+        \State \trustedcode{remove most recent keys from list of old funding keys
+        and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
+        \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
+        c_{\bar{P}} + c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
+        $(c_P + c_1, \pk{P, \mathrm{out}})$, $(c_{\bar{P}} + c_2, (\pk{\bar{P},
+        \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1}, \pk{\bar{P}, R,
+        i+1}\})$\}}
+        \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
+        \textsc{sign}(C_{\bar{P}, i+1}, \sk{P, F}')$}
+        \State \trustedcode{$(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets
+        \textsc{keyGen}()$}
+        \State \trustedcode{input (\textsc{new comm tx}, $\mathrm{sig}_{P, C,
+        i+1}$, $\pk{P, R, i+2}$) to $\texttt{host}_P$}
+        \State \trustedcode{rename received signature to $\mathrm{sig}_{i,
+        \mathrm{right}, C}$} \Comment{executed by \texttt{sibling}}
+        \State \trustedcode{rename received public key to $\pk{i, \mathrm{right},
+        R}$} \Comment{in \texttt{host}s, $i$ is our hop number}
+        \State \trustedcode{send (\textsc{coop close}, \texttt{sig\_bal},
+        (\texttt{left\_comms\_keys}, $\mathrm{sig}_{i, \mathrm{right}, C}$,
+        $\pk{i, \mathrm{right}, R}$)
+        to $\bar{P}$ and expect reply (\textsc{coop close back},
+        (\texttt{right\_comms\_revkeys}, \texttt{right\_revocations}))}
+        \State \trustedcode{$R_{\mathrm{loc}, \mathrm{right}} \gets$ TX \{input:
+        $(c_{\mathrm{virt}}, 2/\{\pk{i, \mathrm{rev}}, \pk{i+1, \mathrm{rev}}\})$,
+        output: $(c_{\mathrm{virt}}, \pk{i, \mathrm{out}})$\}}
+        \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{right},
+        \mathrm{rev}}$ from \texttt{right\_revocations}}
+        \State \trustedcode{ensure \textsc{verify}($R_{\mathrm{loc},
+        \mathrm{right}}$, $\mathrm{sig}_{i+1, \mathrm{right}, \mathrm{rev}}$,
+        $\pk{i+1, \mathrm{rev}}$) = True}
+        \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, C}$ from
+        \texttt{right\_comms\_revkeys}}
+        \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, R}$ from
+        \texttt{right\_revocations}}
+        \State \trustedcode{extract $\pk{i+1, \mathrm{left}, R}$ from
+        \texttt{right\_comms\_revkeys}}
+        \State \trustedcode{output (\textsc{verify comm rev}, $\mathrm{sig}_{i+1,
+        \mathrm{left}, C}$, $\mathrm{sig}_{i+1, \mathrm{left}, R}$, $\pk{i+1,
+        \mathrm{left}, R}$) to \texttt{guest}}
+        \State \trustedcode{store received public key as $\pk{\bar{P}, R, i+2}$}
+        \Comment{executed by \texttt{guest} of \texttt{sibling}}
+        \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, C}$ as
+        $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, R, i+2}$}
+        \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
+        c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P +
+        c_1, (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1},
+        \pk{\bar{P}, R, i+1}\})$, $(c_{\bar{P}} + c_2, \pk{\bar{P},
+        \mathrm{out}})$\}}
+        \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
+        $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
+        \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, R}$ as
+        $\mathrm{sig}_{\bar{P}, R, i}$}
+        \State \trustedcode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
+        i}$.outputs.$\bar{P}$, output: ($c_P + c_{\bar{P}}$, $\pk{P,
+        \mathrm{out}}$)\}}
+        \State \trustedcode{ensure \textsc{verify}($R_{P, i}$,
+        $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
+        \State \trustedcode{input (\textsc{comm rev verified}) to
+        $\texttt{host}_P$}
+        \State \trustedcode{output (\textsc{coop close back},
+        \texttt{right\_comms\_revkeys}, \texttt{right\_revocations}) to
+        \texttt{sibling}} \Comment{executed by \texttt{sibling}}
+        \State $R_{\mathrm{loc}, \mathrm{left}} \gets$ TX \{input:
+        $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i-1, \mathrm{rev}},
+        \pk{i, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
+        $(c_{\mathrm{virt}}, \pk{i, \mathrm{out}})$\} \Comment{the input
+        corresponds to the revocation path of the virtual output of all virtual
+        txs owned by $\bar{P}$}
+        \State extract $\mathrm{sig}_{n, i, \mathrm{left}, \mathrm{rev}}$ from
+        \texttt{right\_revocations}
+        \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
+        $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$, $\pk{n, \mathrm{rev}}$) =
+        True
+      \Else \: \Comment{$i = n$, we are host of fundee}
+        \State output (\textsc{revoke}) to \texttt{fundee}
+        \State \trustedcode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
+        i}$.outputs.$P$, output: $(c_P, \pk{\bar{P}, \mathrm{out}})$\}}
+        \Comment{executed by \texttt{fundee}}
+        \State \trustedcode{$\mathrm{sig}_{P, R, i} \gets
+        \textsc{sign}(R_{\bar{P}, i}, \sk{P, R, i})$}
+        \State \trustedcode{input (\textsc{revocations}, $\mathrm{sig}_{P, R,
+        i}$) to $\texttt{host}_P$}
+        \State rename received signature to $\mathrm{sig}_{n, \mathrm{right},
+        R}$
+        \ForAll{$j \in \{2, \dots, n\}$}
+          \State $R_{j, \mathrm{left}} \gets$ TX \{input: $(c_{\mathrm{virt}},
+          4/\{\pk{1, \mathrm{rev}}, \pk{j-1, \mathrm{rev}}, \pk{j,
+          \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output: $(c_{\mathrm{virt}},
+          \pk{j, \mathrm{out}})\}$
+          \State $\mathrm{sig}_{n, j, \mathrm{left}, \mathrm{rev}} \gets
+          \textsc{sign}(R_{j, \mathrm{left}}, \sk{n, \mathrm{rev}})$
+        \EndFor
+      \EndIf
       \State output (\textsc{new comm rev}) to \texttt{guest}
       \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
       c_{\bar{P}} + c_1 + c_2, 2\{\pk{\bar{P}, F}', \pk{P, F}'\})$, outputs:
@@ -1425,13 +1446,23 @@
       \mathrm{rev}}\})$, output: $(c_{\mathrm{virt}}, \pk{i-1, \mathrm{out}})$\}
       \State $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}} \gets
       \textsc{sign}(R_{\mathrm{rem}, \mathrm{left}}, \sk{i, \mathrm{rev}})$
-      \State send (\textsc{coop close back}, ((\texttt{right\_comms\_revkeys},
-      $\mathrm{sig}_{i, \mathrm{left}, C}$, $\pk{i, \mathrm{left}, R}$),
-      (\texttt{right\_revocations}, $\mathrm{sig}_{i, \mathrm{left},
-      \mathrm{rev}}$, $\mathrm{sig}_{i, \mathrm{left}, R}$))) to $\bar{P}$ and
-      expect reply (\textsc{coop close revocations}, \texttt{left\_revocations})
+      \If{$i < n$} \Comment{we are intermediary}
+        \State $M \gets$ (\textsc{coop close back},
+        ((\texttt{right\_comms\_revkeys}, $\mathrm{sig}_{i, \mathrm{left}, C}$,
+        $\pk{i, \mathrm{left}, R}$), (\texttt{right\_revocations},
+        $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}}$, $\mathrm{sig}_{i,
+        \mathrm{left}, R}$)))
+      \Else \: \Comment{$i = n$, we are host of fundee}
+        \State $M \gets$ (\textsc{coop close back}, ($\mathrm{sig}_{i,
+        \mathrm{left}, C}$, $\pk{i, \mathrm{left}, R}$,  $\mathrm{sig}_{n,
+        \mathrm{left}, R}$), ($\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$,
+        $(\mathrm{sig}_{n, j, \mathrm{left}, \mathrm{rev}})_{j \in \{2, \dots,
+        n\}}$))
+      \EndIf
+      \State send $M$ to $\bar{P}$ and expect reply (\textsc{coop close
+      revocations}, \texttt{left\_revocations})
       \State extract $\mathrm{sig}_{i-1, \mathrm{right}, R}$,
-      $\mathrm{sig}_{1, \mathrm{right}, \mathrm{rev}}$, $\mathrm{sig}_{i-1,
+      $\mathrm{sig}_{1, i, \mathrm{right}, \mathrm{rev}}$, $\mathrm{sig}_{i-1,
       \mathrm{right}, \mathrm{rev}}$ from \texttt{left\_revocations}
       \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
       $\mathrm{sig}_{1, \mathrm{right}, \mathrm{rev}}$, $\pk{1, \mathrm{rev}}$)
@@ -1459,37 +1490,59 @@
       \State \trustedcode{$\itistate \gets \textsc{open}$}
       \State \trustedcode{input (\textsc{rev verified}) to last old host}
       \State $\itistate \gets \textsc{coop closed}$
-      \State send (\textsc{coop close revocations}, \texttt{left\_revocations})
-      to \texttt{sibling}
-      \State \trustedcode{output (\textsc{coop close revocations},
-      $\texttt{host}_P$) to \texttt{guest}} \Comment{executed by
-      \texttt{sibling}}
-      \State \trustedcode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
-      i}$.outputs.$P$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
-      \Comment{executed by \texttt{guest} of \texttt{sibling}}
-      \State \trustedcode{$\mathrm{sig}_{P, R, i} \gets
-      \textsc{sign}(R_{\bar{P}, i}, \sk{P, R, i})$}
-      \State \trustedcode{add $\texttt{host}_P$ to list of old hosts}
-      \State \trustedcode{assign received host to $\texttt{host}_P$}
-      \State \trustedcode{add $\sk{P, F}, \pk{P, F}, \pk{\bar{P}, F}$ to list of
-      old enabler channel funding keys}
-      \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
-      F}')$}
-      \State \trustedcode{$\itistate \gets \textsc{open}$}
-      \State \trustedcode{input (\textsc{revocation}, $\mathrm{sig}_{P, R, i}$)
-      to last old host}
-      \State \trustedcode{rename received signature to $\mathrm{sig}_{i,
-      \mathrm{right}, R}$} \Comment{executed by \texttt{sibling}}
-      \State \trustedcode{$R_{\mathrm{rem}, \mathrm{right}} \gets$ TX \{input:
-      $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i, \mathrm{rev}},
-      \pk{i+1, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
-      $(c_{\mathrm{virt}}, \pk{i+1, \mathrm{out}})$\}}
-      \State \trustedcode{$\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}} \gets
-      \textsc{sign}(R_{\mathrm{rem}, \mathrm{right}}, \sk{i, \mathrm{rev}})$}
-      \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
-      \State \trustedcode{send (\textsc{coop close revocations},
-      (\texttt{left\_revocations}, $\mathrm{sig}_{i, \mathrm{right}, R}$,
-      $\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}}$) to $\bar{P}$)}
+      \If{$i < n$} \Comment{we are intermediary}
+        \State send (\textsc{coop close revocations}, \texttt{left\_revocations})
+        to \texttt{sibling}
+        \State \trustedcode{output (\textsc{coop close revocations},
+        $\texttt{host}_P$) to \texttt{guest}} \Comment{executed by
+        \texttt{sibling}}
+        \State \trustedcode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
+        i}$.outputs.$P$, output: ($c_P$, $\pk{\bar{P}, \mathrm{out}}$)\}}
+        \Comment{executed by \texttt{guest} of \texttt{sibling}}
+        \State \trustedcode{$\mathrm{sig}_{P, R, i} \gets
+        \textsc{sign}(R_{\bar{P}, i}, \sk{P, R, i})$}
+        \State \trustedcode{add $\texttt{host}_P$ to list of old hosts}
+        \State \trustedcode{assign received host to $\texttt{host}_P$}
+        \State \trustedcode{add $\sk{P, F}, \pk{P, F}, \pk{\bar{P}, F}$ to list of
+        old enabler channel funding keys}
+        \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
+        F}')$}
+        \State \trustedcode{$\itistate \gets \textsc{open}$}
+        \State \trustedcode{input (\textsc{revocation}, $\mathrm{sig}_{P, R, i}$)
+        to last old host}
+        \State \trustedcode{rename received signature to $\mathrm{sig}_{i,
+        \mathrm{right}, R}$} \Comment{executed by \texttt{sibling}}
+        \State \trustedcode{$R_{\mathrm{rem}, \mathrm{right}} \gets$ TX \{input:
+        $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i, \mathrm{rev}},
+        \pk{i+1, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
+        $(c_{\mathrm{virt}}, \pk{i+1, \mathrm{out}})$\}}
+        \State \trustedcode{$\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}} \gets
+        \textsc{sign}(R_{\mathrm{rem}, \mathrm{right}}, \sk{i, \mathrm{rev}})$}
+        \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
+        \State \trustedcode{send (\textsc{coop close revocations},
+        (\texttt{left\_revocations}, $\mathrm{sig}_{i, \mathrm{right}, R}$,
+        $\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}}$) to $\bar{P}$)}
+      \Else \: \Comment{$i = n$, we are host of fundee}
+        \State extract $\mathrm{sig}_{1, \mathrm{right}, R}$ from
+        \texttt{left\_revocations}
+        \State output (\textsc{verify revocation}, $\mathrm{sig}_{1,
+        \mathrm{right}, R}$) to \texttt{fundee}
+        \State store received signature as $\mathrm{sig}_{\bar{P}, R, i}$
+        \Comment{executed by \texttt{fundee}}
+        \State \trustedcode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
+        i}$.outputs.$\bar{P}$, output: $(c_{\bar{P}}, \pk{P, \mathrm{out}})$\}}
+        \State \trustedcode{ensure \textsc{verify}($R_{P, i}$,
+        $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
+        \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
+        \If{$\texttt{close\_initiator} = P$} \Comment{\environment instructed us
+        to close the channel}
+          \State execute code of Fig.~\ref{code:ln:coop-closed-to-initiator}
+        \Else \: \Comment{\environment instructed another party to close the
+        channel}
+          \State \trustedcode{send (\textsc{coopClosed}) to
+          \texttt{close\_initiator}}
+        \EndIf
+      \EndIf
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
