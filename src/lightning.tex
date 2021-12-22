@@ -833,8 +833,7 @@
       \State $\itistate \gets \textsc{coop closing}$
       \If{we are not \texttt{fundee}}
         \State send (\textsc{coop close}) to \texttt{fundee} and expect output
-        (\textsc{coopClosed}) by $\texttt{host}_P$ \TODO{decide if more possible
-        outputs should be expected and handled}
+        (\textsc{coopClosed}) by $\texttt{host}_P$
       \Else \: \Comment{we are \texttt{fundee}}
         \State execute code of Fig.~\ref{code:ln:coop-close-fundee}
         \label{code:ln:coop-close:goto}
