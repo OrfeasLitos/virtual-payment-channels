@@ -1348,14 +1348,24 @@
         $\pk{i, \mathrm{right}, R}$)
         to $\bar{P}$ and expect reply (\textsc{coop close back},
         (\texttt{right\_comms\_revkeys}, \texttt{right\_revocations}))}
-        \State \trustedcode{$R_{\mathrm{loc}, \mathrm{right}} \gets$ TX \{input:
-        $(c_{\mathrm{virt}}, 2/\{\pk{i, \mathrm{rev}}, \pk{i+1, \mathrm{rev}}\})$,
-        output: $(c_{\mathrm{virt}}, \pk{i, \mathrm{out}})$\}}
+        \State \trustedcode{$R_{\mathrm{loc}, \mathrm{right}, \mathrm{virt}}
+        \gets$ TX \{input: $(c_{\mathrm{virt}}, 2/\{\pk{i, \mathrm{rev}},
+        \pk{i+1, \mathrm{rev}}\})$, output: $(c_{\mathrm{virt}}, \pk{i,
+        \mathrm{out}})$\}}
         \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{right},
-        \mathrm{rev}}$ from \texttt{right\_revocations}}
+        \mathrm{rev}, \mathrm{virt}}$ from \texttt{right\_revocations}}
         \State \trustedcode{ensure \textsc{verify}($R_{\mathrm{loc},
-        \mathrm{right}}$, $\mathrm{sig}_{i+1, \mathrm{right}, \mathrm{rev}}$,
-        $\pk{i+1, \mathrm{rev}}$) = True}
+        \mathrm{right}, \mathrm{virt}}$, $\mathrm{sig}_{i+1, \mathrm{right},
+        \mathrm{rev}, \mathrm{virt}}$, $\pk{i+1, \mathrm{rev}}$) = True}
+        \State \trustedcode{$R_{\mathrm{loc}, \mathrm{right}, \mathrm{fund}}
+        \gets$ TX \{input: $(c_P + c_{\bar{P}}, 2/\{\pk{i, \mathrm{rev}},
+        \pk{i+1, \mathrm{rev}}\})$, output: $(c_P + c_{\bar{P}}, \pk{i,
+        \mathrm{out}})$\}}
+        \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{right},
+        \mathrm{rev}, \mathrm{fund}}$ from \texttt{right\_revocations}}
+        \State \trustedcode{ensure \textsc{verify}($R_{\mathrm{loc},
+        \mathrm{right}, \mathrm{fund}}$, $\mathrm{sig}_{i+1, \mathrm{right},
+        \mathrm{rev}, \mathrm{fund}}$, $\pk{i+1, \mathrm{rev}}$) = True}
         \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, C}$ from
         \texttt{right\_comms\_revkeys}}
         \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, R}$ from
@@ -1388,14 +1398,14 @@
         \State \trustedcode{output (\textsc{coop close back},
         \texttt{right\_comms\_revkeys}, \texttt{right\_revocations}) to
         \texttt{sibling}} \Comment{executed by \texttt{sibling}}
-        \State $R_{\mathrm{loc}, \mathrm{left}} \gets$ TX \{input:
-        $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i-1, \mathrm{rev}},
-        \pk{i, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
+        \State $R_{\mathrm{loc}, \mathrm{left}, \mathrm{virt}} \gets$ TX
+        \{input: $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i-1,
+        \mathrm{rev}}, \pk{i, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
         $(c_{\mathrm{virt}}, \pk{i, \mathrm{out}})$\} \Comment{the input
         corresponds to the revocation path of the virtual output of all virtual
         txs owned by $\bar{P}$}
-        \State extract $\mathrm{sig}_{n, i, \mathrm{left}, \mathrm{rev}}$ from
-        \texttt{right\_revocations}
+        \State extract $\mathrm{sig}_{n, i, \mathrm{left}, \mathrm{rev},
+        \mathrm{virt}}$ from \texttt{right\_revocations}
         \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
         $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$, $\pk{n, \mathrm{rev}}$) =
         True
@@ -1441,35 +1451,57 @@
       \State rename $\mathrm{sig}_{P, R, i}$ to $\mathrm{sig}_{i,
       \mathrm{left}, R}$
       \State rename received public key to $\pk{i, \mathrm{left}, R}$
-      \State $R_{\mathrm{rem}, \mathrm{left}} \gets$ TX \{input:
-      $(c_{\mathrm{virt}}, 2/\{\pk{i-1, \mathrm{rev}}, \pk{i,
-      \mathrm{rev}}\})$, output: $(c_{\mathrm{virt}}, \pk{i-1, \mathrm{out}})$\}
-      \State $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}} \gets
-      \textsc{sign}(R_{\mathrm{rem}, \mathrm{left}}, \sk{i, \mathrm{rev}})$
+      \State $R_{\mathrm{rem}, \mathrm{left}, \mathrm{virt}} \gets$ TX \{input:
+      $(c_{\mathrm{virt}}, 2/\{\pk{i-1, \mathrm{rev}}, \pk{i, \mathrm{rev}}\})$,
+      output: $(c_{\mathrm{virt}}, \pk{i-1, \mathrm{out}})$\}
+      \State $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}, \mathrm{virt}} \gets
+      \textsc{sign}(R_{\mathrm{rem}, \mathrm{left}, \mathrm{virt}}, \sk{i,
+      \mathrm{rev}})$
+      \State $R_{\mathrm{rem}, \mathrm{left}, \mathrm{fund}} \gets$ TX \{input:
+      $(c_P + c_{\bar{P}}, 2/\{\pk{i-1, \mathrm{rev}}, \pk{i,
+      \mathrm{rev}}\})$, output: $(c_P + c_{\bar{P}}, \pk{i-1, \mathrm{out}})$\}
+      \State $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}, \mathrm{fund}} \gets
+      \textsc{sign}(R_{\mathrm{rem}, \mathrm{left}, \mathrm{fund}}, \sk{i,
+      \mathrm{rev}})$
       \If{$i < n$} \Comment{we are intermediary}
         \State $M \gets$ (\textsc{coop close back},
         ((\texttt{right\_comms\_revkeys}, $\mathrm{sig}_{i, \mathrm{left}, C}$,
         $\pk{i, \mathrm{left}, R}$), (\texttt{right\_revocations},
-        $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}}$, $\mathrm{sig}_{i,
-        \mathrm{left}, R}$)))
+        $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}, \mathrm{virt}}$,
+        $\mathrm{sig}_{i, \mathrm{left}, \mathrm{rev}, \mathrm{fund}}$,
+        $\mathrm{sig}_{i, \mathrm{left}, R}$)))
       \Else \: \Comment{$i = n$, we are host of fundee}
         \State $M \gets$ (\textsc{coop close back}, ($\mathrm{sig}_{i,
         \mathrm{left}, C}$, $\pk{i, \mathrm{left}, R}$,  $\mathrm{sig}_{n,
-        \mathrm{left}, R}$), ($\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$,
-        $(\mathrm{sig}_{n, j, \mathrm{left}, \mathrm{rev}})_{j \in \{2, \dots,
-        n\}}$))
+        \mathrm{left}, R}$), ($\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev},
+        \mathrm{virt}}$, $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev},
+        \mathrm{fund}}$, $(\mathrm{sig}_{n, j, \mathrm{left}, \mathrm{rev}})_{j
+        \in \{2, \dots, n\}}$))
       \EndIf
       \State send $M$ to $\bar{P}$ and expect reply (\textsc{coop close
       revocations}, \texttt{left\_revocations})
       \State extract $\mathrm{sig}_{i-1, \mathrm{right}, R}$,
       $\mathrm{sig}_{1, i, \mathrm{right}, \mathrm{rev}}$, $\mathrm{sig}_{i-1,
       \mathrm{right}, \mathrm{rev}}$ from \texttt{left\_revocations}
-      \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
+      \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left},
+      \mathrm{virt}}$,
       $\mathrm{sig}_{1, \mathrm{right}, \mathrm{rev}}$, $\pk{1, \mathrm{rev}}$)
       = True
-      \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
+      \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left},
+      \mathrm{virt}}$,
       $\mathrm{sig}_{i-1, \mathrm{right}, \mathrm{rev}}$, $\pk{i-1,
       \mathrm{rev}}$) = True
+        \State $R_{\mathrm{loc}, \mathrm{left}, \mathrm{fund}} \gets$ TX
+        \{input: $(c_P + c_{\bar{P}}, 2/\{\pk{i-1,
+        \mathrm{rev}}, \pk{i, \mathrm{rev}})$, output:
+        $(c_P + c_{\bar{P}}, \pk{i, \mathrm{out}})$\} \Comment{the input
+        corresponds to the revocation path of the right funding output of all
+        virtual txs owned by $\bar{P}$}
+        \State extract $\mathrm{sig}_{i-1, \mathrm{left}, \mathrm{rev},
+        \mathrm{fund}}$ from \texttt{left\_revocations}
+        \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left},
+        \mathrm{fund}}$, $\mathrm{sig}_{i-1, \mathrm{left}, \mathrm{rev},
+        \mathrm{fund}}$, $\pk{i-1, \mathrm{rev}}$) = True
       \State output (\textsc{verify rev}, $\mathrm{sig}_{i-1, \mathrm{right},
       R}$, $\texttt{host}_P$) to \texttt{guest}
       \State \trustedcode{store received signature as $\mathrm{sig}_{bar{P}, R,
@@ -1512,16 +1544,26 @@
         to last old host}
         \State \trustedcode{rename received signature to $\mathrm{sig}_{i,
         \mathrm{right}, R}$} \Comment{executed by \texttt{sibling}}
-        \State \trustedcode{$R_{\mathrm{rem}, \mathrm{right}} \gets$ TX \{input:
-        $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i, \mathrm{rev}},
-        \pk{i+1, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
+        \State \trustedcode{$R_{\mathrm{rem}, \mathrm{right}, \mathrm{virt}}
+        \gets$ TX \{input: $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{i,
+        \mathrm{rev}}, \pk{i+1, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
         $(c_{\mathrm{virt}}, \pk{i+1, \mathrm{out}})$\}}
-        \State \trustedcode{$\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}} \gets
-        \textsc{sign}(R_{\mathrm{rem}, \mathrm{right}}, \sk{i, \mathrm{rev}})$}
+        \State \trustedcode{$\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev},
+        \mathrm{virt}} \gets \textsc{sign}(R_{\mathrm{rem}, \mathrm{right},
+        \mathrm{virt}}, \sk{i, \mathrm{rev}})$}
+        \State \trustedcode{$R_{\mathrm{rem}, \mathrm{right}, \mathrm{fund}}
+        \gets$ TX \{input: $(c_P + c_{\bar{P}}, 2/\{\pk{i, \mathrm{rev}},
+        \pk{i+1, \mathrm{rev}}\})$, output: $(c_P + c_{\bar{P}}, \pk{i+1,
+        \mathrm{out}})$\}}
+        \State \trustedcode{$\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev},
+        \mathrm{fund}} \gets \textsc{sign}(R_{\mathrm{rem}, \mathrm{right},
+        \mathrm{fund}}, \sk{i, \mathrm{rev}})$}
         \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
         \State \trustedcode{send (\textsc{coop close revocations},
         (\texttt{left\_revocations}, $\mathrm{sig}_{i, \mathrm{right}, R}$,
-        $\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}}$) to $\bar{P}$)}
+        $\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}, \mathrm{virt}}$,
+        $\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}, \mathrm{fund}}$) to
+        $\bar{P}$)}
       \Else \: \Comment{$i = n$, we are host of fundee}
         \State extract $\mathrm{sig}_{1, \mathrm{right}, R}$ from
         \texttt{left\_revocations}
