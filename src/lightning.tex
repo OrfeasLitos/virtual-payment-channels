@@ -996,17 +996,18 @@
       ($c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{1, \mathrm{rev}},
       \pk{2, \mathrm{rev}}, \pk{n, \mathrm{rev}}\}$), output:
       $(c_{\mathrm{virt}}, \pk{2, \mathrm{out}})$\}}
-      \State $\mathrm{sig}_{1, \mathrm{right}, \mathrm{rev}} \gets
-      \textsc{sign}(R_{\mathrm{rem}, \mathrm{right}}, \sk{1, \mathrm{rev}})$
-      \ForAll{$j \in \{2, \dots, n\}$}
-        \State $R_{j, \mathrm{left}} \gets$ TX \{input: $(c_{\mathrm{virt}},
-        4/\{\pk{1, \mathrm{rev}}, \pk{j-1, \mathrm{rev}}, \pk{j,
-        \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output: $(c_{\mathrm{virt}},
-        \pk{j, \mathrm{out}})\}$
-        \State $\mathrm{sig}_{1, j, \mathrm{left}, \mathrm{rev}} \gets
-        \textsc{sign}(R_{j, \mathrm{left}}, \sk{1, \mathrm{rev}})$
+      \State \trustedcode{$\mathrm{sig}_{1, \mathrm{right}, \mathrm{rev}}
+      \gets \textsc{sign}(R_{\mathrm{rem}}, \sk{1,
+      \mathrm{rev}})$}
+      \ForAll{\trustedcode{$j \in \{2, \dots, n\}$}}
+        \State \trustedcode{$R_{j, \mathrm{left}} \gets$ TX \{input:
+        $(c_{\mathrm{virt}}, 4/\{\pk{1, \mathrm{rev}}, \pk{j-1, \mathrm{rev}},
+        \pk{j, \mathrm{rev}}, \pk{n, \mathrm{rev}}\})$, output:
+        $(c_{\mathrm{virt}}, \pk{j, \mathrm{out}})\}$}
+        \State \trustedcode{$\mathrm{sig}_{1, j, \mathrm{left}, \mathrm{rev}}
+        \gets \textsc{sign}(R_{j, \mathrm{left}}, \sk{1, \mathrm{rev}})$}
       \EndFor
-      \State $\itistate \gets \textsc{coop closed}$
+      \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
       \State \trustedcode{send (\textsc{coop close revocations},
       ($\mathrm{sig}_{1, \mathrm{right}, R}$, $\mathrm{sig}_{1, \mathrm{right},
       \mathrm{rev}}$, $(\mathrm{sig}_{1, j, \mathrm{left}, \mathrm{rev}})_{j \in
