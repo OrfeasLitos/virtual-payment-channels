@@ -1546,6 +1546,7 @@
       \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
       F}')$}
       \State \trustedcode{$\itistate \gets \textsc{open}$}
+      \State \trustedcode{$\texttt{hosting} \gets$ False}
       \State \trustedcode{input (\textsc{rev verified}) to last old host}
       \State $\itistate \gets \textsc{coop closed}$
       \If{$i < n$} \Comment{we are intermediary}
@@ -1566,6 +1567,7 @@
         \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
         F}')$}
         \State \trustedcode{$\itistate \gets \textsc{open}$}
+        \State \trustedcode{$\texttt{hosting} \gets$ False}
         \State \trustedcode{input (\textsc{revocation}, $\mathrm{sig}_{P, R, i}$)
         to last old host}
         \State \trustedcode{rename received signature to $\mathrm{sig}_{i,
