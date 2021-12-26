@@ -845,10 +845,14 @@
       \State ensure $\texttt{host}_P \neq$ ``\texttt{ledger}''
       \State ensure $\itistate = \textsc{open}$
       \State $\itistate \gets \textsc{coop closing}$
-      \If{we are not \texttt{fundee}}
+      \If{we have received at least one of (i) \textsc{open} from $\environment$
+      while $\itistate$ was \textsc{topped up}, (ii) \textsc{fund me} or (iii)
+      \textsc{virtualising}} \Comment{we are not the \texttt{fundee} of a
+      channel that is not the base of any other channel}
         \State $\texttt{we\_are\_close\_initiator} \gets$ True
         \State send (\textsc{coop close}) to \texttt{fundee}
-      \Else \: \Comment{we are \texttt{fundee}}
+      \Else \: \Comment{we are the \texttt{fundee} of a channel that is not the
+      base of any other channel}
         \State $\texttt{close\_initiator} \gets P$
         \State execute code of Fig.~\ref{code:ln:coop-close-fundee}
         \label{code:ln:coop-close:goto}
