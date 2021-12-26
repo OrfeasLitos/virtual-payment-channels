@@ -21,22 +21,24 @@
     \textit{State} was \textsc{open} and $P$ subsequently transitioned to
     \textsc{open} \textit{State}] $l$ times.
   \end{itemize}
-  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$. If $P$ receives
-  $(\textsc{forceClose})$ by \environment and, if $\texttt{host}_P \neq$
-  ``\texttt{ledger}'' the
-  output of $\texttt{host}_P$ is $(\textsc{closed})$, then eventually the state
-  obtained when $P$ inputs $(\textsc{read})$ to \ledger will contain $h$ outputs
-  each of value $c_i$ and that has been spent or is exclusively spendable by
-  $\pk{R, \mathrm{out}}$ such that
-  \begin{equation}
-  \label{lemma:real-balance-security:ineq}
-    \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
-    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace
-  \end{equation}
-  with overwhelming probability in the security parameter, where $R$ is a local,
-  kindred machine (i.e.\ either $P$, $P$'s \texttt{sibling}, the party to which
-  $P$ sent \textsc{fund me} if such a message has been sent, or the
-  \texttt{sibling} of one of the transitive closure of hosts of $P$).
+  Let $\phi = 1$ if $P = \alice$, or $\phi = 0$ if $P = \bob$.
+  \begin{itemize}
+    \item If $P$ receives $(\textsc{forceClose})$ by \environment and, if
+    $\texttt{host}_P \neq$ ``\texttt{ledger}'' the output of $\texttt{host}_P$
+    is $(\textsc{closed})$, then eventually the state obtained when $P$ inputs
+    $(\textsc{read})$ to \ledger will contain $h$ outputs each of value $c_i$
+    and that has been spent or is exclusively spendable by $\pk{R,
+    \mathrm{out}}$ such that
+    \begin{equation}
+    \label{lemma:real-balance-security:ineq}
+      \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
+      \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace
+    \end{equation}
+    with overwhelming probability in the security parameter, where $R$ is a
+    local, kindred machine (i.e.\ either $P$, $P$'s \texttt{sibling}, the party
+    to which $P$ sent \textsc{fund me} if such a message has been sent, or the
+    \texttt{sibling} of one of the transitive closure of hosts of $P$).
+  \end{itemize}
 \end{lemma}
 
 \begin{proof}[Proof of Lemma~\ref{lemma:real-balance-security}]
