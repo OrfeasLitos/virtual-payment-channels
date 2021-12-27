@@ -85,11 +85,11 @@
   is a list of lists of integers. A party $P$ which satisfies the Lemma
   conditions has a unique, unambiguously and recursively defined history: If the
   value \texttt{hops} in the (\textsc{open}, $c$, $\texttt{hops}$, $\dots$)
-  message was equal to \ledger, then $F$ is the empty list, otherwise $F$ is the
+  message was equal to ``\texttt{ledger}'', then $F$ is the empty list, otherwise $F$ is the
   concatenation of the $F$ and $C$ lists of the party that sent
   (\textsc{funded}, $\dots$) to $P$, as they were at the moment the latter
   message was sent. After initialised, $F$ remains immutable. Observe that, if
-  $\texttt{hops} \neq \ledger$, both aforementioned messages must have been
+  $\texttt{hops} \neq$ ``\texttt{ledger}'', both aforementioned messages must have been
   received before $P$ transitions to the \textsc{open} state.
 
   The list $C$ of party $P$ is initialised to $[[g]]$ when $P$'s $\itistate$
@@ -103,7 +103,7 @@
   the funding of new virtual channels, whenever $P$ funds a new virtual channel
   (Fig.~\ref{code:ln:virtualise:start-end},
   l.~\ref{code:ln:virtualise:start-end:reduce-coins}), $[-c_{\mathrm{virt}}]$
-  is appended to $C$ and whenever $P$ helps with the opening of a new virutal
+  is appended to $C$ and whenever $P$ helps with the opening of a new virtual
   channel, but does not fund it (Fig.~\ref{code:ln:virtualise:start-end},
   l.~\ref{code:ln:virtualise:start-end:reply}), $[0]$ is appended to $C$.
   Therefore $C$ consists of one list of integers for each sequence of inbound
@@ -118,7 +118,7 @@
 
   Let party $P$ with a particular history. We will inductively prove that $P$
   satisfies the Lemma. The base case is when a channel is opened with
-  $\texttt{hops} = \ledger$ and is closed right away, therefore $H = ([], [g])$,
+  $\texttt{hops} =$ ``\texttt{ledger}'' and is closed right away, therefore $H = ([], [g])$,
   where $g = c$ if $P = \alice$ and $g = 0$ if $P = \bob$.  $P$ can transition
   to the \textsc{open} \textit{State} for the first time only if all of the
   following have taken place:
@@ -238,7 +238,7 @@
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $-d$ appended to the last list of $C$) and finally
     receives \textsc{forceClose} by \environment and (\textsc{closed}) by
-    $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
+    $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq$ ``\texttt{ledger}'' or
     equivalently $F \neq []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
     each of value $c_i$ exclusively spendable or already spent by $\pk{P,
@@ -249,7 +249,7 @@
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $e$ appended to the last list of $C$) and finally
     receives \textsc{forceClose} by \environment and (\textsc{closed}) by
-    $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq \ledger$ or
+    $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq$ ``\texttt{ledger}'' or
     equivalently $F = []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
     each of value $c_i$ exclusively spendable or already spent by $\pk{P,
@@ -297,10 +297,10 @@
   ll.~\ref{code:virtual-layer:check-chain-close:funder:output-virt}
   respectively).
 
-  If the \texttt{host} of $\texttt{host}_P$ is \ledger, then the funding output
+  If the \texttt{host} of $\texttt{host}_P$ is ``\texttt{ledger}'', then the funding output
   $o_{1, 2} = (c_P + c_{\bar{P}}, 2/\{\pk{P, F}, \pk{\bar{P}, F}\})$ for the
   $P, \bar{P}$ channel is already on-chain. Regarding the case in which
-  $\texttt{host}_P \neq \ledger$, after the funding procedure is complete, the
+  $\texttt{host}_P \neq$ ``\texttt{ledger}'', after the funding procedure is complete, the
   new $\texttt{host}_P$ will have as its \texttt{host} the old $\texttt{host}_P$
   of $P$. If the (\textsc{forceClose}) sequence is initiated, the new
   $\texttt{host}_P$ will follow the same steps that will be described below once
@@ -310,7 +310,7 @@
   however will see no difference in its interface compared to what would happen
   if $P$ had received (\textsc{forceClose}) before the funding procedure, therefore
   it will successfully close by the induction hypothesis. Thereafter the process
-  is identical to the one when the old $\texttt{host}_P = \ledger$.
+  is identical to the one when the old $\texttt{host}_P =$ ``\texttt{ledger}''.
 
   Moving on, $\texttt{host}_P$ is either able to publish its $\mathrm{TX}_{1,
   1}$ (it has necessarily received a valid signature
@@ -466,7 +466,7 @@
 
   In the case that $P$ is to the right of its \texttt{sibling} (i.e.\ $P$
   receives by \texttt{sibling} the (\textsc{virtualising}, $\dots$) message that
-  causes $P$'s transition to the \textsc{virutalising} state), the ``right''
+  causes $P$'s transition to the \textsc{virtualising} state), the ``right''
   funding output $o_{\mathrm{right}}$ (the one held with the untrusted party to
   the right) can be spent by one of $\mathrm{TX}_{i, 1}$, $(\mathrm{TX}_{i, 2,
   k})_{k < i}$, $\mathrm{TX}_{i+1, 1}$, or $(\mathrm{TX}_{i+1, 2, k})_{k >
@@ -530,7 +530,7 @@
   l.~\ref{code:ln:pay:revocations:send-rev}) the counterparty's revocation
   transaction for $P$'s previous commitment transaction.
 
-  Similarly to previous bullets, if $\mathtt{host}_P \neq \ledger$ the funding
+  Similarly to previous bullets, if $\mathtt{host}_P \neq$ ``\texttt{ledger}'' the funding
   output can be put on-chain, otherwise the funding output is already on-chain.
   In both cases, since the closing procedure continues, one of $C_{P, i+1}$
   $(C_{\bar{P}, j})_{0 \leq j \leq i+1}$ will end up on-chain. If $C_{\bar{P},
