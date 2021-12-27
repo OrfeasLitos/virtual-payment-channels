@@ -38,6 +38,33 @@
     local, kindred machine (i.e.\ either $P$, $P$'s \texttt{sibling}, the party
     to which $P$ sent \textsc{fund me} if such a message has been sent, or the
     \texttt{sibling} of one of the transitive closure of hosts of $P$).
+    \item Assume that, at some particular instant during the execution,
+    \begin{enumerate}
+      \item $\texttt{host}_P \neq$ ``\texttt{ledger}'',
+      \item $P$ has $\itistate$ \textsc{open}.
+    \end{enumerate}
+    Consider two alternative series of subsequent execution steps:
+    \begin{enumerate}
+      \item The \texttt{guest} of $\texttt{host}_P$ (call them $S$) receives
+      $(\textsc{forceClose})$ by \environment and eventually a total of $c_b$
+      coins is exclusively spendable by $\pk{R, \mathrm{out}}$, where $R$ is a
+      machine kindred to $S$. Additionally, there is at least one funding output
+      of $P$'s channel $(c_P + c_{\bar{P}}, 2/\{\pk{P, F}, \pk{\bar{P}, F}\})$
+      that is on-chain and unspent.
+      \item $P$ receives either $(\textsc{coopClose})$ by \environment or
+      $(\textsc{coop close}, $\dots$)$ by $R$, and $P$'s variable
+      $\texttt{hosting}$ is False. Subsequently, $P$'s $\itistate$ transitions
+      to \textsc{coop closed} and then the $\itistate$ of $S$ transitions to
+      \textsc{open}. The next time $S$ is activated is via a
+      $(\textsc{forceClose})$ input by \environment and eventually a total of
+      $c_t$ coins is exclusively spendable by $\pk{R, \mathrm{out}}$.
+    \end{enumerate}
+    It then holds that
+    \begin{equation}
+      c_t - c_b \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
+      \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+    \end{equation}
+    with overwhelming probability in the security parameter.
   \end{itemize}
 \end{lemma}
 
