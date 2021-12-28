@@ -35,9 +35,10 @@
       \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
     \end{equation}
     with overwhelming probability in the security parameter, where $R$ is a
-    local, kindred machine (i.e.\ either $P$, $P$'s \texttt{sibling}, the party
-    to which $P$ sent \textsc{fund me} if such a message has been sent, or the
-    \texttt{sibling} of one of the transitive closure of hosts of $P$).
+    local, kindred \textsc{ln} machine (i.e.\ either $P$, the \texttt{guest} of
+    $\texttt{host}_P$'s \texttt{sibling}, the party to which $P$ sent
+    \textsc{fund me} if such a message has been sent, or the \texttt{guest} of
+    the \texttt{sibling} of one of the transitive closure of hosts of $P$).
     \item Assume that, at some particular instant during the execution,
     \begin{enumerate}
       \item $\texttt{host}_P \neq$ ``\texttt{ledger}'',
