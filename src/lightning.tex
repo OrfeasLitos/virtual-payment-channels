@@ -923,8 +923,8 @@
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
       by $\texttt{host}_P$}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
-      \State \trustedcode{output (\textsc{coop close sign comm}, $(c_1, c_2)$)
-      to \texttt{guest}}
+      \State \trustedcode{output (\textsc{coop close sign comm funder}, $(c_1,
+      c_2)$) to \texttt{guest}}
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
       by \texttt{guest} of $\texttt{host}_P$}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}

@@ -14,6 +14,13 @@
     \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
     \textsc{ln} ITI while \textit{State} was \textsc{open} and subsequently $P$
     transitioned to \textsc{open} \textit{State}] $n$ times,
+    \item $P$ [has received $(\textsc{check coop close fundee}, (\_, r_i),
+    \dots)$ as output by $\texttt{host}_P$ while \textit{State} was
+    \textsc{open} and subsequently $P$ transitioned to \textsc{open}
+    \textit{State}] $j$ times,
+    \item $P$ [has received $(\textsc{coop close sign comm funder}, (l_i, \_))$
+    as output by $\texttt{host}_P$ while \textit{State} was \textsc{open} and
+    subsequently $P$ transitioned to \textsc{open} \textit{State}] $k$ times,
     \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
     \textit{State} was \textsc{open} and $P$ subsequently transitioned to
     \textsc{open} \textit{State}] $m$ times,
@@ -32,7 +39,8 @@
     \begin{equation}
     \label{lemma:real-balance-security:ineq}
       \sum\limits_{i=1}^h c_i \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
-      \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+      \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^j
+      r_i + \sum\limits_{i=1}^k l_i
     \end{equation}
     with overwhelming probability in the security parameter, where $R$ is a
     local, kindred \textsc{ln} machine (i.e.\ either $P$, the \texttt{guest} of
@@ -63,7 +71,8 @@
     It then holds that
     \begin{equation}
       c_t - c_b \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
-      \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+      \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^j
+      r_i + \sum\limits_{i=1}^k l_i
     \end{equation}
     with overwhelming probability in the security parameter.
   \end{itemize}

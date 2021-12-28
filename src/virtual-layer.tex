@@ -1321,9 +1321,11 @@
       \State $\itistate \gets \textsc{coop closing}$
       \State extract $\mathrm{sig}_{i-1, \mathrm{right}, C}$, $\pk{i-1,
       \mathrm{right}, R}$ from \texttt{left\_comms\_revkeys}
-      \State output (\textsc{check coop close}, $(c_1, c_2)$,
-      $\mathrm{sig}_{i-1, \mathrm{right}, C}$, $\pk{i-1, \mathrm{right}, R}$) to
-      \texttt{guest}
+      \IfThenElse{{$i < n$}}{$M \gets \textsc{check coop close}$}{$M \gets
+      \textsc{check coop close fundee}$}
+      \State output ($M$, $(c_1, c_2)$, $\mathrm{sig}_{i-1, \mathrm{right}, C}$,
+      $\pk{i-1, \mathrm{right}, R}$) to \texttt{guest}
+      \label{code:virtual-layer:coop-close-intermediary:first-invoke-guest}
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
       by \texttt{guest}}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
