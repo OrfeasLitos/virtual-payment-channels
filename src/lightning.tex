@@ -910,11 +910,11 @@
     \begin{algorithmic}[1]
       \State ensure we are \texttt{funder}
       \State ensure $\itistate = \textsc{open}$
-      \State parse $\texttt{sig\_bal}_{\bar{P}}$ as $((c_P', c_{\bar{P}}'),
+      \State parse $\texttt{sig\_bal}_{\bar{P}}$ as $((c_1, c_2),
       \mathrm{sig}_{\bar{P}})$
-      \State ensure $c_P = c_P' \wedge c_{\bar{P}} = c_{\bar{P}}' \wedge
-      \textsc{verify}((c_P', c_{\bar{P}}'), \mathrm{sig}_{\bar{P}}, \pk{\bar{P},
-      F}) = \mathrm{True}$
+      \State ensure $c_P = c_1 \wedge c_{\bar{P}} = c_2 \wedge
+      \textsc{verify}((c_1, c_2), \mathrm{sig}_{\bar{P}}, \pk{\bar{P}, F}) =
+      \mathrm{True}$
       \State $\texttt{sig\_bal} \gets ((c_P, c_{\bar{P}}), \textsc{sign}((c_P,
       c_{\bar{P}}), \sk{P, F}), \mathrm{sig}_{\bar{P}})$
       \State $\itistate \gets \textsc{coop closing}$
