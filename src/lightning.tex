@@ -851,9 +851,23 @@
       $\environment$ while $\itistate$ was \textsc{topped up}} \Comment{we are
       not the \texttt{fundee} of a channel that is not the base of any other
       channel}
+        \If{\texttt{hosting} = True} \Comment{we are not the \texttt{funder} of
+        the channel to be closed}
+          \State the next time we are activated, if we are not activated by
+          output (\textsc{check coop close}, $\dots$) from $\texttt{host}_P$,
+          set $\texttt{we\_are\_close\_initiator} \gets$ False
+        \Else \: \Comment{we are the \texttt{funder} of the channel to be
+        closed}
+          \State the next time we are activated, if we are not activated by
+          output (\textsc{coop close}, $\dots$) from $\bar{P}$, set
+          $\texttt{we\_are\_close\_initiator} \gets$ False
+        \EndIf
         \State send (\textsc{coop close}) to \texttt{fundee}
       \Else \: \Comment{we are the \texttt{fundee} of a channel that is not the
       base of any other channel}
+        \State the next time we are activated, if we are not activated by output
+        (\textsc{check coop close fundee}, $\dots$) from $\texttt{host}_P$, set
+        $\texttt{we\_are\_close\_initiator} \gets$ False
         \State $\texttt{close\_initiator} \gets P$
         \State execute code of Fig.~\ref{code:ln:coop-close-fundee}
         \label{code:ln:coop-close:goto}
