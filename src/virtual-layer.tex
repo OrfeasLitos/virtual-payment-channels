@@ -1564,6 +1564,8 @@
         \textsc{sign}(R_{\bar{P}, i}, \sk{P, R, i})$}
         \State \trustedcode{add $\texttt{host}_P$ to list of old hosts}
         \State \trustedcode{assign received host to $\texttt{host}_P$}
+        \State \trustedcode{$i \gets i+1$; $c_P \gets c_P + c_1$; $c_{\bar{P}}
+        \gets c_{\bar{P}} + c_2$}
         \State \trustedcode{add $\sk{P, F}, \pk{P, F}, \pk{\bar{P}, F}$ to list of
         old enabler channel funding keys}
         \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
