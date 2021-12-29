@@ -924,10 +924,10 @@
     \begin{algorithmic}[1]
       \State ensure we are \texttt{funder}
       \State ensure $\itistate = \textsc{open}$
-      \State parse $\texttt{sig\_bal}_{\bar{P}}$ as $((c_1, c_2),
+      \State parse $\texttt{sig\_bal}_{\bar{P}}$ as $((c_1', c_2'),
       \mathrm{sig}_{\bar{P}})$
-      \State ensure $c_P = c_1 \wedge c_{\bar{P}} = c_2 \wedge
-      \textsc{verify}((c_1, c_2), \mathrm{sig}_{\bar{P}}, \pk{\bar{P}, F}) =
+      \State ensure $c_P = c_1' \wedge c_{\bar{P}} = c_2' \wedge
+      \textsc{verify}((c_1', c_2'), \mathrm{sig}_{\bar{P}}, \pk{\bar{P}, F}) =
       \mathrm{True}$
       \State $\texttt{sig\_bal} \gets ((c_P, c_{\bar{P}}), \textsc{sign}((c_P,
       c_{\bar{P}}), \sk{P, F}), \mathrm{sig}_{\bar{P}})$
@@ -937,16 +937,16 @@
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
       by $\texttt{host}_P$}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
-      \State \trustedcode{output (\textsc{coop close sign comm funder}, $(c_1,
-      c_2)$) to \texttt{guest}}
+      \State \trustedcode{output (\textsc{coop close sign comm funder}, $(c_1',
+      c_2')$) to \texttt{guest}}
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
       by \texttt{guest} of $\texttt{host}_P$}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
       \State \trustedcode{remove most recent keys from list of old funding keys
       and assign them to $\sk{P, F}'$, $\pk{P, F}'$, $\pk{\bar{P}, F}'$}
       \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
-      c_{\bar{P}} + c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
-      $(c_P + c_1, \pk{P, \mathrm{out}})$, $(c_{\bar{P}} + c_2, (\pk{\bar{P},
+      c_{\bar{P}} + c_1' + c_2', 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
+      $(c_P + c_1', \pk{P, \mathrm{out}})$, $(c_{\bar{P}} + c_2', (\pk{\bar{P},
       \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1}, \pk{\bar{P}, R,
       i+1}\})$\}}
       \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
@@ -995,8 +995,8 @@
       $\mathrm{sig}_{\bar{P}, R, i}$}
       \State \trustedcode{store received public key as $\pk{\bar{P}, R, i+2}$}
       \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
-      c_1 + c_2)$, outputs: $(c_P + c_1, (\pk{P, \mathrm{out}} + (p + s)) \vee
-      2/\{\pk{P, R, i+1}, \pk{\bar{P}, R, i+1}\})$, $(c_{\bar{P}} + c_2,
+      c_1' + c_2')$, outputs: $(c_P + c_1', (\pk{P, \mathrm{out}} + (p + s)) \vee
+      2/\{\pk{P, R, i+1}, \pk{\bar{P}, R, i+1}\})$, $(c_{\bar{P}} + c_2',
       \pk{\bar{P}, \mathrm{out}})$\}}
       \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
       $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
@@ -1033,8 +1033,8 @@
       old enable channel funding keys}
       \State \trustedcode{add $\texttt{host}_P$ to list of old hosts}
       \State \trustedcode{assign received host to $\texttt{host}_P$}
-      \State \trustedcode{$c_P \gets c_P + c_1; c_{\bar{P}} \gets c_{\bar{P}} +
-      c_2$}
+      \State \trustedcode{$c_P \gets c_P + c_1'; c_{\bar{P}} \gets c_{\bar{P}} +
+      c_2'$}
       \label{code:ln:coop-close-funder:update-coins}
       \State \trustedcode{$\itistate \gets \textsc{open}$}
       \State \trustedcode{input (\textsc{revocation},

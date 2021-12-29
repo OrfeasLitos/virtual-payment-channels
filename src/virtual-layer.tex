@@ -1311,19 +1311,19 @@
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open}$
       \State $\itistate \gets \textsc{coop closing}$
-      \State parse \texttt{sig\_bal} as $(c_1, c_2), \mathrm{sig}_1,
+      \State parse \texttt{sig\_bal} as $(c_1', c_2'), \mathrm{sig}_1,
       \mathrm{sig}_2$
-      \State ensure $c_{\mathrm{virt}} = c_1 + c_2$
-      \State ensure \textsc{verify}($(c_1, c_2), \mathrm{sig}_1,
+      \State ensure $c_{\mathrm{virt}} = c_1' + c_2'$
+      \State ensure \textsc{verify}($(c_1', c_2'), \mathrm{sig}_1,
       \pk{\mathrm{left}, \mathrm{virt}}$) = True
-      \State ensure \textsc{verify}($(c_1, c_2), \mathrm{sig}_2,
+      \State ensure \textsc{verify}($(c_1', c_2'), \mathrm{sig}_2,
       \pk{\mathrm{right}, \mathrm{virt}}$) = True
       \State $\itistate \gets \textsc{coop closing}$
       \State extract $\mathrm{sig}_{i-1, \mathrm{right}, C}$, $\pk{i-1,
       \mathrm{right}, R}$ from \texttt{left\_comms\_revkeys}
       \IfThenElse{{$i < n$}}{$M \gets \textsc{check coop close}$}{$M \gets
       \textsc{check coop close fundee}$}
-      \State output ($M$, $(c_1, c_2)$, $\mathrm{sig}_{i-1, \mathrm{right}, C}$,
+      \State output ($M$, $(c_1', c_2')$, $\mathrm{sig}_{i-1, \mathrm{right}, C}$,
       $\pk{i-1, \mathrm{right}, R}$) to \texttt{guest}
       \label{code:virtual-layer:coop-close-intermediary:first-invoke-guest}
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
@@ -1336,9 +1336,9 @@
       \State \trustedcode{remove most recent keys from list of old funding keys
       and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
       \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
-      c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P + c_2,
+      c_1' + c_2', 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P + c_2',
       (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{\bar{P}, R, i+1}, \pk{P, R,
-      i+1}\})$, $(c_{\bar{P}} + c_1, \pk{\bar{P}, \mathrm{out}})$\}}
+      i+1}\})$, $(c_{\bar{P}} + c_1', \pk{\bar{P}, \mathrm{out}})$\}}
       \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
       $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
       \State \trustedcode{input (\textsc{coop close check ok}) to
@@ -1349,7 +1349,7 @@
         \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
         by \texttt{sibling}}
         \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
-        \State \trustedcode{output (\textsc{coop close sign comm}, $(c_1, c_2)$)
+        \State \trustedcode{output (\textsc{coop close sign comm}, $(c_1', c_2')$)
         to \texttt{guest}}
         \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
         by \texttt{guest} of \texttt{sibling}}
@@ -1357,8 +1357,8 @@
         \State \trustedcode{remove most recent keys from list of old funding keys
         and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
         \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
-        c_{\bar{P}} + c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
-        $(c_P + c_1, \pk{P, \mathrm{out}})$, $(c_{\bar{P}} + c_2, (\pk{\bar{P},
+        c_{\bar{P}} + c_1' + c_2', 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
+        $(c_P + c_1', \pk{P, \mathrm{out}})$, $(c_{\bar{P}} + c_2', (\pk{\bar{P},
         \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1}, \pk{\bar{P}, R,
         i+1}\})$\}}
         \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
@@ -1408,9 +1408,9 @@
         \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, C}$ as
         $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, R, i+2}$}
         \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
-        c_1 + c_2, 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P +
+        c_1' + c_2', 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P +
         c_1, (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1},
-        \pk{\bar{P}, R, i+1}\})$, $(c_{\bar{P}} + c_2, \pk{\bar{P},
+        \pk{\bar{P}, R, i+1}\})$, $(c_{\bar{P}} + c_2', \pk{\bar{P},
         \mathrm{out}})$\}}
         \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
         $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
@@ -1459,9 +1459,9 @@
       \EndIf
       \State output (\textsc{new comm rev}) to \texttt{guest}
       \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
-      c_{\bar{P}} + c_1 + c_2, 2\{\pk{\bar{P}, F}', \pk{P, F}'\})$, outputs:
-      $(c_{\bar{P}} + c_1, (\pk{\bar{P}, \mathrm{out}} + (p + s)) \vee
-      2/\{\pk{\bar{P}, R, i+1}, \pk{P, R, i+1}\})$, $(c_P + c_2, \pk{P,
+      c_{\bar{P}} + c_1' + c_2', 2\{\pk{\bar{P}, F}', \pk{P, F}'\})$, outputs:
+      $(c_{\bar{P}} + c_1', (\pk{\bar{P}, \mathrm{out}} + (p + s)) \vee
+      2/\{\pk{\bar{P}, R, i+1}, \pk{P, R, i+1}\})$, $(c_P + c_2', \pk{P,
       \mathrm{out}})$\}} \Comment{executed by \texttt{guest}}
       \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
       \textsc{sign}(C_{\bar{P}, i+1}, \sk{P, F}')$}
@@ -1541,8 +1541,8 @@
       $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
       \State \trustedcode{add $\texttt{host}_P$ to list of old hosts}
       \State \trustedcode{assign received host to $\texttt{host}_P$}
-      \State \trustedcode{$i \gets i+1$; $c_P \gets c_P + c_2$; $c_{\bar{P}}
-      \gets c_{\bar{P}} + c_1$}
+      \State \trustedcode{$i \gets i+1$; $c_P \gets c_P + c_2'$; $c_{\bar{P}}
+      \gets c_{\bar{P}} + c_1'$}
       \State \trustedcode{add $\sk{P, F}, \pk{P, F}, \pk{\bar{P}, F}$ to list of
       old enabler channel funding keys}
       \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
@@ -1564,8 +1564,8 @@
         \textsc{sign}(R_{\bar{P}, i}, \sk{P, R, i})$}
         \State \trustedcode{add $\texttt{host}_P$ to list of old hosts}
         \State \trustedcode{assign received host to $\texttt{host}_P$}
-        \State \trustedcode{$i \gets i+1$; $c_P \gets c_P + c_1$; $c_{\bar{P}}
-        \gets c_{\bar{P}} + c_2$}
+        \State \trustedcode{$i \gets i+1$; $c_P \gets c_P + c_1'$; $c_{\bar{P}}
+        \gets c_{\bar{P}} + c_2'$}
         \State \trustedcode{add $\sk{P, F}, \pk{P, F}, \pk{\bar{P}, F}$ to list of
         old enabler channel funding keys}
         \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
