@@ -219,16 +219,16 @@
     l.~\ref{code:ln:bob:host}) before any further change to its history, then
     \emph{eventually $R$'s \ledger state will contain $k$ transaction outputs
     each of value $c^R_i$ exclusively spendable or already spent by $\pk{R,
-    \mathrm{out}})$ that are descendants of an output with spending method
+    \mathrm{out}}$ that are descendants of an output with spending method
     $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ such that $\sum\limits_{i=1}^k c^R_i \geq
     \sum\limits_{s \in C_R} \sum\limits_{x \in s} x$}.
     \item If $P$ receives (\textsc{virtualising}, $\dots$) by $\bar{P}$,
     subsequently transitions back to \textsc{open} (therefore moving to history
-    $(F, C')$ where $C' = C + [0]$) and finally receives \textsc{forceClose} by
+    $(F, C')$ where $C' = C + [0]$) and finally receives (\textsc{forceClose}) by
     \environment and (\textsc{closed}) by $\texttt{host}_P$ before any further
     change to its history, then \emph{eventually $P$'s \ledger state will
     contain $h$ transaction outputs each of value $c_i$ exclusively spendable or
-    already spent by $\pk{P, \mathrm{out}})$ that are descendants of an output
+    already spent by $\pk{P, \mathrm{out}}$ that are descendants of an output
     with spending method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that
     $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{x \in s}
     x$}. Furthermore, given that $P$ moves to the \textsc{open} state after the
@@ -247,23 +247,23 @@
     \item If $P$ receives (\textsc{pay}, $d$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $-d$ appended to the last list of $C$) and finally
-    receives \textsc{forceClose} by \environment and (\textsc{closed}) by
+    receives (\textsc{forceClose}) by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq$ ``\texttt{ledger}'' or
     equivalently $F \neq []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
     each of value $c_i$ exclusively spendable or already spent by $\pk{P,
-    \mathrm{out}})$ that are descendants of an output with a $2/\{\pk{P, F},
+    \mathrm{out}}$ that are descendants of an output with a $2/\{\pk{P, F},
     \pk{\bar{P}, F}\}$ spending method such that $\sum\limits_{i=1}^h c_i \geq
     \sum\limits_{s \in C'} \sum\limits_{x \in s} x$}.
     \item If $P$ receives (\textsc{get paid}, $e$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $e$ appended to the last list of $C$) and finally
-    receives \textsc{forceClose} by \environment and (\textsc{closed}) by
+    receives (\textsc{forceClose}) by \environment and (\textsc{closed}) by
     $\texttt{host}_P$ (the latter only if $\texttt{host}_P \neq$ ``\texttt{ledger}'' or
     equivalently $F = []$) before any further change to its history, then
     \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
     each of value $c_i$ exclusively spendable or already spent by $\pk{P,
-    \mathrm{out}})$ that are descendants of an output with a $2/\{\pk{P, F},
+    \mathrm{out}}$ that are descendants of an output with a $2/\{\pk{P, F},
     \pk{\bar{P}, F}\}$ spending method such that $\sum\limits_{i=1}^h c_i \geq
     \sum\limits_{s \in C'} \sum\limits_{x \in s} x$}.
   \end{itemize}
@@ -430,7 +430,7 @@
   (\textsc{forceClose}) by \environment then $o_R$ eventually ends up on-chain. After
   receiving (\textsc{closed}) from $\texttt{host}_P$, $R$ attempts to add $C_{R,
   0}$ to \ledger, which may only fail if $C_{\bar{R}, 0}$ ends up on-chain
-  instead.  Similar to the case of $P$, both these transactions have an $(f,
+  instead. Similar to the case of $P$, both these transactions have an $(f,
   \pk{R, \mathrm{out}})$ output. This output of $C_{R, 0}$ is timelocked, but
   the alternative spending method cannot be used as $R$ never signed a
   transaction that uses it (as it is reserved for revocation, which has not
