@@ -116,15 +116,30 @@
   is appended to $C$ and whenever $P$ helps with the opening of a new virtual
   channel, but does not fund it (Fig.~\ref{code:ln:virtualise:start-end},
   l.~\ref{code:ln:virtualise:start-end:reply}), $[0]$ is appended to $C$.
-  Therefore $C$ consists of one list of integers for each sequence of inbound
-  and outbound payments that have not been interrupted by a virtualisation step
-  and a new list is added for every new virtual layer. We also observe that a
-  non-negligent party with history $(F, C)$ satisfies the Lemma conditions and
-  that the value of the right hand side of the
+  In case of cooperatively closing a channel
+  (Figs.~\ref{code:ln:coop-close}-\ref{code:ln:coop-close-funder}
+  \&~\ref{code:virtual-layer:coop-close-intermediary}) to which $P$'s channel is
+  base, if this channel was initially funded by $P$, when the closing procedure
+  completes (Fig.~\ref{code:ln:coop-close-funder},
+  l.~\ref{code:ln:coop-close-funder:update-coins}) $[c_1']$ is appended to $C$.
+  Likewise, if in the closed virtual channel $P$ was the base of the
+  \texttt{fundee} (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:host-of-fundee-revoke}),
+  then $[c_2']$ (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:first-invoke-guest}) is
+  appended to $C$. Lastly, in case $P$ was an intermediary for the closed
+  virtual channel (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:intermediary-revoke}), then
+  $[0]$ is appended to $C$. Therefore $C$ consists of one list of integers for
+  each sequence of inbound and outbound payments that have not been interrupted
+  by a virtualisation step and a new list is added for every virtual layer that
+  is created or torn down cooperatively. We also observe that a non-negligent
+  party with history $(F, C)$ satisfies the Lemma conditions and that the value
+  of the right hand side of the
   inequality~(\ref{lemma:real-balance-security:ineq}) is equal to
   $\sum\limits_{s \in C} \sum\limits_{x \in s} x$, as all inbound and outbound
-  payment values and new channel funding values that appear in the Lemma
-  conditions are recorded in $C$.
+  payment values, new channel funding values and cooperative closing refunds
+  that appear in the Lemma conditions are recorded in $C$.
 
   Let party $P$ with a particular history. We will inductively prove that $P$
   satisfies the Lemma. The base case is when a channel is opened with
