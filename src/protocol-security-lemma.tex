@@ -244,6 +244,42 @@
     Fig.~\ref{code:ln:bob}, l.~\ref{code:ln:bob:host}) before any further change
     to its history, then \emph{eventually $R$'s \ledger state will contain an
     output with a $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ spending method.}
+    \item If $P$ receives (\textsc{check coop close}, $\dots$) or (\textsc{coop
+    close sign comm}, $\dots$) by $\texttt{host}_P$, subsequently transitions
+    back to \textsc{open} (therefore moving to history $(F, C')$ where $C' = C +
+    [0]$), and finally receives (\textsc{forceClose}) by \environment and
+    (\textsc{closed}) by $\texttt{host}_P$ before any further change to its
+    history, then \emph{eventually $P$'s \ledger state will contain $h$
+    transaction outputs each of value $c_i$ exclusively spendable or already
+    spent by $\pk{P, \mathrm{out}}$ that are descendants of an output with
+    spending method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that
+    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{x \in s}
+    x$.}
+    \item If $P$ receives (\textsc{coop close sig comm funder}, $\dots$) by
+    $\texttt{host}_P$, subsequently transitions back to \textsc{open} (therefore
+    moving to history $(F, C')$ where $C' = C + [c_1']$) and finally receives
+    (\textsc{forceClose}) by \environment and (\textsc{closed}) by
+    $\texttt{host}_P$ before any further change to its history, then
+    \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
+    each of value $c_i$ exclusively spendable or already spent by $\pk{P,
+    \mathrm{out}}$ that are descendants of an output with spending method
+    $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C} \sum\limits_{x \in s} x$.}
+    \item If $P$ receives (\textsc{check coop close fundee}, $\dots$) by
+    $\texttt{host}_P$, subsequently transitions back to \textsc{open} (therefore
+    moving to history $(F, C')$ where $C' = C + [c_2']$) and finally receives
+    (\textsc{forceClose}) by \environment and (\textsc{closed}) by
+    $\texttt{host}_P$ before any further change to its history, then
+    \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
+    each of value $c_i$ exclusively spendable or already spent by $\pk{P,
+    \mathrm{out}}$ that are descendants of an output with spending method
+    $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C} \sum\limits_{x \in s} x - c_2'$.} Furthermore, if the
+    (local, kindred) \texttt{fundee} (i.e.\ the next \textsc{ln} ITI that is
+    activated before any message is sent to a non-kindred ITI) transitions to
+    \textsc{coop closed}, then \emph{the above inequality is changed to
+    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{x \in s}
+    x$.}
     \item If $P$ receives (\textsc{pay}, $d$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $-d$ appended to the last list of $C$) and finally
