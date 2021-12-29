@@ -1552,6 +1552,7 @@
       \State \trustedcode{input (\textsc{rev verified}) to last old host}
       \State $\itistate \gets \textsc{coop closed}$
       \If{$i < n$} \Comment{we are intermediary}
+      \label{code:virtual-layer:coop-close-intermediary:intermediary-revoke}
         \State send (\textsc{coop close revocations}, \texttt{left\_revocations})
         to \texttt{sibling}
         \State \trustedcode{output (\textsc{coop close revocations},
@@ -1597,6 +1598,7 @@
         $\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}, \mathrm{fund}}$) to
         $\bar{P}$)}
       \Else \: \Comment{$i = n$, we are host of fundee}
+      \label{code:virtual-layer:coop-close-intermediary:host-of-fundee-revoke}
         \State extract $\mathrm{sig}_{1, \mathrm{right}, R}$ from
         \texttt{left\_revocations}
         \State output (\textsc{verify revocation}, $\mathrm{sig}_{1,

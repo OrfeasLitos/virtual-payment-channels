@@ -907,6 +907,7 @@
       \State ensure $\texttt{hosting} \neq$ True
       \State ensure $\itistate = \textsc{open}$
       \State $\itistate \gets \textsc{coop closing}$
+      \label{code:ln:coop-close-fundee:state-change}
       \State $\texttt{close\_initiator} \gets R$
       \State $\texttt{sig\_bal} \gets ((c_{\bar{P}}, c_P),
       \textsc{sign}((c_{\bar{P}}, c_P), \sk{P, F}))$
