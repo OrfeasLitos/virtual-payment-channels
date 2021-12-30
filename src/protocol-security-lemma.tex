@@ -557,7 +557,34 @@
   include an ($f$, $\pk{P, \mathrm{out}}$) output. We have therefore covered all
   cases and proven the second bullet.
 
-  Regarding now the third bullet, once again the induction hypothesis guarantees
+  We now focus on the third bullet. Once more the induction hypothesis
+  guarantees that before (\textsc{check coop close}, $\dots$) or (\textsc{coop
+  close sign comm}, $\dots$) was received, $P$ could close the channel resulting
+  in on-chain outputs exclusively spendable or already spent by $\pk{P,
+  \mathrm{out}}$ that are descendants of an output with a $2/\{\pk{P, F},
+  \pk{\bar{P}, F}\}$ spending method that have a sum value of $c_P =
+  \sum\limits_{s \in C} \sum\limits_{x \in s} x$. When $P$ receives
+  (\textsc{check coop close}, $\dots$) or (\textsc{coop close sign comm},
+  $\dots$), it moves to the \textsc{coop closing} state before returning to the
+  \textsc{open} state. In case of (\textsc{check coop close}, $\dots$), it
+  verifies the counterparty's signature on the new commitment transaction $C_{P,
+  i+1}$ (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-verify-comm}),
+  in which $P$ owns $c_2'$ more coins than before that moment
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-comm}).
+  It then signs the corresponding commitment transaction for the counterparty
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-sign-comm}),
+  revokes the previous commitment transaction
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-sign-rev}) and
+  expects valid signatures the revocation transaction for the old commitment
+  transaction of the counterparty
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-verify-rev}).
+
+  Regarding now the sixth bullet, once again the induction hypothesis guarantees
   that before (\textsc{pay}, $d$) was received, $P$ could close the channel
   resulting in on-chain outputs exclusively spendable or already spent by
   $\pk{P, \mathrm{out}}$ that are descendants of an output with a  $2/\{\pk{P,
@@ -609,7 +636,7 @@
   exclusively by $\pk{P, \mathrm{out}}$ and carry at least $c_P - d$ coins are
   put on-chain. We have proven the third bullet.
 
-  For the fourth and last bullet, again by the induction hypothesis, before
+  For the seventh and last bullet, again by the induction hypothesis, before
   (\textsc{get paid}, $e$) was received $P$ could close the channel resulting in
   on-chain outputs exclusively spendable or already spent by $\pk{P,
   \mathrm{out}}$ that are descendants of an output $o_F$ with a $2/\{\pk{P, F},
