@@ -757,6 +757,7 @@
           \State $\itistate \gets \textsc{waiting for nothing revoked}$
           \State input (\textsc{check for revoked}) to \texttt{host} and expect
           output (\textsc{nothing revoked})
+          \label{code:ln:poll:hosts-poll}
           \State $\itistate \gets \texttt{state\_before\_checking\_revoked}$
         \EndFor
       \EndIf
@@ -911,6 +912,7 @@
       \State $\texttt{close\_initiator} \gets R$
       \State $\texttt{sig\_bal} \gets ((c_{\bar{P}}, c_P),
       \textsc{sign}((c_{\bar{P}}, c_P), \sk{P, F}))$
+      \label{code:ln:coop-close-fundee:balance-sign}
       \State $\itistate \gets \textsc{waiting to revoke virt comm}$
       \State send (\textsc{coop close}, \texttt{sig\_bal}) to $\bar{P}$
     \end{algorithmic}
@@ -930,6 +932,7 @@
       \State ensure $c_P = c_1' \wedge c_{\bar{P}} = c_2' \wedge
       \textsc{verify}((c_1', c_2'), \mathrm{sig}_{\bar{P}}, \pk{\bar{P}, F}) =
       \mathrm{True}$
+      \label{code:ln:coop-close-funder:verify-balance}
       \State $\texttt{sig\_bal} \gets ((c_P, c_{\bar{P}}), \textsc{sign}((c_P,
       c_{\bar{P}}), \sk{P, F}), \mathrm{sig}_{\bar{P}})$
       \State $\itistate \gets \textsc{coop closing}$

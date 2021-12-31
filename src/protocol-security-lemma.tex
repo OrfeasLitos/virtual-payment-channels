@@ -55,13 +55,14 @@
     Consider two alternative series of subsequent execution steps:
     \begin{enumerate}
       \item The \texttt{guest} of $\texttt{host}_P$ (call them $S$) receives
-      $(\textsc{forceClose})$ by \environment and eventually a total of $c_b$
-      coins is exclusively spendable by $\pk{R, \mathrm{out}}$, where $R$ is a
-      machine kindred to $S$. Additionally, there is at least one funding output
-      of $P$'s channel $(c_P + c_{\bar{P}}, 2/\{\pk{P, F}, \pk{\bar{P}, F}\})$
-      that is on-chain and unspent.
+      $(\textsc{forceClose})$ by \environment. From that point onward, all
+      protocol parties (even corrupted ones) honestly follow the protocol.
+      Eventually a total of $c_b$ coins is exclusively spendable by $\pk{R,
+      \mathrm{out}}$, where $R$ is a machine kindred to $S$. Additionally, there
+      is at least one funding output of $P$'s channel $(c_P + c_{\bar{P}},
+      2/\{\pk{P, F}, \pk{\bar{P}, F}\})$ that is on-chain and unspent.
       \item $P$ receives either $(\textsc{coopClose})$ by \environment or
-      $(\textsc{coop close}, $\dots$)$ by $R$, and $P$'s variable
+      $(\textsc{coop close}, $\dots$)$ by some other ITI, and $P$'s variable
       $\texttt{hosting}$ is False. Subsequently, $P$'s $\itistate$ transitions
       to \textsc{coop closed} and then the $\itistate$ of $S$ transitions to
       \textsc{open}. The next time $S$ is activated is via a
@@ -70,6 +71,7 @@
     \end{enumerate}
     It then holds that
     \begin{equation}
+      \label{eq:real-balance-coop-close}
       c_t - c_b \geq \phi \cdot c - \sum\limits_{i=1}^n f_i -
       \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^j
       r_i + \sum\limits_{i=1}^k l_i
@@ -127,15 +129,19 @@
   l.~\ref{code:virtual-layer:coop-close-intermediary:host-of-fundee-revoke}),
   then $[c_2']$ (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
   l.~\ref{code:virtual-layer:coop-close-intermediary:first-invoke-guest}) is
-  appended to $C$. Lastly, in case $P$ was an intermediary for the closed
+  appended to $C$. In case $P$ was a left intermediary for the closed virtual
+  channel (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:first-activation-guest}),
+  then $[c_2']$ is appended to $C$.
+  Lastly, in case $P$ was a right intermediary for the closed
   virtual channel (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
-  l.~\ref{code:virtual-layer:coop-close-intermediary:intermediary-revoke}), then
-  $[0]$ is appended to $C$. Therefore $C$ consists of one list of integers for
-  each sequence of inbound and outbound payments that have not been interrupted
-  by a virtualisation step and a new list is added for every virtual layer that
-  is created or torn down cooperatively. We also observe that a non-negligent
-  party with history $(F, C)$ satisfies the Lemma conditions and that the value
-  of the right hand side of the
+  l.~\ref{code:virtual-layer:coop-close-intermediary:first-activation-guest-sibling}),
+  then $[c_1' - c_{\mathrm{virt}}]$ is appended to $C$. Therefore $C$ consists
+  of one list of integers for each sequence of inbound and outbound payments
+  that have not been interrupted by a virtualisation step and a new list is
+  added for every virtual layer that is created or torn down cooperatively. We
+  also observe that a non-negligent party with history $(F, C)$ satisfies the
+  Lemma conditions and that the value of the right hand side of the
   inequality~(\ref{lemma:real-balance-security:ineq}) is equal to
   $\sum\limits_{s \in C} \sum\limits_{x \in s} x$, as all inbound and outbound
   payment values, new channel funding values and cooperative closing refunds
@@ -143,10 +149,10 @@
 
   Let party $P$ with a particular history. We will inductively prove that $P$
   satisfies the Lemma. The base case is when a channel is opened with
-  $\texttt{hops} =$ ``\texttt{ledger}'' and is closed right away, therefore $H = ([], [g])$,
-  where $g = c$ if $P = \alice$ and $g = 0$ if $P = \bob$.  $P$ can transition
-  to the \textsc{open} \textit{State} for the first time only if all of the
-  following have taken place:
+  $\texttt{hops} =$ ``\texttt{ledger}'' and is closed right away, therefore $H =
+  ([], [g])$, where $g = c$ if $P = \alice$ and $g = 0$ if $P = \bob$.  $P$ can
+  transition to the \textsc{open} \textit{State} for the first time only if all
+  of the following have taken place:
   \begin{itemize}
     \item It has received (\textsc{open}, $c$, $\dots$) while in the
     \textsc{init} \textit{State}. In case $P = \alice$, this message must have
@@ -237,7 +243,8 @@
     \mathrm{out}}$ that are descendants of an output with spending method
     $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ such that $\sum\limits_{i=1}^k c^R_i \geq
     \sum\limits_{s \in C_R} \sum\limits_{x \in s} x$}.
-    \item If $P$ receives (\textsc{virtualising}, $\dots$) by $\bar{P}$,
+    \item If $P$ receives (\textsc{virtualising}, $\dots$) by $\bar{P}$ or
+    \texttt{sibling},
     subsequently transitions back to \textsc{open} (therefore moving to history
     $(F, C')$ where $C' = C + [0]$) and finally receives (\textsc{forceClose}) by
     \environment and (\textsc{closed}) by $\texttt{host}_P$ before any further
@@ -259,17 +266,33 @@
     Fig.~\ref{code:ln:bob}, l.~\ref{code:ln:bob:host}) before any further change
     to its history, then \emph{eventually $R$'s \ledger state will contain an
     output with a $2/\{\pk{R, F}, \pk{\bar{R}, F}\}$ spending method.}
-    \item If $P$ receives (\textsc{check coop close}, $\dots$) or (\textsc{coop
-    close sign comm}, $\dots$) by $\texttt{host}_P$, subsequently transitions
-    back to \textsc{open} (therefore moving to history $(F, C')$ where $C' = C +
-    [0]$), and finally receives (\textsc{forceClose}) by \environment and
+    \item If $P$ receives (\textsc{check coop close}, $\dots$) by
+    $\texttt{host}_P$, subsequently transitions back to \textsc{open} (therefore
+    moving to history $(F, C')$ where $C' = C + [c_2']$), and finally receives
+    (\textsc{forceClose}) by \environment and (\textsc{closed}) by
+    $\texttt{host}_P$ before any further change to its history, then
+    \emph{eventually $P$'s \ledger state will contain $h$ transaction outputs
+    each of value $c_i$ exclusively spendable or already spent by $\pk{P,
+    \mathrm{out}}$ that are descendants of an output with spending method
+    $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that $\sum\limits_{i=1}^h c_i \geq
+    \sum\limits_{s \in C} \sum\limits_{x \in s} x$.}
+    \item If $P$ receives (\textsc{coop close sign comm}, $\dots$) by
+    $\texttt{host}_P$, subsequently transitions back to \textsc{open} (therefore
+    moving to history $(F, C')$ where $C' = C + [c_1' - c_{\mathrm{virt}}]$),
+    and finally receives (\textsc{forceClose}) by \environment and
     (\textsc{closed}) by $\texttt{host}_P$ before any further change to its
     history, then \emph{eventually $P$'s \ledger state will contain $h$
     transaction outputs each of value $c_i$ exclusively spendable or already
     spent by $\pk{P, \mathrm{out}}$ that are descendants of an output with
     spending method $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that
     $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{x \in s}
-    x$.}
+    x$.} Furthermore, \emph{there exists a local, kindred machine $R$ that
+    transitioned to the \textsc{open} state after the last time control was
+    obtained by one of $P$'s kindred machines and before $P$ transitioned to the
+    \textsc{open} state, such that $R$ obtained $c_2' = c_{\mathrm{virt}} -
+    c_1'$ coins during its last activation.} (In other words, $P$ and $R$ broke
+    even on aggregate by first supporting the opening and then the cooperative
+    closing of a virtual channel.)
     \item If $P$ receives (\textsc{coop close sig comm funder}, $\dots$) by
     $\texttt{host}_P$, subsequently transitions back to \textsc{open} (therefore
     moving to history $(F, C')$ where $C' = C + [c_1']$) and finally receives
@@ -289,12 +312,7 @@
     each of value $c_i$ exclusively spendable or already spent by $\pk{P,
     \mathrm{out}}$ that are descendants of an output with spending method
     $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ such that $\sum\limits_{i=1}^h c_i \geq
-    \sum\limits_{s \in C} \sum\limits_{x \in s} x - c_2'$.} Furthermore, if the
-    (local, kindred) \texttt{fundee} (i.e.\ the next \textsc{ln} ITI that is
-    activated before any message is sent to a non-kindred ITI) transitions to
-    \textsc{coop closed}, then \emph{the above inequality is changed to
-    $\sum\limits_{i=1}^h c_i \geq \sum\limits_{s \in C} \sum\limits_{x \in s}
-    x$.}
+    \sum\limits_{s \in C} \sum\limits_{x \in s} x$.}
     \item If $P$ receives (\textsc{pay}, $d$) by \environment, subsequently
     transitions back to \textsc{open} (therefore moving to history $(F, C')$
     where $C'$ is $C$ with $-d$ appended to the last list of $C$) and finally
@@ -492,7 +510,7 @@
   it can close its channel for a ($f$, $\pk{R, \mathrm{out}}$) output that is a
   descendant of $o_R$. We have therefore proven the first bullet.
 
-  We now move on to the second bullet. In case $P$ is the \texttt{funder} (i.e.\
+  We now move on to the second bullet. In case $P$ is the \texttt{fundee} (i.e.\
   $i=n$), then the same arguments as in the previous bullet hold here with
   ``\textsc{waiting for inbound revocation}'' replaced with ``\textsc{waiting
   for outbound revocation}'', $o_{1, 2}$ with $o_{n-1, n}$, $\mathrm{TX}_{1, 1}$
@@ -506,7 +524,7 @@
   l.~\ref{code:settling-process:increment} of the same Figure and $f$ is
   replaced with $0$. This is so because these two cases are symmetric.
 
-  In case $P$ is not the \texttt{funder} ($1<i<n$), then we only need to prove
+  In case $P$ is not the \texttt{fundee} ($1<i<n$), then we only need to prove
   the first statement of the second bullet. By the induction hypothesis and
   since \texttt{sibling} is kindred, we know that both $P$'s and
   \texttt{sibling}'s funding outputs either are or can be eventually put
@@ -540,7 +558,10 @@
   $P$ has not signed the ``revocation'' spending method of $C_{P, 0}$). $P$ can
   get the remaining $f$ coins as follows: $\mathrm{TX}_{i, 1}$ and all of
   $(\mathrm{TX}_{i, 2, k})_{k < i}$ already have an ($f$, $\pk{P,
-  \mathrm{out}}$) output. If instead $\mathrm{TX}_{i+1, 1}$ or one of
+  \mathrm{out}}$) output (Note that this output is also
+  encumbered with a timelock, but the alternative spending method cannot be used
+  as $\texttt{host}_P$ has not signed the required revocation transaction). If
+  instead $\mathrm{TX}_{i+1, 1}$ or one of
   $(\mathrm{TX}_{i+1, 2, k_2})_{k_2 > i+1}$ spends $o_{\mathrm{right}}$, then
   $P$ will publish $\mathrm{TX}_{i, 2, i+1}$ or $\mathrm{TX}_{i, 2, k_2}$
   respectively if $o_{\mathrm{left}}$ is unspent, otherwise $o_{\mathrm{left}}$
@@ -554,40 +575,156 @@
   i+1}$ is published if $\mathrm{TX}_{i-1, 1}$ and $\mathrm{TX}_{i+1, 1}$ are
   on-chain, or $\mathrm{TX}_{i, 3, k_1, k_2}$ is published if $\mathrm{TX}_{i-1,
   2, k_1}$ and $\mathrm{TX}_{i+1, 2, k_2}$ are on-chain.  All these transactions
-  include an ($f$, $\pk{P, \mathrm{out}}$) output. We have therefore covered all
-  cases and proven the second bullet.
+  include an ($f$, $\pk{P, \mathrm{out}}$) output for which the revocation-based
+  spending methd cannot be used since $\texttt{host}_P$ has not produced the
+  corresponding signature for the revocation transaction. We have therefore
+  covered all cases and proven the second bullet.
 
   We now focus on the third bullet. Once more the induction hypothesis
-  guarantees that before (\textsc{check coop close}, $\dots$) or (\textsc{coop
-  close sign comm}, $\dots$) was received, $P$ could close the channel resulting
-  in on-chain outputs exclusively spendable or already spent by $\pk{P,
-  \mathrm{out}}$ that are descendants of an output with a $2/\{\pk{P, F},
-  \pk{\bar{P}, F}\}$ spending method that have a sum value of $c_P =
-  \sum\limits_{s \in C} \sum\limits_{x \in s} x$. When $P$ receives
-  (\textsc{check coop close}, $\dots$) or (\textsc{coop close sign comm},
-  $\dots$), it moves to the \textsc{coop closing} state before returning to the
-  \textsc{open} state. In case of (\textsc{check coop close}, $\dots$), it
-  verifies the counterparty's signature on the new commitment transaction $C_{P,
-  i+1}$ (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
-  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-verify-comm}),
-  in which $P$ owns $c_2'$ more coins than before that moment
+  guarantees that before (\textsc{check coop close}, $\dots$) was received, $P$
+  could close the channel resulting in on-chain outputs exclusively spendable or
+  already spent by $\pk{P, \mathrm{out}}$ that are descendants of an output
+  $o_F$ with a $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ spending method that have a
+  sum value of $c_P = \sum\limits_{s \in C} \sum\limits_{x \in s} x$. When $P$
+  receives (\textsc{check coop close}, $\dots$), it moves to the \textsc{coop
+  closing} state before returning to the \textsc{open} state. It verifies the
+  counterparty's signature on the new commitment transaction $C_{P, i+1}$,
   (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
-  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-comm}).
-  It then signs the corresponding commitment transaction for the counterparty
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-verify-comm})
+  which spends the latest old funding output
   (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
-  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-sign-comm}),
-  revokes the previous commitment transaction
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-old-fund-keys}),
+  effectively removing one virtualisation layer. In $C_{P, i+1}$ $P$ owns $c_2'$
+  more coins than before that moment
   (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
-  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-sign-rev}) and
-  expects valid signatures the revocation transaction for the old commitment
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-comm}). It then
+  signs the corresponding commitment transaction for the counterparty
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-sign-comm}) and
+  expects a valid signature for the revocation transaction of the old commitment
   transaction of the counterparty
   (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
   l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-verify-rev}).
+  Once these are received, $P$ transitions to the \textsc{open} state. If the
+  $o_F$ output is spent while $P$ is in the \textsc{coop closing} state, it can
+  be spent by one of $C_{P, i+1}$ or some of $(C_{\bar{P}, j})_{0 \leq j \leq
+  i+1}$. If it is spent by $C_{P, i+1}$ or $C_{\bar{P}, i+1}$, then these two
+  transactions have a ($c_P + c_2'$, $\pk{P, \mathrm{out}}$) output. (Note that
+  the former is encumbered with a timelock, but the alternative spending method
+  cannot be used as $P$ has not signed $R_{\bar{P}, i+1}$.) If it is spent by
+  $C_{\bar{P}, i}$ then a ($c_P$, $\pk{P, \mathrm{out}}$) output becomes
+  available instead, therefore $P$ can still get the $c_P$ coins that correspond
+  to the previous state. If any of $(C_{\bar{P}, j})_{0 \leq j < i}$ spends this
+  or another of our past funding outputs then it makes available a $\pk{P,
+  \mathrm{out}}$ output with the coins that $P$ had at state $j$ and
+  additionally $P$ can publish $R_{P, j}$ that spends $\bar{P}$'s output of
+  $C_{\bar{P}, j}$ and obtain the entirety of $\bar{P}$'s coins at state $j$ for
+  a total of $c_P + c_{\bar{P}}$ coins. What is more, if $o_F$ is spent by any
+  virtual transaction, then $\texttt{host}_P$ will punish the publisher of such
+  transaction with the corresponding virtual revocation transaction
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:verify-right-virt-rev},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:verify-right-fund-rev},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:verify-left-virt-rev-end},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:verify-left-virt-rev-start},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:verify-left-virt-rev-left}
+  and l.~\ref{code:virtual-layer:coop-close-intermediary:verify-left-fund-rev})
+  at the latest when $P$ receives (\textsc{check chain for closed})
+  (Fig.~\ref{code:ln:poll}, l.~\ref{code:ln:poll:hosts-poll}) -- note that the
+  latter message is received periodically by $P$, since it is a non-negligent
+  party. The virtual revocation transaction gives a sum equal to the entirety of
+  the channel's funds to $P$. Therefore in every case $P$ can claim at least
+  $c_P$ coins. In the case that $P$ instead
+  subsequently receives a valid signature to $R_{P, i}$
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-verify-rev})
+  and moves to the \textsc{open} state, the above analysis of what can happen
+  when $o_F$ is spent holds similarly, with the difference that if $\bar{P}$
+  spends $o_F$ with $C_{\bar{P}, i}$ now $P$ can publish $R_{P, i}$ which gives
+  $P$ the coins of $\bar{P}$. Therefore with this difference $P$ is now
+  guaranteed to gain at least $c_P + c_2'$ coins upon channel closure. We have
+  therefore proven the third bullet.
 
-  Regarding now the sixth bullet, once again the induction hypothesis guarantees
+  We now focus on the fourth bullet. Once more the induction hypothesis
+  guarantees that before (\textsc{coop close sign comm}, $\dots$) was received,
+  $P$ could close the channel resulting in on-chain outputs exclusively
+  spendable or already spent by $\pk{P, \mathrm{out}}$ that are descendants of
+  an output $o_F$ with a $2/\{\pk{P, F}, \pk{\bar{P}, F}\}$ spending method that
+  have a sum value of $c_P = \sum\limits_{s \in C} \sum\limits_{x \in s} x$.
+  When $P$ receives (\textsc{coop close sign comm}, $\dots$), it moves to the
+  \textsc{coop closing} state before returning to the \textsc{open} state. It
+  signs the new commitment transaction for the counterparty
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:right-interm-sign-comm})
+  which spends the latest old funding output
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:right-old-fund-keys}),
+  effectively removing one virtualisation layer. In $C_{P, i+1}$ $P$ owns
+  $c_{\mathrm{virt}} - c_1'$ less coins than before that moment
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:right-interm-comm}) -- note
+  that $P$ now lost access to $c_{\mathrm{virt}}$ coins from the refund output
+  of its virtual transactions. It then verifies the counterparty's signatures on
+  the corresponding new local commitment transaction $C_{P, i+1}$,
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:right-interm-verify-comm})
+  and on the revocation transaction of the old commitment transaction of the
+  counterparty (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:right-interm-verify-rev}).
+  Once these are received, $P$ transitions to the \textsc{open} state. If the
+  $o_F$ output is spent while $P$ is in the \textsc{coop closing} state, it can
+  be spent by one of $C_{P, i+1}$ or some of $(C_{\bar{P}, j})_{0 \leq j \leq
+  i+1}$. If it is spent by $C_{P, i+1}$ or $C_{\bar{P}, i+1}$, then these two
+  transactions have a ($c_P + c_1'$, $\pk{P, \mathrm{out}}$) output. (Note that
+  the former is encumbered with a timelock, but the alternative spending method
+  cannot be used as $P$ has not signed $R_{\bar{P}, i+1}$.) If it is spent by
+  $C_{\bar{P}, i}$ then a ($c_P$, $\pk{P, \mathrm{out}}$) output becomes
+  available instead, therefore $P$ can still get the $c_P$ coins that correspond
+  to the previous state. If any of $(C_{\bar{P}, j})_{0 \leq j < i}$ spends this
+  or another of our past funding outputs then it makes available a $\pk{P,
+  \mathrm{out}}$ output with the coins that $P$ had at state $j$ and
+  additionally $P$ can publish $R_{P, j}$ that spends $\bar{P}$'s output of
+  $C_{\bar{P}, j}$ and obtain the entirety of $\bar{P}$'s coins at state $j$ for
+  a total of $c_P + c_{\bar{P}}$ coins. Similarly to the previous bullet, if
+  $o_F$ is spent by any virtual transaction, then $\texttt{host}_P$ will punish
+  the publisher and $P$ will obtain a sum equal to the entirety of the channel's
+  funds. Therefore in every case $P$ can claim at least $c_P$ coins. In the case
+  that $P$ instead subsequently receives a valid signature to $R_{P, i}$
+  (Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+  l.~\ref{code:virtual-layer:coop-close-intermediary:left-interm-verify-rev})
+  and moves to the \textsc{open} state, the above analysis of what can happen
+  when $o_F$ holds similarly, with the difference that if $\bar{P}$ spends $o_F$
+  with $C_{\bar{P}, i}$ now $P$ can publish $R_{P, i}$ which gives $P$ the coins
+  of $\bar{P}$. Therefore with this difference $P$ is now guaranteed to gain at
+  least $c_P - c_{\mathrm{virt}} + c_1'$ coins upon channel closure. This proves
+  the first claim of the fourth bullet.
+
+  Regarding the second claim, we observe that $P$ can only move to the
+  \textsc{open} state if previously a local kindred \textsc{ln} ITI $R$ moves to
+  the \textsc{open} state as well. Via direct application of the previous claim
+  of the currently analysed bullet, $R$ has gained $c_2'$ coins in the process,
+  therefore guaranteeing that $P$ and $R$ have on aggregate access to the same
+  number of coins as before the cooperative closing. What is more, throughout
+  the cooperative closing process both parties had access to at least $c_P$ and
+  $c_R$ coins respectively, thus ensuring that no loss of coins is possible. We
+  have now proven the fourth bullet.
+
+  Moving on to the fifth bullet, the same reasoning as that of the treatment of
+  the previous bullet holds, albeit with the \texttt{guest}'s signature
+  verifications as they appear in Fig.~\ref{code:ln:coop-close-funder}.
+
+  The first claim of the sixth bullet holds due to an argument identical to that
+  provided for the third bullet, since in both cases the relevant parts of the
+  protocol execution are the same. Note that \texttt{funder}'s signature for the
+  revocation of the lastt commitment transaction of the virtual channel has not
+  been yet verified, but this is of no consequence for our balance as all other
+  revocation signatures have been already verified and the connection with the
+  \texttt{funder} has been severed due to the successful cooperative closing.
+
+  Regarding now the seventh bullet, once again the induction hypothesis guarantees
   that before (\textsc{pay}, $d$) was received, $P$ could close the channel
   resulting in on-chain outputs exclusively spendable or already spent by
-  $\pk{P, \mathrm{out}}$ that are descendants of an output with a  $2/\{\pk{P,
+  $\pk{P, \mathrm{out}}$ that are descendants of an output with a $2/\{\pk{P,
   F}, \pk{\bar{P}, F}\}$ spending method that have a sum value of $c_P =
   \sum\limits_{s \in C} \sum\limits_{x \in s} x$. (Note that $\sum\limits_{s \in
   C'} \sum\limits_{x \in s} x = d + \sum\limits_{s \in C} \sum\limits_{x \in s}
@@ -604,7 +741,8 @@
   l.~\ref{code:ln:pay:revocations:verify-comm}) and the revocation transaction
   for the old commitment transaction of the counterparty
   (Fig.~\ref{code:ln:pay:revocations},
-  l.~\ref{code:ln:pay:revocations:verify-rev}). Note that if the counterparty
+  l.~\ref{code:ln:pay:revocations:verify-rev}). Upon verifying them, $P$
+  transitions to the \textsc{open} state. Note that if the counterparty
   does not respond or if it responds with missing/invalid signatures, either $P$
   can close the channel with the old commitment transaction $C_{P, i}$ exactly
   like before the update started (as it has not yet sent the signature for the
@@ -634,9 +772,9 @@
   this spending method cannot be used and the timelock will expire, therefore in
   all cases outputs that descend from the funding output, can be spent
   exclusively by $\pk{P, \mathrm{out}}$ and carry at least $c_P - d$ coins are
-  put on-chain. We have proven the third bullet.
+  put on-chain. We have proven the seventh bullet.
 
-  For the seventh and last bullet, again by the induction hypothesis, before
+  For the eighth and last bullet, again by the induction hypothesis, before
   (\textsc{get paid}, $e$) was received $P$ could close the channel resulting in
   on-chain outputs exclusively spendable or already spent by $\pk{P,
   \mathrm{out}}$ that are descendants of an output $o_F$ with a $2/\{\pk{P, F},
@@ -675,5 +813,34 @@
   $C_{\bar{P}, i}$ now $P$ can publish $R_{P, i}$ which gives $P$ the coins of
   $\bar{P}$. Therefore with this difference $P$ is now guaranteed to gain at
   least $c_P + e$ coins upon channel closure. We have therefore proven the
-  fourth bullet.
+  eighth bullet and with it the first bullet of the Lemma.
+
+  We now turn to proving the second bullet of the Lemma. We will take advantage
+  of the results that have been derived earlier in this proof. If $P$ is
+  the \texttt{funder} of the virtual channel in process
+  of cooperatively closing, it ensures that $c_1' = c_P \wedge c_2' =
+  c_{\bar{P}}$ (Fig.~\ref{code:ln:coop-close-funder},
+  l.~\ref{code:ln:coop-close-funder:verify-balance}). If $P$ is the
+  \texttt{fundee}, it requests that the virtual channel be closed with the
+  current honest coin balance (Fig.~\ref{code:ln:coop-close-fundee},
+  l.~\ref{code:ln:coop-close-fundee:balance-sign}), in which case it is $c_1' =
+  c_{\bar{P}} \wedge c_2' = c_P$. Due to the arguments proving
+  the first Lemma bullet, we know that
+  \begin{equation}
+    \label{eq:virt-balance}
+    c_P = \sum\limits_{s \in C} \sum\limits_{x \in s} x \geq \phi \cdot c -
+    \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+    + \sum\limits_{i=1}^j r_i + \sum\limits_{i=1}^k l_i \enspace.
+  \end{equation}
+  Just before the splitting of the two alternative scenarios, party $S$ is
+  entitled to $c_b$ coins, since (i) in the first scenario all other parties
+  honestly follow the protocol and thus they do not lose any coins to $S$ and
+  (ii) no action during the first scenario causes any transfer of coins. As we
+  saw previously, if $P$ transitions to the \textsc{coop closed} state, then $S$
+  has also transitioned from the \textsc{coop closing} to the \textsc{open}
+  state and benefitted from an increase of the coins it can exclusively spend by
+  $c_P$. It therefore holds that the difference of the coins $c_t - c_b$ that
+  $P$ owns at the end of the two scenarios is exactly $c_P$ and due
+  to~(\ref{eq:virt-balance}) we can directly derive the
+  required~(\ref{eq:real-balance-coop-close}). The Lemma has now been proven.
 \end{proof}

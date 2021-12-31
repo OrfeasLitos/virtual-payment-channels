@@ -1328,6 +1328,7 @@
       \label{code:virtual-layer:coop-close-intermediary:first-invoke-guest}
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
       by \texttt{guest}}
+      \label{code:virtual-layer:coop-close-intermediary:first-activation-guest}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
       \State \trustedcode{store received signature as $\mathrm{sig}_{\bar{P}, C,
       i+1}$} \Comment{in \texttt{guest}s, $i$ is the current state number}
@@ -1335,12 +1336,15 @@
       i+2}$}
       \State \trustedcode{remove most recent keys from list of old funding keys
       and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
+      \label{code:virtual-layer:coop-close-intermediary:left-old-fund-keys}
       \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
       c_1' + c_2', 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs: $(c_P + c_2',
       (\pk{P, \mathrm{out}} + (p + s)) \vee 2/\{\pk{\bar{P}, R, i+1}, \pk{P, R,
       i+1}\})$, $(c_{\bar{P}} + c_1', \pk{\bar{P}, \mathrm{out}})$\}}
+      \label{code:virtual-layer:coop-close-intermediary:left-interm-comm}
       \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
       $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
+      \label{code:virtual-layer:coop-close-intermediary:left-interm-verify-comm}
       \State \trustedcode{input (\textsc{coop close check ok}) to
       $\texttt{host}_P$}
       \If{$i < n$} \Comment{we are intermediary}
@@ -1353,16 +1357,20 @@
         to \texttt{guest}}
         \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
         by \texttt{guest} of \texttt{sibling}}
+        \label{code:virtual-layer:coop-close-intermediary:first-activation-guest-sibling}
         \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
         \State \trustedcode{remove most recent keys from list of old funding keys
         and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
+        \label{code:virtual-layer:coop-close-intermediary:right-old-fund-keys}
         \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
         c_{\bar{P}} + c_1' + c_2', 2/\{\pk{P, F}', \pk{\bar{P}, F}'\})$, outputs:
         $(c_P + c_1', \pk{P, \mathrm{out}})$, $(c_{\bar{P}} + c_2', (\pk{\bar{P},
         \mathrm{out}} + (p + s)) \vee 2/\{\pk{P, R, i+1}, \pk{\bar{P}, R,
         i+1}\})$\}}
+        \label{code:virtual-layer:coop-close-intermediary:right-interm-comm}
         \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
         \textsc{sign}(C_{\bar{P}, i+1}, \sk{P, F}')$}
+        \label{code:virtual-layer:coop-close-intermediary:right-interm-sign-comm}
         \State \trustedcode{$(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets
         \textsc{keyGen}()$}
         \State \trustedcode{input (\textsc{new comm tx}, $\mathrm{sig}_{P, C,
@@ -1385,6 +1393,7 @@
         \State \trustedcode{ensure \textsc{verify}($R_{\mathrm{loc},
         \mathrm{right}, \mathrm{virt}}$, $\mathrm{sig}_{i+1, \mathrm{right},
         \mathrm{rev}, \mathrm{virt}}$, $\pk{i+1, \mathrm{rev}}$) = True}
+        \label{code:virtual-layer:coop-close-intermediary:verify-right-virt-rev}
         \State \trustedcode{$R_{\mathrm{loc}, \mathrm{right}, \mathrm{fund}}
         \gets$ TX \{input: $(c_P + c_{\bar{P}}, 2/\{\pk{i, \mathrm{rev}},
         \pk{i+1, \mathrm{rev}}\})$, output: $(c_P + c_{\bar{P}}, \pk{i,
@@ -1394,6 +1403,7 @@
         \State \trustedcode{ensure \textsc{verify}($R_{\mathrm{loc},
         \mathrm{right}, \mathrm{fund}}$, $\mathrm{sig}_{i+1, \mathrm{right},
         \mathrm{rev}, \mathrm{fund}}$, $\pk{i+1, \mathrm{rev}}$) = True}
+        \label{code:virtual-layer:coop-close-intermediary:verify-right-fund-rev}
         \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, C}$ from
         \texttt{right\_comms\_revkeys}}
         \State \trustedcode{extract $\mathrm{sig}_{i+1, \mathrm{left}, R}$ from
@@ -1414,6 +1424,7 @@
         \mathrm{out}})$\}}
         \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
         $\mathrm{sig}_{\bar{P}, C, i+1}$, $\pk{\bar{P}, F}'$) = True}
+        \label{code:virtual-layer:coop-close-intermediary:right-interm-verify-comm}
         \State \trustedcode{store $\mathrm{sig}_{i+1, \mathrm{left}, R}$ as
         $\mathrm{sig}_{\bar{P}, R, i}$}
         \State \trustedcode{$R_{P, i} \gets$ TX \{input: $C_{\bar{P},
@@ -1421,6 +1432,7 @@
         \mathrm{out}}$)\}}
         \State \trustedcode{ensure \textsc{verify}($R_{P, i}$,
         $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
+        \label{code:virtual-layer:coop-close-intermediary:right-interm-verify-rev}
         \State \trustedcode{input (\textsc{comm rev verified}) to
         $\texttt{host}_P$}
         \State \trustedcode{output (\textsc{coop close back},
@@ -1437,6 +1449,7 @@
         \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
         $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$, $\pk{n, \mathrm{rev}}$) =
         True
+        \label{code:virtual-layer:coop-close-intermediary:verify-left-virt-rev-end}
       \Else \: \Comment{$i = n$, we are host of fundee}
         \State output (\textsc{revoke}) to \texttt{fundee}
         \State \trustedcode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
@@ -1465,15 +1478,18 @@
       \mathrm{out}})$\}} \Comment{executed by \texttt{guest}}
       \State \trustedcode{$\mathrm{sig}_{P, C, i+1} \gets
       \textsc{sign}(C_{\bar{P}, i+1}, \sk{P, F}')$}
+      \label{code:virtual-layer:coop-close-intermediary:left-interm-sign-comm}
       \State \trustedcode{$R_{\bar{P}, i} \gets$ TX \{input: $C_{P,
       i}$.outputs.$P$, output: ($c_P + c_{\bar{P}}$, $\pk{\bar{P},
       \mathrm{out}}$)\}}
       \State \trustedcode{$\mathrm{sig}_{P, R, i} \gets
       \textsc{sign}(R_{\bar{P}, i}, \sk{P, R, i})$}
+      \label{code:virtual-layer:coop-close-intermediary:left-interm-sign-rev}
       \State \trustedcode{$(\sk{P, R, i+2}, \pk{P, R, i+2}) \gets
       \textsc{keyGen}()$}
       \State \trustedcode{input (\textsc{new comm rev}, $\mathrm{sig}_{P, C,
       i+1}$, $\mathrm{sig}_{P, R, i}$, $\pk{P, R, i+2}$) to $\texttt{host}_P$}
+      \label{code:virtual-layer:coop-close-intermediary:left-interm-send-comm-rev}
       \State rename $\mathrm{sig}_{P, C, i+1}$ to $\mathrm{sig}_{i,
       \mathrm{left}, C}$
       \State rename $\mathrm{sig}_{P, R, i}$ to $\mathrm{sig}_{i,
@@ -1515,21 +1531,24 @@
       \mathrm{virt}}$,
       $\mathrm{sig}_{1, \mathrm{right}, \mathrm{rev}}$, $\pk{1, \mathrm{rev}}$)
       = True
+      \label{code:virtual-layer:coop-close-intermediary:verify-left-virt-rev-start}
       \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left},
       \mathrm{virt}}$,
       $\mathrm{sig}_{i-1, \mathrm{right}, \mathrm{rev}}$, $\pk{i-1,
       \mathrm{rev}}$) = True
-        \State $R_{\mathrm{loc}, \mathrm{left}, \mathrm{fund}} \gets$ TX
-        \{input: $(c_P + c_{\bar{P}}, 2/\{\pk{i-1,
-        \mathrm{rev}}, \pk{i, \mathrm{rev}})$, output:
-        $(c_P + c_{\bar{P}}, \pk{i, \mathrm{out}})$\} \Comment{the input
-        corresponds to the revocation path of the right funding output of all
-        virtual txs owned by $\bar{P}$}
-        \State extract $\mathrm{sig}_{i-1, \mathrm{left}, \mathrm{rev},
-        \mathrm{fund}}$ from \texttt{left\_revocations}
-        \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left},
-        \mathrm{fund}}$, $\mathrm{sig}_{i-1, \mathrm{left}, \mathrm{rev},
-        \mathrm{fund}}$, $\pk{i-1, \mathrm{rev}}$) = True
+      \label{code:virtual-layer:coop-close-intermediary:verify-left-virt-rev-left}
+      \State $R_{\mathrm{loc}, \mathrm{left}, \mathrm{fund}} \gets$ TX
+      \{input: $(c_P + c_{\bar{P}}, 2/\{\pk{i-1,
+      \mathrm{rev}}, \pk{i, \mathrm{rev}})$, output:
+      $(c_P + c_{\bar{P}}, \pk{i, \mathrm{out}})$\} \Comment{the input
+      corresponds to the revocation path of the right funding output of all
+      virtual txs owned by $\bar{P}$}
+      \State extract $\mathrm{sig}_{i-1, \mathrm{left}, \mathrm{rev},
+      \mathrm{fund}}$ from \texttt{left\_revocations}
+      \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left},
+      \mathrm{fund}}$, $\mathrm{sig}_{i-1, \mathrm{left}, \mathrm{rev},
+      \mathrm{fund}}$, $\pk{i-1, \mathrm{rev}}$) = True
+      \label{code:virtual-layer:coop-close-intermediary:verify-left-fund-rev}
       \State output (\textsc{verify rev}, $\mathrm{sig}_{i-1, \mathrm{right},
       R}$, $\texttt{host}_P$) to \texttt{guest}
       \State \trustedcode{store received signature as $\mathrm{sig}_{bar{P}, R,
@@ -1539,6 +1558,7 @@
       \mathrm{out}}$)\}}
       \State \trustedcode{ensure \textsc{verify}($R_{P, i}$,
       $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
+      \label{code:virtual-layer:coop-close-intermediary:left-interm-verify-rev}
       \State \trustedcode{add $\texttt{host}_P$ to list of old hosts}
       \State \trustedcode{assign received host to $\texttt{host}_P$}
       \State \trustedcode{$i \gets i+1$; $c_P \gets c_P + c_2'$; $c_{\bar{P}}
@@ -1610,6 +1630,7 @@
         i}$.outputs.$\bar{P}$, output: $(c_{\bar{P}}, \pk{P, \mathrm{out}})$\}}
         \State \trustedcode{ensure \textsc{verify}($R_{P, i}$,
         $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
+        \label{code:virtual-layer:coop-close-intermediary:fundee-verify-rev}
         \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
         \If{$\texttt{close\_initiator} = P$} \Comment{\environment instructed us
         to close the channel}
