@@ -98,6 +98,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
       \Indent
         \State $\subbalance{A} \gets x$
         \label{code:functionality:open:base-balance}
+        \State $\sublayer{A} \gets 0$
         \State $\itistate_A \gets \textsc{open}$
       \EndIndent
       \Statex
@@ -106,6 +107,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
       \textsc{init}$:
       \label{code:functionality:open:when-open-bob}
       \Indent
+        \State $\sublayer{B} \gets 0$
         \State $\itistate_B \gets \textsc{open}$
       \EndIndent
       \Statex
@@ -143,6 +145,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
       \Indent
         \IfThen{$P = \alice$}{$\subbalance{P} \gets x$}
         \label{code:functionality:open:virtual-balance}
+        \State $\sublayer{P} \gets 0$
         \State $\itistate_P \gets \textsc{open}$
       \EndIndent
     \end{algorithmic}
@@ -289,6 +292,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
           \State $\texttt{host}_P \gets \texttt{host}$
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with l.~\ref{code:functionality:fund:help-fund-end}}
+          \State $\sublayer{P} \gets \sublayer{P} + 1$
           \State $\itistate_P \gets \textsc{open}$
           \label{code:functionality:fund:fund-end}
         \EndIf
@@ -301,6 +305,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
           \State $\texttt{host}_P \gets \texttt{host}$
           \State \Comment{if $\bar{P}$ honest, this state transition happens
           simultaneously with l.~\ref{code:functionality:fund:fund-end}}
+          \State $\sublayer{P} \gets \sublayer{P} + 1$
           \State $\itistate_P \gets \textsc{open}$
           \label{code:functionality:fund:help-fund-end}
         \EndIf
@@ -312,7 +317,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
 \end{center} \ \\
 
 \begin{center}
-  \begin{systembox}{\fchan{} -- close state machine, $P \in \{\alice,
+  \begin{systembox}{\fchan{} -- force close state machine, $P \in \{\alice,
   \bob\}$}
     \begin{algorithmic}[1]
       \State On (\textsc{forceClose}) by $P$ when $\itistate_P =
@@ -374,13 +379,27 @@ inputs and outputs, network messages may have a tampered ``sender field''.
   \begin{systembox}{\fchan{} -- cooperative close state machine, $P \in
   \{\alice, \bob\}$}
     \begin{algorithmic}[1]
-      \State \TODO{fill in, or, if removed, remove all refs to
-      \{code:functionality:coop-close\}. Possible approach: there will be an
-      alternative message from \adversary, e.g.\ (\textsc{coopClose}, $P$),
-      which will not check on-chain, but tell the host, e.g.\ via
-      (\textsc{coopClosed}, $x$) to demand our money. Of course the handling of
-      \textsc{coopClosed} must be added as well. Maybe the whole thing will fit
-      in the previous box.}
+      \State On (\textsc{coop closing}, $P$, $x$) by \adversary when
+      $\itistate_P = \textsc{open}$:
+      \Indent
+        \State store $x$
+        \State $\itistate_P \gets \textsc{coop closing}$
+      \EndIndent
+      \Statex
+
+      \State On (\textsc{coop closed}, $P$) by \adversary when $\itistate_P =
+      \textsc{coop closing}$:
+      \Indent
+        \If{$\sublayer{P} = 0$} \Comment{$P$'s channel, which is virtual, is
+        cooperatively closed}
+          \State $\itistate_P \gets \textsc{coop closed}$
+        \Else \: \Comment{the virtual channel for which $P$'s channel is base is
+        cooperatively closed}
+          \State $\sublayer{P} \gets \sublayer{P} - 1$
+          \State $\subbalance{P} \gets \subbalance{P} + x$
+          \State $\itistate_P \gets \textsc{open}$
+        \EndIf
+      \EndIndent
     \end{algorithmic}
   \end{systembox}
   \captionof{figure}{}
