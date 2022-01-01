@@ -1310,7 +1310,6 @@
     \Comment{we are left intermediary or host of fundee}
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open}$
-      \State $\itistate \gets \textsc{coop closing}$
       \State parse \texttt{sig\_bal} as $(c_1', c_2'), \mathrm{sig}_1,
       \mathrm{sig}_2$
       \State ensure $c_{\mathrm{virt}} = c_1' + c_2'$
