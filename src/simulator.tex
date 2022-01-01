@@ -131,6 +131,58 @@
       \Statex
 
       \State When one of the honest simulated \fchan's parties $P$ moves to the
+      \textsc{coop closing} state
+      (Fig.~\ref{code:ln:coop-close-fundee},
+      l.~\ref{code:ln:coop-close-fundee:state-change},
+      Fig.~\ref{code:ln:coop-close-funder},
+      ll.~\ref{code:ln:coop-close-funder:state-change},~\ref{code:ln:coop-close-funder:guest-state-change},
+      Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+      ll.~\ref{code:virtual-layer:coop-close-intermediary:guest-state-change},~\ref{code:virtual-layer:coop-close-intermediary:guest-sibling-state-change}):
+      \Indent
+        \If{triggered by Fig.~\ref{code:ln:coop-close-fundee},
+        l.~\ref{code:ln:coop-close-fundee:state-change} or
+        Fig.~\ref{code:ln:coop-close-funder},
+        l.~\ref{code:ln:coop-close-funder:state-change}} \Comment{$P$ is
+        \texttt{funder} or \texttt{fundee}}
+          \State send (\textsc{info}, \textsc{coop closing}, $P$, $-c_P$) to
+          \fchan{} \Comment{coin value extracted from simulated $P$}
+        \ElsIf{triggered by Fig.~\ref{code:ln:coop-close-funder},
+        l.~\ref{code:ln:coop-close-funder:guest-state-change}} \Comment{$P$ is
+        \texttt{funder}'s base}
+          \State send (\textsc{info}, \textsc{coop closing}, $P$, $c_1'$) to
+          \fchan
+        \ElsIf{triggered by
+        Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+        l.~\ref{code:virtual-layer:coop-close-intermediary:guest-state-change}}
+        \Comment{$P$ is an intermediary farther from \texttt{funder} than
+        $\bar{P}$}
+          \State send (\textsc{info}, \textsc{coop closing}, $P$, $c_2'$) to
+          \fchan
+        \ElsIf{triggered by Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+        l.~\ref{code:virtual-layer:coop-close-intermediary:guest-sibling-state-change}}
+        \Comment{$P$ is an intermediary closer to \texttt{funder} than $\bar{P}$}
+          \State send (\textsc{info}, \textsc{coop closing}, $P$, $c_1' -
+          c_{\mathrm{virt}}$) to \fchan
+        \EndIf
+      \EndIndent
+      \Statex
+
+      \State When one of the honest simulated \fchan's parties $P$ completes
+      cooperative closing
+      (Fig.~\ref{code:ln:coop-close-funder},
+      l.~\ref{code:ln:coop-close-funder:coop-closed-state},
+      Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+      l.~\ref{code:virtual-layer:coop-close-intermediary:fundee-coop-closed},
+      Fig.~\ref{code:virtual-layer:coop-close-intermediary},
+      l.~\ref{code:virtual-layer:coop-close-intermediary:sibling-guest-back-open},
+      Fig.~\ref{code:virtual-layer:coop-close-intermediary}, or
+      l.~\ref{code:virtual-layer:coop-close-intermediary:guest-back-open}):
+      \Indent
+        \State send (\textsc{info}, \textsc{coop closed}, $P$) to \fchan
+      \EndIndent
+      \Statex
+
+      \State When one of the honest simulated \fchan's parties $P$ moves to the
       \textsc{closed} state (Fig.~\ref{code:ln:poll},
       l.~\ref{code:ln:poll:state-closed-punished} or
       l.~\ref{code:ln:poll:state-closed-honestly}):
