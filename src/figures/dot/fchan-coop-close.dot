@@ -1,0 +1,11 @@
+digraph G {
+  open [texlbl="\textsc{open}"]
+  closing [texlbl="\textsc{coop} \textsc{closing}"]
+  open -> closing [label="\simulator: (\textsc{coop closing}, P, x)"]
+
+  check_layer [label="l_P \overset{?}{=} 0",style=diamond]
+  closing -> check_layer [label="\simulator: (\textsc{coop closed}, P)"]
+  coop_closed [texlbl="\textsc{coop closed}"]
+  check_layer -> coop_closed [texlbl="True; $\text{bal}_P \gets \text{bal}_P + x$"]
+  check_layer -> open [texlbl="False; $\text{bal}_P \gets \text{bal}_P + x$; $l_P \gets l_P - 1$"]
+}
