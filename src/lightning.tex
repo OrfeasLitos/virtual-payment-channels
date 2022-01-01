@@ -936,6 +936,7 @@
       \State $\texttt{sig\_bal} \gets ((c_P, c_{\bar{P}}), \textsc{sign}((c_P,
       c_{\bar{P}}), \sk{P, F}), \mathrm{sig}_{\bar{P}})$
       \State $\itistate \gets \textsc{coop closing}$
+      \label{code:ln:coop-close-funder:state-change}
       \State input (\textsc{coop close}, $\texttt{sig\_bal}$) to
       $\texttt{host}_P$
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
@@ -946,6 +947,7 @@
       \State \trustedcode{ensure $\itistate = \textsc{open}$} \Comment{executed
       by \texttt{guest} of $\texttt{host}_P$}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
+      \label{code:ln:coop-close-funder:guest-state-change}
       \State \trustedcode{remove most recent keys from list of old funding keys
       and assign them to $\sk{P, F}'$, $\pk{P, F}'$, $\pk{\bar{P}, F}'$}
       \State \trustedcode{$C_{\bar{P}, i+1} \gets$ TX \{input: $(c_P +
@@ -1023,6 +1025,7 @@
       R, i})$
       \State $\itistate \gets \textsc{coop closed}$ \Comment{in \textsc{ln},
       only virtual channels can end up in this state}
+      \label{code:ln:coop-close-funder:coop-closed-state}
       \State input (\textsc{coop close revocation}, $\mathrm{sig}_{P, R, i}$) to
       $\texttt{host}_P$
       \State \trustedcode{output (\textsc{coop close revocations},

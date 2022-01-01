@@ -1329,6 +1329,7 @@
       by \texttt{guest}}
       \label{code:virtual-layer:coop-close-intermediary:first-activation-guest}
       \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
+      \label{code:virtual-layer:coop-close-intermediary:guest-state-change}
       \State \trustedcode{store received signature as $\mathrm{sig}_{\bar{P}, C,
       i+1}$} \Comment{in \texttt{guest}s, $i$ is the current state number}
       \State \trustedcode{store received revocation key as $\pk{\bar{P}, R,
@@ -1358,6 +1359,7 @@
         by \texttt{guest} of \texttt{sibling}}
         \label{code:virtual-layer:coop-close-intermediary:first-activation-guest-sibling}
         \State \trustedcode{$\itistate \gets \textsc{coop closing}$}
+        \label{code:virtual-layer:coop-close-intermediary:guest-sibling-state-change}
         \State \trustedcode{remove most recent keys from list of old funding keys
         and assign them to $\sk{P, F}'$, $\pk{P, F}'$ and $\pk{\bar{P}, F}'$}
         \label{code:virtual-layer:coop-close-intermediary:right-old-fund-keys}
@@ -1568,6 +1570,7 @@
       F}')$}
       \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
       \State \trustedcode{$\itistate \gets \textsc{open}$}
+      \label{code:virtual-layer:coop-close-intermediary:guest-back-open}
       \State \trustedcode{$\texttt{hosting} \gets$ False}
       \State \trustedcode{input (\textsc{rev verified}) to last old host}
       \State $\itistate \gets \textsc{coop closed}$
@@ -1593,6 +1596,7 @@
         F}')$}
         \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
         \State \trustedcode{$\itistate \gets \textsc{open}$}
+        \label{code:virtual-layer:coop-close-intermediary:sibling-guest-back-open}
         \State \trustedcode{$\texttt{hosting} \gets$ False}
         \State \trustedcode{input (\textsc{revocation}, $\mathrm{sig}_{P, R, i}$)
         to last old host}
@@ -1633,6 +1637,7 @@
         $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
         \label{code:virtual-layer:coop-close-intermediary:fundee-verify-rev}
         \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
+        \label{code:virtual-layer:coop-close-intermediary:fundee-coop-closed}
         \If{$\texttt{close\_initiator} = P$} \Comment{\environment instructed us
         to close the channel}
           \State execute code of Fig.~\ref{code:ln:coop-closed-to-initiator}
