@@ -1040,6 +1040,7 @@
       \State \trustedcode{$c_P \gets c_P + c_1'; c_{\bar{P}} \gets c_{\bar{P}} +
       c_2'$}
       \label{code:ln:coop-close-funder:update-coins}
+      \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
       \State \trustedcode{$\itistate \gets \textsc{open}$}
       \State \trustedcode{input (\textsc{revocation},
       $\mathrm{sig}_{P, R, i}$) to last old host}

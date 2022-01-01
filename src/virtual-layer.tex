@@ -1567,6 +1567,7 @@
       old enabler channel funding keys}
       \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
       F}')$}
+      \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
       \State \trustedcode{$\itistate \gets \textsc{open}$}
       \State \trustedcode{$\texttt{hosting} \gets$ False}
       \State \trustedcode{input (\textsc{rev verified}) to last old host}
@@ -1591,6 +1592,7 @@
         old enabler channel funding keys}
         \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
         F}')$}
+        \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
         \State \trustedcode{$\itistate \gets \textsc{open}$}
         \State \trustedcode{$\texttt{hosting} \gets$ False}
         \State \trustedcode{input (\textsc{revocation}, $\mathrm{sig}_{P, R, i}$)
