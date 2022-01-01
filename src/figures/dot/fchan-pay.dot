@@ -20,5 +20,5 @@ digraph G {
   check_sgp [label="\text{State}_{\bar{P}} \overset{?}{\in} \{\textsc{ignore}, (\textsc{sync pay}, d)\}",style=diamond]
   sgp -> check_sgp [label="\environment"]
   check_sgp -> sgp [texlbl="False"]
-  check_sgp -> open [texlbl="True; $\text{bal}_P \gets \text{bal}_P + f$"]
+  check_sgp -> open [texlbl="True; $\text{bal}_P \gets \text{bal}_P + d$"]
 }
