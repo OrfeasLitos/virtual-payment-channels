@@ -191,7 +191,7 @@
   subsequently the payer is instructed by \environment to commence the payment
   (Figure~\ref{code:ln:pay}).
 
-  \TODO{if this limitation is removed, change paragraph.} If the channel is virtual, each party also checks that its upcoming balance is
+  If the channel is virtual, each party also checks that its upcoming balance is
   lower than the balance of its sibling's counterparty and that the upcoming
   balance of the counterparty is higher than the balance of its own sibling,
   otherwise it rejects the payment. This is to mitigate a ``griefing'' attack (i.e.\
@@ -310,12 +310,4 @@ On a related note, the
   mutually exclusive and therefore if another base party publishes an
   incompatible virtual transaction contemporaneously and that remote transaction
   enters the chain, then our \textsc{virt} party has to try again with another,
-  compatible virtual transaction. \TODO{The next lifts the balance limitation,
-  so remove it if it isn't fixed after all. It however may be also relevant for
-  the collaborative closing. Check this again} If any neighbour has spent the
-  common funding output with an old, revoked state, \textsc{virt} creates a new
-  virtual output (e.g.\ the one that would be produced by the malicious
-  neighbour's intiator transaction) using the coins from the punishment of the
-  revoked state. \textsc{virt} can then use its own virtual transaction as if
-  its neighbour were honest. The \texttt{ANYPREVOUT} flag ensures that this
-  newly generated output can be spent by \textsc{virt}'s virtual transaction.
+  compatible virtual transaction.
