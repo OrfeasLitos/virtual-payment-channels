@@ -19,6 +19,8 @@
     if $P$ is a fundee)
     \item $P$ is the host of $n$ channels, where the $i$-th channel is funded
     with $f_i$ coins,
+    \item $P$ has cooperatively closed $k$ channels, where the $i$-th channel
+    transferred $r_i$ coins from the hosted virtual channel to $P$,
     \item $P$ has successfully sent $m$ payments, where the $i$-th payment
     involved $d_i$ coins,
     \item $P$ has successfully received $l$ payments, where the $i$-th payment
@@ -29,13 +31,12 @@
   such that
   \begin{equation}
     \sum\limits_{i=1}^h c_i \geq c - \sum\limits_{i=1}^n f_i -
-    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i \enspace.
+    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i
+    \enspace.
   \end{equation}
 \end{lemma}
 The formal statement, Lemma~\ref{lemma:real-balance-security}, is deferred to
 the Appendix.
-
-\TODO{update informal lemma statements according to formal versions}
 
   The second lemma states that for an ideal party in a
   similar situation, the balance that \fchan has stored for it is at least equal
@@ -53,27 +54,29 @@ the Appendix.
     if $P$ is a fundee)
     \item $P$ is the host of $n$ channels, where the $i$-th channel is funded
     with $f_i$ coins,
+    \item $P$ has cooperatively closed $k$ channels, where the $i$-th channel
+    transferred $r_i$ coins from the hosted virtual channel to $P$,
     \item $P$ has successfully sent $m$ payments, where the $i$-th payment
     involved $d_i$ coins,
     \item $P$ has successfully received $l$ payments, where the $i$-th payment
     involved $c_i$ coins.
   \end{itemize}
   Let $\texttt{balance}_P$ be the balance that \fchan stores internally for $P$.
-  If the channel is closed (either unilaterally or cooperatively \TODO{check
-  that this is true and relevant}), then the following holds with overwhelming
-  probability on the security parameter:
+  If the channel is closed (either unilaterally or cooperatively), then the
+  following holds with overwhelming probability on the security parameter:
   \begin{equation}
-    \texttt{balance}_P = c - \sum\limits_{i=1}^n f_i -
-    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+    \texttt{balance}_P = c - \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i +
+    \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i + \sum\limits_{i=1}^k r_i
+    \enspace.
   \end{equation}
 \end{lemma}
 The formal statement, Lemma~\ref{lemma:ideal-balance}, is deferred to the
 Appendix.
 
-  In both cases the expected funds are [initial balance -
-  funds for supported virtuals - outbound payments + inbound payments]. Note
-  that the funds for supported virtuals only refer to those funds used by the
-  funder of the virtual channel, not the rest of the base parties.
+  In both cases the expected funds are [initial balance - funds for hosted
+  virtuals + funds returned from hosted virtuals - outbound payments + inbound
+  payments]. Note that the funds for hosted virtuals only refer to those funds
+  used by the funder of the virtual channel, not the rest of the base parties.
 
   Both proofs follow the various possible execution paths, keeping track of the
   resulting balance in each case and coming to the conclusion that balance is
