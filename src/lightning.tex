@@ -1084,3 +1084,21 @@
   \captionof{figure}{}
   \label{code:ln:coop-close-funder}
 \end{center} \ \\
+
+\begin{center}
+  \begin{processbox}{\textsc{ln} -- On (\textsc{corrupt}) by \adversary or
+  kindred party $R$:}
+    \Comment{This is executed by the shell -- c.f.~\cite{uc}}
+    \begin{algorithmic}[1]
+      \If{$\itistate \neq \textsc{corrupted}$}
+        \State $\itistate \gets \textsc{corrupted}$
+        \For{$S \in$ set of kindred parties}
+          \State input (\textsc{corrupt}) to $S$ and expect reply (\textsc{ok})
+        \EndFor
+      \EndIf
+      \State reply (\textsc{ok})
+    \end{algorithmic}
+  \end{processbox}
+  \captionof{figure}{}
+  \label{code:ln:coop-close-funder}
+\end{center} \ \\
