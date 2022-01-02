@@ -3,7 +3,7 @@
   Lemma~\ref{lemma:ideal-balance} hold, then the conditions of
   Lemma~\ref{lemma:real-balance-security} for the real world execution with
   protocol \textsc{ln} and the same \environment and \adversary hold as well for
-  the same $m, n$ and $l$ values.
+  the same $k, m, n$ and $l$ values.
 
   For $\itistate_P$ to become $\textsc{ignored}$, either \simulator has to send
   (\textsc{became corrupted or negligent}, $P$) or $\texttt{host}_P$ must output
@@ -73,7 +73,23 @@
   Lemma~\ref{lemma:real-balance-security} holds with the same $n$ as that of
   Lemma~\ref{lemma:ideal-balance}.
 
-  Regarding the fourth Lemma~\ref{lemma:ideal-balance} condition, we again
+  Moving on to the fourth Lemma~\ref{lemma:ideal-balance} condition, we again
+  assume that if both parties are honest and the state of one is \textsc{open},
+  then the state of the other is also \textsc{open}. Each time \fchan receives
+  (\textsc{coop closing}, $P$, $r$) by \simulator, $\itistate_P$ transitions to
+  \textsc{coop closing} and subsequently when \simulator sends (\textsc{coop
+  closed}, $P$) to \fchan, if $\sublayer{P} = 0$ then $\itistate_P$ transitions
+  to \textsc{coop closed}, else $\itistate_P$ transitions to \textsc{open}. This
+  sequence of events may repeat any $k \geq 0$ times. We observe that throughout
+  these steps, honest simulated $P$ has transitioned to the \textsc{coop
+  closing} state and that \simulator only sends (\textsc{coop closed}, $P$) when
+  honest simulated $P$ transitions to either \textsc{open} or \textsc{coop
+  closed} state, so the sum of $j$ (from the fourth condition of
+  Lemma~\ref{lemma:real-balance-security}) plus $k$ (from the fifth condition of
+  Lemma~\ref{lemma:real-balance-security}) is equal to the $k$ of
+  Lemma~\ref{lemma:ideal-balance}.
+
+  Regarding the sixth Lemma~\ref{lemma:ideal-balance} condition, we again
   assume that if both parties are honest and the state of one is \textsc{open},
   then the state of the other is also \textsc{open}. Each time $P$ receives
   input (\textsc{pay}, $d$) by \environment, $\itistate_P$ tranisitions to
@@ -92,11 +108,11 @@
   simulated $P$ has received (\textsc{pay}, $d$) and that \simulator only sends
   (\textsc{pay}) when all honest simulated parties have completed sending or
   receiving the payment (Fig.~\ref{code:simulator},
-  l.~\ref{code:simulator:when-pay}), so the fourth condition of
+  l.~\ref{code:simulator:when-pay}), so the sixth condition of
   Lemma~\ref{lemma:real-balance-security} holds with the same $m$ as that of
-  Lemma~\ref{lemma:ideal-balance}. As far as the fifth condition of
+  Lemma~\ref{lemma:ideal-balance}. As far as the seventh condition of
   Lemma~\ref{lemma:ideal-balance} goes, we observe that this case is symmetric
-  to the one discussed for its fourth condition above if we swap $P$ and
+  to the one discussed for its sixth condition above if we swap $P$ and
   $\bar{P}$, therefore we deduce that if Lemma~\ref{lemma:ideal-balance} holds
   with some $l$, then Lemma~\ref{lemma:real-balance-security} holds with the
   same $l$.
@@ -108,13 +124,16 @@
   transition for the other party. We also saw that, when a party transitions
   from the \textsc{sync help fund} or the \textsc{sync fund} state to the
   \textsc{open} state, then the other party will also transition to the
-  \textsc{open} state simultaneously. Furthermore, we saw that if one party
-  transitions from the \textsc{sync pay} or the \textsc{sync get paid} state to
-  the \textsc{open} state, the other party will also transition to the
-  \textsc{open} state simultaneously. Lastly we notice that we have exhausted
-  all manners in which a party can transition to the \textsc{open} state,
-  therefore we have proven that transitions of honest parties to the
-  \textsc{open} state happen simultaneously.
+  \textsc{open} state simultaneously. Additionally, we saw that if one party
+  transitions from the \textsc{coop closing} state to the \textsc{open} state,
+  the other party will also transition to the \textsc{open} state
+  simultaneously. Furthermore, we saw that if one party transitions from the
+  \textsc{sync pay} or the \textsc{sync get paid} state to the \textsc{open}
+  state, the other party will also transition to the \textsc{open} state
+  simultaneously. Lastly we notice that we have exhausted all manners in which a
+  party can transition to the \textsc{open} state, therefore we have proven that
+  transitions of honest parties to the \textsc{open} state happen
+  simultaneously.
 
   Now, given that \simulator internally simulates faithfully both \textsc{ln}
   parties and that \fchan relinquishes to \simulator complete control of the
