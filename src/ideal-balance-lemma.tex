@@ -12,6 +12,9 @@
     \item $P$ [has received $(\textsc{fund me}, f_i, \dots)$ as input by another
     \fchan/\textsc{ln} ITI while $\itistate_P$ was $\textsc{open}$ and $P$
     subsequently transitioned to \textsc{open} \textit{State}] $n$ times,
+    \item \ledger [has received (\textsc{coop closing}, $P$, $r_i$) by
+    \simulator while $\itistate_P$ was \textsc{open} and subsequently $P$
+    transitioned to \textsc{open} \textit{State}] $k$ times,
     \item $P$ [has received $(\textsc{pay}, d_i)$ by \environment while
     $\itistate_P$ was $\textsc{open}$ and $P$ subsequently transitioned to
     \textsc{open} \textit{State}] $m$ times,
@@ -24,7 +27,7 @@
   overwhelming probability on the security parameter:
   \begin{equation}
     \texttt{balance}_P = \phi \cdot c - \sum\limits_{i=1}^n f_i -
-    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i
+    \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i
   \end{equation}
 \end{lemma}
 
@@ -53,6 +56,16 @@
     l.~\ref{code:functionality:fund:complete-fund}). Therefore, if this cycle
     happens $n \geq 0$ times, $\subbalance{P}$ will be decremented by
     $\sum\limits_{i=1}^n f_i$ in total.
+    \item Every time \ledger receives (\textsc{coop closing}, $P$, $r_i$) by
+    \simulator while $\itistate_P$ is \textsc{open}, $r_i$ is stored
+    (Fig.~\ref{code:functionality:coop-close},
+    l.~\ref{code:functionality:coop-close:when-coop-close}). The next time
+    $\itistate_P$ transitions to \textsc{open} (if such a transition happens),
+    $\subbalance{P}$ is incremented by $r_i$
+    (Fig.~\ref{code:functionality:coop-close},
+    l.~\ref{code:functionality:coop-close:complete-coop-close}). Therefore, if
+    this cycle happens $k \geq 0$ times, $\subbalance{P}$ will be incremented by
+    $\sum\limits_{i=1}^k r_i$ in total.
     \item Every time $P$ receives input $(\textsc{pay}, d_i)$ by \environment
     while $\itistate_P = \textsc{open}$, $d_i$ is stored
     (Fig.~\ref{code:functionality:pay},
@@ -76,7 +89,8 @@
   \end{itemize}
   On aggregate, after the above are completed and then \fchan receives
   (\textsc{forceClose}, $P$) by \simulator, it is $\subbalance{P} = c -
-  \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$
-  if $P = \alice$, or else if $P = \bob$, $\subbalance{P} = - \sum\limits_{i=1}^n
-  f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i$.
+  \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i +
+  \sum\limits_{i=1}^k r_i$ if $P = \alice$, or else if $P = \bob$,
+  $\subbalance{P} = - \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i +
+  \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i$.
 \end{proof}

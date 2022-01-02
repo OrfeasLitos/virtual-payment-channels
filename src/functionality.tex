@@ -381,6 +381,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
     \begin{algorithmic}[1]
       \State On (\textsc{coop closing}, $P$, $x$) by \adversary when
       $\itistate_P = \textsc{open}$:
+      \label{code:functionality:coop-close:when-coop-close}
       \Indent
         \State store $x$
         \State $\itistate_P \gets \textsc{coop closing}$
@@ -397,6 +398,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
         cooperatively closed}
           \State $\sublayer{P} \gets \sublayer{P} - 1$
           \State $\subbalance{P} \gets \subbalance{P} + x$
+          \label{code:functionality:coop-close:complete-coop-close}
           \State $\itistate_P \gets \textsc{open}$
         \EndIf
       \EndIndent
