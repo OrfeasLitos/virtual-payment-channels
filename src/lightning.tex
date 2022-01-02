@@ -1045,6 +1045,8 @@
       c_2'$}
       \label{code:ln:coop-close-funder:update-coins}
       \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
+      \State \trustedcode{$\texttt{locked}_P \gets \texttt{locked}_P -
+      c_{\mathrm{virt}}$}
       \State \trustedcode{$\itistate \gets \textsc{open}$}
       \State \trustedcode{input (\textsc{revocation},
       $\mathrm{sig}_{P, R, i}$) to last old host}

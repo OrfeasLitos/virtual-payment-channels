@@ -1569,6 +1569,8 @@
       \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
       F}')$}
       \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
+      \State \trustedcode{$\texttt{locked}_P \gets \texttt{locked}_P -
+      c_{\mathrm{virt}}$}
       \State \trustedcode{$\itistate \gets \textsc{open}$}
       \label{code:virtual-layer:coop-close-intermediary:guest-back-open}
       \State \trustedcode{$\texttt{hosting} \gets$ False}
@@ -1595,6 +1597,8 @@
         \State \trustedcode{$(\sk{P, F}, \pk{P, F}) \gets (\sk{P, F}', \pk{P,
         F}')$}
         \State \trustedcode{$\texttt{layer} \gets \texttt{layer} - 1$}
+        \State \trustedcode{$\texttt{locked}_P \gets \texttt{locked}_P -
+        c_{\mathrm{virt}}$}
         \State \trustedcode{$\itistate \gets \textsc{open}$}
         \label{code:virtual-layer:coop-close-intermediary:sibling-guest-back-open}
         \State \trustedcode{$\texttt{hosting} \gets$ False}
