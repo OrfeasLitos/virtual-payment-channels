@@ -477,12 +477,13 @@
       $i$, $n$) by $\bar{P}$:
       \Indent
         \State ensure $\itistate = \textsc{open}$
-        \State ensure $c_{\bar{P}} - \texttt{locked}_{\bar{P}} \geq c$; $1 \leq
-        i \leq n$
+        \State ensure $c_{\bar{P}} - \texttt{locked}_{\bar{P}} \geq
+        c_{\mathrm{virt}}$; $1 \leq i \leq n$
         \State ensure $\pk{\bar{P}, F}'$ is different from $\pk{\bar{P}, F}$ and
         all older $\bar{P}$'s funding public keys
         \State $\itistate \gets \textsc{virtualising}$
-        \State $\texttt{locked}_{\bar{P}} \gets \texttt{locked}_{\bar{P}} + c$
+        \State $\texttt{locked}_{\bar{P}} \gets \texttt{locked}_{\bar{P}} +
+        c_{\mathrm{virt}}$
         \Comment{if $\bar{P}$ is hosting the \texttt{funder}, $\bar{P}$ will
         transfer $c_{\mathrm{virt}}$ coins instead of locking them, but the end
         result is the same}
@@ -522,13 +523,13 @@
       \texttt{sibling}:
       \Indent
         \State ensure $\itistate = \textsc{open}$
-        \State ensure $c_P - \texttt{locked}_P \geq c$
+        \State ensure $c_P - \texttt{locked}_P \geq c_{\mathrm{virt}}$
         \State ensure $c_{\mathrm{sib}, \mathrm{rem}} \geq c_P \wedge
         c_{\bar{P}} \geq c_{\mathrm{sib}}$ \Comment{avoid value loss by griefing
         attack: one counterparty closes with old version, the other stays idle
         forever}
         \State $\itistate \gets \textsc{virtualising}$
-        \State $\texttt{locked}_P \gets \texttt{locked}_P + c$
+        \State $\texttt{locked}_P \gets \texttt{locked}_P + c_{\mathrm{virt}}$
         \State define new \textsc{virt} ITI $\texttt{host}_P'$
         \State send (\textsc{virtualising}, $\texttt{host}_P'$, $\pk{P, F}'$,
         \texttt{hops}, \texttt{fundee}, $c_{\mathrm{virt}}$, $i+1$, $n$) to
