@@ -19,10 +19,10 @@
             \label{code:ln:init:negligent}
           \EndIf
         \EndIf
-        \If{activation is not caused by output (\textsc{nothing revoked}),
-        received by a member of the list of old hosts $\wedge \itistate =
-        \textsc{waiting for nothing revoked}$} \Comment{the only way for this
-        case to be true is if the old host punished a misbehaving counterparty}
+        \If{\itistate = \textsc{waiting for nothing revoked} $\wedge$ activation
+        is not caused by output (\textsc{nothing revoked}), received by a member
+        of the list of old hosts} \Comment{the only way for this case to be true
+        is if the old host punished a misbehaving counterparty}
           \State $\itistate \gets \textsc{base punished}$
         \EndIf
       \EndIndent
