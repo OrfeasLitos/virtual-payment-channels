@@ -1,0 +1,161 @@
+\section{Protocol Pseudocode} \ \\
+\label{sec:pseudocode}
+
+\begin{center}
+  \begin{processbox}{\pchan -- self is $P$}
+    \begin{itemize}
+      \item Before handling each message:
+      \begin{algorithmic}[0]
+      % TODO: change 0 to 1 if line numbers needed in all algorithm snippets.
+      % Due to number duplication, we may need to scrap itemize and have one big
+      % algorithmic instead
+        \If{we have not been activated since more than $p$ blocks}
+          \State mark ourselves as negligent \Comment{no balance security
+          guarantees anymore}
+        \EndIf
+      \end{algorithmic}
+
+      \item Initialisation:
+      \begin{algorithmic}[0]
+        \State receive $\pk{P, \mathrm{out}}$ from \environment \Comment{all
+        outputs owned by $P$ pay $\pk{P, \mathrm{out}}$}
+        \State generate own keypair
+        \State wait for \environment to give own keypair some starting coins
+      \end{algorithmic}
+
+      \item Opening:
+      \begin{algorithmic}[0]
+        \State generate funding and revocation keypairs
+        \State exchange funding, revocation and out public keys with
+        counterparty
+        \If{opening virtual (off-chain) channel}
+          \State ask our host channel to prepare, passing them our funding keys
+          \Comment{c.f.\ ``Hosting a virtual channel''}
+          \State get $t_P$ from host \Comment{timelock to ensure our balance
+          security}
+        \EndIf
+        \State exchange and verify signatures on commitment transactions with
+        counterparty
+        \If{opening simple (on-chain) channel}
+          \State prepare and submit funding transaction to ledger and wait for
+          its inclusion \Comment{only one party funds the channel, so the
+          funding transaction needs only the funder's signature}
+          \State $t_P \gets s + p$ \Comment{timelock to ensure balance security
+          for simple channels}
+        \EndIf
+      \end{algorithmic}
+
+      \item Hosting a virtual channel of $c_{\mathrm{virt}}$ coins:
+      \begin{algorithmic}[0]
+        \State ensure we have enough coins to host such a virtual channel
+        \State generate one new funding keypair, $O(n^2)$ virtual keypairs
+        ($O(n)$ per hop) and one virtual revocation keypair \Comment{all
+        keypairs are generated normally, using \textsc{keyGen}()}
+        \State exchange generated public keys among all base channel parties
+        \State generate and sign new commitment transactions with our
+        counterparties. The new funding keys and the latest revocation keys are
+        used and the balance of the party ``closer'' to the funder is reduced by
+        $c_{\mathrm{virt}}$ \Comment{$1$ counterparty if we are endpoint, $2$
+        counterparties if we are intermediary}
+        \State exchange signatures with counterparties and verify them
+        \State generate and sign all $O(n^3)$ virtual transactions \Comment{one
+        signature for each virtual input -- each virtual input needs one
+        signature from each party. Only ``extend-interval'' and
+        ``merge-intervals'' transactions need these signatures}
+        \State exchange all signatures among all base channel parties and verify
+        that all our virtual transactions have fully signed virtual inputs
+        \State exchange with counterparties and verify signatures for the
+        funding inputs of our virtual transactions \Comment{only ``initiator''
+        and ``extend-interval'' transactions need these signatures}
+        \State exchange with counterparties and verify signatures for the
+        revocation transactions of the previous channel state
+        \If{$P$ is intermediary}
+          \State $t_P \gets \max\{t \text{ of left channel}, t \text{ of right
+          channel}\}$
+        \Else \: \Comment{$P$ is endpoint}
+          \State $t_P \gets p + \sum\limits_{j = 2}^{n-1}(s - 1 + t_j)$
+          \Comment{worst case delay is if counterparty uses initiator tx and
+          every intermediary uses its extend-interval tx sequentially -- the
+          maximum possible delay is $O(\text{sum of intermediaries' delays})$}
+        \EndIf
+      \end{algorithmic}
+
+      \item Reacting if counterparty publishes virtual transaction:
+      \begin{algorithmic}[0]
+        \If{both our counterparties have published a virtual transaction}
+          \State publish our merge-intervals transaction that has an interval
+          equal to the union of the intervals of the two virtual transactions
+          plus ourselves
+        \Else \: \Comment{exactly one of our counterparties has published a
+        virtual transaction}
+          \State publish our extend-interval transaction that has an interval
+          equal to the interval of the virtual transaction plus ourselves
+        \EndIf
+      \end{algorithmic}
+
+      \item Paying $x$ coins:
+      \begin{algorithmic}[0]
+        \State ensure we have enough coins to pay
+        \If{we host a virtual channel}
+          \State ensure balance after payment will not allow griefing attack
+          \Comment{c.f.\ Subsubsection~\ref{construction:ln}}
+        \EndIf
+        \State generate and sign new commitment transactions, with $x$ coins
+        less for the payer and $x$ coins more for the payee and using the latest
+        revocation keys
+        \State exchange and verify signatures
+        \State sign revocation transactions that correspond to the old
+        commitment transactions
+        \State generate next revocation keypairs
+        \State exchange and verify signatures and revocation public keys
+      \end{algorithmic}
+
+      \item Unilaterally closing:
+      \begin{algorithmic}[0]
+        \State publish all initiator transactions that are needed to put our
+        funding output on the ledger
+        \State publish our latest commitment transaction to the ledger
+      \end{algorithmic}
+
+      \item Cooperatively closing:
+      \begin{algorithmic}[0]
+        \State \Comment{only a virtual channel which does not host any further
+        virtual channel may close cooperatively}
+        \State both endpoints sign and broadcast the final virtual channel
+        balance $(c_1, c_2)$
+        \State every party verifies both signatures, ensures that the two
+        opinions agree and that the balance sum is equal to $c_{\mathrm{virt}}$
+        \State generate and sign new commitment transactions with:
+        \begin{itemize}
+          \item the most recent old funding keys (the ones used before hosting
+          the virtual channel)
+          \item the new revocation keys
+          \item $c_1$ additional coins for the party closest to the virtual
+          channel funder and $c_2$ for the counterparty
+        \end{itemize}
+        \State generate new revocation keypairs
+        \State exchange and verify signatures and revocation public keys
+        \State generate and sign revocation transactions for both the old
+        virtual transactions (with the virtual revocation keys) and the old
+        commitment transactions (with the normal revocation keys)
+        \State exchange and verify signatures \Comment{if a party publishes a
+        revoked virtual transaction, its various outputs can be spent by
+        revocation transactions so that its ($1$ or $2$) counterparties can
+        claim all base channel funds}
+      \end{algorithmic}
+
+      \item Punishing malicious counterparties:
+      \begin{algorithmic}[0]
+        \State \Comment{executed at least every $p$ blocks}
+        \If{the ledger contains an old commitment transaction}
+          \State sign and publish the corresponding revocation transaction
+        \EndIf
+        \If{the ledger contains an old virtual transaction}
+          \State sign and publish the corresponding revocation transaction(s)
+        \EndIf
+      \end{algorithmic}
+    \end{itemize}
+  \end{processbox}
+  \captionof{figure}{High level pseudocode of the Elmo protocol}
+  \label{code:pseudocode}
+\end{center} \ \\
