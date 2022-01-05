@@ -50,9 +50,6 @@
 % TODO: stress that we here compare the _variadic_ Elmo construction
 % TODO: if all updates are completely symmetric, merge Payee and Payer columns
   \begin{table*}
-    \caption{Efficiency comparison of virtual channel protocols with $3$
-    parties}
-    \label{table:comparison:overhead:3-parties}
     \begin{minipage}{\textwidth}
     \begin{center}
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
@@ -91,6 +88,9 @@
     \end{tabular}
     \end{center}
     \end{minipage}
+    \caption{Efficiency comparison of virtual channel protocols with $3$
+    parties}
+    \label{table:comparison:overhead:3-parties}
   \end{table*}
 
   In Table~\ref{table:comparison:overhead:n-parties:open} we compare the
@@ -119,9 +119,6 @@
   [intermediary's costs - fundee's costs] for all three measured quantities.
 
   \begin{table*}
-    \caption{Open efficiency comparison of virtual channel protocols with $n$
-    parties}
-    \label{table:comparison:overhead:n-parties:open}
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|c|}
     \hline
@@ -151,12 +148,12 @@
     $1000n$ & $n!$ & $n!$ & $1000n$ \\
     \hline
     \end{tabular}}
+    \caption{Open efficiency comparison of virtual channel protocols with $n$
+    parties}
+    \label{table:comparison:overhead:n-parties:open}
   \end{table*}
 
   \begin{table*}
-    \caption{On-chain worst-case closing efficiency comparison of virtual
-    channel protocols with $n$ parties}
-    \label{table:comparison:overhead:n-parties:close}
     \begin{minipage}{\textwidth}
     \begin{center}
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
@@ -182,6 +179,9 @@
     \end{tabular}
     \end{center}
     \end{minipage}
+    \caption{On-chain worst-case closing efficiency comparison of virtual
+    channel protocols with $n$ parties}
+    \label{table:comparison:overhead:n-parties:close}
   \end{table*}
   The on-chain number of transactions to close a virtual channel in the case of
   LVPC is calculated as follows: One ``split'' transaction is needed for each
