@@ -199,4 +199,8 @@
   signatures help eliminate the quadratic term and reduce the linear term of the
   total on-chain cost. The same cannot be said for the linear factor in Donner,
   since there is currently no way to optimise away the $n$ outputs of the
-  funder's transaction $\tx^{\mathtt{vc}}$.
+  funder's transaction $\tx^{\mathtt{vc}}$. Likewise LVPC cannot obtain a linear
+  improvement with this optimisation, since each of its relevant transactions
+  (``split'', ``merge'' and ``refund'') only needs a constant number of
+  signatures. We deduce that, using this optimisation, Elmo has the smallest
+  worst-case total on-chain footprint compared to LVPC and Donner.
