@@ -107,22 +107,39 @@ non-custo\-dial chains (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lowe
               & Unlimited lifetime & Recursive & Variadic & Script requirements \\
     \hline
     LVPC~\cite{10.1007/978-3-030-65411-5_18}
-              & ✗                  & \LEFTcircle\footnote{lacks security analysis}
-                                               & ✗         & Bitcoin \\
+              & x                  & \LEFTcircle\footnote{lacks security analysis}
+                                               & x         & Bitcoin \\
     \hline
     BCVC~\cite{cryptoeprint:2020:554}
-              & ✓                  & ✗         & ✗         & Bitcoin \\
+              & v                  & x         & x         & Bitcoin \\
     \hline
     Perun~\cite{perun}
-              & ✓                  & ✗         & ✗         & Ethereum \\
+              & v                  & x         & x         & Ethereum \\
     \hline
     GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}
-              & ✓                  & ✓         & ✗         & Ethereum \\
+              & v                  & v         & x         & Ethereum \\
     \hline
     Donner~\cite{donner}
-              & ✗                  & ✗         & ✓         & Bitcoin \\
+              & x                  & x         & v         & Bitcoin \\
     \hline
-    this work & ✓                  & ✓         & ✓         & Bitcoin + \texttt{ANYPREVOUT} \\
+    this work & v                  & v         & v         & Bitcoin + \texttt{ANYPREVOUT} \\
+   % LVPC~\cite{10.1007/978-3-030-65411-5_18}
+   %           & ✗                  & \LEFTcircle\footnote{lacks security analysis}
+   %                                            & ✗         & Bitcoin \\
+   % \hline
+   % BCVC~\cite{cryptoeprint:2020:554}
+   %           & ✓                  & ✗         & ✗         & Bitcoin \\
+   % \hline
+   % Perun~\cite{perun}
+   %           & ✓                  & ✗         & ✗         & Ethereum \\
+   % \hline
+   % GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}
+   %           & ✓                  & ✓         & ✗         & Ethereum \\
+   % \hline
+   % Donner~\cite{donner}
+   %           & ✗                  & ✗         & ✓         & Bitcoin \\
+   % \hline
+   % this work & ✓                  & ✓         & ✓         & Bitcoin + \texttt{ANYPREVOUT} \\
     \hline
     \end{tabular}
     \end{center}
