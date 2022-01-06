@@ -1,5 +1,4 @@
 \section{Introduction}
-\TODO{update for cooperative closing}
   The popularity of blockchain protocols 
   in recent years has stretched their
   performance  exposing a number of scalability considerations. 
@@ -49,8 +48,16 @@ provided a better solution that enabled channels staying open
 for an arbitrary duration: the key idea was to duplicate the
 state of the channel between the two counterparties, say Alice and Bob, and facilitate a punishment mechanism that can be triggered by Bob whenever Alice posts an old state update and vice-versa. The script timelocking is essential to allow an honest counterparty some time to act.
 
-Interconnecting state channels in LN enables any two parties to transmit funds to each other as long as they can find a route of payment channels that connects them. The downside of this mechanism is that it requires the direct involvement of all the parties along the path for each payment. Instead, ``virtual payment channels'', suggest the more attractive approach of putting a one-time initialization step to set up a virtual payment channel, which subsequently can be used for direct payments with complexity  ---in the optimistic case---  independent of the length of the path.
-Initial constructions for virtual channels essentially capitalized on the extended functionality of Ethereum, e.g., 
+Interconnecting state channels in LN enables any two parties to transmit funds
+to each other as long as they can find a route of payment channels that connects
+them. The downside of this mechanism is that it requires the direct involvement
+of all the parties along the path for each payment. Instead, ``virtual payment
+channels'', suggest the more attractive approach of putting a one-time off-chain
+initialization step to set up a virtual payment channel, which subsequently can
+be used for direct payments with complexity  ---in the optimistic case---
+independent of the length of the path. When the virtual channel has exhausted
+its usefulness, it can be closed off-chain if involved parties cooperate.
+Initial constructions for virtual channels essentially capitalized on the extended functionality of Ethereum, e.g.,
 Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more
 recent work~\cite{cryptoeprint:2020:554}  brought them closer to
 Bitcoin-compatibility (by leveraging adaptor
@@ -88,8 +95,12 @@ binary, c.f.~\cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,10.1007/9
 \paragraph{Our Contributions.}  We present  the first  Bitcoin-suitable
 recursive virtual channel constructor that supports channels
 with an indefinite lifetime. In addition, our constructor, Elmo (named after St.
-Elmo's fire), is variadic and symmetric. In our constructor, both optimistic and pessimistic execution paths are optimal in terms of round complexity: issuing payments between the two endpoints requires just three messages of size independent of the length of the channel while
-closing the channel requires up to two on-chain transactions for any involved
+Elmo's fire), is variadic and symmetric. In our constructor, both optimistic and
+pessimistic execution paths are optimal in terms of round complexity: issuing
+payments between the two endpoints requires just three messages of size
+independent of the length of the channel, closing the channel cooperatively
+requires at most three messages from each party while
+closing the channel unilaterally requires up to two on-chain transactions for any involved
 party (endpoint or intermediary) also independent of the channel's length. Our
 construction is also compatible with the current version of any blockchain that
 supports Turing-complete smart contracts, such as
@@ -98,7 +109,10 @@ Ethereum~\cite{wood2014ethereum}.
 We achieve the above by leveraging a sophisticated virtual channel setup
 protocol which, on the one hand, enables endpoints to use an interface that is
 invariant between on-chain and off-chain (i.e.\ virtual) channels,
-while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
+while on the other, parties can securely close the channel cooperatively
+off-chain, or instead opt for unilateral on-chain closing, following any arbitrary
+activation sequence. The latter is achieved by making it feasible for anyone to
+become an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
 
   We formally prove the security of the constructor protocol in the
   UC~\cite{uc} setting; our ideal functionality is global, according to the
