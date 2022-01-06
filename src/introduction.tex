@@ -106,11 +106,8 @@ while on the other, intermediaries can act following any arbitrary activation se
   on the \texttt{ANYPREVOUT}
   signature type, which does not sign the hash of the transaction it spends,
   therefore allowing for a single pre-signed transaction to spend any output
-  with a suitable script. We further discuss the limitations of any constructor
-  primitive that does not rely on \texttt{ANYPREVOUT} in
-  Section~\ref{section:anyprevout}. In particular in Theorem~\ref{theorem:anyprevout},
-  we prove that any virtual channel constructor protocol that
+  with a suitable script. We conjecture that any virtual channel constructor protocol that
   has participants store transactions in their local state
   and offers an efficient closing operation via $O(1)$ transactions
   will have an exponentially large state in the number of intermediaries, unless
-  \texttt{ANYPREVOUT} is available. 
+  \texttt{ANYPREVOUT} is available.
