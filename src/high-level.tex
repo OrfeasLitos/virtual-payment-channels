@@ -87,7 +87,8 @@
   misbehaviour is detected. Let us first consider a simple channel that has been
   established between \alice and \bob where the former owns $c_A$ and the latter
   $c_B$ coins. There are three sets of transactions at play: A ``funding''
-  transaction that is put on-chain, off-chain ``commitment'' transactions that
+  transaction that is put on-chain, ``commitment'' transactions that are stored
+  off-chain and
   spend the funding output on channel closure and off-chain ``revocation''
   transactions that spend commitment outputs in case of misbehaviour (c.f.\
   Figure~\ref{figure:payment-layer}).
@@ -135,8 +136,9 @@
 
 \subsection{Virtual Channels}
   In order to gain intuition on how virtual channels function, consider $n-1$
-  simple channels established between $n$ honest parties as before. $P_1$ (the
-  funder) and $P_n$ want to open a virtual channel over these base channels.
+  simple channels established between $n$ honest parties as before. $P_1$, the
+  funder, and $P_n$, the fundee, want to open a virtual channel over these base
+  channels.
   Before opening the virtual, each base channel is entirely independent, having
   different unique keys, separate on-chain funding outputs, a possibly different
   balance and number of updates. After the $n$ parties follow our novel virtual
@@ -145,18 +147,18 @@
   can themselves be spent by new commitment transactions in a manner that
   ensures fair funds allocation for all honest parties.
 
-  In particular, apart from the transactions of simple channels, each of the two
+  In particular, apart from the transactions of simple channels (i.e.\
+  commitment and revocation txs), each of the two
   endpoints also has an ``initiator'' transaction that spends the funding output
   of its only base channel and produces two outputs: one new funding output for
   the base channel and one ``virtual'' output (c.f.\
   Figures~\ref{figure:virtual-layer-endpoint},~\ref{code:virtual-layer:endpoint-txs}).
-  If the
-  initiator 
-  transaction ends up on-chain, the latter output carries coins that
-  will directly or indirectly fund the funding output of the virtual channel.
-  This virtual funding output can in turn be spent by a commitment transaction
-  that is negotiated and updated with direct communication between the two
-  endpoints in exactly the same manner as the payments of simple channels.
+  If the initiator transaction ends up on-chain honestly, the latter output
+  carries coins that will directly or indirectly fund the funding output of the
+  virtual channel. This virtual funding output can in turn be spent by a
+  commitment transaction that is negotiated and updated with direct
+  communication between the two endpoints in exactly the same manner as the
+  payments of simple channels.
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint.tex}
@@ -176,7 +178,7 @@
   intermediary coins equal to the total value in the virtual channel, and one
   ``virtual output'', which carries coins that can potentially fund the virtual
   channel. If both funding outputs are still unspent, publishing its initiator
-  tx is the only way for an intermediary to close either of its channels.
+  tx is the only way for an honest intermediary to close either of its channels.
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{intermediary-initiator.tex}
@@ -227,7 +229,8 @@
   value of the virtual channel, and one virtual output.
 
   To understand why this multitude of virtual transactions is needed, we now
-  zoom out from the individual party and discuss the dynamic of the system as a
+  zoom out from the individual party and discuss the dynamic of unilateral
+  closing as a
   whole. The first party $P_i$ that wishes to close a base channel observes that
   its funding output(s) remain(s) unspent and publishes its initiator
   transaction. First, this allows $P_i$ to use its commitment transaction to
@@ -267,11 +270,11 @@
   The required timelock of a party is $p + s$ if its channel is simple,  or $p +
   \sum\limits_{j = 2}^{n - 1}(s - 1 + t_j)$ if the channel is virtual, where
   $t_j$ is the required timelock of the base channel
-  of the $j$th intermediary's channel. The only exception are virtual outputs that
-  correspond to an interval that includes all parties, which can only be used as
-  funding outputs for the virtual channel as its interval cannot be further
-  extended, therefore the two separate spending methods and the associated
-  timelock are dropped.
+  of the $j$th intermediary's channel. The only exception are virtual outputs
+  with an interval that includes all parties, which are just
+  funding outputs for the virtual channel: an interval with all parties cannot
+  be further extended, therefore one spending method and the timelock are
+  dropped.
 
   Many extend-interval and merge-intervals transactions have to be able to spend
   different outputs, depending on the order other base parties publish their
@@ -308,14 +311,14 @@
   virtual outputs and funding outputs respectively) and the sixth shares
   revocation signatures for the old channel states.
 
-  In order to better grasp the manner in which the construction described
-  achieves its intended goals, let us now turn to an example. Consider an
+  In order to better grasp how our construction plays out on-chain in practice, let us
+  now turn to an example (Figure~\ref{figure:example-start-end}). Consider an
   established virtual channel on top of $4$ preexisting simple base channels.
   Let $A$, $B$, $C$, $D$ and $E$ be the relevant parties, which control the $(A,
   B)$, $(B, C)$, $(C, D)$ and $(D, E)$ base channels, along with the $(A, E)$
-  virtual channel. After carrying out some payments, $A$ decides to close the
-  virtual channel. It therefore publishes its initiator transaction, thus
-  consuming the funding output of $(A, B)$ and producing (among others) a
+  virtual channel. After carrying out some payments, $A$ decides to unilaterally
+  close the virtual channel. It therefore publishes its initiator transaction,
+  thus consuming the funding output of $(A, B)$ and producing (among others) a
   virtual output with the interval $\{A\}$. $B$ notices this before the timelock
   of the virtual output expires and publishes its extend-interval
   transaction that consumes the aforementioned virtual output and the funding
@@ -326,9 +329,7 @@
   extend-interval transaction, thus producing an interval with all players.
   Instead of a virtual output, it produces the funding output for the virtual
   channel $(A, E)$. Now $A$ can spend this funding output with its latest
-  commitment transaction. The entire process is depicted schematically in
-  Figure~\ref{figure:example-start-end}. Note that if any of $B$, $C$ or $D$
-  does
+  commitment transaction. Note that if any of $B$, $C$ or $D$ does
   not act within the timelock prescribed in their consumed virtual output, then
   $A$ or $E$ can spend the virtual output with their latest commitment
   transaction, thus eventually $A$ can close its virtual channel in all cases.
