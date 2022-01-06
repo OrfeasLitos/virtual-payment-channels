@@ -303,13 +303,27 @@
   As for the actual protocol needed to establish a virtual channel, $6$ rounds
   of communication are needed, each starting from the funder and hop by hop reaching
   the fundee and back (c.f.\ Figure~\ref{code:ln:prepare-base}). The first communicates
-  parties' identities, their funding keys and their neighbours' channel
-  balances, the second creates new commitment transactions, the third
+  parties' identities, their funding keys, revocation keys and their neighbours'
+  channel balances, the second creates new commitment transactions, the third
   communicates keys for virtual transactions (a.k.a.\ virtual keys), all parties'
   coins and desired timelocks, the fourth and the
   fifth communicate signatures for the virtual transactions (signatures for
   virtual outputs and funding outputs respectively) and the sixth shares
   revocation signatures for the old channel states.
+
+  Cooperative closing is quite intuitive (c.f.\
+  Figures~\ref{code:ln:coop-close},~\ref{code:ln:coop-closed-to-initiator},~\ref{code:ln:coop-close-fundee},~\ref{code:ln:coop-close-funder}
+  and~\ref{code:virtual-layer:coop-close-intermediary}). It can be initiated by
+  any party, one and a half communication rounds are needed. The funder builds
+  new commitment txs, which once again (as before the virtual channel opening)
+  spend the funding outputs that the virtual txs spent before. The funder sends
+  their signatures to the first intermediary; the latter signs and sends the
+  same to the second intermediary and so on until the fundee. The fundee
+  responds with its own commitment tx signatures, along with signatures revoking
+  the previous commitment tx and virtual txs. This is repeated backwards until
+  revocations reach the funder. Finally the funder sends its revocation to its
+  neighbour and it to the next, until the revocations reach the fundee. The
+  channel has now closed cooperatively.
 
   In order to better grasp how our construction plays out on-chain in practice, let us
   now turn to an example (Figure~\ref{figure:example-start-end}). Consider an
