@@ -1,7 +1,8 @@
 \section{High Level Explanation}
 \TODO{update for cooperative closing}
-  Conceptually, Elmo is split into three main actions: channel opening,
-  payments and closing. A channel $(P_1, P_n)$ between parties $P_1$ and $P_n$
+  Conceptually, Elmo is split into four main actions: channel opening,
+  payments, cooperative closing and unilateral closing. A channel $(P_1, P_n)$
+  between parties $P_1$ and $P_n$
   may be opened directly on-chain, in which case the two parties follow an
   opening procedure similar to that of LN; such a channel is called ``simple''.
   Otherwise it can be opened on top of a path
@@ -21,14 +22,19 @@
   LN, but without the use of HTLCs. To be completed, a payment needs three
   messages to be exchanged by the two parties.
 
+  A virtual channel can be optimistically closed completely off-chain. Put
+  simply, the parties that control the base channels revoke their virtual
+  transactions and the related commitment transactions, effectively peeling one
+  layer of virtualisation. Balances are redistributed so that intermediaries
+  ``break even'', while $P_1$ and $P_n$ get their rightful coins as reflected in
+  the last state of their virtual channel.
+
   Finally, the unilateral closing procedure of a channel $C$ does not need
   cooperation and consists of signing and publishing a number of transactions
   on-chain. As
   we will discuss later, the exact transactions that a party will publish vary
   depending on the actions of the parties controlling the channels that form the
-  ``base'' of $C$ and the channels that are based on $C$. Our protocol can be
-  augmented with a more efficient optimistic collaborative closing procedure,
-  which however is left as future work.
+  base of $C$ and the channels that are based on $C$.
 
   In a nutshell, a virtual channel is built on top of two or more ``base''
   channels, which, due to the recursive property, may themselves be simple or
