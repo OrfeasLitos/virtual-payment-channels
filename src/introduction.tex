@@ -75,10 +75,15 @@ Endpoints are the two parties that share the virtual channel, intermediaries are
 the parties that take part in any of underlying channels.
 
 We note that recursiveness, while identified already as an important design property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}) it has not been achieved in the context of Bitcoin-compatible channels 
-(it was achieved only for DCN-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{cryptoeprint:2020:554}). 
+(it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{cryptoeprint:2020:554}).
 The reason behind this are the severe limitations imposed in the design by the scripting language of Bitcoin-compatible systems. 
 %
-With respect to the other two properties, observe that successive applications of a recursive {\em binary} virtual channel operator to make it variadic will break symmetry (since the sequence of operator applications will impact the participants' functions with respect to the resulting channel). This is of particular concern since all previous virtual channel constructors proposed are binary, cf.~\cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,10.1007/978-3-030-65411-5_18}. 
+With respect to the other two properties, observe that successive applications
+of a recursive {\em binary} virtual channel operator to make it variadic will
+break symmetry (since the sequence of operator applications will impact the
+participants' functions with respect to the resulting channel). This is of
+particular concern since all previous virtual channel constructors proposed are
+binary, c.f.~\cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,10.1007/978-3-030-65411-5_18}.
 
 \paragraph{Our Contributions.}  We present  the first  Bitcoin-suitable
 recursive virtual channel constructor that is recursive and supports channels
@@ -90,10 +95,10 @@ construction is also compatible with the current version of any blockchain that
 supports Turing-complete smart contracts, such as
 Ethereum~\cite{wood2014ethereum}.
 
-We achieve the above by leveraging on a sophisticated virtual channel setup
+We achieve the above by leveraging a sophisticated virtual channel setup
 protocol which, on the one hand, enables endpoints to use an interface that is
 invariant between on-chain and off-chain (i.e.\ virtual) channels,
-while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each. 
+while on the other, intermediaries can act following any arbitrary activation sequence when the channel is closed. The latter is achieved by making it feasible for anyone becoming an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
 
   We formally prove the security of the constructor protocol in the
   UC~\cite{uc} setting; our ideal functionality is global, according to the
