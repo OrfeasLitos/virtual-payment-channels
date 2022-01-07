@@ -207,13 +207,14 @@
   replaced with an eltoo-inspired one~\cite{eltoo}.
 
   Subsequently each of the two parties builds the new commitment transaction of
-  its counterparty, signs it and sends over the signature, then the revocation
-  transactions for the previously valid commitment transactions are generated,
-  signed and the signatures are exchanged. To reduce the number of messages, the
-  payee sends the two signatures in one message. This does not put it at risk of
-  losing funds, since the new commitment transaction (for which it has already
-  received a signature and therefore can spend) gives it more funds than the
-  previous one.
+  its counterparty and signs it. It also generates a new revocation keypair for
+  the next update and sends over the generated signature and public key. Then
+  the revocation transactions for the previously valid commitment transactions
+  are generated, signed and the signatures are exchanged. To reduce the number
+  of messages, the payee sends the two signatures and the public key in one
+  message. This does not put it at risk of losing funds, since the new
+  commitment transaction (for which it has already received a signature and
+  therefore can spend) gives it more funds than the previous one.
 
   \pchan also checks the chain for outdated commitment transactions by the
   counterparty and publishes the corresponding revocation transaction in case
