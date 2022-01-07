@@ -92,7 +92,7 @@
   functionality and the protocol are met and that the realisability proof can go
   through, as we will see in Section~\ref{section:security} in more detail.
 
-  Note that we could instead contain all the channels in a single, monolithic
+  We could instead contain all the channels in a single, monolithic
   functionality (following the approach of~\cite{DBLP:conf/csfw/KiayiasL20}) and
   we believe that we could still carry out the security proof. Nevertheless,
   having the functionality correspond to a single channel has no drawbacks, as
@@ -102,7 +102,7 @@
   functionality aids in its reusability and is an informal goal of the
   simulation-based paradigm. Secondly, this approach permits our functionality
   to be global, as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}.
-  Furthermore, the ideal functionality defined in~\cite{cryptoeprint:2020:476}
+  We note that the ideal functionality defined in~\cite{cryptoeprint:2020:476}
   is unsuitable for our case, as it requires direct access to the ledger, which
   is not the case for a \fchan corresponding to a virtual channel.
 
@@ -132,15 +132,15 @@
 
   After initialisation, the funder \alice is ready to open the channel. Once
   \environment gives to \alice the identity of \bob, the initial channel balance
-  $c$ and, (looking forward to Subsubsection~\ref{construction:virt})
+  $c$ and, (looking forward to the \textsc{virt} subprotocol description)
   in case it is a virtual channel, the identities of the base channel owners
   (Figure~\ref{code:ln:open}), \alice generates and sends \bob her funding and
   revocation public keys ($\pk{A, F}$, $\pk{A, R}$, used for the funding and
   revocation outputs respectively) along with $c$, $\pk{A,
-  \mathrm{out}}$, and the base channel identities (if any). Given that \bob has
-  been initialised, it generates funding and revocation keys and replies to
-  \alice with $\pk{B, F}$, $\pk{B, R}$, and $\pk{B, \mathrm{out}}$
-  (Figure~\ref{code:ln:exchange-open-keys}).
+  \mathrm{out}}$, and the base channel identities (only for virtual channels).
+  Given that \bob has been initialised, it generates funding and revocation keys
+  and replies to \alice with $\pk{B, F}$, $\pk{B, R}$, and $\pk{B,
+  \mathrm{out}}$ (Figure~\ref{code:ln:exchange-open-keys}).
 
   The next step prepares the base channels (Figure~\ref{code:ln:prepare-base})
   if needed.
@@ -228,24 +228,24 @@
 
   \TODO{Add paragraph explaining steps for cooperative closure}
 
-  When either party is instructed by \environment to unilaterally close the channel
-  (Figure~\ref{code:ln:close}), it first asks its host to unilaterally close (details on the
-  exact steps are discussed later) and once that is done, the ledger is checked
-  for any transaction spending the funding output. In case the latest remote
-  commitment tx is on-chain, then the channel is already closed and no further
-  action is necessary. If an old committment transaction is on-chain, the
-  corresponding revocation transaction is used for punishment. If the funding
-  output is still unspent, the party attempts to publish the latest commitment
-  transaction after waiting for any relevant timelock to expire. Until the
-  funding output is irrevocably spent, the party still has to periodically check
-  the blockchain and again be ready to use a revocation transaction if an old
-  commitment transaction spends the funding output after all
-  (Figure~\ref{code:ln:poll}).
+  When either party is instructed by \environment to unilaterally close the
+  channel (Figure~\ref{code:ln:close}), it first asks its host to unilaterally
+  close (details on the exact steps are discussed later) and once that is done,
+  the ledger is checked for any transaction spending the funding output. In case
+  the latest remote commitment tx is on-chain, then the channel is already
+  closed and no further action is necessary. If an old committment transaction
+  is on-chain, the corresponding revocation transaction is used for punishment.
+  If the funding output is still unspent, the party attempts to publish the
+  latest commitment transaction after waiting for any relevant timelock to
+  expire. Until the funding output is irrevocably spent, the party still has to
+  periodically check the blockchain and again be ready to use a revocation
+  transaction if an old commitment transaction spends the funding output after
+  all (Figure~\ref{code:ln:poll}).
 
   \subsubsection{\textsc{virt} subprotocol}
   \label{construction:virt}
   This subprotocol acts as a mediator between the base channels and the
-  Lightning-based logic. Put otherwise, its responsibility is putting on-chain
+  Lightning-based logic. Put simply, its main responsibility is putting on-chain
   the funding output of the channel when needed. When first initialised by a
   machine that executes the \textsc{ln} subprotocol
   (Figure~\ref{code:virtual-layer:keys}), it learns and stores the identities,
@@ -300,15 +300,14 @@ On a related note, the
 
   When \textsc{virt} is instructed to unilaterally close by party $R$
   (Figure~\ref{code:virtual-layer:close}), it first notifies its \textsc{virt}
-  host (if any) and waits for it to unilaterally close. After that, it signs and publishes
-  the unique valid virtual transaction. It then repeatedly checks the chain to
-  see if the transaction is included
+  host (if any) and waits for it to unilaterally close. After that, it signs and
+  publishes the unique valid virtual transaction. It then repeatedly checks the
+  chain to see if the transaction is included
   (Figure~\ref{code:virtual-layer:check-chain-close}). If it is included, the
   virtual layer is closed and \textsc{virt} informs (i.e.\ outputs
-  (\textsc{closed}) to) $R$. The
-  instruction to close has to be received potentially many times, because a
-  number of virtual transactions (the ones that spend the same output) are
-  mutually exclusive and therefore if another base party publishes an
-  incompatible virtual transaction contemporaneously and that remote transaction
-  enters the chain, then our \textsc{virt} party has to try again with another,
-  compatible virtual transaction.
+  (\textsc{closed}) to) $R$. The instruction to close has to be received
+  potentially many times, because a number of virtual transactions (the ones
+  that spend the same output) are mutually exclusive and therefore if another
+  base party publishes an incompatible virtual transaction contemporaneously and
+  that remote transaction wins the race to the chain, then our \textsc{virt}
+  party has to try again with another, compatible virtual transaction.
