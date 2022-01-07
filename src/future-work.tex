@@ -79,7 +79,10 @@
   needs substantially more network communication than performing an one-off
   multi-hop payment. It would be therefore fruitful to also enable the multi-hop
   payment technique used in Lightning and allow human users to choose which
-  method to use in each case.
+  method to use in each case. Likewise, optimistic cooperative on-chain closing
+  of simple channels could be done just like in Lightning, obviating the need to
+  wait for the revocation timelock to expire and reducing on-chain costs if the
+  counterparty is cooperative.
 
   Moreover, our need for \texttt{ANYPREVOUT} prevents our protocol from being
   deployable today. Even though it is one of the prime contenders for inclusion
