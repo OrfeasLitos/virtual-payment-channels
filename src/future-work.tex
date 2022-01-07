@@ -19,7 +19,8 @@
   to an existing virtualisation layer.
 
   Due to the possibility of the griefing attack discussed in
-  Subsubsection~\ref{construction:ln}, the range of balances a virtual channel can
+  Subsection~\ref{construction:real-world}, the range of balances a virtual
+  channel can
   support is limited by the balances of neighbouring channels. We believe that
   this limitation can be lifted if instead of using a Lightning-based
   construction for the payment layer, we instead replace it with an
@@ -43,8 +44,8 @@
   represents the maximum time (in blocks) between two activations of a non-negligent party,
   so in principle it is possible for the parties to explicitly negotiate this
   value when opening a new channel and even renegotiate it after the channel has
-  been opened if need be. We leave this usability-augmenting protocol feature as
-  future work.
+  been opened if the counterparties agree. We leave this usability-augmenting
+  protocol feature as future work.
 
   As we mentioned earlier, our protocol is not designed to ``gracefully'' recover
   from a situation in which halfway through a subprotocol, one of the
@@ -71,7 +72,8 @@
   optimisations. These include a number of techniques employed in Lightning that
   drastically reduce storage requirements, along with a variety of possible
   improvements to our novel virtual subprotocol. Most notably, the
-  Taproot~\cite{taproot} update that is planned for Bitcoin will allow for a
+  Taproot~\cite{taproot} feature that has been recently added to Bitcoin will
+  allow for a
   drastic reduction in the size of transactions, as in the optimistic case only
   the hash of the Script has to be added to the blockchain and the $n$
   signatures needed to spend a virtual output can be replaced with their
@@ -100,6 +102,6 @@
   theoretically no privacy is offered at all. Nevertheless, onion packets can be
   incorporated in the current construction and intuitively our construction
   leaks less data than Lightning for the same multi-hop payments, as
-  intermediaries in our case do not learn the new balance after every payment,
-  contrary to Lightning. Therefore a future extension can improve the privacy of
-  the construction and formally demonstrate exact privacy guarantees.
+  intermediaries in our case are not notified on each payment, contrary to
+  multi-hop payments in Lightning. Therefore a future extension can improve the
+  privacy of the construction and formally demonstrate exact privacy guarantees.
