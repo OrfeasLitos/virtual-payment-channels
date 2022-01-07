@@ -540,8 +540,8 @@
         \State $c_{\mathrm{tot}} \gets c_{\mathrm{left}} + c_{\mathrm{right}}$
         \State $\texttt{old\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
         \mathrm{old}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{old}}\}$
-        \State $\texttt{new\_fund} \gets (2/\{\pk{\mathrm{left}, \mathrm{fund},
-        \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\}) \vee
+        \State $\texttt{new\_fund} \gets 2/\{\pk{\mathrm{left}, \mathrm{fund},
+        \mathrm{new}}, \pk{\mathrm{right}, \mathrm{fund}, \mathrm{new}}\} \vee
         2/\{\pk{\mathrm{left}, \mathrm{rev}}, \pk{\mathrm{right},
         \mathrm{rev}}\}$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
