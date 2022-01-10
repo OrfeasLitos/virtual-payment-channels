@@ -143,15 +143,19 @@
     LVPC      & $8(n-2)$ & $1381(n-2)$ & $3005(n-2)$ & $7$ & $1254$ & $2936$ &
               $16$ & $2989$ & $6385$ & $4370n-8740$ & $9390n-18780$ \\
     \hline
-    Donner    & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ &
-    $1000n$ & $n!$ & $n!$ & $1000n$ \\
+    Donner    & $2$ & $184n + 828.25$ & $1332.5k+43n+125.5$ & $1$ & $43n+192.5$
+              & $1332.5k+43n+125.5$ & $1$ & $546.75$ & $1332.5k+43n+125.5$
+              & $773.75n-72.75$ & $1332.5kn + 43n^2 + 125.5n$ \\
+              % For Donner, I drew the storage numbers from
+              % https://eprint.iacr.org/2021/855.pdf, p. 22. I'm not sure what
+              % pid is, so these numbers may have to be revised.
     \hline
     Elmo      & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ & $1000n$ & $n!$ &
     $1000n$ & $n!$ & $n!$ & $1000n$ \\
     \hline
     \end{tabular}}
     \caption{Open efficiency comparison of virtual channel protocols with $n$
-    parties}
+    parties and $k$ payments}
     \label{table:comparison:overhead:n-parties:open}
   \end{table*}
 
