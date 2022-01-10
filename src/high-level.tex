@@ -227,6 +227,18 @@
   two outputs: One that directly pays the intermediary coins equal to the total
   value of the virtual channel, and one virtual output.
 
+  Note that each output of a virtual transaction has a ``revocation'' spending
+  method that needs a signature from every party that may end up owning the
+  output coins: each funding output is signed by the two parties of the
+  corresponding channel, each refund output is signed by the transaction owner
+  and the party to the left (giving $c_{\mathrm{virt}}$ coins to the left party
+  if the owner acts maliciously), whereas each virtual output is signed by the
+  transaction owner, the right party and the two virtual channel parties. If the
+  owner acts maliciously, $c_{\mathrm{virt}}$ are given to the right party. The
+  virtual channel parties have to sign as well since this output may end up
+  funding their channel -- lack of such signatures would allow two colluding
+  intermediaries to claim the virtual output for themselves.
+
   To understand why this multitude of virtual transactions is needed, we now
   zoom out from the individual party and discuss the dynamic of unilateral
   closing as a
