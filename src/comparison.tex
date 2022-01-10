@@ -37,9 +37,11 @@
   always implicate exactly two parties (the payer and the payee \TODO{change if
   who is funder/fundee also plays a role for any of the constructions}) and
   their interaction is independent of the number of underlying channels.
-  Therefore the ``Update'' entries in Table~\ref{table:comparison:overhead:3-parties} also
-  cover the general case of $n$ underlying channels. Note that the
-  update-related storage requirements of
+  Therefore the ``Update'' entries in
+  Table~\ref{table:comparison:overhead:3-parties} also cover the general case of
+  $n$ underlying channels. \emph{Party rounds} are calculated as
+  $[\#\text{incoming messages} + \#\text{outgoing messages}]/2$, for each party
+  separately. Note that the update-related storage requirements of
   Table~\ref{table:comparison:overhead:3-parties} take into account savings that
   may arise by deleting old unneeded data at the end of an update. \TODO{change
   previous if for some reason we do something else}
@@ -60,7 +62,7 @@
               \multicolumn{2}{|c|}{Close} \\
     \hline
               & \#txs & size & \multicolumn{2}{|c|}{Payer} &
-              \multicolumn{2}{|c|}{Payee} & \multirow{2}{*}{\shortstack{comm. \\
+              \multicolumn{2}{|c|}{Payee} & \multirow{2}{*}{\shortstack{party \\
               rounds}} & \#txs & size \\
     \cline{1-7} \cline{9-10}
                & TODO & TODO & sent & stored & sent & stored & & TODO & TODO \\
@@ -97,11 +99,9 @@
 
   In Table~\ref{table:comparison:overhead:n-parties:open} we compare the
   resources needed to open a new virtual channel both for each party
-  individually and for all parties in total, in terms of communication rounds
-  (calculated as $[\#\text{incoming messages} + \#\text{outgoing messages}]/2$,
-  for each party separately) and amount of data sent and stored. The data is
-  counted as the sum of the relevant channel identifiers ($8$ bytes each, as
-  defined by the Lightning Network
+  individually and for all parties in total, in terms of party rounds and amount
+  of data sent and stored. The data is counted as the sum of the relevant
+  channel identifiers ($8$ bytes each, as defined by the Lightning Network
   specification\footnote{\url{https://github.com/lightning/bolts/blob/master/07-routing-gossip.md\#definition-of-short_channel_id}}),
   transaction output identifiers ($36$ bytes), secret keys ($32$ bytes each),
   public keys ($33$ bytes each, compressed form -- these double as party
@@ -131,10 +131,10 @@
               \multicolumn{3}{|c|}{Intermediary} & \multicolumn{2}{|c|}{Total}
               \\
     \cline{2-12}
-              & \multirow{2}{*}{\shortstack{comm. \\ rounds}} &
-              \multicolumn{2}{|c|}{size} & \multirow{2}{*}{\shortstack{comm. \\
+              & \multirow{2}{*}{\shortstack{party \\ rounds}} &
+              \multicolumn{2}{|c|}{size} & \multirow{2}{*}{\shortstack{party \\
               rounds}} & \multicolumn{2}{|c|}{size} &
-              \multirow{2}{*}{\shortstack{comm. \\ rounds}} &
+              \multirow{2}{*}{\shortstack{party \\ rounds}} &
               \multicolumn{2}{|c|}{size} & \multicolumn{2}{|c|}{size} \\
     \cline{3-4} \cline{6-7} \cline{9-12}
               & & sent & stored & & sent & stored & & sent & stored & sent &

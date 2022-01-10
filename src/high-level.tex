@@ -299,9 +299,10 @@
   virtual base channels into account to determine the timelocks needed for its
   own virtual outputs.
 
-  As for the actual protocol needed to establish a virtual channel, $6$ rounds
-  of communication are needed, each starting from the funder and hop by hop reaching
-  the fundee and back (c.f.\ Figure~\ref{code:ln:prepare-base}). The first communicates
+  Let a single \emph{channel round} be a series of messages starting from the
+  funder and hop by hop reaching the fundee and back again. For the actual
+  protocol that establishes a virtual channel $6$ channel rounds are needed
+  (c.f.\ Figure~\ref{code:ln:prepare-base}). The first communicates
   parties' identities, their funding keys, revocation keys and their neighbours'
   channel balances, the second creates new commitment transactions, the third
   communicates keys for virtual transactions (a.k.a.\ virtual keys), all parties'
