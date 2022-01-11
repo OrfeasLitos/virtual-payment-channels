@@ -774,6 +774,7 @@
       \mathrm{rev}}$, $\pk{n, \mathrm{rev}}$, $(\pk{j, n-1, n})_{j \in [n]}$,
       $t_{n-1}$)
       \label{code:virtual-layer:fundee-sigs:tx}
+      \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
       \ForAll{$j \in [n-1] \setminus \{1\}$}
         \IfThenElse{$j = 2$}{$m \gets 1$}{$m \gets 2$}
         \IfThenElse{$j = n-1$}{$l \gets n$}{$l \gets n-1$}
@@ -795,7 +796,6 @@
         [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, s\}}$, $(\pk{h, 2,
         1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1]
         \setminus \{1\}}$)
-        \State $\mathrm{sigs}_{\mathrm{toLeft}} \gets \emptyset$
         \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{n, j, k}$,
           \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
@@ -817,6 +817,7 @@
 \begin{center}
   \begin{processbox}{\textsc{virt.hostFunderSigs}()}
     \begin{algorithmic}[1]
+      \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
       \ForAll{$j \in [n-1] \setminus \{1\}$}
         \IfThenElse{$j = 2$}{$m \gets 1$}{$m \gets 2$}
         \IfThenElse{$j = n-1$}{$l \gets n$}{$l \gets n-1$}
@@ -838,7 +839,6 @@
         [n-1] \setminus \{1\}, k \in [n-1] \setminus \{1, s\}}$, $(\pk{h, 2,
         1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1]
         \setminus \{1\}}$)
-        \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
         \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{1, j, k}$,
           \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toRight}}$
