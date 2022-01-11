@@ -58,11 +58,11 @@
     \begin{center}
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
     \hline
-              & \multicolumn{2}{|c|}{Open} & \multicolumn{5}{|c|}{Update} &
-              \multicolumn{2}{|c|}{Close} \\
+              & \multicolumn{2}{|c|}{Open} & \multicolumn{5}{|c|}{Update}
+              & \multicolumn{2}{|c|}{Close} \\
     \hline
-              & \#txs & size & \multicolumn{2}{|c|}{Payer} &
-              \multicolumn{2}{|c|}{Payee} & \multirow{2}{*}{\shortstack{party \\
+              & \#txs & size & \multicolumn{2}{|c|}{Payer}
+              & \multicolumn{2}{|c|}{Payee} & \multirow{2}{*}{\shortstack{party \\
               rounds}} & \#txs & size \\
     \cline{1-7} \cline{9-10}
                & TODO & TODO & sent & stored & sent & stored & & TODO & TODO \\
@@ -77,14 +77,14 @@
               \\
     \hline
     BCVC-LN-NV
-              & 16 & 7704 & fill & 2824 check & fill & 2824 check & fill & 3 &
-              1800 \\
+              & 16 & 7704 & fill & 2824 check & fill & 2824 check & fill & 3
+              & 1800 \\
     \hline
-    BCVC-LN-V & 14 & 5722 & fill & 1412 check & fill & 1412 check & fill & 4 &
-              1778 \\
+    BCVC-LN-V & 14 & 5722 & fill & 1412 check & fill & 1412 check & fill & 4
+              & 1778 \\
     \hline
-    Donner    & 14 & 4721 & fill & 695 check & fill & 695 check & fill & 10 &
-              3438 \\
+    Donner    & 14 & 4721 & fill & 695 check & fill & 695 check & fill & 10
+              & 3438 \\
     \hline
     Elmo      & 1000 & 100000 & fill & fill & fill & fill & fill & 1000 & 100000
               \\
@@ -127,21 +127,21 @@
     \multicolumn{12}{|c|}{Open} \\
     \hline
     \multirow{3}{*}{}
-              & \multicolumn{3}{|c|}{Funder} & \multicolumn{3}{|c|}{Fundee} &
-              \multicolumn{3}{|c|}{Intermediary} & \multicolumn{2}{|c|}{Total}
-              \\
+              & \multicolumn{3}{|c|}{Funder} & \multicolumn{3}{|c|}{Fundee}
+              & \multicolumn{3}{|c|}{$i$th Intermediary}
+              & \multicolumn{2}{|c|}{Total} \\
     \cline{2-12}
-              & \multirow{2}{*}{\shortstack{party \\ rounds}} &
-              \multicolumn{2}{|c|}{size} & \multirow{2}{*}{\shortstack{party \\
-              rounds}} & \multicolumn{2}{|c|}{size} &
-              \multirow{2}{*}{\shortstack{party \\ rounds}} &
-              \multicolumn{2}{|c|}{size} & \multicolumn{2}{|c|}{size} \\
+              & \multirow{2}{*}{\shortstack{party \\ rounds}}
+              & \multicolumn{2}{|c|}{size} & \multirow{2}{*}{\shortstack{party
+              \\ rounds}} & \multicolumn{2}{|c|}{size}
+              & \multirow{2}{*}{\shortstack{party \\ rounds}}
+              & \multicolumn{2}{|c|}{size} & \multicolumn{2}{|c|}{size} \\
     \cline{3-4} \cline{6-7} \cline{9-12}
               & & sent & stored & & sent & stored & & sent & stored & sent &
               stored \\
     \hline
-    LVPC      & $8(n-2)$ & $1381(n-2)$ & $3005(n-2)$ & $7$ & $1254$ & $2936$ &
-              $16$ & $2989$ & $6385$ & $4370n-8740$ & $9390n-18780$ \\
+    LVPC      & $8(n-2)$ & $1381(n-2)$ & $3005(n-2)$ & $7$ & $1254$ & $2936$
+              & $16$ & $2989$ & $6385$ & $4370n-8740$ & $9390n-18780$ \\
     \hline
     Donner    & $2$ & $184n + 828.25$ & $1332.5k+43n+125.5$ & $1$ & $43n+192.5$
               & $1332.5k+43n+125.5$ & $1$ & $546.75$ & $1332.5k+43n+125.5$
@@ -150,8 +150,8 @@
               % https://eprint.iacr.org/2021/855.pdf, p. 22. I'm not sure what
               % pid is, so these numbers may have to be revised.
     \hline
-    Elmo      & $6$ & $1000n$ & $n!$ & $6$ & $n!$ & $1000n$ & $12$ &
-              $1000n$ & $n!$ & $n!$ & $1000n$ \\
+    Elmo      & $6$ & $1000n$ & $n!$ & $6$ & $n!$ & $1000n$ & $12$
+              & $1000n$ & $n!$ & $n!$ & $1000n$ \\
     \hline
     \end{tabular}}
     \caption{Open efficiency comparison of virtual channel protocols with $n$
@@ -166,9 +166,9 @@
     \hline
     \multicolumn{9}{|c|}{Unilateral Close} \\
     \hline
-              & \multicolumn{2}{|c|}{Intermediary} &
-              \multicolumn{2}{|c|}{Funder} & \multicolumn{2}{|c|}{Fundee} &
-              \multicolumn{2}{|c|}{Total} \\
+              & \multicolumn{2}{|c|}{Intermediary}
+              & \multicolumn{2}{|c|}{Funder} & \multicolumn{2}{|c|}{Fundee}
+              & \multicolumn{2}{|c|}{Total} \\
     \hline
               & \#txs & size & \#txs & size & \#txs & size & \#txs & size \\
     \hline
@@ -178,8 +178,8 @@
     Donner    & $1$ & $204.5$ & $4$ & $704 + 43n$ & $1$ & $136.5$ & $2n$ & $458n
               - 26$ \\
     \hline
-    Elmo      & $1$ & $593.75 + 26.75n$ & $2$ & $503$ & $2$ & $503$ & $n$ &
-              \begin{tabular}{@{}c@{}}$26.75n^2 + 540.25n$ \\ $-
+    Elmo      & $1$ & $593.75 + 26.75n$ & $2$ & $503$ & $2$ & $503$ & $n$
+              & \begin{tabular}{@{}c@{}}$26.75n^2 + 540.25n$ \\ $-
               684.5$\end{tabular} \\
     \hline
     \end{tabular}
