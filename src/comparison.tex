@@ -150,8 +150,15 @@
               % https://eprint.iacr.org/2021/855.pdf, p. 22. I'm not sure what
               % pid is, so these numbers may have to be revised.
     \hline
-    Elmo      & $6$ & $1000n$ & $n!$ & $6$ & $n!$ & $1000n$ & $12$
-              & $1000n$ & $n!$ & $n!$ & $1000n$ \\
+    \multirow{3}{*}{Elmo}
+              & & \multirow{3}{*}{\shortstack{$\frac{7}{3}n^3-109n^2+$ \\
+              $\frac{1435}{3}n-325$}} & &
+              & \multirow{3}{*}{\shortstack{$\frac{7}{3}n^3-109n^2+$ \\
+              $\frac{1336}{3}n-401$}} & &
+              & \multirow{3}{*}{\shortstack{$\frac{106}{3}n^3-208n^2$ \\
+              $+\frac{2302}{3}n-551$}} & & & \\
+              & $6$ & & $1000n$ & $6$ & & $n!$ & $12$ & & $n!$ & $1000n$ & \\
+              & & & & & & & & & & & \\
     \hline
     \end{tabular}}
     \caption{Open efficiency comparison of virtual channel protocols with $n$
