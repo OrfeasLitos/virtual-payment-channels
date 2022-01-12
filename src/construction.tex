@@ -301,8 +301,8 @@
   virtual transactions -- we remind that each virtual output can be spent by a
   $n$-of-$n$ multisig.
 %  , for a   total of $nS \in O(n^4)$ signatures in this phase. 
-On a related note, the
-  number of virtual transactions stored by each party is $1$ for the two
+  On a related note, the number of virtual transactions for which each party
+  needs to store signatures is $1$ for the two
   endpoints (Figure~\ref{code:virtual-layer:endpoint-txs}) and $n - 2 + \chi_{i
   = 2} + \chi_{i = n - 1} +  (i - 2 + \chi_{i = 2}) (n - i - 1 + \chi_{i = n-1})
   \in O(n^2)$ for the $i$-th intermediary
