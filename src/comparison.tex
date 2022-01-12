@@ -10,9 +10,14 @@
   supporting a virtual channel, we subtract the cost the intermediary would pay
   to close its channel if it was not supporting any virtual channel. Lastly, we
   compare the maximum total on-chain cost, aggregated over all parties. On-chain
-  cost is measured in terms of size\footnote{Transaction size is calculated in
+  cost is measured in terms of size\footnote{For
+  Table~\ref{table:comparison:overhead:n-parties:close}, transaction size is
+  calculated in
   so-called ``virtual bytes'', which map directly to on-chain fees and thus are
-  preferred to raw bytes. We used the tool found in
+  preferred to raw bytes. For Table~\ref{table:comparison:overhead:3-parties},
+  transaction size is calculated in raw bytes instead, to better align with the
+  counting method used in the efficiency evaluation found
+  in~\cite{cryptoeprint:2020:554}. We used the tool found in
   \url{https://jlopp.github.io/bitcoin-transaction-size-calculator/} to aid size
   calculation.} and number of transactions. The comparison is performed both for
   channels of length $2$ and for channels of length $n$. In the second
