@@ -1,11 +1,9 @@
-% TODO: decide whether to merge the two tables, having only 3 parties for BCVC
-% and only n parties for the rest
 \section{Efficiency Evaluation}
   \label{section:comparison}
   We offer here a comparison of this work with
   LVPC~\cite{10.1007/978-3-030-65411-5_18}, BCVC~\cite{cryptoeprint:2020:554}
   and Donner~\cite{donner} in terms of communication efficiency when opening and
-  updating aggregated for all parties \TODO{decide on previous}. We also compare
+  updating. We also compare
   the maximum on-chain cost for an endpoint to unilaterally close its virtual
   channel. Furthermore, we compare the maximum on-chain cost for an intermediary
   to close its base channel. In order to only show the costs caused by
@@ -33,18 +31,16 @@
   all of them here. We refer the reader to~\cite{cryptoeprint:2020:554} for more
   details.
 
-  Since all constructions produce pairwise channels, updates (a.k.a. payments)
-  always implicate exactly two parties (the payer and the payee \TODO{change if
-  who is funder/fundee also plays a role for any of the constructions}) and
+  Since all constructions produce pairwise channels, updates (a.k.a.\ payments)
+  always implicate exactly two parties (the payer and the payee) and
   their interaction is independent of the number of underlying channels.
   Therefore the ``Update'' entries in
   Table~\ref{table:comparison:overhead:3-parties} also cover the general case of
   $n$ underlying channels. \emph{Party rounds} are calculated as
   $[\#\text{incoming messages} + \#\text{outgoing messages}]/2$, for each party
   separately. Note that the update-related storage requirements of
-  Table~\ref{table:comparison:overhead:3-parties} take into account savings that
-  may arise by deleting old unneeded data at the end of an update. \TODO{change
-  previous if for some reason we do something else}
+  Table~\ref{table:comparison:overhead:3-parties} do not take into account
+  savings that may arise by deleting old unneeded data at the end of an update.
 
   Some results disagree slightly with those of the tables found in related work,
   due to differences in the counting method. Also note that the data for Elmo
@@ -52,7 +48,6 @@
   channels, in other words the channel considered is opened without the help of
   recursion.
 
-% TODO: if all updates are completely symmetric, merge Payee and Payer columns
   \begin{table*}
     \begin{minipage}{\textwidth}
     \begin{center}
@@ -93,11 +88,8 @@
   transaction output identifiers ($36$ bytes), secret keys ($32$ bytes each),
   public keys ($33$ bytes each, compressed form -- these double as party
   identifiers), signatures ($71$ bytes each), coins ($8$ bytes each), times and
-  timelocks (both $4$ bytes each). UC-specific data is ignored. \TODO{add
-  "auxiliary data", or specifically what other kind of data is counted, if
-  needed} \TODO{see if any optimisations are used by other papers, decide if it
-  makes sense to ignore them and change the next phrase} Optimisations are not
-  considered.
+  timelocks (both $4$ bytes each). UC-specific data is ignored. Optimisations
+  are not considered.
 
   In LVPC, every intermediary, apart from the first one, acts both as a fundee
   in a new virtual channel with the funder and as an intermediary in the
