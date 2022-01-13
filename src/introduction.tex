@@ -66,7 +66,11 @@ signatures~\cite{cryptoeprint:2020:476}).
 A virtual channel constructor can be thought of as an  {\em operator} over the underlying primitive of a state channel. We can identify three   natural desiderata for this operator. 
 
 \begin{itemize}
-\item Recursive. A recursive virtual channel constructor can operate over channels that themselves could be the results of previous applications of the operator. This is important in the context of PCNs since it allows building virtual channels on top of pre-existing virtual channels.
+\item Recursive. A recursive virtual channel constructor can operate over
+channels that themselves could be the results of previous applications of the
+operator. This is important in the context of PCNs since it allows building
+virtual channels on top of pre-existing virtual channels, allowing the channel
+structure to evolve dynamically.
 \item Variadic. A variadic virtual channel constructor can virtualize any number
 of input state channels directly, i.e.\ without leveraging recursion. This is
 important in the context of PCNs since it enables applying the operator to build
@@ -81,15 +85,16 @@ closing operations that are symmetric in terms of cost between the two
 Endpoints are the two parties that share the virtual channel, intermediaries are
 the parties that take part in any of underlying channels.
 
-We note that recursiveness, while identified already as an important design property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}) it has not been achieved in the context of Bitcoin-compatible channels 
+We note that recursiveness, while identified already as an important design
+property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}), has not been achieved in the context of Bitcoin-compatible channels 
 (it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{cryptoeprint:2020:554}).
-The reason behind this are the severe limitations imposed in the design by the scripting language of Bitcoin-compatible systems. 
+The reason behind this are the severe limitations imposed to the design by the scripting language of Bitcoin-compatible systems. 
 %
 With respect to the other two properties, observe that successive applications
 of a recursive {\em binary} virtual channel operator to make it variadic will
 break symmetry (since the sequence of operator applications will impact the
 participants' functions with respect to the resulting channel). This is of
-particular concern since all previous virtual channel constructors proposed are
+particular concern since most previous virtual channel constructors proposed are
 binary, c.f.~\cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,10.1007/978-3-030-65411-5_18}.
 
 \paragraph{Our Contributions.}  We present  the first  Bitcoin-suitable
@@ -118,8 +123,8 @@ become an initiator towards closing the channel, while subsequent respondents, f
   We formally prove the security of the constructor protocol in the
   UC~\cite{uc} setting; our ideal functionality is global, according to the
   definition of~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The construction relies
-  on the \texttt{ANYPREVOUT}
-  signature type, which does not sign the hash of the transaction it spends,
+  on the \texttt{ANYPREVOUT} signature type (currently under discussion for
+  future inclusion in Bitcoin), which does not sign the hash of the transaction it spends,
   therefore allowing for a single pre-signed transaction to spend any output
   with a suitable script. We conjecture that any virtual channel constructor protocol that
   has participants store transactions in their local state

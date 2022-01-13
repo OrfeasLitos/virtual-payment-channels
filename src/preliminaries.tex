@@ -1,7 +1,9 @@
 \section{Preliminaries}
 
   \subsection{\ledger Functionality}
-  In this work we embrace the Universal Composition (UC) framework~\cite{uc} to
+  In this work we embrace the Universal Composition (UC) framework~\cite{uc}
+  together with its global subroutines extension,
+  UCGS~\cite{DBLP:conf/tcc/BadertscherCHTZ20}, to
   model parties, network interactions, adversarial influence and corruptions, as
   well as formalise and prove security. We choose to model the Bitcoin ledger
   with the \ledger
@@ -21,8 +23,9 @@
   Any \Fclock participant can request to read the current time (which is
   initially 0) and inform \Fclock that her round is over. \Fclock increments the
   time by one once all parties have declared the end of their round. We further note that both
-  \ledger and \Fclock are global functionalities~\cite{globaluc} and therefore
-  can be accessed directly by the environment.
+  \ledger and \Fclock are global
+  functionalities~\cite{DBLP:conf/tcc/BadertscherCHTZ20} and therefore can be
+  accessed directly by the environment.
 
   \subsection{Modelling time}
   The protocol and functionality defined in this work do not use \Fclock
