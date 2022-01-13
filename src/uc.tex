@@ -1,0 +1,92 @@
+\section{Universal Composition Framework}
+  In this work we embrace the Universal Composition (UC) framework~\cite{uc} to
+  model parties, network interactions, adversarial influence and corruptions, as
+  well as formalise and prove security.
+
+  UC closely follows and expands upon the paradigm of simulation-based
+  security~\cite{DBLP:books/sp/17/Lindell17}. For a particular real world
+  protocol, the main goal of UC is allow us to provide a simple ``interface'',
+  the ideal world functionality, that describes what the protocol achieves in an
+  ideal way. The functionality takes the inputs of all protocol parties and
+  knows which parties are corrupted, therefore it normally can achieve the
+  intention of the protocol in a much more straightforward manner. At a high
+  level, once we have the protocol and the functionality defined, our goal is to
+  prove that no probabilistic polynomial-time (PPT) Interactive Turing Machine
+  (ITM) can distinguish whether it is interacting with the real world protocol
+  or the ideal world functionality. If this is true we then say that the
+  protocol UC-realises the functionality.
+
+  The principal contribution of UC is the following: Once a functionality that
+  corresponds to a particular protocol is found, any other higher level protocol
+  that internally uses the former protocol can instead use the functionality.
+  This allows cryptographic proofs to compose and obviates the need for
+  re-proving the security of every underlying primitive in every new application
+  that uses it, therefore vastly improving the efficiency and scalability of the
+  effort of cryptographic proofs.
+
+  An Interactive Turing Instance (ITI) is a single instantiation of an ITM. In
+  UC, a number of ITIs execute and send
+  messages to each other. At each moment only one ITI is executing (has the
+  ``execution token'') and when it sends a message to another ITI, it transfers
+  the execution token to the receiver. Messages can be sent either locally
+  (inputs, outputs) or over the network. There is no notion of time built in UC
+  -- the only requirement is that the total number of execution steps each ITI
+  takes throughout the experiment is polynomial in the security parameter.
+
+  The first ITI to be activated is the environment \environment. This can be an
+  instance of any
+  PPT ITM. This ITI encompasses everything that happens around the protocol
+  under scrutiny, including the players that send instructions to the protocol.
+  It also is the ITI that tries to distinguish whether it is in the real or the
+  ideal world. Put otherwise, it plays the role of the distinguisher.
+
+  After activating and executing some code, \environment may input a message to
+  any party. If this execution is in the real world, then each party is an ITI
+  running the protocol \prot. Otherwise if the execution takes place in the
+  ideal world, then each party is a dummy that simply relays messages to the
+  functionality \func. An activated real world party then follows its code,
+  which may instruct it to parse its input and send a message to another party
+  via the network.
+
+  In UC the network is fully controlled by the so called adversary \adversary,
+  which may be any PPT ITI. Once activated by any network message, this machine
+  can read the message contents and act adaptively, freely communicate with
+  \environment bidirectionally, choose to deliver the message right away, delay
+  its delivery arbitrarily long, even corrupt it or drop it entirely. Crucially,
+  it can also choose to corrupt any protocol party (in other words, UC allows
+  adaptive corruptions). Once a party is corrupted, its internal state, inputs,
+  outputs and execution comes under the full control of \adversary for the rest
+  of the execution. Corruptions take place covertly, so other parties do not
+  necessarily learn which parties are corrupt. Furthermore, a corrupted party
+  cannot become honest again.
+
+  The fact that \adversary controls the network in the real world is modelled by
+  providing direct communication channels between \adversary and every other
+  machine. This however poses an issue for the ideal world, as \func is a single
+  party that replaces all real world parties, so the interface has to be adapted
+  accordingly. Furthermore, if \func is to be as simple as possible, simulating
+  internally all real world parties is not the way forward. This however may
+  prove necessary in order to faithfully simulate the messages that the
+  adversary expects to see in the real world. To solve these issues an ideal
+  world adversary, also known as simulator \simulator, is introduced. This party
+  can communicate freely with \func and completely engulfs the real world
+  \adversary. It can therefore internally simulate real world parties and
+  generate suitable messages so that \adversary remains oblivious to the fact
+  that this is the ideal world. Normally messages between \adversary and
+  \environment are just relayed by \simulator, without modification or special
+  handling.
+
+  From the point of view of the functionality, \simulator is untrusted,
+  therefore any information that \func leaks to \simulator has to be carefully
+  monitored by the designer. Ideally it has to be as little as possible so that
+  \simulator does not learn more than what is needed to simulate the real world.
+  This facilitates modelling privacy.
+
+  At any point during one of its activations, \environment may return a binary
+  value (either $0$ or $1$). The entire execution then halts. Informally, we say that \prot
+  UC-realises \func, or equivalently that the ideal and the real worlds are
+  indistinguishable, if $\forall \text{ PPT } \adversary, \exists \text{ PPT }
+  \simulator: \forall \text{ PPT } \environment$, the distance of the
+  distributions over the machines' random tapes of the outputs of \environment
+  in the two worlds is negligibly small. Note the order of quantifiers:
+  \simulator depends on \adversary, but not on \environment.
