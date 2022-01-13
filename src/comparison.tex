@@ -207,7 +207,8 @@
   needed to spend each virtual output can be shrunk down to a single aggregate
   signature without compromising security. For the same reason, Schnorr
   signatures help eliminate the quadratic term and reduce the linear term of the
-  total on-chain cost. The same cannot be said for the linear factor in Donner,
+  total on-chain cost, as well as reduce the required storage. The same cannot
+  be said for the linear factor in Donner,
   since there is currently no way to optimise away the $n$ outputs of the
   funder's transaction $\tx^{\mathtt{vc}}$. Likewise LVPC cannot obtain a linear
   improvement with this optimisation, since each of its relevant transactions
