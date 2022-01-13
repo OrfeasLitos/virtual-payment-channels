@@ -327,8 +327,9 @@
   Figures~\ref{code:ln:coop-close},~\ref{code:ln:coop-closed-to-initiator},~\ref{code:ln:coop-close-fundee},~\ref{code:ln:coop-close-funder}
   and~\ref{code:virtual-layer:coop-close-intermediary}). It can be initiated by
   any party, one and a half communication rounds are needed. The funder builds
-  new commitment txs, which once again (as before the virtual channel opening)
-  spend the funding outputs that the virtual txs spent before. The funder sends
+  new commitment txs, which once again spend the funding outputs that the
+  virtual txs spent before, just like prior to opening the virtual channel. The
+  funder sends
   their signatures to the first intermediary; the latter signs and sends the
   same to the second intermediary and so on until the fundee. The fundee
   responds with its own commitment tx signatures, along with signatures revoking
@@ -337,8 +338,9 @@
   neighbour and it to the next, until the revocations reach the fundee. The
   channel has now closed cooperatively.
 
-  In order to better grasp how our construction plays out on-chain in practice, let us
-  now turn to an example (Figure~\ref{figure:example-start-end}). Consider an
+  As for the unilateral closing, let us now turn to an example in order to
+  better grasp how our construction plays out on-chain in practice
+  (Figure~\ref{figure:example-start-end}). Consider an
   established virtual channel on top of $4$ preexisting simple base channels.
   Let $A$, $B$, $C$, $D$ and $E$ be the relevant parties, which control the $(A,
   B)$, $(B, C)$, $(C, D)$ and $(D, E)$ base channels, along with the $(A, E)$
