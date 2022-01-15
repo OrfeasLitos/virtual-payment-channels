@@ -37,12 +37,12 @@
   details.
 
   Since all constructions produce pairwise channels, updates (a.k.a.\ payments)
-  always implicate exactly two parties (the payer and the payee) and
+  always implicate exactly two parties and
   their interaction is independent of the number of underlying channels.
   Therefore the ``Update'' entries in
   Table~\ref{table:comparison:overhead:3-parties} also cover the general case of
   $n$ underlying channels. \emph{Party rounds} are calculated as
-  $[\#\text{incoming messages} + \#\text{outgoing messages}]/2$, for each party
+  [\#incoming messages + \#outgoing messages]/2, for each party
   separately. Note that the update-related storage requirements of Elmo-related
   entries in Table~\ref{table:comparison:overhead:3-parties} do not take into
   account savings that may arise by deleting old unneeded data at the end of an
@@ -204,16 +204,16 @@
 
   We note that the linear size factor when the intermediary closes can, in the
   case of our work, be eliminated with the aid of Schnorr signatures (recently
-  made available on Bitcoin), bringing its cost below that of LVPC. This is so
+  added to Bitcoin), bringing its cost below that of LVPC. This is so
   because the $n$ signatures that are
-  needed to spend each virtual output can be shrunk down to a single aggregate
-  signature without compromising security. For the same reason, Schnorr
+  needed to spend each virtual output can be reduced to a single aggregate
+  signature without compromising security. Likewise, Schnorr
   signatures help eliminate the quadratic term and reduce the linear term of the
   total on-chain cost, as well as reduce the required storage. The same cannot
   be said for the linear factor in Donner,
-  since there is currently no way to optimise away the $n$ outputs of the
-  funder's transaction $\tx^{\mathtt{vc}}$. Likewise LVPC cannot obtain a linear
+  since Schnorr signatures cannot optimise away the $n$ outputs of the
+  funder's transaction $\tx^{\mathtt{vc}}$. Likewise LVPC cannot gain a linear
   improvement with this optimisation, since each of its relevant transactions
-  (``split'', ``merge'' and ``refund'') only needs a constant number of
+  (``split'', ``merge'' and ``refund'') needs constant
   signatures. We deduce that, using this optimisation, Elmo has the smallest
   worst-case total on-chain footprint compared to LVPC and Donner.

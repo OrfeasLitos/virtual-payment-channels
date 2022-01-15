@@ -48,7 +48,7 @@ the Appendix.
   \simulator. Let $P \in \{\alice, \bob\}$ one of the two parties of \fchan.
   Assume that all of the following are true:
   \begin{itemize}
-    \item $P$ is not corrupted or negligent, nor the any member of the
+    \item $P$ is not corrupted or negligent, nor any member of the
     transitive closure of its hosts has published a revocation transaction,
     \item $P$ successfully opened the channel, with initial balance $c$ ($c = 0$
     if $P$ is a fundee)
@@ -78,7 +78,7 @@ Appendix.
   payments]. Note that the funds for hosted virtuals only refer to those funds
   used by the funder of the virtual channel, not the rest of the base parties.
 
-  Both proofs follow the various possible execution paths, keeping track of the
+  Both proofs follow all possible execution paths, keeping track of the
   resulting balance in each case and coming to the conclusion that balance is
   secure in all cases, except if signatures are forged.
 
@@ -86,7 +86,7 @@ Appendix.
   namely that an honest, non-negligent party with an open channel can
   unilaterally close it and obtain the expected funds on-chain within a known
   number of blocks, given that \environment sends the necessary ``daemon'' messages.
-  This stronger guarantee is sufficient to make this construction reliable
+  This stronger guarantee is sufficient to make Elmo reliable
   enough for real-world applications. However a corresponding ideal world
   functionality with such guarantees would have to be aware of the specific
   transactions and signatures, therefore it would be essentially as complicated
@@ -142,7 +142,7 @@ Appendix.
   \label{theorem:security:simple}
   The protocol $\pchansup{1}$ UC-realises $\fchansup{1}$ in the presence of a
   global functionality $\ledger$ and assuming the security of the underlying
-  digital signature. Specifically,
+  digital signature:
   \begin{gather*}
     \forall \text{ PPT } \adversary, \exists \text{ PPT } \simulator: \forall
     \text{ PPT } \environment \text{ it is }
@@ -151,9 +151,9 @@ Appendix.
   \end{gather*}
 \end{theorem}
 
-  The corresponding proof is a simple application of
+  The corresponding proof stems from
   Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
-  \simulator faithfully simulates \pchan internally.
+  \simulator faithfully simulates \pchan.
 
 \begin{proof}[Proof of Theorem~\ref{theorem:security:simple}]
   By inspection of Figures~\ref{code:functionality:rules}

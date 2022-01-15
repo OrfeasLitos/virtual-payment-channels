@@ -75,7 +75,6 @@
   ($\wedge$) and ``OR'' ($\vee$), so an output $a \vee b$ can be spent either by
   matching the condition $a$ or the condition $b$, and an input $\sigma_a \wedge
   \sigma_b$ carries signatures from $\sk{a}$ and $\sk{b}$.
-
   Note that all signatures for all multisig outputs make use of the
   \texttt{ANYPREVOUT} hash type.
 
@@ -134,8 +133,8 @@
   Observe that the above logic is essentially a simplification of LN.
 
 \subsection{Virtual Channels}
-  In order to gain intuition on how virtual channels function, consider $n-1$
-  simple channels established between $n$ honest parties as before. $P_1$, the
+  In order to gain intuition on how virtual channels work, consider $n-1$
+  simple channels between $n$ honest parties as before. $P_1$, the
   funder, and $P_n$, the fundee, want to open a virtual channel over these base
   channels.
   Before opening the virtual, each base channel is entirely independent, having

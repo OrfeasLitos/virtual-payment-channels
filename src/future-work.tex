@@ -15,17 +15,17 @@
   Subsection~\ref{construction:real-world}, the range of balances a virtual
   channel can
   support is limited by the balances of neighbouring channels. We believe that
-  this limitation can be lifted if instead of using a Lightning-based
-  construction for the payment layer, we instead replace it with an
-  eltoo-based~\cite{eltoo} construction. Since in eltoo a maliciously published
+  this limitation can be lifted if the Lightning-based
+  construction for the payment layer is replaced with an
+  eltoo-based~\cite{eltoo} one. Since in eltoo a maliciously published
   old state can be simply re-spent by the honest latest state, the griefing
   attack is completely avoided. What is more, our protocol shares with eltoo the
-  need for the \texttt{ANYPREVOUT} sighash flag, therefore no additional
-  requirements from the Bitcoin protocol would be added by this change. Lastly,
+  need for the \texttt{ANYPREVOUT} flag, therefore no additional
+  requirements from Bitcoin would be added by this change. Lastly,
   due to the separation of intermediate layers with the payment layer in our
-  pseudocode implementation as found in Section~\ref{sec:protocol} (i.e.\ the distinction
-  between the \textsc{ln} and the \textsc{virt} protocols), this change should
-  in principle not need extensive changes in all parts of the protocol.
+  pseudocode implementation (i.e.\ the distinction
+  between the \textsc{ln} and the \textsc{virt} protocols), this change
+  in principle needs only limited changes to the protocol.
 
   As it currently stands, the timelocks calculated for the virtual channels are
   based on $p$ (Figure~\ref{code:ln:init}) and $s$
@@ -85,12 +85,12 @@
   counterparty is cooperative.
 
   Moreover, our need for \texttt{ANYPREVOUT} prevents our protocol from being
-  deployable on Bitcoin today. Even though it is one of the prime contenders for inclusion
-  in a future update, there are no guarantees that it will ever be added.
-  Nevertheless, as we mentioned before, we conjecture that a variadic virtual
+  deployable on Bitcoin today. Though it is one of the prime contenders for inclusion
+  in a future update, it may never make it.
+  Nevertheless, as mentioned before, we conjecture that a variadic virtual
   channel protocol with unlimited lifetime needs each party to store an
   exponential number of signatures if \texttt{ANYPREVOUT} is not available. We
-  leave proof of this conjecture as future work.
+  leave proof of this as future work.
 
   Last but not least, the current analysis gives no privacy guarantees for the
   protocol, as it does not employ onion packets~\cite{sphinx} like Lightning.
