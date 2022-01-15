@@ -302,8 +302,8 @@
   virtual channels with $O(1)$ on-chain and subexponential number of off-chain
   transactions of size $O(1)$ for each party cannot be constructed in Bitcoin without this
   flag.\footnote{To see why, consider a virtual channel over $k+1$ players who  close the channel non-cooperatively via on-chain interaction. 
-Assuming the $(k+1)$-th player goes last, the protocol should be able to accommodate any possible activation sequence for the first $k$ parties.  Consecutive pairs of parties $(i,i+1)$ need to be reactive to each other's posted transactions since they share a base channel. It follows that for each $i$ we can assign either ``L'' or ``R'' signifying the directionality of reaction, resulting in a total of $2^k$ different sequences.  
-  Without \texttt{ANYPREVOUT},  the $(k+1)$-th party will need a different transaction to interact with the outcome of each sequence, hence blowing up its local storage. The formalization of this argument is outside the scope of the present work.}
+Assuming the $(k+1)$-th party goes last, the protocol should be able to accommodate any possible activation sequence for the first $k$ parties.  Consecutive pairs of parties $(i,i+1)$ need to be reactive to each other's posted transactions since they share a base channel. It follows that for each $i$ we can assign either ``L'' or ``R'' signifying the directionality of reaction, resulting in a total of $2^{k-1}$ different sequences.  
+  Without \texttt{ANYPREVOUT},  the $(k+1)$-th party needs a different transaction to interact with the outcome of each sequence, hence blowing up its local storage. The formalization of this argument is outside the scope of the present work.}
   We hope this work provides additional motivation for this flag to be
   included in the future.
 
