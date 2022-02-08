@@ -121,7 +121,7 @@ activation sequence. The latter is achieved by making it feasible for anyone to
 become an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
 
   We formally prove the security of the constructor protocol in the
-  UC~\cite{uc} setting; our ideal functionality is global, according to the
+  Universally Composable security (UC)~\cite{uc} setting; our ideal functionality is global, according to the
   definition of~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The construction relies
   on the \texttt{ANYPREVOUT} signature type (currently under discussion for
   future inclusion in Bitcoin), which does not sign the hash of the transaction it spends,
