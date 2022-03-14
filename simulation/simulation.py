@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+# TODO: when this starts to get big, split classes into separate files
+
+# TODO: move these constants inside `PlainBitcoin`
 Bitcoin_money_const = 1  # Should probably be modified
 Bitcoin_time_const = 3600  # 1h = 3600 seconds
 
@@ -13,8 +16,15 @@ class Network:
         edges is a list of tuples containing exactly two elements. The first element specifies what kind of channel is used, i.e Bitcoin, Lightning, Elmo,...
         The second element is a second tuple that specifies the two vertices the edge connects.
         """
+# TODO: define nr_vertices in doc
+# TODO: To avoid a bad class of interactions,
+#       we won't simulate mixed networks (e.g. half Elmo, half LN).
+#       Change `edges` accordingly.
+# TODO: Seems like there are some assumptions on which constructor input combinations are valid,
+#       e.g. if both `nr_vertices` and `vertices` are defined, then the latter overwrites the former.
+#       Validate input and raise ValueError on failure.
         if (nr_vertices != None):
-            self.vertices = [i for i in range(nr_vertices)]
+            self.vertices = [i for i in range(nr_vertices)] # TODO: use the (IMO prettier) `list(range(nr_vertices))`
             self.edges = []
         if (vertices != None):
             self.vertices = vertices
@@ -44,7 +54,7 @@ class Knowledge:
         self.party = party
 
     def eval(self, lst_payments):
-        return (self.knowledge(self.party, lst_payments))
+        return (self.knowledge(self.party, lst_payments)) # TODO (also elsewhere): drop parentheses around output
 
     # maybe an update method
 
@@ -56,6 +66,9 @@ class Payment:
     """
 
     def __init__(self, payment_method, sender, receiver, content):
+        # TODO: I think `payment_method` shouldn't be part of payment objects,
+        #       as payments are generated at the beginning of the sim,
+        #       whereas the suitable payment method is decided during the sim.
         self.payment_method = payment_method
         self.content = content
         self.sender = sender
@@ -66,7 +79,13 @@ class Payment:
     #def get_payment_size(self):
     # to be done
 
+    # TODO: Rename to `get_payment_cost()`,
+    #       better keep 'transaction' for the thing that can enter Bitcoin blocks
     def get_transaction_cost(self):
+        # TODO: this function should probably be in `Utility`
+        #       and take, among others, a `Payment` object as input
+        # TODO: `unit_money_cost` -> `fee`
+        # TODO: `unit_time_cost` -> `delay`
         unit_money_cost, unit_time_cost = self.payment_method.get_unit_transaction_cost()
         return (self.size * unit_money_cost, unit_time_cost)
 
@@ -102,7 +121,7 @@ class Utility:
 
 class Simulation:
     """
-    Here the simulation takes places.
+    Here the simulation takes place.
 
     There's an update method which is one step in the simulation.
     Running the simulation is equivalent to calling the update method as long as it's possible.
@@ -114,11 +133,18 @@ class Simulation:
         self.network = Network(None, None, self.nr_players)
         print(payment_lst)
         # maybe pop instead of iterator
+        # TODO: even better, use deque and `popleft()` to maintain performance and sanity
+        #       https://docs.python.org/2/library/collections.html#collections.deque
         self.payments_iterator = iter(payment_lst)
         self.knowledge = knowledge
         self.utility_fct = utility_fct
         self.payment_method = payment_method  # probably not necessary here
 
+    # TODO: `update` -> `step` (and change doc)
+    # TODO: alternatively, it may make sense to have `Simulation` be an iterator,
+    #       so that we can write
+    #       `for state in simulation:`
+    #       and inspect the `state` at will
     def update(self):
         payment = next(self.payments_iterator, None)
         if payment == None:
@@ -127,9 +153,14 @@ class Simulation:
         # normally the update should depend on the utility for the party
         if isinstance(payment.payment_method, PlainBitcoin):
             edge = (payment.payment_method, (payment.sender, payment.receiver))
+            # TODO: In plain bitcoin, there won't be any real network,
+            #       maybe just a dummy one.
+            #       In each other payment method PM, the network will change
+            #       based on what PM decides.
             self.network.add_edge(edge)
         return True
 
+    # TODO: if we turn it into an iterator, this function won't be needed
     def run(self):
         update_possible = True
         while update_possible:
@@ -137,6 +168,8 @@ class Simulation:
         return
 
     # Should Simulation extend Iterator?
+    # TODO: You're in my head :)
+    #       It's done by defining `__iter__()` and ``__next__()` methods
 
 
 if __name__ == "__main__":
