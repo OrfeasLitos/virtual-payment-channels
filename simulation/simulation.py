@@ -67,8 +67,7 @@ class Payment:
     # to be done
 
     def get_transaction_cost(self):
-        unit_money_cost, unit_time_cost = self.payment_method.get_unit_transaction_cost(
-        )
+        unit_money_cost, unit_time_cost = self.payment_method.get_unit_transaction_cost()
         return (self.size * unit_money_cost, unit_time_cost)
 
 
