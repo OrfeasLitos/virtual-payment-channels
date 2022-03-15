@@ -126,12 +126,15 @@ class Simulation:
         self.utility_fct = utility_fct
         self.payment_method = payment_method  # probably not necessary here
 
+    def __iter__():
+        pass # TODO
+
     # TODO: `update` -> `step` (and change doc)
     # TODO: alternatively, it may make sense to have `Simulation` be an iterator,
     #       so that we can write
     #       `for state in simulation:`
     #       and inspect the `state` at will
-    def update(self):
+    def __next__(self):
         payment = next(self.payments_iterator, None)
         if payment == None:
             return False
@@ -146,12 +149,9 @@ class Simulation:
             self.network.add_edge(edge)
         return True
 
-    # TODO: if we turn it into an iterator, this function won't be needed
     def run(self):
-        update_possible = True
-        while update_possible:
-            update_possible = self.update()
-        return
+        while self.__next__(): # TODO: store output of next and return its final value
+            pass
 
     # Should Simulation extend Iterator?
     # TODO: You're in my head :)
