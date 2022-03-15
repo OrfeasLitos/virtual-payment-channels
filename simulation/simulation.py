@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import random
 
 # TODO: when this starts to get big, split classes into separate files
 
@@ -61,6 +62,22 @@ class Payment:
         unit_money_cost, unit_time_cost = self.payment_method.get_unit_transaction_cost()
         return (self.size * unit_money_cost, unit_time_cost)
 
+def random_payments(num_pays, players, max_pay):
+    res = []
+
+    for i in range(num_pays):
+        # TODO: call functions correctly
+        sender = randrange(players)
+
+        receiver = randrange(players)
+        while receiver == sender:
+            receiver = randrange(players)
+
+        value = random.randrange(max_pay)
+
+        res.append((sender, receiver, value))
+
+    return res
 
 class PaymentMethod:
     """
