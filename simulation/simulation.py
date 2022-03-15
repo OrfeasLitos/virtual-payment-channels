@@ -20,8 +20,7 @@ class Network:
     def add_edge(self, edge):
         self.edges.append(edge)
 
-    # remove vertices, edges ...
-
+    # TODO: remove vertices, edges ...
 
 class Knowledge:
 
@@ -37,10 +36,9 @@ class Knowledge:
         self.party = party
 
     def eval(self, lst_payments):
-        return (self.knowledge(self.party, lst_payments)) # TODO (also elsewhere): drop parentheses around output
+        return self.knowledge(self.party, lst_payments)
 
     # maybe an update method
-
 
 class Payment:
     """
@@ -83,7 +81,6 @@ class PaymentMethod:
     def get_unit_transaction_cost(self):
         pass
 
-
 class PlainBitcoin(PaymentMethod):
 
     def __init__(self):
@@ -92,7 +89,6 @@ class PlainBitcoin(PaymentMethod):
     def get_unit_transaction_cost(self):
         return (Bitcoin_money_const, Bitcoin_time_const)
 
-
 class Utility:
 
     def __init__(self, function):
@@ -100,7 +96,6 @@ class Utility:
 
     def evaluate(self, parameters):
         return self.function(parameters)
-
 
 class Simulation:
     """
@@ -153,7 +148,6 @@ class Simulation:
     # Should Simulation extend Iterator?
     # TODO: You're in my head :)
     #       It's done by defining `__iter__()` and ``__next__()` methods
-
 
 if __name__ == "__main__":
 
