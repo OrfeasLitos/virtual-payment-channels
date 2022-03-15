@@ -10,26 +10,9 @@ Bitcoin_time_const = 3600  # 1h = 3600 seconds
 # maybe Network should extend a class "LabeledGraph"
 class Network:
 
-    def __init__(self, vertices=None, edges=None, nr_vertices=None):
-        """
-        vertices should be a list.
-        edges is a list of tuples containing exactly two elements. The first element specifies what kind of channel is used, i.e Bitcoin, Lightning, Elmo,...
-        The second element is a second tuple that specifies the two vertices the edge connects.
-        """
-# TODO: define nr_vertices in doc
-# TODO: To avoid a bad class of interactions,
-#       we won't simulate mixed networks (e.g. half Elmo, half LN).
-#       Change `edges` accordingly.
-# TODO: Seems like there are some assumptions on which constructor input combinations are valid,
-#       e.g. if both `nr_vertices` and `vertices` are defined, then the latter overwrites the former.
-#       Validate input and raise ValueError on failure.
-        if (nr_vertices != None):
-            self.vertices = [i for i in range(nr_vertices)] # TODO: use the (IMO prettier) `list(range(nr_vertices))`
-            self.edges = []
-        if (vertices != None):
-            self.vertices = vertices
-        if (edges != None):
-            self.edges = edges
+    def __init__(self, nr_vertices):
+        self.vertices = list(range(nr_vertices))
+        self.edges = []
 
     def add_vertex(self, vertex):
         self.vertices.append(vertex)
