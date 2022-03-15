@@ -7,6 +7,7 @@ import random
 Bitcoin_money_const = 1  # Should probably be modified
 Bitcoin_time_const = 3600  # 1h = 3600 seconds
 
+MAX_COINS = 1000000
 
 # maybe Network should extend a class "LabeledGraph"
 class Network:
@@ -158,6 +159,29 @@ class Simulation:
     #       It's done by defining `__iter__()` and ``__next__()` methods
 
 if __name__ == "__main__":
+
+    seed = random.randrange(sys.maxsize)
+    # seed = 12345
+    random.seed(seed)
+    print('Randomness seed:', seed)
+
+    for parties in [10, 100, 1000, 10000]:
+        for num_payments in [100, 1000, 10000, 100000]:
+            for payments in random_payments(num_payments, parties, MAX_COINS/5) * 10:
+                for method in [PlainBitcoin(), LN(), Elmo(), Donner(), LVPC()]:
+                    for utility in [
+                        Utility('only-fee'), Utility('only-time'),
+                        Utility('add'), Utility('mul')
+                    ]:
+                        for knowledge in [
+                            Knowledge('all'), Knowledge('only-mine'),
+                            Knowledge('only-next'), Knowledge('10-next'),
+                            Knowledge('10-next-mine')
+                        ]:
+                            sim = Simulation(parties, payments, method, utility, knowledge)
+                            sim.run()
+                            # for step in sim:
+                            #    print(step)
 
     def identity_fct(x):
         return x
