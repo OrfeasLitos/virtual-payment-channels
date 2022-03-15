@@ -46,19 +46,10 @@ class Payment:
     It is possible to get the cost of a transaction.
     """
 
-    def __init__(self, payment_method, sender, receiver, content):
-        # TODO: I think `payment_method` shouldn't be part of payment objects,
-        #       as payments are generated at the beginning of the sim,
-        #       whereas the suitable payment method is decided during the sim.
-        self.payment_method = payment_method
-        self.content = content
+    def __init__(self, sender, receiver, value):
+        self.value = value
         self.sender = sender
         self.receiver = receiver
-        #self.size = get_payment_size()
-        self.size = 5
-
-    #def get_payment_size(self):
-    # to be done
 
     # TODO: Rename to `get_payment_cost()`,
     #       better keep 'transaction' for the thing that can enter Bitcoin blocks
