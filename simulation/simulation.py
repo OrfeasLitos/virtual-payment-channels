@@ -7,7 +7,7 @@ from paymentmethod import *
 from utility import *
 
 def random_payments(num_pays, players, max_pay):
-    res = []
+    res = collections.deque()
     for i in range(num_pays):
         sender = random.randrange(players)
         receiver = random.randrange(players)
@@ -15,7 +15,7 @@ def random_payments(num_pays, players, max_pay):
             receiver = random.randrange(players)
         value = random.randrange(max_pay)
         res.append((sender, receiver, value))
-    return collections.deque(res)
+    return res
 
 class Simulation:
     """
