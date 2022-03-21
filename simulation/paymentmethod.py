@@ -35,4 +35,5 @@ class PlainBitcoin(PaymentMethod):
     
     def compare_utilites(self, utility, payment, knowledge):
         # This says that in the class PlainBitcoin PlainBitcoin is always the best (since only) way. Should this be string or some other object?
-        return "PlainBitcoin"
+        # I suspect this function will need to be moved/changed. For now I changed its return value to number so that the set() hash is deterministic (strings result in non-deterministic hashing)
+        return 0
