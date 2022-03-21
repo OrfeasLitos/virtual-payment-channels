@@ -1,3 +1,4 @@
 *.swp
 node_modules
+__pycache__
 src/figures/auto-tikz/
