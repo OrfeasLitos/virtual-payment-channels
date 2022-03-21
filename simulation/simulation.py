@@ -53,13 +53,8 @@ class Simulation:
 
     def run(self):
         res = []
-        end = False
-        while end == False:
-            try:
-                next = self.__next__()
-                res.append(next)
-            except StopIteration:
-                end = True
+        for step in self:
+            res.append(step)
         return res
 
 
