@@ -45,8 +45,8 @@ class Simulation:
             sender, receiver, value = payment
             # Here method means just Plainbitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
             method = self.payment_method.compare_utilites(self.utility, payment, self.knowledge)
-            self.network.add_edge_with_check((method, (sender, receiver)))
-            self.network.add_edge_with_check((method, (receiver, sender)))
+            self.network.add_edge((method, (sender, receiver)))
+            self.network.add_edge((method, (receiver, sender)))
             return (method, payment)
         else:
             raise StopIteration
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     network = simulation.network
     print(len(network.edges))
     print(payments_with_method[:30])
-    print(network.edges[:60])
+    print(list(network.edges)[:60])
     """
     for parties in [10, 100, 1000, 10000]:
         for num_payments in [100, 1000, 10000, 100000]:
