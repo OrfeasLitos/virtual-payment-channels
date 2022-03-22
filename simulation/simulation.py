@@ -30,7 +30,7 @@ class Simulation:
         """
         payments should be a deque.
         """
-        self.network = Network(self.nr_players)
+        self.network = Network(nr_players) # TODO: network should also know party balances
         self.payments = payments
         self.payment_method = payment_method
         self.knowledge = knowledge
@@ -43,7 +43,20 @@ class Simulation:
         try:
             payment = self.payments.popleft()
             sender, receiver, value = payment
-            # Here method means just Plainbitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
+            # TODO
+            # 1. query network for payment methods that satisfy this payment
+            #list_of_candidate_payment_methods = self.network.payment_options(payment)
+            # 2a. if no candidates exist, write this down as a failed payment (and decide later how to measure them)
+            # 2b. find which method is the cheapest
+            #    * use discussed heuristics, i.e. distance from future paying parties and our centrality
+            #  for each candidate, calculate: candidate_network = self.network.apply(candidate)
+            #    * our new centrality: candidate_centrality = candidate_network.centrality(sender)
+            #    * our distance from future paying parties: candidate_distance = candidate_network.distance(sender)
+            #  for each candidate, apply the utility function, which takes (fee, time, current_ - candidate_centrality, current_ - candidate_distance)
+            # 3. instruct network to carry out cheapest method
+            #self.network = self.network.apply(best_method)
+
+            # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
             method = self.payment_method.compare_utilites(self.utility, payment, self.knowledge)
             self.network.add_edge((method, (sender, receiver)))
             self.network.add_edge((method, (receiver, sender)))
