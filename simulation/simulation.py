@@ -30,7 +30,6 @@ class Simulation:
         """
         payments should be a deque.
         """
-        self.nr_players = nr_players
         self.network = Network(self.nr_players)
         self.payments = payments
         self.payment_method = payment_method
