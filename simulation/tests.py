@@ -1,3 +1,5 @@
+# TODO: write __eq__ for simulation, comparing everything, and use it here to make test pass. Ensure that test fails if edges contain strings.
+
 from simulation import Simulation, random_payments
 from paymentmethod import PlainBitcoin
 from network import Network
