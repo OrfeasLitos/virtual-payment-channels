@@ -41,7 +41,7 @@ class Simulation:
         return self
 
     def __next__(self):
-        if len(self.payments) > 0:
+        try:
             payment = self.payments.popleft()
             sender, receiver, value = payment
             # Here method means just Plainbitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
@@ -49,7 +49,7 @@ class Simulation:
             self.network.add_edge((method, (sender, receiver)))
             self.network.add_edge((method, (receiver, sender)))
             return (method, payment)
-        else:
+        except IndexError:
             raise StopIteration
 
     def run(self):
