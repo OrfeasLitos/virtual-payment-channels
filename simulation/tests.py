@@ -2,7 +2,6 @@
 
 from simulation import Simulation, random_payments
 from paymentmethod import PlainBitcoin
-from network import Network
 from utility import Utility
 from knowledge import Knowledge
 
