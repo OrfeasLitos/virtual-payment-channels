@@ -70,6 +70,11 @@ class Simulation:
             res.append(step)
         return res
 
+    def __eq__(self, other):
+        # two simulations are equal if and only if all attributes are equal.
+        # This method doesn't work yet as for every new simulation a new network is set up. So we need an __eq__ method for Network.
+        return (self.network == other.network and self.payments == other.payments and self.payment_method == other.payment_method and self.knowledge == other.knowledge
+                and self.utility == other.utility)
 
 if __name__ == "__main__":
 
