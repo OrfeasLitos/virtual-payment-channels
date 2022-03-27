@@ -15,4 +15,7 @@ class Network:
     def has_edge(self, edge):
         return edge in self.edges
 
+    def __eq__(self, other):
+        return (self.edges == other.edges and self.vertices == other.vertices)
+
     # TODO: remove vertices, edges ...
