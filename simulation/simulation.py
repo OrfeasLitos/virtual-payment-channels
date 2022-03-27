@@ -2,10 +2,10 @@ import random
 import sys
 import collections
 # TODO: import explicitly
-from network import *
-from knowledge import *
-from paymentmethod import *
-from utility import *
+from network import Network
+from knowledge import Knowledge
+from paymentmethod import PaymentMethod
+from utility import Utility
 
 def random_payments(num_pays, players, max_pay):
     res = collections.deque()
