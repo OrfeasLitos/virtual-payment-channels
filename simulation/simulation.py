@@ -4,7 +4,7 @@ import collections
 # TODO: import explicitly
 from network import Network
 from knowledge import Knowledge
-from paymentmethod import PaymentMethod
+from paymentmethod import PaymentMethod, PlainBitcoin
 from utility import Utility
 
 def random_payments(num_pays, players, max_pay):

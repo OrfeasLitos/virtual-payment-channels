@@ -16,3 +16,5 @@ class Knowledge:
     def get_knowledge(self):
         return self.knowledge_function(self.party, self.payments)
 
+    def __eq__(self, other):
+        return (self.party == other.party and self.payments == other.payments and self.knowledge_function == other.knowledge_function)
