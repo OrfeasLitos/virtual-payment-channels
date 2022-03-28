@@ -4,19 +4,32 @@ from simulation import Simulation, random_payments
 from paymentmethod import PlainBitcoin
 from utility import Utility
 from knowledge import Knowledge
+from network import Network
 
 import random
 import sys
 
-def get_adjacency_matrix(network):
+def get_weighted_adjacency_matrix(network):
     # edge is just a set of vertices
     nr_vertices = len(network.vertices)
-    adjacency_matrix = np.zeros((nr_vertices, nr_vertices))
+    weighted_adjacency_matrix = np.zeros((nr_vertices, nr_vertices))
+    money_on_network = 0
     for vertex1 in network.vertices:
         for vertex2 in network.vertices:
-            if set(vertex1, vertex2) in network.edges:
-                adjacency_matrix[vertex1, vertex2] = 1
-    return adjacency_matrix
+            for edge in network.edges:
+                parties, balance_a, balance_b = edge
+                a , b = parties
+                if (a == vertex1 and b == vertex2) or (a == vertex2 and b == vertex1):
+                    weighted_adjacency_matrix[vertex1, vertex2] = balance_a + balance_b
+                    money_on_network += balance_a + balance_b
+    for vertex1 in network.vertices:
+        for vertex2 in network.vertices:
+            weighted_adjacency_matrix[vertex1, vertex2] /= money_on_network
+    return weighted_adjacency_matrix
+
+
+def test_adjacency_matrix():
+    pass
 
 def is_deterministic():
 
