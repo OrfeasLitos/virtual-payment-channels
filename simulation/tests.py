@@ -8,6 +8,16 @@ from knowledge import Knowledge
 import random
 import sys
 
+def get_adjacency_matrix(network):
+    # edge is just a set of vertices
+    nr_vertices = len(network.vertices)
+    adjacency_matrix = np.zeros((nr_vertices, nr_vertices))
+    for vertex1 in network.vertices:
+        for vertex2 in network.vertices:
+            if set(vertex1, vertex2) in network.edges:
+                adjacency_matrix[vertex1, vertex2] = 1
+    return adjacency_matrix
+
 def is_deterministic():
 
     bitcoin = PlainBitcoin()
