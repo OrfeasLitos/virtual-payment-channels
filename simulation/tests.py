@@ -33,12 +33,29 @@ def test_adjacency_matrix():
     edge1 = (set({0,2}, 1, 0))
     edge2 = (set({1,2}, 1.2, 5.6))
     edge3 = (set({3,4}, 0.1, 3.2))
+    edge4 = (set({1,0}, 1, 2))
     network.add_edge(edge1)
     network.add_edge(edge2)
     network.add_edge(edge3)
+    network.add_edge(edge4)
     adjacency_matrix_edges = network.get_weighted_adjacency_matrix()
     adjacency_matrix_vertices = get_weighted_adjacency_matrix(network)
     return (np.linalg.norm(adjacency_matrix_edges - adjacency_matrix_vertices) < 10**(-10))
+
+def test_find_paths():
+    network = Network(5)
+    edge1 = (set({0,2}, 1, 0))
+    edge2 = (set({1,2}, 1.2, 5.6))
+    edge3 = (set({3,4}, 0.1, 3.2))
+    edge4 = (set({1,0}, 1, 2))
+    network.add_edge(edge1)
+    network.add_edge(edge2)
+    network.add_edge(edge3)
+    network.add_edge(edge4)
+    paths_calculated = network.find_all_paths(0, 2)
+    paths = set({[0,2], [0,1,2]})
+    return paths_calculated == paths
+
 
 def is_deterministic():
 
@@ -77,4 +94,6 @@ if __name__ == "__main__":
     assert(is_deterministic())
     print("Success")
     assert(test_adjacency_matrix)
+    print("Success")
+    assert(test_find_paths)
     print("Success")

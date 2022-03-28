@@ -5,8 +5,9 @@ class Network:
 
     def __init__(self, nr_vertices):
         self.vertices = list(range(nr_vertices))
-
         self.edges = set()
+        # maybe self.adjacency_matrix would be good for finding all paths, espicially if I call some functions recursively.
+        # but then the weights can't be relative to the amount of money on the network, since in the beginning the amount would be 0.
 
     def add_vertex(self, vertex):
         self.vertices.append(vertex)
@@ -43,6 +44,24 @@ class Network:
         except ZeroDivisionError:
             raise Exception("There needs to be money on at least one channel")
     
+    # following the code from the following link (Dijkstra)
+    # https://stackoverflow.com/questions/24471136/how-to-find-all-paths-between-two-graph-nodes
+    def find_all_paths(self, start, end, path = []):
+        adjacency_matrix = self.get_weighted_adjacency_matrix()
+        # or self.adjacency_matrix
+        nr_vertices = len(self.vertices)
+        path = path + [start]
+        if start == end:
+            return path
+        if start not in self.vertices:
+            return []
+        paths = set()
+        for vertex in range(nr_vertices):
+            if adjacency_matrix[start, vertex] > 0 and vertex not in path:
+                newpaths = self.find_all_paths(vertex, end, path)
+                paths.add(newpaths)
+        return paths
+
     def __eq__(self, other):
         return (self.edges == other.edges and self.vertices == other.vertices)
 
