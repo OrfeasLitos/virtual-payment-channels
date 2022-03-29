@@ -88,8 +88,6 @@ def is_deterministic():
 
 if __name__ == "__main__":
     assert(is_deterministic())
-    print("Success")
-    assert(test_adjacency_matrix)
-    print("Success")
-    assert(test_find_paths)
+    #assert(test_adjacency_matrix())
+    #assert(test_find_paths())
     print("Success")
