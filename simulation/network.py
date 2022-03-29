@@ -5,6 +5,7 @@ class Network:
 
     def __init__(self, nr_vertices):
         self.vertices = list(range(nr_vertices))
+        self.edge_id = 0
         self.edges = set()
         # maybe self.adjacency_matrix would be good for finding all paths, espicially if I call some functions recursively.
         # but then the weights can't be relative to the amount of money on the network, since in the beginning the amount would be 0.
@@ -12,16 +13,17 @@ class Network:
     def add_vertex(self, vertex):
         self.vertices.append(vertex)
 
-    def add_edge(self, edge):
-        self.edges.add(edge)
+    def add_channel(self, idA, balA, idB, balB):
+        AtoB = (self.edge_id, (idA, idB), balA)
+        BtoA = (self.edge_id, (idB, idA), balB)
+        self.edge_id += 1
+        self.edges.add(AtoB)
+        self.edges.add(BtoA)
 
     def has_edge(self, edge):
         return edge in self.edges
 
     def get_weighted_adjacency_matrix(self):
-        # what should an edge be? Maybe for parties a, b with a < b a 3-tuple (set({a, b}), money of a on channel, money of b on channel)
-        # in this way we can identify the balance for each party and still have some symmetry (in that we don't need (a,b) and (b,a))
-        # Doesn't seem that elegant yet.
         nr_vertices = len(network.vertices)
         weighted_adjacency_matrix = np.zeros((nr_vertices, nr_vertices))
         money_on_network = 0
