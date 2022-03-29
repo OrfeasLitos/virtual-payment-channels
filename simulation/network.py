@@ -48,16 +48,20 @@ class Network:
 
     # following the code from the following link (Dijkstra)
     # https://stackoverflow.com/questions/24471136/how-to-find-all-paths-between-two-graph-nodes
+    # TODO: find library function that does this for us
     def find_all_paths(self, start, end, amount, path = []):
+        # TODO: use adjacency_list or simply directly self.edges (2nd option slower)
         adjacency_matrix = self.get_weighted_adjacency_matrix()
         # or self.adjacency_matrix
         nr_vertices = len(self.vertices)
         path = path + [start]
         if start == end:
             return set(path)
+        # TODO: remove the next if, if we're too slow
         if start not in self.vertices:
             raise ValueError("start not in vertices")
         paths = set()
+        # TODO: use adjacency_list
         for vertex in range(nr_vertices):
             if adjacency_matrix[start, vertex] >= amount and vertex not in path:
                 newpaths = self.find_all_paths(vertex, end, amount, path)
