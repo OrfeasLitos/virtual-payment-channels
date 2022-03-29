@@ -45,23 +45,24 @@ class Network:
                     weighted_adjacency_matrix[i, j] = weighted_adjacency_matrix / money_on_network
         except ZeroDivisionError:
             raise Exception("There needs to be money on at least one channel")
-    
+
     # following the code from the following link (Dijkstra)
     # https://stackoverflow.com/questions/24471136/how-to-find-all-paths-between-two-graph-nodes
-    def find_all_paths(self, start, end, path = []):
+    def find_all_paths(self, start, end, amount, path = []):
         adjacency_matrix = self.get_weighted_adjacency_matrix()
         # or self.adjacency_matrix
         nr_vertices = len(self.vertices)
         path = path + [start]
         if start == end:
-            return path
+            return set(path)
         if start not in self.vertices:
-            return []
+            raise ValueError("start not in vertices")
         paths = set()
         for vertex in range(nr_vertices):
-            if adjacency_matrix[start, vertex] > 0 and vertex not in path:
-                newpaths = self.find_all_paths(vertex, end, path)
-                paths.add(newpaths)
+            if adjacency_matrix[start, vertex] >= amount and vertex not in path:
+                newpaths = self.find_all_paths(vertex, end, amount, path)
+                for newpath in newpaths:
+                    paths.add(newpath)
         return paths
 
     def __eq__(self, other):
