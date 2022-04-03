@@ -7,11 +7,13 @@ class Network:
         self.vertices = list(range(nr_vertices))
         self.edge_id = 0
         self.edges = set()
-        # maybe self.adjacency_matrix would be good for finding all paths, espicially if I call some functions recursively.
-        # but then the weights can't be relative to the amount of money on the network, since in the beginning the amount would be 0.
+        # in adjacency_list[i] should be the vertices adjacent to vertex i
+        self.adjacency_list = [[] for _ in range(nr_vertices)]
+
 
     def add_vertex(self, vertex):
         self.vertices.append(vertex)
+        # do we need this method? If we need it adjacency list should probably be a dict, or we need a convention that a new vertex gets the number len(self.vertices).
 
     def add_channel(self, idA, balA, idB, balB):
         AtoB = (self.edge_id, (idA, idB), balA)
@@ -19,6 +21,10 @@ class Network:
         self.edge_id += 1
         self.edges.add(AtoB)
         self.edges.add(BtoA)
+        # this represents the edge from A to B
+        self.adjacency_list[idA].append((self.edge_id, idB, balA))
+        self.adjacency_list[idB].append((self.edge_id, idA, balB))
+        
 
     def has_edge(self, edge):
         return edge in self.edges
