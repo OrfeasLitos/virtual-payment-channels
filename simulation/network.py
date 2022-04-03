@@ -23,28 +23,15 @@ class Network:
     def has_edge(self, edge):
         return edge in self.edges
 
-    def get_weighted_adjacency_matrix(self):
-        nr_vertices = len(network.vertices)
-        weighted_adjacency_matrix = np.zeros((nr_vertices, nr_vertices))
-        money_on_network = 0
+    def get_weighted_adjacency_list(self):
+        # the i-th element of the adjacency list is the list of vertices adjacent to vertex i. Could also be a dict or deque.
+        # Maybe it would be convenient to be able to access all edges going from A to B at once, i.e to have sth like adjacency_list[idA][idB] to be a list of tuples (edge_id, balA).
+        adjacency_list = [[] for i in range(len(self.vertices))]
         for edge in self.edges:
-            parties, balance_a, balance_b = edge
-            a, b = parties
-            # the if is not necessary if we are only interested in the sum of the balances.
-            if a >= b:
-                tmp = a
-                a = b
-                b = tmp
-            weighted_adjacency_matrix[a, b] = weighted_adjacency_matrix[b,a] = balance_a + balance_b
-            money_on_network += balance_a + balance_b
-        # This is for the case that the weight should be relative to the overall amount on the network. Otherwise not necessary.
-        # The exception is for the case that no money is on the network, i.e. division by zero
-        try:
-            for i in range(nr_vertices):
-                for j in range(nr_vertices):
-                    weighted_adjacency_matrix[i, j] = weighted_adjacency_matrix / money_on_network
-        except ZeroDivisionError:
-            raise Exception("There needs to be money on at least one channel")
+            edge_id, ids_parties, balA = edge
+            idA, idB = ids_parties
+            adjacency_list[idA].append((idB, edge_id, balA))
+        return adjacency_list
 
     # following the code from the following link (Dijkstra)
     # https://stackoverflow.com/questions/24471136/how-to-find-all-paths-between-two-graph-nodes
