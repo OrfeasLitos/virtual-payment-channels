@@ -1,29 +1,22 @@
 # maybe Network should extend a class "LabeledGraph"
 import numpy as np
+import networkx as nx
 
 class Network:
 
     def __init__(self, nr_vertices):
-        self.vertices = list(range(nr_vertices))
+        self.multigraph = nx.empty_graph(nr_vertices, create_using=nx.MultiDiGraph)
         self.edge_id = 0
-        self.edges = set()
-        # in adjacency_list[i] should be the vertices adjacent to vertex i
-        self.adjacency_list = [[] for _ in range(nr_vertices)]
 
 
-    def add_vertex(self, vertex):
-        self.vertices.append(vertex)
-        # do we need this method? If we need it adjacency list should probably be a dict, or we need a convention that a new vertex gets the number len(self.vertices).
+    def add_node(self, node):
+        self.multigraph.add_node(node)
+        # do we need this method? If we need it we need sth like a convention that a new vertex gets the number len(self.vertices).
 
     def add_channel(self, idA, balA, idB, balB):
-        AtoB = (self.edge_id, (idA, idB), balA)
-        BtoA = (self.edge_id, (idB, idA), balB)
+        self.multigraph.add_weighted_edges_from([(idA, idB, balA)], weight = "balanceSender", edge_id = self.edge_id)
+        self.multigraph.add_weighted_edges_from([(idB, idA, balB)], weight = "balanceSender", edge_id = self.edge_id)
         self.edge_id += 1
-        self.edges.add(AtoB)
-        self.edges.add(BtoA)
-        # this represents the edge from A to B
-        self.adjacency_list[idA].append((idB, self.edge_id, balA))
-        self.adjacency_list[idB].append((idA, self.edge_id, balB))
         
 
     def has_edge(self, edge):
