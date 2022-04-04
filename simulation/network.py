@@ -22,8 +22,8 @@ class Network:
         self.edges.add(AtoB)
         self.edges.add(BtoA)
         # this represents the edge from A to B
-        self.adjacency_list[idA].append((self.edge_id, idB, balA))
-        self.adjacency_list[idB].append((self.edge_id, idA, balB))
+        self.adjacency_list[idA].append((idB, self.edge_id, balA))
+        self.adjacency_list[idB].append((idA, self.edge_id, balB))
         
 
     def has_edge(self, edge):
