@@ -13,8 +13,8 @@ class Network:
         # do we need this method? If we need it we need sth like a convention that a new vertex gets the number len(self.vertices).
 
     def add_channel(self, idA, balA, idB, balB):
-        self.multigraph.add_weighted_edges_from([(idA, idB, balA)], weight = "balanceSender", edge_id = self.edge_id)
-        self.multigraph.add_weighted_edges_from([(idB, idA, balB)], weight = "balanceSender", edge_id = self.edge_id)
+        self.multigraph.add_weighted_edges_from([(idA, idB, balA)], weight = "source_balance", edge_id = self.edge_id)
+        self.multigraph.add_weighted_edges_from([(idB, idA, balB)], weight = "source_balance", edge_id = self.edge_id)
         self.edge_id += 1
         
     # TODO: find library function that does this for us
@@ -45,7 +45,7 @@ class Network:
                 for edge_nr in edges_from_start_to_vertex.keys():
                     edge_id = edges_from_start_to_vertex[edge_nr]['edge_id']
                     # We check whether the balance is high enough and we want only simple paths.
-                    if edges_from_start_to_vertex[edge_nr]['balanceSender'] >= amount and vertex not in path:
+                    if edges_from_start_to_vertex[edge_nr]['source_balance'] >= amount and vertex not in path:
                         newpaths = self.find_all_paths(vertex, end, amount, path, edge_ids + [edge_id])
                         for i in range(len(newpaths)):
                             newpath, new_edge_ids = newpaths[i]
