@@ -1,11 +1,15 @@
 # maybe Network should extend a class "LabeledGraph"
+from re import S
 import numpy as np
 import networkx as nx
+
+UNIT_COST = 1
 
 class Network:
 
     def __init__(self, nr_vertices):
-        self.multigraph = nx.empty_graph(nr_vertices, create_using=nx.MultiDiGraph)
+        # TODO: change multigraph to graph
+        self.multigraph = nx.empty_graph(nr_vertices, create_using=nx.DiGraph)
         self.edge_id = 0
 
     def add_node(self, node):
@@ -14,8 +18,8 @@ class Network:
 
     def add_channel(self, idA, balA, idB, balB):
         assert(balA > 0 or balB > 0)
-        self.multigraph.add_weighted_edges_from([(idA, idB, balA)], weight = "source_balance", edge_id = self.edge_id)
-        self.multigraph.add_weighted_edges_from([(idB, idA, balB)], weight = "source_balance", edge_id = self.edge_id)
+        edges = [(idA, idB, dict({'balance': balA, 'cost' : UNIT_COST})),(idB, idA, dict({'balance': balB, 'cost' : UNIT_COST}))]
+        self.multigraph.add_edges_from(edges)
         self.edge_id += 1
         
     # TODO: find library function that does this for us
@@ -54,6 +58,8 @@ class Network:
             except KeyError:
                 continue
         return paths
+
+
 
     def __eq__(self, other):
         return (self.edges == other.edges and self.vertices == other.vertices)
