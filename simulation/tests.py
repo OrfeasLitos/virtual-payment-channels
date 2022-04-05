@@ -21,33 +21,6 @@ def test_cheapest_path():
     print(cheapest_path)
     # TODO: Complete the Test
 
-def test_find_paths():
-    # TODO: use adjacency list
-    network = Network(10)
-    network.add_channel(2, 3.4, 6, 6.7)
-    network.add_channel(2, 4., 5, 5.6)
-    network.add_channel(5, 3.2, 6, 7.8)
-    network.add_channel(8, 5.4, 6, 3.4)
-    network.add_channel(3, 3., 4, 3.2)
-    network.add_channel(2, 5.6, 3, 5.)
-    network.add_channel(4, 7.8, 6, 3.9)
-    all_paths = network.find_all_paths(2, 6, 0)
-    paths = set()
-    edge_ids = set()
-    for i in range(3):
-        path, edge_id = all_paths[i]
-        paths.add(tuple(path))
-        edge_ids.add(tuple(edge_id))
-    right_paths = set()
-    right_paths.add(tuple([2, 6]))
-    right_paths.add(tuple([2,5,6]))
-    right_paths.add(tuple([2,3,4,6]))
-    right_edge_ids = set()
-    right_edge_ids.add(tuple([0]))
-    right_edge_ids.add(tuple([1,2]))
-    right_edge_ids.add(tuple([5,4,6]))
-    return right_paths == paths and right_edge_ids == edge_ids
-
 def is_deterministic():
 
     bitcoin = PlainBitcoin()
@@ -84,7 +57,6 @@ def is_deterministic():
 if __name__ == "__main__":
     #assert(is_deterministic())
     #assert(test_adjacency_matrix())
-    #assert(test_find_paths())
     test_cheapest_path()
     print("Success")
 
