@@ -21,7 +21,17 @@ class Network:
         edges = [(idA, idB, dict({'balance': balA, 'cost' : UNIT_COST})),(idB, idA, dict({'balance': balB, 'cost' : UNIT_COST}))]
         self.multigraph.add_edges_from(edges)
         self.edge_id += 1
-        
+    
+    def find_cheapest_path(self, start, end, amount):
+        self.multigraph.nodes[start]['amount'] = -amount
+        self.multigraph.nodes[end]['amount'] = amount
+        cost, path = nx.network_simplex(self.multigraph,
+        demand='amount', capacity='balance', weight='cost')
+        self.multigraph.nodes[start]['amount'] = 0
+        self.multigraph.nodes[end]['amount'] = 0
+        # cost should be number of edges - 1
+        return cost - 1, path
+
     def __eq__(self, other):
         return (self.edges == other.edges and self.vertices == other.vertices)
 
