@@ -13,6 +13,7 @@ class Network:
         # do we need this method? If we need it we need sth like a convention that a new vertex gets the number len(self.vertices).
 
     def add_channel(self, idA, balA, idB, balB):
+        assert(balA > 0 or balB > 0)
         self.multigraph.add_weighted_edges_from([(idA, idB, balA)], weight = "source_balance", edge_id = self.edge_id)
         self.multigraph.add_weighted_edges_from([(idB, idA, balB)], weight = "source_balance", edge_id = self.edge_id)
         self.edge_id += 1
