@@ -1002,7 +1002,7 @@
       $\mathrm{sig}_{\bar{P}, R, i}$}
       \State \trustedcode{store received public key as $\pk{\bar{P}, R, i+2}$}
       \State \trustedcode{$C_{P, i+1} \gets$ TX \{input: $(c_P + c_{\bar{P}} +
-      c_1' + c_2')$, outputs: $(c_P + c_1', (\pk{P, \mathrm{out}} + (p + s)) \vee
+      c_1' + c_2')$, \TODO{add sigs needed for input}, outputs: $(c_P + c_1', (\pk{P, \mathrm{out}} + (p + s)) \vee
       2/\{\pk{P, R, i+1}, \pk{\bar{P}, R, i+1}\})$, $(c_{\bar{P}} + c_2',
       \pk{\bar{P}, \mathrm{out}})$\}}
       \State \trustedcode{ensure \textsc{verify}($C_{P, i+1}$,
