@@ -9,7 +9,17 @@ from network import Network
 import random
 import sys
 
+def test_cheapest_path():
+    network = Network(5)
+    network.add_channel(0, 6.5, 1, 7.3)
+    network.add_channel(1, 4.8, 4, 8.9)
+    network.add_channel(0, 5., 2, 6.7)
+    network.add_channel(3, 2.3, 4, 8.2)
+    network.add_channel(2, 3.4, 3, 5.5)
 
+    cost, cheapest_path = network.find_cheapest_path(0, 4, 1)
+    print(cheapest_path)
+    # TODO: Complete the Test
 
 def test_find_paths():
     # TODO: use adjacency list
@@ -74,7 +84,8 @@ def is_deterministic():
 if __name__ == "__main__":
     #assert(is_deterministic())
     #assert(test_adjacency_matrix())
-    assert(test_find_paths())
+    #assert(test_find_paths())
+    test_cheapest_path()
     print("Success")
 
 
