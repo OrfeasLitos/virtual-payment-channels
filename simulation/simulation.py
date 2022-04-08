@@ -1,7 +1,6 @@
 import random
 import sys
 import collections
-# TODO: import explicitly
 from network import Network
 from knowledge import Knowledge
 from paymentmethod import PaymentMethod, PlainBitcoin
@@ -30,7 +29,7 @@ class Simulation:
         """
         payments should be a deque.
         """
-        self.network = Network(nr_players) # TODO: network should also know party balances
+        self.network = Network(nr_players)
         self.payments = payments
         self.payment_method = payment_method
         self.knowledge = knowledge

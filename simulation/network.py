@@ -31,6 +31,6 @@ class Network:
         return cost - 1, path
 
     def __eq__(self, other):
-        return (self.edges == other.edges and self.vertices == other.vertices)
+        return (self.graph == other.graph)
 
     # TODO: remove vertices, edges ...
