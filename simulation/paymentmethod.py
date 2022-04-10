@@ -49,9 +49,10 @@ class LN(PaymentMethod):
     base_fee = 0.01
 
     def get_payment_time(self, path):
-        time = delay * (len(path) - 1)
+        time = self.delay * (len(path) - 1)
         return time
     
     def get_payment_cost(self, payment, path):
-        payment_fee = base_fee + fee * (len(path) - 1)
+        # TODO: check if cost in reality depends on the payment or just on the path in the network
+        payment_fee = self.base_fee + self.fee * (len(path) - 1)
         return payment_fee
