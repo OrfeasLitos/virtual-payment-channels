@@ -14,10 +14,10 @@ class PaymentMethod:
         pass
 
     # Should there also be a payment?
-    def get_payment_time(self):
+    def get_payment_time(self, path=None):
         return self.delay
 
-    def get_payment_cost(self, payment):
+    def get_payment_cost(self, payment, path=None):
         """
         payment is a tuple (sender, receiver, value).
         """
@@ -38,3 +38,20 @@ class PlainBitcoin(PaymentMethod):
         # This says that in the class PlainBitcoin PlainBitcoin is always the best (since only) way. Should this be string or some other object?
         # I suspect this function will need to be moved/changed. For now I changed its return value to number so that the set() hash is deterministic (strings result in non-deterministic hashing)
         return 0
+
+class LN(PaymentMethod):
+    MAX_COINS = 1000000
+    # This is just for sake of having fees and time. TODO: look up actual fees and time
+    fee = 0.001
+    delay = 0.05
+    # maybe there's a better name than base fee and fee.
+    # With base fee I mean the part of the fee that has to be payed for every transaction and with fee the part of the fee that depends on the number of intermediaries.
+    base_fee = 0.01
+
+    def get_payment_time(self, path):
+        time = delay * (len(path) - 1)
+        return time
+    
+    def get_payment_cost(self, payment, path):
+        payment_fee = base_fee + fee * (len(path) - 1)
+        return payment_fee
