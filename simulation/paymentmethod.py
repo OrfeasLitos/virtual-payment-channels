@@ -54,6 +54,7 @@ class LN(PaymentMethod):
     
     def get_payment_fee(self, payment, path):
         # TODO: check if cost in reality depends on the payment or just on the path in the network
+        # for PlainBitcoin it probably depends on the payment so I need the argument payment here.
         # cost actually should not depend on the path, but just on the length of the path, so we could use the cost_output of the method find cheapest path
         # which should actually be len(path) - 1
         payment_fee = self.base_fee + self.fee * (len(path) - 1)

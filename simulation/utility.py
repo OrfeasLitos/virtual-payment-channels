@@ -1,5 +1,5 @@
-import paymentmethod
-import knowledge
+from paymentmethod import PaymentMethod, PlainBitcoin
+from knowledge import Knowledge
 
 class Utility:
 
@@ -25,8 +25,12 @@ class Utility:
 
         sender, receiver, value = payment
         try:
-            cost, shortest_path = self.network.find_cheapest_path(sender, receiver, value)
-
+            cost, shortest_path = network.find_cheapest_path(sender, receiver, value)
+            off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path)
+            plain_bitcoin = PlainBitcoin()
+            # TODO: write a method that generates opening transaction in the paymentmethod class.
+            new_channel_utility = self.get_utility(opening_transaction, plain_bitcoin, knowledge)
+            plain_bitcoin_utility = self.get_utility(payment, plain_bitcoin, knowledge)
 
         except Exception:
             pass
