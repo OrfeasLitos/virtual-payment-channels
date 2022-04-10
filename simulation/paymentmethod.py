@@ -13,6 +13,17 @@ class PaymentMethod:
     def get_unit_transaction_cost(self):
         pass
 
+    # Should there also be a payment?
+    def get_payment_time(self, payment_method):
+        return payment_method.delay
+
+    def get_payment_cost(self, payment, payment_method):
+        """
+        payment is a tuple (sender, receiver, value).
+        """
+        value = payment[2]
+        return value * payment_method.fee
+
 class PlainBitcoin(PaymentMethod):
     MAX_COINS = 1000000
     fee = 1  # Should probably be modified
