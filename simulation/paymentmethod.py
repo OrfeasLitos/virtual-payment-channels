@@ -17,7 +17,7 @@ class PaymentMethod:
     def get_payment_time(self, path=None):
         return self.delay
 
-    def get_payment_cost(self, payment, path=None):
+    def get_payment_fee(self, payment, path=None):
         """
         payment is a tuple (sender, receiver, value).
         """
@@ -52,7 +52,9 @@ class LN(PaymentMethod):
         time = self.delay * (len(path) - 1)
         return time
     
-    def get_payment_cost(self, payment, path):
+    def get_payment_fee(self, payment, path):
         # TODO: check if cost in reality depends on the payment or just on the path in the network
+        # cost actually should not depend on the path, but just on the length of the path, so we could use the cost_output of the method find cheapest path
+        # which should actually be len(path) - 1
         payment_fee = self.base_fee + self.fee * (len(path) - 1)
         return payment_fee

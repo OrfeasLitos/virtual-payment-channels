@@ -10,7 +10,7 @@ class Utility:
         self.utility_function = utility_function
     
     def get_utility(self, payment, payment_method, knowledge):
-        return self.utility_function(self.get_payment_cost(payment, payment_method), self.get_payment_time(payment_method), knowledge.get_knowledge())
+        return self.utility_function(self.get_payment_fee(payment, payment_method), self.get_payment_time(payment_method), knowledge.get_knowledge())
 
     def compare_utilites(self, payment, payment_method, knowledge, network):
         """
