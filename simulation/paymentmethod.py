@@ -13,16 +13,6 @@ class PaymentMethod:
     def get_unit_transaction_cost(self):
         pass
 
-    @abstractmethod
-    def compare_utilites(self, utility, payment, knowledge):
-        """
-        This method should compare the utility of on-chain transactions with the utility of a new channel (opened on chain) and completely off-chain transactions and should
-        returns the best of these possibilities.
-        """
-        # There should be if's to calculate utilities and check whether to make a plain bitcoin transaction, open a new channel on chain or do everything off-chain (for Lightning)
-        # For other protocols similarly.
-        pass
-
 class PlainBitcoin(PaymentMethod):
     MAX_COINS = 1000000
     fee = 1  # Should probably be modified
