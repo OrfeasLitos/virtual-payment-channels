@@ -55,6 +55,14 @@ class Simulation:
             # 3. instruct network to carry out cheapest method
             #self.network = self.network.apply(best_method)
 
+            try:
+                # this is the case that there is a path so that we can transfer off-chain. Here we have three comparisons: offchain (cheapest path), new channel and Plainbitcoin
+                cost, shortest_path = self.network.find_cheapest_path(sender, receiver, value)
+
+            except Exception:
+                # in this case we have two comparisons: new channel and Plainbitcoin
+                pass
+
             # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
             method = self.payment_method.compare_utilites(self.utility, payment, self.knowledge)
             self.network.add_edge((method, (sender, receiver)))
