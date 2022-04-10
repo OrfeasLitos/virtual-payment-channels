@@ -22,13 +22,16 @@ class Network:
         self.edge_id += 1
     
     def find_cheapest_path(self, start, end, amount):
-        self.graph.nodes[start]['amount'] = -amount
-        self.graph.nodes[end]['amount'] = amount
-        cost, path = nx.network_simplex(self.graph, demand='amount', capacity='balance', weight='cost')
-        self.graph.nodes[start]['amount'] = 0
-        self.graph.nodes[end]['amount'] = 0
-        # cost should be number of edges - 1
-        return cost - 1, path
+        try:
+            self.graph.nodes[start]['amount'] = -amount
+            self.graph.nodes[end]['amount'] = amount
+            cost, path = nx.network_simplex(self.graph, demand='amount', capacity='balance', weight='cost')
+            self.graph.nodes[start]['amount'] = 0
+            self.graph.nodes[end]['amount'] = 0
+            # cost should be number of edges - 1
+            return cost - 1, path
+        except nx.NetworkXUnfeasible:
+            raise Exception("No suitable channel available for the transfer")
 
     def __eq__(self, other):
         return (self.graph == other.graph)
