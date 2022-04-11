@@ -16,6 +16,7 @@ class Utility:
         """
         This method should compare the utility of on-chain transactions with the utility of a new channel (opened on chain) and completely off-chain transactions and should
         returns the best of these possibilities.
+        Returns 0 for off-chain, 1 for new channel, 2 for PlainBitcoin
         """
         # There should be if's to calculate utilities and check whether to make a plain bitcoin transaction, open a new channel on chain or do everything off-chain (for Lightning)
         # For other protocols similarly.
@@ -28,9 +29,26 @@ class Utility:
             cost, shortest_path = network.find_cheapest_path(sender, receiver, value)
             off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path)
             plain_bitcoin = PlainBitcoin()
-            # TODO: write a method that generates opening transaction in the paymentmethod class.
+            opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
+            # TODO: probably the fee of shouldn't go to the receiver. Check how to handle the fee for opening a new channel.
+            # But for the utility of the sender one could pretend the money goes to the receiver.
+            opening_transaction = (sender, receiver, opening_transaction_fee)
             new_channel_utility = self.get_utility(opening_transaction, plain_bitcoin, knowledge)
             plain_bitcoin_utility = self.get_utility(payment, plain_bitcoin, knowledge)
-
+            if new_channel_utility >= off_chain_utility and new_channel_utility >= plain_bitcoin_utility:
+                return 1
+            elif off_chain_utility >= new_channel_utility and off_chain_utility >= plain_bitcoin_utility:
+                return 0
+            else:
+                return 2
         except Exception:
-            pass
+            plain_bitcoin = PlainBitcoin()
+            opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
+            # TODO: similar as above in the try block
+            opening_transaction = (sender, receiver, opening_transaction_fee)
+            new_channel_utility = self.get_utility(opening_transaction, plain_bitcoin, knowledge)
+            plain_bitcoin_utility = self.get_utility(payment, plain_bitcoin, knowledge)
+            if new_channel_utility >= plain_bitcoin_utility:
+                return 1
+            else:
+                return 2

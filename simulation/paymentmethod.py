@@ -8,6 +8,8 @@ class PaymentMethod:
     MAX_COINS = None
     fee = None
     delay = None
+    # TODO: check how to handle the PlainBitcoin case as there is no opening transaction.
+    opening_transaction_size = None
     # This method gives the cost of a transaction of fixed size.
     @abstractmethod
     def get_unit_transaction_cost(self):
@@ -44,6 +46,8 @@ class LN(PaymentMethod):
     # This is just for sake of having fees and time. TODO: look up actual fees and time
     fee = 0.001
     delay = 0.05
+    # This is for opening a new channel, TODO: look up real value
+    opening_transaction_size = 1
     # maybe there's a better name than base fee and fee.
     # With base fee I mean the part of the fee that has to be payed for every transaction and with fee the part of the fee that depends on the number of intermediaries.
     base_fee = 0.01
