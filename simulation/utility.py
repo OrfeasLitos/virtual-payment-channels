@@ -29,29 +29,18 @@ class Utility:
         # but for now I used greater generality. Also this has the advantage that we can call find_shortest_path here and don't have to do it in the simulation.
 
         sender, receiver, value = payment
-        try:
-            off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path)
-            plain_bitcoin = PlainBitcoin()
-            opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
-            # TODO: probably the fee of shouldn't go to the receiver. Check how to handle the fee for opening a new channel.
-            # But for the utility of the sender one could pretend the money goes to the receiver.
-            opening_transaction = (sender, receiver, opening_transaction_fee)
-            new_channel_utility = self.get_utility(opening_transaction, plain_bitcoin, knowledge)
-            plain_bitcoin_utility = self.get_utility(payment, plain_bitcoin, knowledge)
-            if new_channel_utility >= off_chain_utility and new_channel_utility >= plain_bitcoin_utility:
-                return 1
-            elif off_chain_utility >= new_channel_utility and off_chain_utility >= plain_bitcoin_utility:
-                return 0
-            else:
-                return 2
-        except Exception:
-            plain_bitcoin = PlainBitcoin()
-            opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
-            # TODO: similar as above in the try block
-            opening_transaction = (sender, receiver, opening_transaction_fee)
-            new_channel_utility = self.get_utility(opening_transaction, plain_bitcoin, knowledge)
-            plain_bitcoin_utility = self.get_utility(payment, plain_bitcoin, knowledge)
-            if new_channel_utility >= plain_bitcoin_utility:
-                return 1
-            else:
-                return 2
+        off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path)
+        plain_bitcoin = PlainBitcoin()
+        opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
+        # TODO: probably the fee of shouldn't go to the receiver. Check how to handle the fee for opening a new channel.
+        # But for the utility of the sender one could pretend the money goes to the receiver.
+        opening_transaction = (sender, receiver, opening_transaction_fee)
+        new_channel_utility = self.get_utility(opening_transaction, plain_bitcoin, knowledge)
+        plain_bitcoin_utility = self.get_utility(payment, plain_bitcoin, knowledge)
+        if new_channel_utility >= off_chain_utility and new_channel_utility >= plain_bitcoin_utility:
+            return 1
+        elif off_chain_utility >= new_channel_utility and off_chain_utility >= plain_bitcoin_utility:
+            return 0
+        else:
+            return 2
+            
