@@ -12,7 +12,7 @@ class Utility:
     def get_utility(self, payment, payment_method, knowledge, path=None):
         return self.utility_function(payment_method.get_payment_fee(payment, path), payment_method.get_payment_time(path), knowledge.get_knowledge())
 
-    def compare_utilites(self, payment, payment_method, knowledge, network):
+    def compare_utilities(self, payment, payment_method, knowledge, network):
         """
         This method should compare the utility of on-chain transactions with the utility of a new channel (opened on chain) and completely off-chain transactions and should
         returns the best of these possibilities.
