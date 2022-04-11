@@ -12,7 +12,7 @@ class Utility:
     def get_utility(self, payment, payment_method, knowledge, path=None):
         return self.utility_function(payment_method.get_payment_fee(payment, path), payment_method.get_payment_time(path), knowledge.get_knowledge())
 
-    def compare_utilities(self, payment, payment_method, knowledge, network):
+    def compare_utilities(self, payment, payment_method, knowledge, shortest_path):
         """
         This method should compare the utility of on-chain transactions with the utility of a new channel (opened on chain) and completely off-chain transactions and should
         returns the best of these possibilities.
@@ -21,13 +21,12 @@ class Utility:
         # There should be if's to calculate utilities and check whether to make a plain bitcoin transaction, open a new channel on chain or do everything off-chain (for Lightning)
         # For other protocols similarly.
 
-        # The last argument "network" could maybe be replaced by the length of the shortest path (e.g. for LN, where time and fee depend only on the length of the path)
+        # The last argument "shortest_path" could maybe be replaced by the length of the shortest path (e.g. for LN, where time and fee depend only on the length of the path)
         # but for now I used greater generality. Also this has the advantage that we can call find_shortest_path here and don't have to do it in the simulation.
 
         sender, receiver, value = payment
         try:
-            cost, shortest_path = network.find_cheapest_path(sender, receiver, value)
-            off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path)
+            off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path = None)
             plain_bitcoin = PlainBitcoin()
             opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
             # TODO: probably the fee of shouldn't go to the receiver. Check how to handle the fee for opening a new channel.

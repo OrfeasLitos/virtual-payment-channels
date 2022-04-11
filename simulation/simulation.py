@@ -55,17 +55,25 @@ class Simulation:
             # 3. instruct network to carry out cheapest method
             #self.network = self.network.apply(best_method)
 
-            # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
-            method_num = self.payment_method.compare_utilities(self.utility, payment, self.knowledge)
-            if method_num == 1:
-                # TODO: think about a reasonable balance that should be put on the new channel. For the sender it should be >= value
-                self.network.add_channel(sender, value, receiver, 0)
-                # TODO: make a function that updates the balance of a party (hereby I mean the balance that is not on a channel, so just the Bitcoins in a Wallet)
-                self.network.update_balance(sender, amount_sender, receiver, amount_receiver)
-                # TODO: keep actually track of the balance of a party in his wallet.
-            else:
-                self.network.update_balance(sender, amount_sender, receiver, amount_receiver)
-            return (method_num, payment)
+            try:
+                cost, shortest_path = network.find_cheapest_path(sender, receiver, value)
+                # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
+                method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
+                if method_num == 1:
+                    # TODO: think about a reasonable balance that should be put on the new channel. For the sender it should be >= value
+                    self.network.add_channel(sender, value, receiver, 0)
+                    # TODO: make a function that updates the balance of a party (hereby I mean the balance that is not on a channel, so just the Bitcoins in a Wallet)
+                    self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
+                    # TODO: keep actually track of the balance of a party in his wallet.
+                else:
+                    # TODO: make two more cases (with elif else)
+                    self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
+                return (method_num, payment)
+            except Exception:
+                # TODO: make two cases
+                method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
+                self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
+
         except IndexError:
             raise StopIteration
 
