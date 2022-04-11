@@ -5,6 +5,7 @@ import networkx as nx
 
 UNIT_COST = 1
 # TODO: Check whether that's reasonable
+# review: rename next var to `INIT_ONCHAIN_COINS` or similar
 INITIAL_BALANCE_WALLET = 10000
 
 class Network:
@@ -35,9 +36,14 @@ class Network:
             # cost should be number of edges - 1
             return cost - 1, path
         except nx.NetworkXUnfeasible:
+            # review:
+            #  * should we reraise, or maybe better return None, None?
+            #  * in either case, we should reset the 2 amounts to 0
+            #  * the try part should contain only nx.network_simplex()
             raise Exception("No suitable channel available for the transfer")
 
     def __eq__(self, other):
+        # review: is this method tested? does networkx graph equality work as expected?
         return (self.graph == other.graph)
 
     # TODO: remove vertices, edges ...

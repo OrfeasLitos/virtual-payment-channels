@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+# review: each class that inherits from PaymentMethod should be able to return a payment method, ready to be compared against others by Utility
 class PaymentMethod:
     """
     This is an abstract class so far.
@@ -36,11 +37,13 @@ class PlainBitcoin(PaymentMethod):
     def get_unit_transaction_cost(self):
         return (self.fee, self.delay)
     
+    # review: IIUC, this method is now obsolete
     def compare_utilites(self, utility, payment, knowledge):
         # This says that in the class PlainBitcoin PlainBitcoin is always the best (since only) way. Should this be string or some other object?
         # I suspect this function will need to be moved/changed. For now I changed its return value to number so that the set() hash is deterministic (strings result in non-deterministic hashing)
         return 0
 
+# review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
 class LN(PaymentMethod):
     MAX_COINS = 1000000
     # This is just for sake of having fees and time. TODO: look up actual fees and time
@@ -53,13 +56,20 @@ class LN(PaymentMethod):
     base_fee = 0.01
 
     def get_payment_time(self, path):
+        # review:
+        #  * the next should be `len(path)` (without `- 1`), since even an 1-hop payment has this delay
+        #  * no need to assign to `time`, just return directly
         time = self.delay * (len(path) - 1)
         return time
     
     def get_payment_fee(self, payment, path):
         # TODO: check if cost in reality depends on the payment or just on the path in the network
         # for PlainBitcoin it probably depends on the payment so I need the argument payment here.
+        # review: the next comment is a good point. Let's add a test to ensure equality and if it is always equal, we can just use the fastest
         # cost actually should not depend on the path, but just on the length of the path, so we could use the cost_output of the method find cheapest path
         # which should actually be len(path) - 1
+        # review:
+        #   * the base_fee should be payed for each hop and the fee should be additionally multiplied with the payment value
+        #   * no need to assign to `payment_fee`, just return directly
         payment_fee = self.base_fee + self.fee * (len(path) - 1)
         return payment_fee

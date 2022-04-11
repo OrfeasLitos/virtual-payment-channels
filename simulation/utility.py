@@ -11,11 +11,15 @@ class Utility:
         self.utility_function = utility_function
     
     def get_utility(self, payment, payment_method, knowledge, path=None):
+        # review: this gives a -inf utility to on-chain payments
         if path == None:
             return -math.inf
         
         return self.utility_function(payment_method.get_payment_fee(payment, path), payment_method.get_payment_time(path), knowledge.get_knowledge())
 
+    # review:
+    #  * this method should take as input a list of candidate payments and choose the best one. It should be agnostic to the details of each payment method (e.g. no calls to PlainBitcoin)
+    #  * I was thinking of naming this method `choose_payment_method`
     def compare_utilities(self, payment, payment_method, knowledge, shortest_path):
         """
         This method should compare the utility of on-chain transactions with the utility of a new channel (opened on chain) and completely off-chain transactions and should
