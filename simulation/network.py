@@ -4,12 +4,16 @@ import numpy as np
 import networkx as nx
 
 UNIT_COST = 1
+# TODO: Check whether that's reasonable
+INITIAL_BALANCE_WALLET = 10000
 
 class Network:
 
     def __init__(self, nr_vertices):
         self.graph = nx.empty_graph(nr_vertices, create_using=nx.DiGraph)
         self.edge_id = 0
+        for vertex in range(nr_vertices):
+            self.graph.nodes[vertex]['balance_wallet'] = INITIAL_BALANCE_WALLET
 
     def add_node(self, node):
         self.graph.add_node(node)
