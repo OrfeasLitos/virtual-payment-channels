@@ -1,5 +1,6 @@
 from paymentmethod import PaymentMethod, PlainBitcoin
 from knowledge import Knowledge
+import math
 
 class Utility:
 
@@ -10,6 +11,9 @@ class Utility:
         self.utility_function = utility_function
     
     def get_utility(self, payment, payment_method, knowledge, path=None):
+        if path == None:
+            return -math.inf
+        
         return self.utility_function(payment_method.get_payment_fee(payment, path), payment_method.get_payment_time(path), knowledge.get_knowledge())
 
     def compare_utilities(self, payment, payment_method, knowledge, shortest_path):
@@ -26,7 +30,7 @@ class Utility:
 
         sender, receiver, value = payment
         try:
-            off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path = None)
+            off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path)
             plain_bitcoin = PlainBitcoin()
             opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
             # TODO: probably the fee of shouldn't go to the receiver. Check how to handle the fee for opening a new channel.

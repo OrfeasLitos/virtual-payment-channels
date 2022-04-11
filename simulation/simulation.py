@@ -70,7 +70,7 @@ class Simulation:
                     self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
                 return (method_num, payment)
             except Exception:
-                # TODO: make two cases
+                # TODO: make two cases (opening of channel, PlainBitcoin transaction)
                 method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
                 self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
 
