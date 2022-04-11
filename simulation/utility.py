@@ -32,8 +32,8 @@ class Utility:
         off_chain_utility = self.get_utility(payment, payment_method, knowledge, shortest_path)
         plain_bitcoin = PlainBitcoin()
         opening_transaction_fee = plain_bitcoin.get_payment_fee(payment_method.opening_transaction_size)
-        # TODO: probably the fee of shouldn't go to the receiver. Check how to handle the fee for opening a new channel.
-        # But for the utility of the sender one could pretend the money goes to the receiver.
+        # TODO: probably the fee of the opening transaction shouldn't go to the receiver. Check how to handle the fee for opening a new channel.
+        # But for the utility of the sender one could pretend the money goes to the receiver (as done in the next line).
         opening_transaction = (sender, receiver, opening_transaction_fee)
         new_channel_utility = self.get_utility(opening_transaction, plain_bitcoin, knowledge)
         plain_bitcoin_utility = self.get_utility(payment, plain_bitcoin, knowledge)
@@ -43,4 +43,3 @@ class Utility:
             return 0
         else:
             return 2
-            

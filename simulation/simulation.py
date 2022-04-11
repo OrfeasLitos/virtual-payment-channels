@@ -63,6 +63,9 @@ class Simulation:
                     # TODO: think about a reasonable balance that should be put on the new channel. For the sender it should be >= value
                     self.network.add_channel(sender, value, receiver, 0)
                     # TODO: make a function that updates the balance of a party (hereby I mean the balance that is not on a channel, so just the Bitcoins in a Wallet)
+                    # TODO: make a function that does the transaction and updates the balance on the channel (or both updates in one)
+                    # probably add_channel should automatically update the balance of the wallets when they are transfered to the channel.
+                    # then only the balance on the channel has to be updated.
                     self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
                     # TODO: keep actually track of the balance of a party in his wallet.
                 else:
