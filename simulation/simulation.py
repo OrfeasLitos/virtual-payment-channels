@@ -56,6 +56,8 @@ class Simulation:
             #self.network = self.network.apply(best_method)
 
             try:
+                # change next line to sth like:
+                #payment_options = self.payment_method.get_payment_options(sender, receiver, value)
                 cost, shortest_path = network.find_cheapest_path(sender, receiver, value)
                 # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
                 method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
@@ -124,7 +126,7 @@ if __name__ == "__main__":
     for parties in [10, 100, 1000, 10000]:
         for num_payments in [100, 1000, 10000, 100000]:
             for payments in random_payments(num_payments, parties, MAX_COINS/5) * 10:
-                for method in [PlainBitcoin(), LN(), Elmo(), Donner(), LVPC()]:
+                for method in [LN(), Elmo(), Donner(), LVPC()]:
                     for utility in [
                         Utility('only-fee'), Utility('only-time'),
                         Utility('add'), Utility('mul')
