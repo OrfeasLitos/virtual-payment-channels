@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from network import Network
 
 # review: each class that inherits from PaymentMethod should be able to return a payment method, ready to be compared against others by Utility
 
@@ -15,15 +16,14 @@ class PlainBitcoin():
 
 # review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
 class LN(PlainBitcoin):
-    MAX_COINS = 1000000
-    # This is just for sake of having fees and time. TODO: look up actual fees and time
-    fee = 0.001
-    delay = 0.05
-    # This is for opening a new channel, TODO: look up real value
-    opening_transaction_size = 1
-    # maybe there's a better name than base fee and fee.
-    # With base fee I mean the part of the fee that has to be payed for every transaction and with fee the part of the fee that depends on the number of intermediaries.
-    base_fee = 0.01
+    # TODO: look up reasonable default values
+    def __init__(self, nr_players, MAX_COINS = 1000000, fee = 0.001, delay = 0.05, opening_transaction_size = 1, base_fee = 0.01):
+        self.MAX_COINS = MAX_COINS
+        self.fee = fee
+        self.delay = delay
+        self.opening_transaction_size = opening_transaction_size
+        self.base_fee = base_fee
+        self.network = Network(nr_players)
 
     def get_payment_time(self, path):
         # review:
