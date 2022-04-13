@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 # review: each class that inherits from PaymentMethod should be able to return a payment method, ready to be compared against others by Utility
 
 class PlainBitcoin():
-    MAX_COINS = 1000000
-    fee = 1  # Should probably be modified
-    delay = 3600  # 1h = 3600 seconds
-    def __init__(self):
-        super(PlainBitcoin, self).__init__()
+    # TODO: check for reasonable default values
+    def __init__(self, MAX_COINS = 1000000, fee = 1, delay = 3600):
+        self.MAX_COINS = MAX_COINS
+        self.fee = fee
+        self.delay = delay
 
     def get_unit_transaction_cost(self):
         return (self.fee, self.delay)
