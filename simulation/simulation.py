@@ -1,7 +1,6 @@
 import random
 import sys
 import collections
-from network import Network
 from knowledge import Knowledge
 from paymentmethod import PlainBitcoin
 from utility import Utility
@@ -29,7 +28,6 @@ class Simulation:
         """
         payments should be a deque.
         """
-        self.network = Network(nr_players)
         self.payments = payments
         self.payment_method = payment_method
         self.knowledge = knowledge
@@ -56,9 +54,7 @@ class Simulation:
             #self.network = self.network.apply(best_method)
 
             try:
-                # change next line to sth like:
-                #payment_options = self.payment_method.get_payment_options(sender, receiver, value)
-                cost, shortest_path = network.find_cheapest_path(sender, receiver, value)
+                payment_options = self.payment_method.get_payment_options(sender, receiver, value)
                 # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
                 method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
                 if method_num == 1:
