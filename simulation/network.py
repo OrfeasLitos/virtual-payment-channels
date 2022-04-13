@@ -27,20 +27,18 @@ class Network:
         self.edge_id += 1
     
     def find_cheapest_path(self, start, end, amount):
+        self.graph.nodes[start]['amount'] = -amount
+        self.graph.nodes[end]['amount'] = amount
         try:
-            self.graph.nodes[start]['amount'] = -amount
-            self.graph.nodes[end]['amount'] = amount
             cost, path = nx.network_simplex(self.graph, demand='amount', capacity='balance', weight='cost')
             self.graph.nodes[start]['amount'] = 0
             self.graph.nodes[end]['amount'] = 0
             # cost should be number of edges - 1
             return cost - 1, path
         except nx.NetworkXUnfeasible:
-            # review:
-            #  * should we reraise, or maybe better return None, None?
-            #  * in either case, we should reset the 2 amounts to 0
-            #  * the try part should contain only nx.network_simplex()
-            raise Exception("No suitable channel available for the transfer")
+            self.graph.nodes[start]['amount'] = 0
+            self.graph.nodes[end]['amount'] = 0
+            return None
 
     def __eq__(self, other):
         # review: is this method tested? does networkx graph equality work as expected?
