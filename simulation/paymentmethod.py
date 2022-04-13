@@ -42,10 +42,12 @@ class LN(PlainBitcoin):
         return payment_fee
 
     def get_payment_options(self, sender, receiver, value):
-        off_chain_cost, off_chain_path = self.network.find_cheapest_path(sender, receiver, value)
+        off_chain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
+        if off_chain_cost_and_path != None:
+            off_chain_cost, off_chain_path = off_chain_cost_and_path
         off_chain_time = self.get_payment_time(off_chain_path)
         payment = (sender, receiver, value)
-        off_chain_fee = self.get_payment_fee(payment, path)
+        off_chain_fee = self.get_payment_fee(payment, off_chain_path)
         #offchain_centrality = 
         #offchain_distance = 
         off_chain_option = (off_chain_time, off_chain_fee, offchain_centrality, offchain_distance, offchain_cost, off_chain_path)
