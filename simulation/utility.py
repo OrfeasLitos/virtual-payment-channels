@@ -1,4 +1,4 @@
-from paymentmethod import PaymentMethod, PlainBitcoin
+from paymentmethod import PlainBitcoin
 from knowledge import Knowledge
 import math
 

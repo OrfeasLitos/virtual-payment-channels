@@ -1,33 +1,8 @@
 from abc import ABC, abstractmethod
 
 # review: each class that inherits from PaymentMethod should be able to return a payment method, ready to be compared against others by Utility
-class PaymentMethod:
-    """
-    This is an abstract class so far.
-    The class PlainBitcoin is derived from it.
-    """
-    MAX_COINS = None
-    fee = None
-    delay = None
-    # TODO: check how to handle the PlainBitcoin case as there is no opening transaction.
-    opening_transaction_size = None
-    # This method gives the cost of a transaction of fixed size.
-    @abstractmethod
-    def get_unit_transaction_cost(self):
-        pass
 
-    # Should there also be a payment?
-    def get_payment_time(self, path=None):
-        return self.delay
-
-    def get_payment_fee(self, payment, path=None):
-        """
-        payment is a tuple (sender, receiver, value).
-        """
-        value = payment[2]
-        return value * self.fee
-
-class PlainBitcoin(PaymentMethod):
+class PlainBitcoin():
     MAX_COINS = 1000000
     fee = 1  # Should probably be modified
     delay = 3600  # 1h = 3600 seconds
@@ -39,7 +14,7 @@ class PlainBitcoin(PaymentMethod):
 
 
 # review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
-class LN(PaymentMethod):
+class LN(PlainBitcoin):
     MAX_COINS = 1000000
     # This is just for sake of having fees and time. TODO: look up actual fees and time
     fee = 0.001

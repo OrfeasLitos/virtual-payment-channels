@@ -3,7 +3,7 @@ import sys
 import collections
 from network import Network
 from knowledge import Knowledge
-from paymentmethod import PaymentMethod, PlainBitcoin
+from paymentmethod import PlainBitcoin
 from utility import Utility
 
 def random_payments(num_pays, players, max_pay):
