@@ -36,12 +36,7 @@ class PlainBitcoin(PaymentMethod):
 
     def get_unit_transaction_cost(self):
         return (self.fee, self.delay)
-    
-    # review: IIUC, this method is now obsolete
-    def compare_utilites(self, utility, payment, knowledge):
-        # This says that in the class PlainBitcoin PlainBitcoin is always the best (since only) way. Should this be string or some other object?
-        # I suspect this function will need to be moved/changed. For now I changed its return value to number so that the set() hash is deterministic (strings result in non-deterministic hashing)
-        return 0
+
 
 # review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
 class LN(PaymentMethod):
