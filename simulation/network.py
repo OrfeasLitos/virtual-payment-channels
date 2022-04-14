@@ -25,6 +25,11 @@ class Network:
         edges = [(idA, idB, dict({'balance': balA, 'cost' : UNIT_COST})),(idB, idA, dict({'balance': balB, 'cost' : UNIT_COST}))]
         self.graph.add_edges_from(edges)
         self.edge_id += 1
+
+    def close_channel(self, idA, balA, idB, balB):
+        assert(balA > 0 or balB > 0)
+        edges = [(idA, idB, dict({'balance': balA, 'cost' : UNIT_COST})),(idB, idA, dict({'balance': balB, 'cost' : UNIT_COST}))]
+        self.graph.remove_edges_from(edges)
     
     def find_cheapest_path(self, start, end, amount):
         self.graph.nodes[start]['amount'] = -amount

@@ -40,14 +40,15 @@ class LN(PlainBitcoin):
         payment_fee = self.fee * (len(path) - 1)
         return payment_fee
 
-    def get_payment_options(self, sender, receiver, value):
+    def get_payment_options(self, sender, receiver, value, future_payments):
+        # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
 
         bitcoin_time = self.bitcoin_delay
         # is the fee fixed?
         bitcoin_fee = self.bitcoin_fee
         # if centrality or distance was already a attribute I could use this attribute straightaway as PlainBitcoin payment doesn't change the network.
-        # bitcoin_centrality = 
+        bitcoin_centrality = self.network.get_harmonic_centrality()
         # bitcoin_distance = 
         bitcoin_option = (bitcoin_time, bitcoin_fee, bitcoin_centrality, bitcoin_distance)
 
