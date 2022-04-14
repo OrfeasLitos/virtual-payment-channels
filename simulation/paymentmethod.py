@@ -45,7 +45,7 @@ class LN(PlainBitcoin):
         This method is used to determine a minimum amount that should be put on a new channel between sender and receiver.
         """
         future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[1] == receiver]
-        return sum([future_payments_to_receiver[i][2] for i in range(len(future_payments))])
+        return sum([future_payments_to_receiver[i][2] for i in range(len(future_payments_to_receiver))])
 
     def distance_to_future_parties(self, future_payments):
         """
