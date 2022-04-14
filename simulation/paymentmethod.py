@@ -20,6 +20,7 @@ class PlainBitcoin():
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
 # review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
+# review: bring back base_fee and add fee_rate. The per-hop fee is base_fee + fee_rate * payment_value
 class LN(PlainBitcoin):
     def __init__(
         self, nr_players, plain_bitcoin, max_coins = 2000000000000000,
