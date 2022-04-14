@@ -30,20 +30,19 @@ class Network:
         assert(balA > 0 or balB > 0)
         edges = [(idA, idB, dict({'balance': balA, 'cost' : UNIT_COST})),(idB, idA, dict({'balance': balB, 'cost' : UNIT_COST}))]
         self.graph.remove_edges_from(edges)
-    
+
     def find_cheapest_path(self, start, end, amount):
         self.graph.nodes[start]['amount'] = -amount
         self.graph.nodes[end]['amount'] = amount
         try:
             cost, path = nx.network_simplex(self.graph, demand='amount', capacity='balance', weight='cost')
-            self.graph.nodes[start]['amount'] = 0
-            self.graph.nodes[end]['amount'] = 0
             # cost should be number of edges - 1
-            return cost - 1, path
+            res = cost - 1, path
         except nx.NetworkXUnfeasible:
-            self.graph.nodes[start]['amount'] = 0
-            self.graph.nodes[end]['amount'] = 0
-            return None
+            res = None
+        self.graph.nodes[start]['amount'] = 0
+        self.graph.nodes[end]['amount'] = 0
+        return res
 
     # TODO: check for sensible definition of centrality of a graph with many components or take connectedness into account in the utility
     # (to give less emphasis on the centrality in a graph with many components)
