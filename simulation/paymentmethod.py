@@ -41,14 +41,33 @@ class LN(PlainBitcoin):
         return payment_fee
 
     def get_payment_options(self, sender, receiver, value):
+        # TODO: check if some of the stuff that happens here should be in separate functions.
+
+        bitcoin_time = self.bitcoin_delay
+        # is the fee fixed?
+        bitcoin_fee = self.bitcoin_fee
+        # if centrality or distance was already a attribute I could use this attribute straightaway as PlainBitcoin payment doesn't change the network.
+        # bitcoin_centrality = 
+        # bitcoin_distance = 
+        bitcoin_option = (bitcoin_time, bitcoin_fee, bitcoin_centrality, bitcoin_distance)
+
+        new_channel_time = self.bitcoin_delay + self.LN_delay
+        # is the fee for PlainBitcoin fixed? should there be the factor self.opening_transaction_size?
+        new_channel_fee = self.bitcoin_fee * self.opening_transaction_size
+        # new_channel_centrality = 
+        # new_channel_distance = 
+        new_channel_option = (new_channel_time, new_channel_fee, new_channel_centrality, new_channel_distance)
+
+        # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
+        offchain_option = None
         offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
         if offchain_cost_and_path != None:
             offchain_cost, offchain_path = offchain_cost_and_path
-        offchain_time = self.get_payment_time(offchain_path)
-        payment = (sender, receiver, value)
-        offchain_fee = self.get_payment_fee(payment, offchain_path)
-        #offchain_centrality = 
-        #offchain_distance = 
-        off_chain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
-        #new_channel_time = 
-
+            offchain_time = self.get_payment_time(offchain_path)
+            payment = (sender, receiver, value)
+            offchain_fee = self.get_payment_fee(payment, offchain_path)
+            #offchain_centrality = 
+            #offchain_distance = 
+            offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
+        
+        return (bitcoin_option, new_channel_option, offchain_option)
