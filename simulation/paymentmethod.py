@@ -47,6 +47,18 @@ class LN(PlainBitcoin):
         future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[1] == receiver]
         return sum([future_payments_to_receiver[i][2] for i in range(len(future_payments))])
 
+    def distance_to_future_parties(self, future_payments):
+        """
+        Returns the sum of the distances of the future parties (if parties occur multiple times their distance is summed multiple times)
+        """
+        # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
+        distances = 0
+        for i in range(len(future_payments)):
+            sender, receiver, value = future_payments[i]
+            cost, cheapest_path = self.network.find_cheapest_path(sender, receiver, value)
+            distances += len(cheapest_path)
+        return distances
+
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
@@ -56,7 +68,7 @@ class LN(PlainBitcoin):
         bitcoin_fee = self.bitcoin_fee
         # if centrality or distance was already a attribute I could use this attribute straightaway as PlainBitcoin payment doesn't change the network.
         bitcoin_centrality = self.network.get_harmonic_centrality()
-        # bitcoin_distance = 
+        bitcoin_distance = self.distance_to_future_parties(future_payments)
         bitcoin_option = (bitcoin_time, bitcoin_fee, bitcoin_centrality, bitcoin_distance)
 
         new_channel_time = self.bitcoin_delay + self.LN_delay
@@ -65,7 +77,7 @@ class LN(PlainBitcoin):
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
         self.network.add_channel(sender, min_amount, receiver, 0)
         new_channel_centrality = self.network.get_harmonic_centrality()
-        # new_channel_distance = 
+        new_channel_distance = self.distance_to_future_parties(future_payments)
         self.network.close_channel(sender, receiver)
         new_channel_option = (new_channel_time, new_channel_fee, new_channel_centrality, new_channel_distance)
 
@@ -79,7 +91,7 @@ class LN(PlainBitcoin):
             offchain_fee = self.get_payment_fee(payment, offchain_path)
             # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
             offchain_centrality = bitcoin_centrality
-            #offchain_distance = bitcoin_distance
+            offchain_distance = bitcoin_distance
             offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
         
         return (bitcoin_option, new_channel_option, offchain_option)
