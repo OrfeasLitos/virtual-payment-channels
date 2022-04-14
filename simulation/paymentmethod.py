@@ -62,8 +62,11 @@ class LN(PlainBitcoin):
         new_channel_time = self.bitcoin_delay + self.LN_delay
         # is the fee for PlainBitcoin fixed? should there be the factor self.opening_transaction_size?
         new_channel_fee = self.bitcoin_fee * self.opening_transaction_size
-        # new_channel_centrality = 
+        min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
+        self.network.add_channel(sender, min_amount, receiver, 0)
+        new_channel_centrality = self.network.get_harmonic_centrality()
         # new_channel_distance = 
+        self.network.close_channel(sender, receiver)
         new_channel_option = (new_channel_time, new_channel_fee, new_channel_centrality, new_channel_distance)
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
