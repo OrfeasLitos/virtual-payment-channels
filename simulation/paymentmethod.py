@@ -40,6 +40,13 @@ class LN(PlainBitcoin):
         payment_fee = self.fee * (len(path) - 1)
         return payment_fee
 
+    def sum_future_payments_to_receiver(self, receiver, future_payments):
+        """
+        This method is used to determine a minimum amount that should be put on a new channel between sender and receiver.
+        """
+        future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[1] == receiver]
+        return sum([future_payments_to_receiver[i][2] for i in range(len(future_payments))])
+
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
@@ -67,8 +74,9 @@ class LN(PlainBitcoin):
             offchain_time = self.get_payment_time(offchain_path)
             payment = (sender, receiver, value)
             offchain_fee = self.get_payment_fee(payment, offchain_path)
-            #offchain_centrality = 
-            #offchain_distance = 
+            # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
+            offchain_centrality = bitcoin_centrality
+            #offchain_distance = bitcoin_distance
             offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
         
         return (bitcoin_option, new_channel_option, offchain_option)

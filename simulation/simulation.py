@@ -59,6 +59,7 @@ class Simulation:
                 method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
                 if method_num == 1:
                     # TODO: think about a reasonable balance that should be put on the new channel. For the sender it should be >= value
+                    # actually it should probably depend on the future payments, i.e. knowledge, but still some useful heuristic would be good if not all payments are known.
                     self.network.add_channel(sender, value, receiver, 0)
                     # TODO: make a function that updates the balance of a party (hereby I mean the balance that is not on a channel, so just the Bitcoins in a Wallet)
                     # TODO: make a function that does the transaction and updates the balance on the channel (or both updates in one)
