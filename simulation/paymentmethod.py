@@ -1,26 +1,34 @@
 from abc import ABC, abstractmethod
 from network import Network
 
+# units in millisatoshis
+# default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
+# default max coins loosely copied from real world USD figures
+
 # review: each class that inherits from PaymentMethod should be able to return a payment method, ready to be compared against others by Utility
 
 class PlainBitcoin():
     # TODO: check for reasonable default values
-    def __init__(self, MAX_COINS = 1000000, bitcoin_fee = 1, bitcoin_delay = 3600):
-        self.MAX_COINS = MAX_COINS
+    def __init__(self, max_coins = 2000000000000000, bitoin_fee = 1000000, bitcoin_delay = 3600):
+        self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
 
+# LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
 # review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
 class LN(PlainBitcoin):
-    # TODO: look up reasonable default values
-    def __init__(self, nr_players, MAX_COINS = 1000000, bitcoin_fee = 1, bitcoin_delay = 3600, LN_fee = 0.001, LN_delay = 0.05, opening_transaction_size = 1):
-        super().__init__(MAX_COINS, bitcoin_fee, bitcoin_delay)
-        self.LN = LN_fee
-        self.LN_delay = LN_delay
+    def __init__(
+        self, nr_players, plain_bitcoin, max_coins = 2000000000000000,
+        bitoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
+        opening_transaction_size = 200, base_fee = 1000
+    ):
+        super().__init__(max_coins, bitcoin_fee, bitcoin_delay)
+        self.ln_fee = ln_fee
+        self.ln_delay = ln_delay
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         # use attribute to give flexibility with different fees and delays for Plainbitcoin
