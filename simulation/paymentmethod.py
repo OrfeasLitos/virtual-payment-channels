@@ -5,26 +5,25 @@ from network import Network
 
 class PlainBitcoin():
     # TODO: check for reasonable default values
-    def __init__(self, MAX_COINS = 1000000, fee = 1, delay = 3600):
+    def __init__(self, MAX_COINS = 1000000, bitcoin_fee = 1, bitcoin_delay = 3600):
         self.MAX_COINS = MAX_COINS
-        self.fee = fee
-        self.delay = delay
+        self.bitcoin_fee = bitcoin_fee
+        self.bitcoin_delay = bitcoin_delay
 
     def get_unit_transaction_cost(self):
-        return (self.fee, self.delay)
+        return (self.bitcoin_fee, self.bitcoin_delay)
 
 
 # review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
 class LN(PlainBitcoin):
     # TODO: look up reasonable default values
-    def __init__(self, nr_players, plain_bitcoin, MAX_COINS = 1000000, fee = 0.001, delay = 0.05, opening_transaction_size = 1, base_fee = 0.01):
-        self.MAX_COINS = MAX_COINS
-        self.fee = fee
-        self.delay = delay
+    def __init__(self, nr_players, MAX_COINS = 1000000, bitcoin_fee = 1, bitcoin_delay = 3600, LN_fee = 0.001, LN_delay = 0.05, opening_transaction_size = 1):
+        super().__init__(MAX_COINS, bitcoin_fee, bitcoin_delay)
+        self.LN = LN_fee
+        self.LN_delay = LN_delay
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         # use attribute to give flexibility with different fees and delays for Plainbitcoin
-        self.plain_bitcoin = plain_bitcoin
 
     def get_payment_time(self, path):
         return self.delay * len(path)
@@ -42,14 +41,14 @@ class LN(PlainBitcoin):
         return payment_fee
 
     def get_payment_options(self, sender, receiver, value):
-        off_chain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
-        if off_chain_cost_and_path != None:
-            off_chain_cost, off_chain_path = off_chain_cost_and_path
-        off_chain_time = self.get_payment_time(off_chain_path)
+        offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
+        if offchain_cost_and_path != None:
+            offchain_cost, offchain_path = offchain_cost_and_path
+        offchain_time = self.get_payment_time(offchain_path)
         payment = (sender, receiver, value)
-        off_chain_fee = self.get_payment_fee(payment, off_chain_path)
+        offchain_fee = self.get_payment_fee(payment, offchain_path)
         #offchain_centrality = 
         #offchain_distance = 
-        off_chain_option = (off_chain_time, off_chain_fee, offchain_centrality, offchain_distance, offchain_cost, off_chain_path)
-
+        off_chain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
+        #new_channel_time = 
 
