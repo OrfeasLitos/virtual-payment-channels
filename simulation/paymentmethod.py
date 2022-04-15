@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pydoc import plain
 from network import Network
 
 # units in millisatoshis
@@ -24,7 +25,7 @@ class PlainBitcoin():
 class LN(PlainBitcoin):
     def __init__(
         self, nr_players, plain_bitcoin, max_coins = 2000000000000000,
-        bitoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
+        bitcoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
         opening_transaction_size = 200, base_fee = 1000
     ):
         super().__init__(max_coins, bitcoin_fee, bitcoin_delay)
@@ -32,6 +33,8 @@ class LN(PlainBitcoin):
         self.ln_delay = ln_delay
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
+        self.base_fee = base_fee
+        self.plain_bitcoin = plain_bitcoin
         # use attribute to give flexibility with different fees and delays for Plainbitcoin
 
     def get_payment_time(self, path):
