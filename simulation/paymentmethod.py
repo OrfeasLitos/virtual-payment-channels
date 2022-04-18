@@ -65,8 +65,7 @@ class LN(PlainBitcoin):
         """
         # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
         distances = 0
-        for i in range(len(future_payments)):
-            sender, receiver, value = future_payments[i]
+        for sender, receiver, value in future_payments:
             cost, cheapest_path = self.network.find_cheapest_path(sender, receiver, value)
             distances += len(cheapest_path)
         return distances
