@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from pydoc import plain
 from network import Network
 import math
+import networkx as nx
 
 # units in millisatoshis
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
@@ -35,6 +35,7 @@ class LN(PlainBitcoin):
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         self.base_fee = base_fee
+        # Do we need the plain_bitcoin attribute?
         self.plain_bitcoin = plain_bitcoin
         # use attribute to give flexibility with different fees and delays for Plainbitcoin
 
@@ -95,7 +96,8 @@ class LN(PlainBitcoin):
         # is the fee for PlainBitcoin fixed? should there be the factor self.opening_transaction_size?
         new_channel_fee = self.bitcoin_fee * self.opening_transaction_size
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
-        self.network.add_channel(sender, min_amount, receiver, 0)
+        # receiver doesn't need same minimum amount, what should he put on channel?
+        self.network.add_channel(sender, min_amount, receiver, min_amount)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
         self.network.close_channel(sender, receiver)

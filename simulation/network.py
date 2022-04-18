@@ -1,5 +1,4 @@
 # maybe Network should extend a class "LabeledGraph"
-from re import S
 import numpy as np
 import networkx as nx
 
@@ -31,6 +30,8 @@ class Network:
         self.graph.remove_edges_from(edges)
 
     def find_cheapest_path(self, start, end, amount):
+        # maybe the output of this function should be modified.
+        # TODO: find_cheapest_path doesn't work yet as expected.
         self.graph.nodes[start]['amount'] = -amount
         self.graph.nodes[end]['amount'] = amount
         try:
