@@ -73,7 +73,7 @@ def test_LN():
 if __name__ == "__main__":
     #assert(is_deterministic())
     #assert(test_adjacency_matrix())
-    #assert(test_LN())
+    assert(test_LN())
     test_cheapest_path()
     print("Success")
 

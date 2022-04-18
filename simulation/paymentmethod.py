@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pydoc import plain
 from network import Network
+import math
 
 # units in millisatoshis
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
@@ -66,10 +67,14 @@ class LN(PlainBitcoin):
         # review: this doesn't calculate _our_ distance from others but _future payers'_ distances from others
         # Yes therefore I made the first comment in get_payment_options. I still have to implement a filter method, so that we don't need the assumption there.
         # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
-        distances = 0
+        distances = []
         for sender, receiver, value in future_payments:
-            cost, cheapest_path = self.network.find_cheapest_path(sender, receiver, value)
-            distances += len(cheapest_path)
+            cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
+            if cost_and_path != None:
+                cost, cheapest_path = cost_and_path
+                distances.append(len(cheapest_path))
+            else:
+                distances.append(math.inf)
         return distances
 
     def get_payment_options(self, sender, receiver, value, future_payments):
@@ -86,7 +91,7 @@ class LN(PlainBitcoin):
         bitcoin_option = (bitcoin_time, bitcoin_fee, bitcoin_centrality, bitcoin_distance)
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
-        new_channel_time = self.bitcoin_delay + self.LN_delay
+        new_channel_time = self.bitcoin_delay + self.ln_delay
         # is the fee for PlainBitcoin fixed? should there be the factor self.opening_transaction_size?
         new_channel_fee = self.bitcoin_fee * self.opening_transaction_size
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
