@@ -63,6 +63,7 @@ class LN(PlainBitcoin):
         """
         Returns the sum of the distances of the future parties (if parties occur multiple times their distance is summed multiple times)
         """
+        # review: this doesn't calculate _our_ distance from others but _future payers'_ distances from others
         # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
         distances = 0
         for sender, receiver, value in future_payments:
@@ -76,12 +77,14 @@ class LN(PlainBitcoin):
 
         bitcoin_time = self.bitcoin_delay
         # is the fee fixed?
+        # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
         bitcoin_fee = self.bitcoin_fee
         # if centrality or distance was already a attribute I could use this attribute straightaway as PlainBitcoin payment doesn't change the network.
         bitcoin_centrality = self.network.get_harmonic_centrality()
         bitcoin_distance = self.distance_to_future_parties(future_payments)
         bitcoin_option = (bitcoin_time, bitcoin_fee, bitcoin_centrality, bitcoin_distance)
 
+        # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
         new_channel_time = self.bitcoin_delay + self.LN_delay
         # is the fee for PlainBitcoin fixed? should there be the factor self.opening_transaction_size?
         new_channel_fee = self.bitcoin_fee * self.opening_transaction_size
@@ -101,8 +104,11 @@ class LN(PlainBitcoin):
             payment = (sender, receiver, value)
             offchain_fee = self.get_payment_fee(payment, offchain_path)
             # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
+            # review: the above shouldn't be right: depleting my channels should reduce my centrality and increase my distance
+            # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
             offchain_centrality = bitcoin_centrality
             offchain_distance = bitcoin_distance
             offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
         
+        # review: return list of options, so that it can be of variable length
         return (bitcoin_option, new_channel_option, offchain_option)
