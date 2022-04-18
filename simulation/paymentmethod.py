@@ -10,7 +10,7 @@ from network import Network
 
 class PlainBitcoin():
     # TODO: check for reasonable default values
-    def __init__(self, max_coins = 2000000000000000, bitoin_fee = 1000000, bitcoin_delay = 3600):
+    def __init__(self, max_coins = 2000000000000000, bitcoin_fee = 1000000, bitcoin_delay = 3600):
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
@@ -64,6 +64,7 @@ class LN(PlainBitcoin):
         Returns the sum of the distances of the future parties (if parties occur multiple times their distance is summed multiple times)
         """
         # review: this doesn't calculate _our_ distance from others but _future payers'_ distances from others
+        # Yes therefore I made the first comment in get_payment_options. I still have to implement a filter method, so that we don't need the assumption there.
         # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
         distances = 0
         for sender, receiver, value in future_payments:
@@ -110,5 +111,4 @@ class LN(PlainBitcoin):
             offchain_distance = bitcoin_distance
             offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
         
-        # review: return list of options, so that it can be of variable length
-        return (bitcoin_option, new_channel_option, offchain_option)
+        return [bitcoin_option, new_channel_option, offchain_option]
