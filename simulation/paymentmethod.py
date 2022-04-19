@@ -69,7 +69,11 @@ class LN(PlainBitcoin):
         """
         # review: this doesn't calculate _our_ distance from others but _future payers'_ distances from others
         # Yes therefore I made the first comment in get_payment_options. I still have to implement a filter method, so that we don't need the assumption there.
+        # review: instead of filtering them out, we could exploit the data on payments that don't include us by e.g.
+        # review: wanting to have a shorter distance to those parties as well
+        # review: (and give our distance to them bonus weight if we project the unrelated payment to go through us)
         # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
+        # review: in orfer to combine the distances of various future payments, we may need to also store sender/receiver info in the list
         distances = []
         for sender, receiver, value in future_payments:
             cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
