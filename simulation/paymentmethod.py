@@ -104,6 +104,10 @@ class LN(PlainBitcoin):
         new_channel_fee = self.bitcoin_fee * self.opening_transaction_size
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
         # receiver doesn't need same minimum amount, what should he put on channel?
+        # review: give receiver the current payment value (corresponds to `push_msat` of LN).
+        # review: our initial coins should be slightly higher than the minimum needed,
+        # review: in order to accommodate for future payments and act as intermediary.
+        # review: we can say e.g. `min(our on-chain coins, 2 * (min_amount - value))` and we can improve from there
         self.network.add_channel(sender, min_amount, receiver, min_amount)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
