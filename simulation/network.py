@@ -36,8 +36,8 @@ class Network:
         self.graph.nodes[end]['amount'] = amount
         try:
             cost, path = nx.network_simplex(self.graph, demand='amount', capacity='balance', weight='cost')
-            # cost should be number of edges - 1
-            res = cost - 1, path
+            # cost should be number of edges - 1. The cost of the simplex algorithm is per unit of amount, so we have to divide by amount
+            res = cost/amount - 1, path
         except nx.NetworkXUnfeasible:
             res = None
         self.graph.nodes[start]['amount'] = 0
