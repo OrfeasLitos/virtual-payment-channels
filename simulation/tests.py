@@ -11,13 +11,15 @@ import sys
 
 def test_cheapest_path():
     network = Network(5)
-    network.add_channel(0, 6.5, 1, 7.3)
-    network.add_channel(1, 4.8, 4, 8.9)
-    network.add_channel(0, 5., 2, 6.7)
-    network.add_channel(3, 2.3, 4, 8.2)
-    network.add_channel(2, 3.4, 3, 5.5)
+    network.add_channel(0, 6, 1, 7)
+    network.add_channel(1, 4, 4, 8)
+    network.add_channel(0, 5, 2, 6)
+    network.add_channel(3, 2, 4, 8)
+    network.add_channel(2, 3, 3, 5)
+    network.add_channel(1, 2, 2, 5)
 
-    cost, cheapest_path = network.find_cheapest_path(0, 4, 1.)
+    # doesn't work yet, as amount flow can take several paths at once, if one doesn't have enough capacity on one path, but enough if several paths are taken at the same time.
+    cost, cheapest_path = network.find_cheapest_path(0, 4, 5)
     print(cost)
     print(cheapest_path)
     # TODO: Complete the Test
@@ -75,7 +77,7 @@ if __name__ == "__main__":
     #assert(is_deterministic())
     #assert(test_adjacency_matrix())
     assert(test_LN())
-    #test_cheapest_path()
-    print("Success")
+    test_cheapest_path()
+    #print("Success")
 
 
