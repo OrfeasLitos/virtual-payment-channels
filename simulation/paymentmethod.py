@@ -36,6 +36,8 @@ class LN(PlainBitcoin):
         self.network = Network(nr_players)
         self.base_fee = base_fee
         # Do we need the plain_bitcoin attribute?
+        # review: it would be nicer to avoid it. We can avoid it if we don't need to carry plain_bitcoin state around.
+        # review: it currently looks like we can just instantiate a new PlainBitcoin() object every time we need it.
         self.plain_bitcoin = plain_bitcoin
         # use attribute to give flexibility with different fees and delays for Plainbitcoin
 
@@ -82,6 +84,7 @@ class LN(PlainBitcoin):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
 
+        # review: ideally this whole block should be a few calls to either self.plain_bitcoin or a new disposable PlainBitcoin() built here
         bitcoin_time = self.bitcoin_delay
         # is the fee fixed?
         # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
