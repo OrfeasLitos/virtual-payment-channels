@@ -25,7 +25,6 @@ def test_cheapest_path():
     # TODO: Complete the Test
 
 def is_deterministic():
-
     bitcoin = PlainBitcoin()
 
     # Player knows everything
@@ -70,12 +69,10 @@ def test_LN():
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     result = lightning.sum_future_payments_to_receiver(7, future_payments)
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
-    #print(payment_options)
     return result == 3.6
 
 if __name__ == "__main__":
     #assert(is_deterministic())
-    #assert(test_adjacency_matrix())
     assert(test_LN())
     test_cheapest_path()
     #print("Success")

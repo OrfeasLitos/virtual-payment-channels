@@ -53,28 +53,11 @@ class Simulation:
             # 3. instruct network to carry out cheapest method
             #self.network = self.network.apply(best_method)
 
-            try:
-                payment_options = self.payment_method.get_payment_options(sender, receiver, value)
-                # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
-                method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
-                if method_num == 1:
-                    # TODO: think about a reasonable balance that should be put on the new channel. For the sender it should be >= value
-                    # actually it should probably depend on the future payments, i.e. knowledge, but still some useful heuristic would be good if not all payments are known.
-                    self.network.add_channel(sender, value, receiver, 0)
-                    # TODO: make a function that updates the balance of a party (hereby I mean the balance that is not on a channel, so just the Bitcoins in a Wallet)
-                    # TODO: make a function that does the transaction and updates the balance on the channel (or both updates in one)
-                    # probably add_channel should automatically update the balance of the wallets when they are transfered to the channel.
-                    # then only the balance on the channel has to be updated.
-                    self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
-                    # TODO: keep actually track of the balance of a party in his wallet.
-                else:
-                    # TODO: make two more cases (with elif else)
-                    self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
-                return (method_num, payment)
-            except Exception:
-                # TODO: make two cases (opening of channel, PlainBitcoin transaction)
-                method_num = self.utility.compare_utilities(self.payment_method, payment, self.knowledge, shortest_path)
-                self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
+            payment_options = self.payment_method.get_payment_options(sender, receiver, value)
+            # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
+            payment = self.utility.get_best_from(payment_options)
+            self.payment_method.do(payment)
+            return payment # ideally, one could take the initial network state and the list of payments and reach the final network state
 
         except IndexError:
             raise StopIteration

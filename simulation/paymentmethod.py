@@ -84,7 +84,7 @@ class LN(PlainBitcoin):
                 distances.append(math.inf)
         return distances
 
-    def get_payment_options(self, sender, receiver, value, future_payments):
+    def get_payment_from(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
 
@@ -96,7 +96,13 @@ class LN(PlainBitcoin):
         # if centrality or distance was already a attribute I could use this attribute straightaway as PlainBitcoin payment doesn't change the network.
         bitcoin_centrality = self.network.get_harmonic_centrality()
         bitcoin_distance = self.distance_to_future_parties(future_payments)
-        bitcoin_option = (bitcoin_time, bitcoin_fee, bitcoin_centrality, bitcoin_distance)
+        bitcoin_option = {
+            'delay': bitcoin_time,
+            'fee': bitcoin_fee,
+            'centrality': bitcoin_centrality,
+            'distance': bitcoin_distance,
+            'payment': { kind: 'onchain', data: (sender, receiver, value) } # TODO: turn tuple into dict
+        }
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
         new_channel_time = self.bitcoin_delay + self.ln_delay
@@ -112,7 +118,13 @@ class LN(PlainBitcoin):
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
         self.network.close_channel(sender, receiver)
-        new_channel_option = (new_channel_time, new_channel_fee, new_channel_centrality, new_channel_distance)
+        new_channel_option = {
+            'delay': new_channel_time,
+            'fee': new_channel_fee,
+            'centrality': new_channel_centrality,
+            'distance': new_channel_distance,
+            'payment': { kind: 'ln-open', data: (sender, receiver, value, counterparty, our_coins, their_coins) } # TODO: turn tuple into dict
+        }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
         offchain_option = None
@@ -128,5 +140,30 @@ class LN(PlainBitcoin):
             offchain_centrality = bitcoin_centrality
             offchain_distance = bitcoin_distance
             offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
-        
+
         return [bitcoin_option, new_channel_option, offchain_option]
+
+    def do(self, payment):
+        match payment['kind']:
+            case 'onchain':
+                self.plain_bitcoin.pay(data);
+            case 'ln-open':
+                pass # TODO
+            case 'ln-pay':
+                pass # TODO
+            case _:
+                raise ValueError
+
+        if method_num == 1:
+            # TODO: think about a reasonable balance that should be put on the new channel. For the sender it should be >= value
+            # actually it should probably depend on the future payments, i.e. knowledge, but still some useful heuristic would be good if not all payments are known.
+            self.network.add_channel(sender, value, receiver, 0)
+            # TODO: make a function that updates the balance of a party (hereby I mean the balance that is not on a channel, so just the Bitcoins in a Wallet)
+            # TODO: make a function that does the transaction and updates the balance on the channel (or both updates in one)
+            # probably add_channel should automatically update the balance of the wallets when they are transfered to the channel.
+            # then only the balance on the channel has to be updated.
+            self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
+            # TODO: keep actually track of the balance of a party in his wallet.
+        else:
+            # TODO: make two more cases (with elif else)
+            self.network.update_balance(sender, amount_sender, receiver, amount_receiver, intermediaries, amount_intermediaries)
