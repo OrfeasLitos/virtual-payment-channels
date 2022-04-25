@@ -1,11 +1,11 @@
 # maybe Network should extend a class "LabeledGraph"
 import numpy as np
 import networkx as nx
+import math
 
 UNIT_COST = 1
 # TODO: Check whether that's reasonable
-# review: rename next var to `INIT_ONCHAIN_COINS` or similar
-INITIAL_BALANCE_WALLET = 10000
+INIT_ONCHAIN_COINS = 10000
 
 class Network:
 
@@ -13,7 +13,7 @@ class Network:
         self.graph = nx.empty_graph(nr_vertices, create_using=nx.DiGraph)
         self.edge_id = 0
         for vertex in range(nr_vertices):
-            self.graph.nodes[vertex]['balance_wallet'] = INITIAL_BALANCE_WALLET
+            self.graph.nodes[vertex]['balance_wallet'] = INIT_ONCHAIN_COINS
 
     def add_node(self, node):
         self.graph.add_node(node)
@@ -28,6 +28,20 @@ class Network:
     def close_channel(self, idA, idB):
         edges = [(idA, idB) ,(idB, idA)]
         self.graph.remove_edges_from(edges)
+
+    def get_weight_function(self, amount):
+        """
+        This function returns the weight function we use in the following.
+        The balance acts as a threshold. If the amount is bigger than the balance the weight is math.inf, otherwise it is 1.
+        """
+        # TODO: Check whether higher order functions make some optimizations harder.
+        def weight_function(sender, receiver, edge_attributes):
+            if edge_attributes['balance'] >= amount:
+                return 1
+            else:
+                return math.inf
+        
+        return weight_function
 
     def find_cheapest_path(self, start, end, amount):
         # maybe the output of this function should be modified.
