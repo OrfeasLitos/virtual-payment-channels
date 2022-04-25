@@ -44,9 +44,13 @@ class Network:
         return weight_function
 
     def find_cheapest_path(self, sender, receiver, amount):
-        weight_function = self.get_weight_function(amount)
-        cheapest_path = nx.shortest_path(self.graph, sender, receiver, weight_function)
-        return cheapest_path
+        try:
+            weight_function = self.get_weight_function(amount)
+            cheapest_path = nx.shortest_path(self.graph, sender, receiver, weight_function)
+            # TODO: handle the case that the cheapest path has distance math.inf
+            return cheapest_path
+        except nx.exception.NetworkXNoPath:
+            return None
 
     # TODO: check for sensible definition of centrality of a graph with many components or take connectedness into account in the utility
     # (to give less emphasis on the centrality in a graph with many components)

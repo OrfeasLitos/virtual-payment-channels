@@ -68,7 +68,7 @@ def test_LN():
     lightning = LN(10, plain_bitcoin)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     result = lightning.sum_future_payments_to_receiver(7, future_payments)
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    payment_options = lightning.get_payment_from(0, 7, 1., future_payments)
     return result == 3.6
 
 if __name__ == "__main__":
