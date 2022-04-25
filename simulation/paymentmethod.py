@@ -101,7 +101,7 @@ class LN(PlainBitcoin):
             'fee': bitcoin_fee,
             'centrality': bitcoin_centrality,
             'distance': bitcoin_distance,
-            'payment': { kind: 'onchain', data: (sender, receiver, value) } # TODO: turn tuple into dict
+            'payment': { 'kind': 'onchain', 'data': (sender, receiver, value) } # TODO: turn tuple into dict
         }
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
@@ -123,7 +123,7 @@ class LN(PlainBitcoin):
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
-            'payment': { kind: 'ln-open', data: (sender, receiver, value, counterparty, our_coins, their_coins) } # TODO: turn tuple into dict
+            'payment': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, our_coins, their_coins) } # TODO: turn tuple into dict
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option

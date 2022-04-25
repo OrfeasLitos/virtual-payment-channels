@@ -48,7 +48,12 @@ class Network:
             weight_function = self.get_weight_function(amount)
             cheapest_path = nx.shortest_path(self.graph, sender, receiver, weight_function)
             # TODO: handle the case that the cheapest path has distance math.inf
-            return cheapest_path
+            for i in range(len(cheapest_path)-1):
+                sender = cheapest_path[i]
+                receiver = cheapest_path[i+1]
+                if self.graph.get_edge_data(sender, receiver)['balance'] < amount:
+                    return None
+            return len(cheapest_path) - 1, cheapest_path
         except nx.exception.NetworkXNoPath:
             return None
 
