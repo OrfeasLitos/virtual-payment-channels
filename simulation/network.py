@@ -43,20 +43,10 @@ class Network:
         
         return weight_function
 
-    def find_cheapest_path(self, start, end, amount):
-        # maybe the output of this function should be modified.
-        # TODO: find_cheapest_path doesn't work yet as expected.
-        self.graph.nodes[start]['amount'] = -amount
-        self.graph.nodes[end]['amount'] = amount
-        try:
-            cost, path = nx.network_simplex(self.graph, demand='amount', capacity='balance', weight='cost')
-            # cost should be number of edges - 1. The cost of the simplex algorithm is per unit of amount, so we have to divide by amount
-            res = cost/amount - 1, path
-        except nx.NetworkXUnfeasible:
-            res = None
-        self.graph.nodes[start]['amount'] = 0
-        self.graph.nodes[end]['amount'] = 0
-        return res
+    def find_cheapest_path(self, sender, receiver, amount):
+        weight_function = self.get_weight_function(amount)
+        cheapest_path = nx.shortest_path(self.graph, sender, receiver, weight_function)
+        return cheapest_path
 
     # TODO: check for sensible definition of centrality of a graph with many components or take connectedness into account in the utility
     # (to give less emphasis on the centrality in a graph with many components)
