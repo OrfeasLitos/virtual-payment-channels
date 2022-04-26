@@ -57,18 +57,9 @@ class Network:
         except nx.exception.NetworkXNoPath:
             return None
 
-    # TODO: check for sensible definition of centrality of a graph with many components or take connectedness into account in the utility
-    # (to give less emphasis on the centrality in a graph with many components)
-    def get_harmonic_centrality(self):
-        return nx.harmonic_centrality(self.graph)
-
-    # TODO: check for sensible definition of centrality of a graph with many components or take connectedness into account in the utility
-    # (to give less emphasis on the centrality in a graph with many components)
     def get_harmonic_centrality(self):
         return nx.harmonic_centrality(self.graph)
 
     def __eq__(self, other):
         # review: is this method tested? does networkx graph equality work as expected?
         return (self.graph == other.graph)
-
-    # TODO: remove vertices, edges ...

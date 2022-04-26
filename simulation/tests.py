@@ -18,7 +18,6 @@ def test_cheapest_path():
     network.add_channel(2, 9, 3, 2)
     network.add_channel(1, 10, 2, 8)
 
-    # doesn't work yet, as amount flow can take several paths at once, if one doesn't have enough capacity on one path, but enough if several paths are taken at the same time.
     cost1, cheapest_path1 = network.find_cheapest_path(0, 4, 3)
     cost2, cheapest_path2 = network.find_cheapest_path(0, 4, 5)
     cost_and_path3 = network.find_cheapest_path(0, 4, 12)
