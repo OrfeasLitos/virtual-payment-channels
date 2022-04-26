@@ -52,9 +52,8 @@ class LN(PlainBitcoin):
         # which should actually be len(path) - 1
         # review:
         #   * the base_fee should be payed for each hop and the fee should be additionally multiplied with the payment value
-        #   * no need to assign to `payment_fee`, just return directly
-        payment_fee = self.fee * (len(path) - 1)
-        return payment_fee
+        sender, receiver, value = payment
+        return (self.base_fee +  value * self.ln_fee) * (len(path) - 1)
 
     def sum_future_payments_to_receiver(self, receiver, future_payments):
         """
@@ -79,7 +78,7 @@ class LN(PlainBitcoin):
             cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
             if cost_and_path != None:
                 cost, cheapest_path = cost_and_path
-                distances.append(len(cheapest_path))
+                distances.append(len(cheapest_path)-1)
             else:
                 distances.append(math.inf)
         return distances
@@ -101,7 +100,7 @@ class LN(PlainBitcoin):
             'fee': bitcoin_fee,
             'centrality': bitcoin_centrality,
             'distance': bitcoin_distance,
-            'payment': { 'kind': 'onchain', 'data': (sender, receiver, value) } # TODO: turn tuple into dict
+            'payment': { 'kind': 'onchain', 'data': (sender, receiver, value) }
         }
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
@@ -140,6 +139,7 @@ class LN(PlainBitcoin):
             offchain_fee = self.get_payment_fee(payment, offchain_path)
             # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
             # review: the above shouldn't be right: depleting my channels should reduce my centrality and increase my distance
+            # True, TODO: change the way this is handled here.
             # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
             offchain_centrality = bitcoin_centrality
             offchain_distance = bitcoin_distance
