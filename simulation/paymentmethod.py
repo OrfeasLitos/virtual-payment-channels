@@ -44,16 +44,14 @@ class LN(PlainBitcoin):
     def get_payment_time(self, path):
         return self.delay * len(path)
 
-    def get_payment_fee(self, payment, path):
+    def get_payment_fee(self, payment, num_hops):
         # TODO: check if cost in reality depends on the payment or just on the path in the network
         # for PlainBitcoin it probably depends on the payment so I need the argument payment here.
         # review: the next comment is a good point. Let's add a test to ensure equality and if it is always equal, we can just use the fastest
         # cost actually should not depend on the path, but just on the length of the path, so we could use the cost_output of the method find cheapest path
         # which should actually be len(path) - 1
-        # review:
-        #   * the base_fee should be payed for each hop and the fee should be additionally multiplied with the payment value
         sender, receiver, value = payment
-        return (self.base_fee +  value * self.ln_fee) * (len(path) - 1)
+        return (self.base_fee +  value * self.ln_fee) * num_hops
 
     def sum_future_payments_to_receiver(self, receiver, future_payments):
         """
@@ -133,17 +131,17 @@ class LN(PlainBitcoin):
         offchain_option = None
         offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
         if offchain_cost_and_path != None:
-            offchain_cost, offchain_path = offchain_cost_and_path
+            offchain_hops, offchain_path = offchain_cost_and_path
             offchain_time = self.get_payment_time(offchain_path)
             payment = (sender, receiver, value)
-            offchain_fee = self.get_payment_fee(payment, offchain_path)
+            offchain_fee = self.get_payment_fee(payment, offchain_hops)
             # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
             # review: the above shouldn't be right: depleting my channels should reduce my centrality and increase my distance
             # True, TODO: change the way this is handled here.
             # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
             offchain_centrality = bitcoin_centrality
             offchain_distance = bitcoin_distance
-            offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_cost, offchain_path)
+            offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_hops, offchain_path)
 
         return [bitcoin_option, new_channel_option, offchain_option]
 

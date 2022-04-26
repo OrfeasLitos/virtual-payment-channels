@@ -1,7 +1,6 @@
 
 
 class Knowledge:
-    # should knowledge depend on the party?
     def __init__(self, party, payments, knowledge_function):
         """
         Knowledge could be a list of payments or a probability distribution.

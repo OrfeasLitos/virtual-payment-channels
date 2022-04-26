@@ -24,6 +24,12 @@ def test_cheapest_path():
     cost4, cheapest_path4 = network.find_cheapest_path(0, 4, 6)
     return cost1 == 2 and cheapest_path1 == [0,1,4] and cost2 == 3 and cheapest_path2 == [0,2,3,4] and cost_and_path3 == None and cost4 == 4 and cheapest_path4 == [0,1,2,3,4]
 
+def test_get_payment_fee():
+    def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
+        sender, receiver, value = payment
+        return (base_fee +  value * ln_fee) * (len(path) - 1)
+    pass
+
 def is_deterministic():
     bitcoin = PlainBitcoin()
 

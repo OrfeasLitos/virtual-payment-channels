@@ -12,10 +12,12 @@ class Utility:
 
     def get_utility(self, payment, payment_method, knowledge, path=None):
         # review: this gives a -inf utility to on-chain payments
+        # TODO: rewrite this function to take fee, delay, distance and centrality
         if path == None:
             return -math.inf
 
-        return self.utility_function(payment_method.get_payment_fee(payment, path), payment_method.get_payment_time(path), knowledge.get_knowledge())
+        num_hops = len(path) - 1
+        return self.utility_function(payment_method.get_payment_fee(payment, num_hops), payment_method.get_payment_time(path), knowledge.get_knowledge())
 
     # review:
     #  * this method should take as input a list of candidate payments and choose the best one. It should be agnostic to the details of each payment method (e.g. no calls to PlainBitcoin)
