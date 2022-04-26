@@ -118,12 +118,16 @@ class LN(PlainBitcoin):
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
         self.network.close_channel(sender, receiver)
+        # TODO: make a loop that gives us several possible new channels with different counterparties
+        counterparty = receiver
+        sender_coins = 2 * (min_amount - value)
+        counterparty_coins = 2 * (min_amount - value)
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
-            'payment': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, our_coins, their_coins) } # TODO: turn tuple into dict
+            'payment': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, sender_coins, counterparty_coins) }
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option

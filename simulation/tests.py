@@ -14,15 +14,16 @@ def test_cheapest_path():
     network.add_channel(0, 6, 1, 7)
     network.add_channel(1, 4, 4, 8)
     network.add_channel(0, 5, 2, 6)
-    network.add_channel(3, 2, 4, 8)
-    network.add_channel(2, 3, 3, 5)
-    network.add_channel(1, 2, 2, 5)
+    network.add_channel(3, 9, 4, 8)
+    network.add_channel(2, 9, 3, 2)
+    network.add_channel(1, 10, 2, 8)
 
     # doesn't work yet, as amount flow can take several paths at once, if one doesn't have enough capacity on one path, but enough if several paths are taken at the same time.
-    cost, cheapest_path = network.find_cheapest_path(0, 4, 5)
-    print(cost)
-    print(cheapest_path)
-    # TODO: Complete the Test
+    cost1, cheapest_path1 = network.find_cheapest_path(0, 4, 3)
+    cost2, cheapest_path2 = network.find_cheapest_path(0, 4, 5)
+    cost_and_path3 = network.find_cheapest_path(0, 4, 12)
+    cost4, cheapest_path4 = network.find_cheapest_path(0, 4, 6)
+    return cost1 == 2 and cheapest_path1 == [0,1,4] and cost2 == 3 and cheapest_path2 == [0,2,3,4] and cost_and_path3 == None and cost4 == 4 and cheapest_path4 == [0,1,2,3,4]
 
 def is_deterministic():
     bitcoin = PlainBitcoin()
@@ -74,7 +75,7 @@ def test_LN():
 if __name__ == "__main__":
     #assert(is_deterministic())
     assert(test_LN())
-    test_cheapest_path()
-    #print("Success")
+    assert(test_cheapest_path())
+    print("Success")
 
 
