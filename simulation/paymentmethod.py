@@ -83,7 +83,7 @@ class LN(PlainBitcoin):
                 distances.append(math.inf)
         return distances
 
-    def get_payment_from(self, sender, receiver, value, future_payments):
+    def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
 

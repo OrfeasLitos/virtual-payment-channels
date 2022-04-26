@@ -55,7 +55,7 @@ class Simulation:
 
             payment_options = self.payment_method.get_payment_options(sender, receiver, value)
             # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
-            payment = self.utility.get_best_from(payment_options)
+            payment = self.utility.choose_payment_method(payment_options)
             self.payment_method.do(payment)
             return payment # ideally, one could take the initial network state and the list of payments and reach the final network state
 
