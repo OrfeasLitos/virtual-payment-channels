@@ -35,21 +35,12 @@ class LN(PlainBitcoin):
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         self.base_fee = base_fee
-        # Do we need the plain_bitcoin attribute?
-        # review: it would be nicer to avoid it. We can avoid it if we don't need to carry plain_bitcoin state around.
-        # review: it currently looks like we can just instantiate a new PlainBitcoin() object every time we need it.
-        self.plain_bitcoin = plain_bitcoin
-        # use attribute to give flexibility with different fees and delays for Plainbitcoin
+        self.plain_bitcoin = PlainBitcoin(max_coins, bitcoin_fee, bitcoin_delay)
 
     def get_payment_time(self, path):
         return self.ln_delay * len(path)
 
     def get_payment_fee(self, payment, num_hops):
-        # TODO: check if cost in reality depends on the payment or just on the path in the network
-        # for PlainBitcoin it probably depends on the payment so I need the argument payment here.
-        # review: the next comment is a good point. Let's add a test to ensure equality and if it is always equal, we can just use the fastest
-        # cost actually should not depend on the path, but just on the length of the path, so we could use the cost_output of the method find cheapest path
-        # which should actually be len(path) - 1
         sender, receiver, value = payment
         return (self.base_fee +  value * self.ln_fee) * num_hops
 
