@@ -18,6 +18,12 @@ class PlainBitcoin():
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
+    
+    def get_fee(self):
+        return self.bitcoin_fee
+    
+    def get_delay(self):
+        return self.bitcoin_delay
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
@@ -25,11 +31,10 @@ class PlainBitcoin():
 # review: bring back base_fee and add fee_rate. The per-hop fee is base_fee + fee_rate * payment_value
 class LN(PlainBitcoin):
     def __init__(
-        self, nr_players, plain_bitcoin, max_coins = 2000000000000000,
+        self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
         opening_transaction_size = 200, base_fee = 1000
     ):
-        super().__init__(max_coins, bitcoin_fee, bitcoin_delay)
         self.ln_fee = ln_fee
         self.ln_delay = ln_delay
         self.opening_transaction_size = opening_transaction_size
@@ -77,10 +82,10 @@ class LN(PlainBitcoin):
         # TODO: check if some of the stuff that happens here should be in separate functions.
 
         # review: ideally this whole block should be a few calls to either self.plain_bitcoin or a new disposable PlainBitcoin() built here
-        bitcoin_time = self.bitcoin_delay
+        bitcoin_time = self.plain_bitcoin.get_delay()
         # is the fee fixed?
         # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
-        bitcoin_fee = self.bitcoin_fee
+        bitcoin_fee = self.plain_bitcoin.get_fee()
         # if centrality or distance was already a attribute I could use this attribute straightaway as PlainBitcoin payment doesn't change the network.
         bitcoin_centrality = self.network.get_harmonic_centrality()
         bitcoin_distance = self.distance_to_future_parties(future_payments)
@@ -93,9 +98,9 @@ class LN(PlainBitcoin):
         }
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
-        new_channel_time = self.bitcoin_delay + self.ln_delay
+        new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         # is the fee for PlainBitcoin fixed? should there be the factor self.opening_transaction_size?
-        new_channel_fee = self.bitcoin_fee * self.opening_transaction_size
+        new_channel_fee = self.plain_bitcoin.get_fee() * self.opening_transaction_size
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
         # receiver doesn't need same minimum amount, what should he put on channel?
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
