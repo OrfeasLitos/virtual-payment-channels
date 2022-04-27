@@ -81,7 +81,6 @@ class LN(PlainBitcoin):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
 
-        # review: ideally this whole block should be a few calls to either self.plain_bitcoin or a new disposable PlainBitcoin() built here
         bitcoin_time = self.plain_bitcoin.get_delay()
         # is the fee fixed?
         # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
@@ -99,7 +98,6 @@ class LN(PlainBitcoin):
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
-        # is the fee for PlainBitcoin fixed? should there be the factor self.opening_transaction_size?
         new_channel_fee = self.plain_bitcoin.get_fee() * self.opening_transaction_size
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
         # receiver doesn't need same minimum amount, what should he put on channel?
@@ -134,6 +132,7 @@ class LN(PlainBitcoin):
             # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
             # review: the above shouldn't be right: depleting my channels should reduce my centrality and increase my distance
             # True, TODO: change the way this is handled here.
+            # TODO: change the balance on the edges, calculate distance and centrality and reset the balance to the previous value.
             # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
             offchain_centrality = bitcoin_centrality
             offchain_distance = bitcoin_distance
