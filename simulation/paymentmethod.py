@@ -42,7 +42,7 @@ class LN(PlainBitcoin):
         # use attribute to give flexibility with different fees and delays for Plainbitcoin
 
     def get_payment_time(self, path):
-        return self.delay * len(path)
+        return self.ln_delay * len(path)
 
     def get_payment_fee(self, payment, num_hops):
         # TODO: check if cost in reality depends on the payment or just on the path in the network

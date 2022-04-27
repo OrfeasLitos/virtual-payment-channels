@@ -28,7 +28,31 @@ def test_get_payment_fee():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
         sender, receiver, value = payment
         return (base_fee +  value * ln_fee) * (len(path) - 1)
-    pass
+    base_fee = 1000
+    ln_fee = 0.00002
+    plain_bitcoin = PlainBitcoin()
+    lightning = LN(10, plain_bitcoin, base_fee = base_fee, ln_fee = ln_fee)
+
+    # Probably LN should have an add_channel method
+    lightning.network.add_channel(0, 3., 2, 7.)
+    lightning.network.add_channel(0, 6., 1, 7.)
+    lightning.network.add_channel(1, 4., 4, 8.)
+    lightning.network.add_channel(0, 5., 2, 6.)
+    lightning.network.add_channel(3, 9., 4, 8.)
+    lightning.network.add_channel(2, 9., 3, 2.)
+    lightning.network.add_channel(1, 10., 2, 8.)
+    lightning.network.add_channel(4, 10., 7, 8.)
+    lightning.network.add_channel(3, 10., 8, 8.)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    output = True
+    for payment in future_payments:
+        sender, receiver, value = payment
+        path = lightning.network.find_cheapest_path(sender, receiver, value)
+        num_hops = len(path) - 1
+        if get_payment_fee_with_path(base_fee, ln_fee, payment, path) != lightning.get_payment_fee(payment, num_hops):
+            output = False
+    return output
 
 def is_deterministic():
     bitcoin = PlainBitcoin()
@@ -63,13 +87,6 @@ def is_deterministic():
     return simulation1 == simulation2
 
 def test_LN():
-    network = Network(10)
-    network.add_channel(0, 6.5, 1, 7.3)
-    network.add_channel(1, 4.8, 4, 8.9)
-    network.add_channel(0, 5., 2, 6.7)
-    network.add_channel(3, 2.3, 4, 8.2)
-    network.add_channel(2, 3.4, 3, 5.5)
-
     plain_bitcoin = PlainBitcoin()
     lightning = LN(10, plain_bitcoin)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
@@ -81,6 +98,7 @@ if __name__ == "__main__":
     #assert(is_deterministic())
     assert(test_LN())
     assert(test_cheapest_path())
+    assert(test_get_payment_fee())
     print("Success")
 
 
