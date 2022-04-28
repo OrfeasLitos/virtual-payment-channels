@@ -73,7 +73,7 @@ def test_choose_payment_method():
     def utility_function(fee, delay, distance, centrality):
         distance_array = np.array(distance)
         distance_array = 1 / distance_array
-        return 100/fee + 50/delay + sum(distance_array) + sum(centrality)
+        return 10000/fee + 5000/delay + sum(distance_array) + sum(centrality)
     utility = Utility(utility_function)
     payment_method = utility.choose_payment_method(payment_options)
     print(payment_method)

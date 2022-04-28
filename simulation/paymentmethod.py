@@ -25,6 +25,12 @@ class PlainBitcoin():
     def get_delay(self):
         return self.bitcoin_delay
 
+    def pay(self, data):
+        # TODO: think about how to handle the on-chain coins. Part of network? Or some dictionary or list?
+        sender, receiver, value = data
+        return
+
+
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
 # review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
