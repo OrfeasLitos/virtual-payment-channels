@@ -8,6 +8,7 @@ from network import Network
 
 import random
 import sys
+import numpy as np
 
 def test_cheapest_path():
     network = Network(5)
@@ -54,6 +55,30 @@ def test_get_payment_fee():
             output = False
     return output
 
+def test_choose_payment_method():
+    lightning = LN(10)
+
+    # Probably LN should have an add_channel method
+    lightning.network.add_channel(0, 3., 2, 7.)
+    lightning.network.add_channel(0, 6., 1, 7.)
+    lightning.network.add_channel(1, 4., 4, 8.)
+    lightning.network.add_channel(0, 5., 2, 6.)
+    lightning.network.add_channel(3, 9., 4, 8.)
+    lightning.network.add_channel(2, 9., 3, 2.)
+    lightning.network.add_channel(1, 10., 2, 8.)
+    lightning.network.add_channel(4, 10., 7, 8.)
+    lightning.network.add_channel(3, 10., 8, 8.)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    def utility_function(fee, delay, distance, centrality):
+        distance_array = np.array(distance)
+        distance_array = 1 / distance_array
+        return 100/fee + 50/delay + sum(distance_array) + sum(centrality)
+    utility = Utility(utility_function)
+    payment_method = utility.choose_payment_method(payment_options)
+    print(payment_method)
+    return
+
 def is_deterministic():
     bitcoin = PlainBitcoin()
 
@@ -99,6 +124,7 @@ if __name__ == "__main__":
     assert(test_LN())
     assert(test_cheapest_path())
     assert(test_get_payment_fee())
+    test_choose_payment_method()
     print("Success")
 
 
