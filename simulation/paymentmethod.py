@@ -136,7 +136,13 @@ class LN(PlainBitcoin):
             # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
             offchain_centrality = bitcoin_centrality
             offchain_distance = bitcoin_distance
-            offchain_option = (offchain_time, offchain_fee, offchain_centrality, offchain_distance, offchain_hops, offchain_path)
+            offchain_option = {
+                'delay': offchain_time,
+                'fee': offchain_fee,
+                'centrality': offchain_centrality,
+                'distance': offchain_distance,
+                'payment': {'kind': 'ln-pay', 'data': (sender, receiver, value, offchain_hops, offchain_path)}
+            }
 
         return [bitcoin_option, new_channel_option, offchain_option]
 
