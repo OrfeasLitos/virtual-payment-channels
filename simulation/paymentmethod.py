@@ -11,10 +11,11 @@ import networkx as nx
 
 class PlainBitcoin():
     # TODO: check for reasonable default values
-    def __init__(self, max_coins = 2000000000000000, bitcoin_fee = 1000000, bitcoin_delay = 3600):
+    def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000, bitcoin_delay = 3600):
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
+        self.parties_and_coins = dict([(i, max_coins) for i in range(nr_players)])
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
@@ -46,7 +47,7 @@ class LN(PlainBitcoin):
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         self.base_fee = base_fee
-        self.plain_bitcoin = PlainBitcoin(max_coins, bitcoin_fee, bitcoin_delay)
+        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay)
 
     def get_payment_time(self, path):
         return self.ln_delay * len(path)

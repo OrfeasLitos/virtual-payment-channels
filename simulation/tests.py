@@ -31,7 +31,6 @@ def test_get_payment_fee():
         return (base_fee +  value * ln_fee) * (len(path) - 1)
     base_fee = 1000
     ln_fee = 0.00002
-    plain_bitcoin = PlainBitcoin()
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
 
     # Probably LN should have an add_channel method
@@ -112,8 +111,8 @@ def is_deterministic():
     return simulation1 == simulation2
 
 def test_LN():
-    plain_bitcoin = PlainBitcoin()
-    lightning = LN(10)
+    nr_players = 10
+    lightning = LN(nr_players)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     result = lightning.sum_future_payments_to_receiver(7, future_payments)
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
