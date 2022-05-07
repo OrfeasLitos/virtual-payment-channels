@@ -54,6 +54,9 @@ def test_get_payment_fee():
             output = False
     return output
 
+def test_get_payment_options():
+    pass
+
 def test_choose_payment_method():
     lightning = LN(10)
 
@@ -69,6 +72,8 @@ def test_choose_payment_method():
     lightning.network.add_channel(3, 10., 8, 8.)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    on_chain_centrality = lightning.network.get_harmonic_centrality()
+    on_chain_option = {'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality, 'distance': [1, 3, 3, 3], 'payment_information': {'kind': 'onchain', 'data': (0, 7, 1.0)}}
     def utility_function(fee, delay, distance, centrality):
         distance_array = np.array(distance)
         distance_array = 1 / distance_array
@@ -117,6 +122,9 @@ def test_LN():
     result = lightning.sum_future_payments_to_receiver(7, future_payments)
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     return result == 3.6
+
+def test_do():
+    pass
 
 if __name__ == "__main__":
     #assert(is_deterministic())
