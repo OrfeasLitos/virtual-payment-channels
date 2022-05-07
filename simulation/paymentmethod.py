@@ -102,7 +102,7 @@ class LN(PlainBitcoin):
             'fee': bitcoin_fee,
             'centrality': bitcoin_centrality,
             'distance': bitcoin_distance,
-            'payment': { 'kind': 'onchain', 'data': (sender, receiver, value) }
+            'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
         }
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
@@ -127,7 +127,7 @@ class LN(PlainBitcoin):
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
-            'payment': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, sender_coins, counterparty_coins) }
+            'payment_information': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, sender_coins, counterparty_coins) }
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
@@ -150,15 +150,16 @@ class LN(PlainBitcoin):
                 'fee': offchain_fee,
                 'centrality': offchain_centrality,
                 'distance': offchain_distance,
-                'payment': {'kind': 'ln-pay', 'data': (sender, receiver, value, offchain_hops, offchain_path)}
+                'payment_information': {'kind': 'ln-pay', 'data': (sender, receiver, value, offchain_hops, offchain_path)}
             }
 
         return [bitcoin_option, new_channel_option, offchain_option]
 
-    def do(self, payment):
-        match payment['kind']:
+    def do(self, payment_information):
+        match payment_information['kind']:
             case 'onchain':
-                self.plain_bitcoin.pay(data);
+                data = payment_information['data']
+                self.plain_bitcoin.pay(data)
             case 'ln-open':
                 pass # TODO
             case 'ln-pay':
