@@ -15,7 +15,7 @@ class PlainBitcoin():
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
-        self.parties_and_coins = dict([(i, max_coins) for i in range(nr_players)])
+        self.coins = dict([(i, max_coins) for i in range(nr_players)])
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
@@ -27,8 +27,10 @@ class PlainBitcoin():
         return self.bitcoin_delay
 
     def pay(self, data):
-        # TODO: think about how to handle the on-chain coins. Part of network? Or some dictionary or list?
         sender, receiver, value = data
+        # should self.get_fee() also be multiplied with value
+        self.coins[sender] -= (value + self.get_fee())
+        self.coins[receiver] += value
         return
 
 
