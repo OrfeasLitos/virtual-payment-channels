@@ -106,6 +106,7 @@ class LN(PlainBitcoin):
         }
 
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
+        # maybe make methods for new_channel time and fee as well
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee() * self.opening_transaction_size
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
