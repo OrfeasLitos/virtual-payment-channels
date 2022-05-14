@@ -11,6 +11,22 @@ import random
 import sys
 import numpy as np
 
+def make_example_network():
+    base_fee = 1000
+    ln_fee = 0.00002
+    lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
+
+    lightning.network.add_channel(0, 3., 2, 7.)
+    lightning.network.add_channel(0, 6., 1, 7.)
+    lightning.network.add_channel(1, 4., 4, 8.)
+    lightning.network.add_channel(0, 5., 2, 6.)
+    lightning.network.add_channel(3, 9., 4, 8.)
+    lightning.network.add_channel(2, 9., 3, 2.)
+    lightning.network.add_channel(1, 10., 2, 8.)
+    lightning.network.add_channel(4, 10., 7, 8.)
+    lightning.network.add_channel(3, 10., 8, 8.)
+    return lightning
+
 def test_cheapest_path():
     network = Network(5)
     network.add_channel(0, 6, 1, 7)
@@ -32,17 +48,7 @@ def test_get_payment_fee():
         return (base_fee +  value * ln_fee) * (len(path) - 1)
     base_fee = 1000
     ln_fee = 0.00002
-    lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
-
-    lightning.network.add_channel(0, 3., 2, 7.)
-    lightning.network.add_channel(0, 6., 1, 7.)
-    lightning.network.add_channel(1, 4., 4, 8.)
-    lightning.network.add_channel(0, 5., 2, 6.)
-    lightning.network.add_channel(3, 9., 4, 8.)
-    lightning.network.add_channel(2, 9., 3, 2.)
-    lightning.network.add_channel(1, 10., 2, 8.)
-    lightning.network.add_channel(4, 10., 7, 8.)
-    lightning.network.add_channel(3, 10., 8, 8.)
+    lightning = make_example_network()
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     output = True
@@ -55,18 +61,7 @@ def test_get_payment_fee():
     return output
 
 def test_get_payment_options():
-    lightning = LN(10)
-
-    # Probably LN should have an add_channel method
-    lightning.network.add_channel(0, 3., 2, 7.)
-    lightning.network.add_channel(0, 6., 1, 7.)
-    lightning.network.add_channel(1, 4., 4, 8.)
-    lightning.network.add_channel(0, 5., 2, 6.)
-    lightning.network.add_channel(3, 9., 4, 8.)
-    lightning.network.add_channel(2, 9., 3, 2.)
-    lightning.network.add_channel(1, 10., 2, 8.)
-    lightning.network.add_channel(4, 10., 7, 8.)
-    lightning.network.add_channel(3, 10., 8, 8.)
+    lightning = make_example_network()
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     on_chain_centrality = lightning.network.get_harmonic_centrality()
@@ -81,18 +76,7 @@ def test_get_payment_options():
 
 
 def test_choose_payment_method():
-    lightning = LN(10)
-
-    # Probably LN should have an add_channel method
-    lightning.network.add_channel(0, 3., 2, 7.)
-    lightning.network.add_channel(0, 6., 1, 7.)
-    lightning.network.add_channel(1, 4., 4, 8.)
-    lightning.network.add_channel(0, 5., 2, 6.)
-    lightning.network.add_channel(3, 9., 4, 8.)
-    lightning.network.add_channel(2, 9., 3, 2.)
-    lightning.network.add_channel(1, 10., 2, 8.)
-    lightning.network.add_channel(4, 10., 7, 8.)
-    lightning.network.add_channel(3, 10., 8, 8.)
+    lightning = make_example_network()
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     on_chain_centrality = lightning.network.get_harmonic_centrality()
