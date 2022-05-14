@@ -15,7 +15,8 @@ class PlainBitcoin():
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
-        self.coins = dict([(i, max_coins) for i in range(nr_players)])
+        # TODO: different amount for different parties
+        self.coins = {i: max_coins for i in range(nr_players)}
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
@@ -29,7 +30,9 @@ class PlainBitcoin():
     def pay(self, data):
         sender, receiver, value = data
         # should self.get_fee() also be multiplied with value
-        self.coins[sender] -= (value + self.get_fee())
+        if self.coins[sender] - value + self.get_fee() < 0:
+            raise ValueError
+        self.coins[sender] -= value + self.get_fee()
         self.coins[receiver] += value
         return
 
@@ -80,7 +83,7 @@ class LN(PlainBitcoin):
         for sender, receiver, value in future_payments:
             cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
             if cost_and_path != None:
-                cost, cheapest_path = cost_and_path
+                _, cheapest_path = cost_and_path
                 distances.append(len(cheapest_path)-1)
             else:
                 distances.append(math.inf)
