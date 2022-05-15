@@ -60,6 +60,15 @@ class Network:
     def get_harmonic_centrality(self):
         return nx.harmonic_centrality(self.graph)
 
+    def update_balances(self, value, fee, path, num_hops):
+        sender = path[0]
+        receiver = path[-1]
+        # TODO: raise Error if necessary
+        self.graph[sender, receiver]['balance'] -= value + num_hops * fee
+        self.graph[receiver, sender]['balance'] += value
+        # Now have to update the balances of the intermediaries.
+        return
+
     def __eq__(self, other):
         # review: is this method tested? does networkx graph equality work as expected?
         return (self.graph == other.graph)
