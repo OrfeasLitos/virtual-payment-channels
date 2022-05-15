@@ -36,6 +36,11 @@ class PlainBitcoin():
         self.coins[receiver] += value
         return
 
+    def update_coins(self, party, amount):
+        if self.coins[party] + amount < 0:
+            raise ValueError
+        self.coins[party] += amount
+        return
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
