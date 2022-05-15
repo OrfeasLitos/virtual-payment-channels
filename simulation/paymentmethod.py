@@ -165,6 +165,7 @@ class LN(PlainBitcoin):
         return [bitcoin_option, new_channel_option, offchain_option]
 
     def do(self, payment_information):
+        # Should do return sth?
         match payment_information['kind']:
             case 'onchain':
                 data = payment_information['data']
@@ -180,7 +181,9 @@ class LN(PlainBitcoin):
                 self.plain_bitcoin.update_coins(counterparty, amount_counterparty)
                 # maybe use ln-pay here to make the off-chain payment after opening a new channel.
             case 'ln-pay':
-                pass # TODO
+                data = payment_information['data']
+                sender, receiver, value, offchain_hops, offchain_path = data
+                # TODO: method in network that updates balances
             case _:
                 raise ValueError
 
