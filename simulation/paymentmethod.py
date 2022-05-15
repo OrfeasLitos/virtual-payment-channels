@@ -173,9 +173,12 @@ class LN(PlainBitcoin):
                 data = payment_information['data']
                 sender, receiver, value, counterparty, sender_coins, counterparty_coins = data
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
-                # next update the balance of sender and counterparty
-                
-                # maybe use ln-pay afterwards.
+                # next update the coins of sender and counterparty
+                amount_sender = - (value + self.plain_bitcoin.get_fee())
+                self.plain_bitcoin.update_coins(sender, amount_sender)
+                amount_counterparty = - counterparty_coins
+                self.plain_bitcoin.update_coins(counterparty, amount_counterparty)
+                # maybe use ln-pay here to make the off-chain payment after opening a new channel.
             case 'ln-pay':
                 pass # TODO
             case _:
