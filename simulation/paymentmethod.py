@@ -165,7 +165,12 @@ class LN(PlainBitcoin):
                 data = payment_information['data']
                 self.plain_bitcoin.pay(data)
             case 'ln-open':
-                pass # TODO
+                data = payment_information['data']
+                sender, receiver, value, counterparty, sender_coins, counterparty_coins = data
+                self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
+                # next update the balance of sender and counterparty
+                
+                # maybe use ln-pay afterwards.
             case 'ln-pay':
                 pass # TODO
             case _:

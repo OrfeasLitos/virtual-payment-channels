@@ -1,6 +1,5 @@
 # TODO: Check __eq__ method for simulation. Ensure that test fails if edges contain strings.
 
-from turtle import distance
 from simulation import Simulation, random_payments
 from paymentmethod import PlainBitcoin, LN
 from utility import Utility
