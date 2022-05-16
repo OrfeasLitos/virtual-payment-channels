@@ -1,6 +1,5 @@
 # TODO: Check __eq__ method for simulation. Ensure that test fails if edges contain strings.
 
-from lib2to3.pgen2 import grammar
 from simulation import Simulation, random_payments
 from paymentmethod import PlainBitcoin, LN
 from utility import Utility
@@ -132,8 +131,16 @@ def test_LN():
 
 def test_do():
     lightning = make_example_network()
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     # first test on-chain option
-    pass
+    payment_information = payment_options[0]['payment_information']
+    lightning.do(payment_information)
+    MAX_COINS = lightning.plain_bitcoin.max_coins
+    # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
+    test_onchain = lightning.plain_bitcoin.coins[0] == MAX_COINS - 1. - lightning.plain_bitcoin.get_fee() and lightning.plain_bitcoin.coins[7] == MAX_COINS + 1.
+    # TODO: test for exceptions
+    return test_onchain
 
 def test_update_balances():
     lightning1 = make_example_network(base_fee = 1, ln_fee = 0.00002)
@@ -163,6 +170,7 @@ if __name__ == "__main__":
     assert(test_get_payment_fee())
     assert(test_update_balances())
     assert(test_get_payment_options())
+    assert(test_do())
     test_choose_payment_method()
     print("Success")
 
