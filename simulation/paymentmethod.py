@@ -167,6 +167,8 @@ class LN(PlainBitcoin):
         self.network.add_channel(sender, min_amount, receiver, min_amount)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
+        # TODO: adjust future_payments.
+        new_channel_offchain_option = self.get_offchain_option(sender, receiver, value, future_payments[1:])
         self.network.close_channel(sender, receiver)
         # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
@@ -177,7 +179,7 @@ class LN(PlainBitcoin):
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
-            'payment_information': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, sender_coins, counterparty_coins) }
+            'payment_information': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, sender_coins, counterparty_coins, new_channel_offchain_option) }
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
@@ -193,7 +195,7 @@ class LN(PlainBitcoin):
                 self.plain_bitcoin.pay(data)
             case 'ln-open':
                 data = payment_information['data']
-                sender, receiver, value, counterparty, sender_coins, counterparty_coins = data
+                sender, receiver, value, counterparty, sender_coins, counterparty_coins, new_channel_offchain_option = data
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender and counterparty
                 amount_sender = - (value + self.plain_bitcoin.get_fee())
@@ -201,6 +203,7 @@ class LN(PlainBitcoin):
                 amount_counterparty = - counterparty_coins
                 self.plain_bitcoin.update_coins(counterparty, amount_counterparty)
                 # maybe use ln-pay here to make the off-chain payment after opening a new channel.
+                self.do(self, new_channel_offchain_option['payment_information'])
             case 'ln-pay':
                 data = payment_information['data']
                 sender, receiver, value, offchain_hops, offchain_path = data
