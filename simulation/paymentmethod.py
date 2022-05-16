@@ -94,22 +94,21 @@ class LN(PlainBitcoin):
                 distances.append(math.inf)
         return distances
     
-    def update_balances(self, value, fee_intermediary, base_fee, path, num_hops):
-        # review: `num_hops` is redundant and should be equal to `len(path)`
+    def update_balances(self, value, fee_intermediary, base_fee, path):
+        num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
         # review: I think `sender, receiver` should be `sender, path[1]` x2
         # review: also I suspect that the `[sender, receiver]` syntax is wrong.
         # review: If `num_hops == len(path)`, then the `fee_intermediary` should be paid only `num_hops - 1` times,
         # review: as many as the intermediaries
-        if self.network.graph[sender, receiver]['balance'] - value + num_hops * fee_intermediary + base_fee < 0:
+        if self.network.graph[sender, receiver]['balance'] - value + num_intermediaries * fee_intermediary + base_fee < 0:
             raise ValueError
-        self.network.graph[sender, receiver]['balance'] -= value + num_hops * fee_intermediary + base_fee
+        self.network.graph[sender, receiver]['balance'] -= value + num_intermediaries * fee_intermediary + base_fee
         # review: I think `receiver, sender` should be `path[-2], receiver`
         self.network.graph[receiver, sender]['balance'] += value
         # Now have to update the balances of the intermediaries.
-        # TODO: check whether last balance should also be updated.
-        for i in range(num_hops):
+        for i in range(num_intermediaries):
         # review: I suspect that the `[path[i+1]][path[i]]` syntax is wrong
             self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
         return
@@ -125,11 +124,6 @@ class LN(PlainBitcoin):
             offchain_time = self.get_payment_time(offchain_path)
             payment = (sender, receiver, value)
             offchain_fee = self.get_payment_fee(payment, offchain_hops)
-            # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
-            # review: the above shouldn't be right: depleting my channels should reduce my centrality and increase my distance
-            # True, TODO: change the way this is handled here.
-            # TODO: change the balance on the edges, calculate distance and centrality and reset the balance to the previous value.
-            # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
             offchain_centrality = self.network.get_harmonic_centrality()
             offchain_distance = self.distance_to_future_parties(future_payments)
             offchain_option = {
@@ -137,7 +131,7 @@ class LN(PlainBitcoin):
                 'fee': offchain_fee,
                 'centrality': offchain_centrality,
                 'distance': offchain_distance,
-                'payment_information': {'kind': 'ln-pay', 'data': (sender, receiver, value, offchain_hops, offchain_path)}
+                'payment_information': {'kind': 'ln-pay', 'data': (offchain_path, value)}
             }
 
         return offchain_option
@@ -213,10 +207,7 @@ class LN(PlainBitcoin):
                 # use ln-pay here to make the off-chain payment after opening a new channel.
                 self.do(self, new_channel_offchain_option['payment_information'])
             case 'ln-pay':
-                data = payment_information['data']
-                # review: looks like (i) `sender, receiver` are redundant, (ii) `data` could be passed to `update_balances()` directly
-                # review: and turn the 3 lines of this case into 1. Then ofc destructuring has to be done in `update_balances()`, so whichever you prefer
-                sender, receiver, value, offchain_hops, offchain_path = data
-                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, offchain_hops)
+                offchain_path, value = payment_information['data']
+                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path)
             case _:
                 raise ValueError
