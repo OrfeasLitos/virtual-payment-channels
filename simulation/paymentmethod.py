@@ -107,6 +107,11 @@ class LN(PlainBitcoin):
             self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
         return
 
+    # This method is defined because we need the offchain option several times in get_payment_options.
+    # For every new_channel and if we do everything off-chain.
+    def get_offchain_option(self, sender, receiver, value):
+        pass
+
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
@@ -144,6 +149,8 @@ class LN(PlainBitcoin):
         counterparty = receiver
         sender_coins = 2 * (min_amount - value)
         counterparty_coins = 2 * (min_amount - value)
+        new_channel_offchain_hops = 1
+        new_channel_offchain_path = [sender, receiver]
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
