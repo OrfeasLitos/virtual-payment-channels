@@ -10,9 +10,7 @@ import random
 import sys
 import numpy as np
 
-def make_example_network():
-    base_fee = 1000
-    ln_fee = 0.00002
+def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
 
     lightning.network.add_channel(0, 3., 2, 7.)
@@ -131,6 +129,16 @@ def test_LN():
 
 def test_do():
     pass
+
+def test_update_balances():
+    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    base_fee = lightning.base_fee
+    fee_intermediary = lightning.ln_fee
+    path = [0, 1, 4, 7]
+    value = 2
+    lightning.update_balances(value, fee_intermediary, base_fee, path)
+    # sender 0 has 6. in the beginning on the channel to  
+    return
 
 if __name__ == "__main__":
     #assert(is_deterministic())
