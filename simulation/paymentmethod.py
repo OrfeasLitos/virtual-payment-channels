@@ -202,12 +202,11 @@ class LN(PlainBitcoin):
                 self.plain_bitcoin.update_coins(sender, amount_sender)
                 amount_counterparty = - counterparty_coins
                 self.plain_bitcoin.update_coins(counterparty, amount_counterparty)
-                # maybe use ln-pay here to make the off-chain payment after opening a new channel.
+                # use ln-pay here to make the off-chain payment after opening a new channel.
                 self.do(self, new_channel_offchain_option['payment_information'])
             case 'ln-pay':
                 data = payment_information['data']
                 sender, receiver, value, offchain_hops, offchain_path = data
-                # TODO: method in network that updates balances
                 self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, offchain_hops)
             case _:
                 raise ValueError
