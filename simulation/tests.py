@@ -1,5 +1,6 @@
 # TODO: Check __eq__ method for simulation. Ensure that test fails if edges contain strings.
 
+from lib2to3.pgen2 import grammar
 from simulation import Simulation, random_payments
 from paymentmethod import PlainBitcoin, LN
 from utility import Utility
@@ -138,8 +139,10 @@ def test_update_balances():
     value = 2
     lightning.update_balances(value, fee_intermediary, base_fee, path)
     # sender 0 has 6. in the beginning on the channel to 1
-    # after update he should have 2 less for the transaction to 7, 1 less for the base fee and 0.00004 less for the intermediaries 
-    return lightning.network.graph[0][1]['balance'] == 6-3-0.00004
+    # after update he should have 2 less for the transaction to 7, 1 less for the base fee and 0.00004 less for the intermediaries
+    # the intermediaries should have 0.00002 more each on the channel with the previous party
+    return (lightning.network.graph[0][1]['balance'] == 6-3-0.00004 and lightning.network.graph[1][0]['balance'] == 7.00002
+            and lightning.network.graph[4][1]['balance'] == 8.00002 and lightning.network.graph[7][4]['balance'] == 10.)
 
 if __name__ == "__main__":
     #assert(is_deterministic())
