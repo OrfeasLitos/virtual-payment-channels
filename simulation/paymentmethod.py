@@ -98,6 +98,7 @@ class LN(PlainBitcoin):
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
+        # TODO: check whether this formula is correct.
         if self.network.graph[sender][path[1]]['balance'] - (value + num_intermediaries * fee_intermediary + base_fee) < 0:
             raise ValueError
         self.network.graph[sender][path[1]]['balance'] -= value + num_intermediaries * fee_intermediary + base_fee
@@ -209,3 +210,4 @@ class LN(PlainBitcoin):
                     raise Exception("can't make payment")
             case _:
                 raise ValueError
+        return
