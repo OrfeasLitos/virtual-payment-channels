@@ -109,8 +109,31 @@ class LN(PlainBitcoin):
 
     # This method is defined because we need the offchain option several times in get_payment_options.
     # For every new_channel and if we do everything off-chain.
-    def get_offchain_option(self, sender, receiver, value):
-        pass
+    def get_offchain_option(self, sender, receiver, value, future_payments):
+        # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
+        offchain_option = None
+        offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
+        if offchain_cost_and_path != None:
+            offchain_hops, offchain_path = offchain_cost_and_path
+            offchain_time = self.get_payment_time(offchain_path)
+            payment = (sender, receiver, value)
+            offchain_fee = self.get_payment_fee(payment, offchain_hops)
+            # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
+            # review: the above shouldn't be right: depleting my channels should reduce my centrality and increase my distance
+            # True, TODO: change the way this is handled here.
+            # TODO: change the balance on the edges, calculate distance and centrality and reset the balance to the previous value.
+            # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
+            offchain_centrality = self.network.get_harmonic_centrality()
+            offchain_distance = self.distance_to_future_parties(future_payments)
+            offchain_option = {
+                'delay': offchain_time,
+                'fee': offchain_fee,
+                'centrality': offchain_centrality,
+                'distance': offchain_distance,
+                'payment_information': {'kind': 'ln-pay', 'data': (sender, receiver, value, offchain_hops, offchain_path)}
+            }
+
+        return offchain_option
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
@@ -149,8 +172,6 @@ class LN(PlainBitcoin):
         counterparty = receiver
         sender_coins = 2 * (min_amount - value)
         counterparty_coins = 2 * (min_amount - value)
-        new_channel_offchain_hops = 1
-        new_channel_offchain_path = [sender, receiver]
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
@@ -160,27 +181,7 @@ class LN(PlainBitcoin):
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
-        offchain_option = None
-        offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
-        if offchain_cost_and_path != None:
-            offchain_hops, offchain_path = offchain_cost_and_path
-            offchain_time = self.get_payment_time(offchain_path)
-            payment = (sender, receiver, value)
-            offchain_fee = self.get_payment_fee(payment, offchain_hops)
-            # In LN an off-chain payment doesn't change the network, same for PlainBitcoin, so centrality and distance are equal.
-            # review: the above shouldn't be right: depleting my channels should reduce my centrality and increase my distance
-            # True, TODO: change the way this is handled here.
-            # TODO: change the balance on the edges, calculate distance and centrality and reset the balance to the previous value.
-            # review: also here centrality & distance are calculated after payment is complete, whereas in the "new channel" case the off-chain payment isn't carried out before calculating the metrics.
-            offchain_centrality = bitcoin_centrality
-            offchain_distance = bitcoin_distance
-            offchain_option = {
-                'delay': offchain_time,
-                'fee': offchain_fee,
-                'centrality': offchain_centrality,
-                'distance': offchain_distance,
-                'payment_information': {'kind': 'ln-pay', 'data': (sender, receiver, value, offchain_hops, offchain_path)}
-            }
+        offchain_option = self.get_offchain_option(sender, receiver, value, future_payments)
 
         return [bitcoin_option, new_channel_option, offchain_option]
 
