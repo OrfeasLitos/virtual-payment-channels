@@ -97,10 +97,14 @@ class LN(PlainBitcoin):
     def update_balances(self, value, fee_intermediary, base_fee, path, num_hops):
         sender = path[0]
         receiver = path[-1]
-        # TODO: raise Error if necessary
+        if self.network.graph[sender, receiver]['balance'] - value + num_hops * fee_intermediary + base_fee < 0:
+            raise ValueError
         self.network.graph[sender, receiver]['balance'] -= value + num_hops * fee_intermediary + base_fee
         self.network.graph[receiver, sender]['balance'] += value
         # Now have to update the balances of the intermediaries.
+        # TODO: check whether last balance should also be updated.
+        for i in range(num_hops):
+            self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
         return
 
     def get_payment_options(self, sender, receiver, value, future_payments):
