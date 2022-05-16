@@ -98,14 +98,12 @@ class LN(PlainBitcoin):
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
-        # review: also I suspect that the `[sender, receiver]` syntax is wrong.
-        if self.network.graph[sender, path[1]]['balance'] - value + num_intermediaries * fee_intermediary + base_fee < 0:
+        if self.network.graph[sender][path[1]]['balance'] - value + num_intermediaries * fee_intermediary + base_fee < 0:
             raise ValueError
-        self.network.graph[sender, path[1]]['balance'] -= value + num_intermediaries * fee_intermediary + base_fee
-        self.network.graph[receiver, path[-2]]['balance'] += value
+        self.network.graph[sender][path[1]]['balance'] -= value + num_intermediaries * fee_intermediary + base_fee
+        self.network.graph[receiver][path[-2]]['balance'] += value
         # Now have to update the balances of the intermediaries.
         for i in range(num_intermediaries):
-        # review: I suspect that the `[path[i+1]][path[i]]` syntax is wrong
             self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
         return
 

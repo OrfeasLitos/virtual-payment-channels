@@ -137,14 +137,16 @@ def test_update_balances():
     path = [0, 1, 4, 7]
     value = 2
     lightning.update_balances(value, fee_intermediary, base_fee, path)
-    # sender 0 has 6. in the beginning on the channel to  
-    return
+    # sender 0 has 6. in the beginning on the channel to 1
+    # after update he should have 2 less for the transaction to 7, 1 less for the base fee and 0.00004 less for the intermediaries 
+    return lightning.network.graph[0][1]['balance'] == 6-3-0.00004
 
 if __name__ == "__main__":
     #assert(is_deterministic())
     assert(test_LN())
     assert(test_cheapest_path())
     assert(test_get_payment_fee())
+    assert(test_update_balances())
     #assert(test_get_payment_options())
     test_choose_payment_method()
     print("Success")
