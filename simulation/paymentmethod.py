@@ -98,7 +98,7 @@ class LN(PlainBitcoin):
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
-        if self.network.graph[sender][path[1]]['balance'] - value + num_intermediaries * fee_intermediary + base_fee < 0:
+        if self.network.graph[sender][path[1]]['balance'] - (value + num_intermediaries * fee_intermediary + base_fee) < 0:
             raise ValueError
         self.network.graph[sender][path[1]]['balance'] -= value + num_intermediaries * fee_intermediary + base_fee
         self.network.graph[receiver][path[-2]]['balance'] += value
@@ -202,6 +202,10 @@ class LN(PlainBitcoin):
                 self.do(self, new_channel_offchain_option['payment_information'])
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
-                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path)
+                try:
+                    self.update_balances(value, self.ln_fee, self.base_fee, offchain_path)
+                except ValueError:
+                    # TODO: think of what should happen in case of a ValueError
+                    raise Exception("can't make payment")
             case _:
                 raise ValueError

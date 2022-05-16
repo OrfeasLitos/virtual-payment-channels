@@ -129,20 +129,29 @@ def test_LN():
     return result == 3.6
 
 def test_do():
+    # first test on-chain option
     pass
 
 def test_update_balances():
-    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
-    base_fee = lightning.base_fee
-    fee_intermediary = lightning.ln_fee
+    lightning1 = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    base_fee1 = lightning1.base_fee
+    fee_intermediary = lightning1.ln_fee
     path = [0, 1, 4, 7]
     value = 2
-    lightning.update_balances(value, fee_intermediary, base_fee, path)
+    lightning1.update_balances(value, fee_intermediary, base_fee1, path)
     # sender 0 has 6. in the beginning on the channel to 1
     # after update he should have 2 less for the transaction to 7, 1 less for the base fee and 0.00004 less for the intermediaries
     # the intermediaries should have 0.00002 more each on the channel with the previous party
-    return (lightning.network.graph[0][1]['balance'] == 6-3-0.00004 and lightning.network.graph[1][0]['balance'] == 7.00002
-            and lightning.network.graph[4][1]['balance'] == 8.00002 and lightning.network.graph[7][4]['balance'] == 10.)
+    test1 =  (lightning1.network.graph[0][1]['balance'] == 6-3-0.00004 and lightning1.network.graph[1][0]['balance'] == 7.00002
+            and lightning1.network.graph[4][1]['balance'] == 8.00002 and lightning1.network.graph[7][4]['balance'] == 10.)
+    lightning2 = make_example_network()
+    base_fee2 = lightning2.base_fee
+    test2 = False
+    try:
+        lightning2.update_balances(value, fee_intermediary, base_fee2, path)
+    except ValueError:
+        test2 = True
+    return test1 and test2
 
 if __name__ == "__main__":
     #assert(is_deterministic())
