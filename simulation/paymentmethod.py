@@ -95,15 +95,22 @@ class LN(PlainBitcoin):
         return distances
     
     def update_balances(self, value, fee_intermediary, base_fee, path, num_hops):
+        # review: `num_hops` is redundant and should be equal to `len(path)`
         sender = path[0]
         receiver = path[-1]
+        # review: I think `sender, receiver` should be `sender, path[1]` x2
+        # review: also I suspect that the `[sender, receiver]` syntax is wrong.
+        # review: If `num_hops == len(path)`, then the `fee_intermediary` should be paid only `num_hops - 1` times,
+        # review: as many as the intermediaries
         if self.network.graph[sender, receiver]['balance'] - value + num_hops * fee_intermediary + base_fee < 0:
             raise ValueError
         self.network.graph[sender, receiver]['balance'] -= value + num_hops * fee_intermediary + base_fee
+        # review: I think `receiver, sender` should be `path[-2], receiver`
         self.network.graph[receiver, sender]['balance'] += value
         # Now have to update the balances of the intermediaries.
         # TODO: check whether last balance should also be updated.
         for i in range(num_hops):
+        # review: I suspect that the `[path[i+1]][path[i]]` syntax is wrong
             self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
         return
 
@@ -138,6 +145,7 @@ class LN(PlainBitcoin):
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
         # TODO: check if some of the stuff that happens here should be in separate functions.
+        # review: I like that the offchain option is a function, let's make on-chain and ln-open into separate functions as well
 
         bitcoin_time = self.plain_bitcoin.get_delay()
         # is the fee fixed?
@@ -206,6 +214,8 @@ class LN(PlainBitcoin):
                 self.do(self, new_channel_offchain_option['payment_information'])
             case 'ln-pay':
                 data = payment_information['data']
+                # review: looks like (i) `sender, receiver` are redundant, (ii) `data` could be passed to `update_balances()` directly
+                # review: and turn the 3 lines of this case into 1. Then ofc destructuring has to be done in `update_balances()`, so whichever you prefer
                 sender, receiver, value, offchain_hops, offchain_path = data
                 self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, offchain_hops)
             case _:
