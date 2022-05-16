@@ -93,6 +93,15 @@ class LN(PlainBitcoin):
             else:
                 distances.append(math.inf)
         return distances
+    
+    def update_balances(self, value, fee_intermediary, base_fee, path, num_hops):
+        sender = path[0]
+        receiver = path[-1]
+        # TODO: raise Error if necessary
+        self.network.graph[sender, receiver]['balance'] -= value + num_hops * fee_intermediary + base_fee
+        self.network.graph[receiver, sender]['balance'] += value
+        # Now have to update the balances of the intermediaries.
+        return
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
