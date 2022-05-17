@@ -194,7 +194,7 @@ class LN(PlainBitcoin):
                 sender, receiver, value, counterparty, sender_coins, counterparty_coins, new_channel_offchain_option = payment_information['data']
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender and counterparty
-                amount_sender = - (value + self.plain_bitcoin.get_fee())
+                amount_sender = - (sender_coins + self.plain_bitcoin.get_fee())
                 self.plain_bitcoin.update_coins(sender, amount_sender)
                 amount_counterparty = - counterparty_coins
                 self.plain_bitcoin.update_coins(counterparty, amount_counterparty)
