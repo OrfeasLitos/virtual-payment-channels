@@ -9,6 +9,7 @@ from network import Network
 import random
 import sys
 import numpy as np
+import unittest
 
 def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
@@ -130,17 +131,27 @@ def test_LN():
     return result == 3.6
 
 def test_do():
-    lightning = make_example_network()
+    lightning = make_example_network(base_fee = 1)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     # first test on-chain option
-    payment_information = payment_options[0]['payment_information']
-    lightning.do(payment_information)
+    payment_information_onchain = payment_options[0]['payment_information']
+    lightning.do(payment_information_onchain)
     MAX_COINS = lightning.plain_bitcoin.max_coins
     # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
     test_onchain = lightning.plain_bitcoin.coins[0] == MAX_COINS - 1. - lightning.plain_bitcoin.get_fee() and lightning.plain_bitcoin.coins[7] == MAX_COINS + 1.
     # TODO: test for exceptions
-    return test_onchain
+    # now test off-chain option
+    payment_information_offchain = payment_options[2]['payment_information']
+    # path is [0,1,4,7]
+    lightning = make_example_network(base_fee=1)
+    lightning.do(payment_information_offchain)
+    test_offchain =  lightning.plain_bitcoin.coins[0] == MAX_COINS and lightning.plain_bitcoin.coins[7] == MAX_COINS
+    np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'], 6-2-0.00004)
+    np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7.00002)
+    np.testing.assert_almost_equal(lightning.network.graph[4][1]['balance'], 8.00002)
+    np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 9.)
+    return test_onchain and test_offchain
 
 def test_update_balances():
     lightning1 = make_example_network(base_fee = 1, ln_fee = 0.00002)
