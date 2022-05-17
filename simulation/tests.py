@@ -151,6 +151,10 @@ def test_do():
     np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7.00002)
     np.testing.assert_almost_equal(lightning.network.graph[4][1]['balance'], 8.00002)
     np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 9.)
+    # now test new-channel option
+    payment_information_new_channel = payment_options[1]['payment_information']
+    lightning = make_example_network(base_fee=1)
+    lightning.do(payment_information_new_channel)
     return test_onchain and test_offchain
 
 def test_update_balances():
