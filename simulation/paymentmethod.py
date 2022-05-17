@@ -28,9 +28,10 @@ class PlainBitcoin():
         return self.bitcoin_delay
 
     def pay(self, data):
+        # TODO: use update coins in pay
         sender, receiver, value = data
         # should self.get_fee() also be multiplied with value
-        if self.coins[sender] - value + self.get_fee() < 0:
+        if self.coins[sender] - (value + self.get_fee()) < 0:
             raise ValueError
         self.coins[sender] -= value + self.get_fee()
         self.coins[receiver] += value
@@ -94,16 +95,19 @@ class LN(PlainBitcoin):
                 distances.append(math.inf)
         return distances
     
-    def update_balances(self, value, fee_intermediary, base_fee, path):
+    def update_balances(self, value, ln_fee, base_fee, path):
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
         # TODO: check whether this formula is correct.
-        if self.network.graph[sender][path[1]]['balance'] - (value + num_intermediaries * fee_intermediary + base_fee) < 0:
+        fee_intermediary = ln_fee * value + base_fee
+        cost_sender = value + num_intermediaries * fee_intermediary
+        if self.network.graph[sender][path[1]]['balance'] - cost_sender < 0:
             raise ValueError
-        self.network.graph[sender][path[1]]['balance'] -= value + num_intermediaries * fee_intermediary + base_fee
+        self.network.graph[sender][path[1]]['balance'] -= cost_sender
         self.network.graph[receiver][path[-2]]['balance'] += value
         # Now have to update the balances of the intermediaries.
+        # TODO: change this
         for i in range(num_intermediaries):
             self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
         return
@@ -136,6 +140,8 @@ class LN(PlainBitcoin):
         # TODO: check if some of the stuff that happens here should be in separate functions.
         # review: I like that the offchain option is a function, let's make on-chain and ln-open into separate functions as well
 
+        # off-chain option
+        # TODO: make separate function
         bitcoin_time = self.plain_bitcoin.get_delay()
         # is the fee fixed?
         # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
@@ -155,6 +161,7 @@ class LN(PlainBitcoin):
         # maybe make methods for new_channel time and fee as well
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee() * self.opening_transaction_size
+        # TODO: incorporate counterparty in min_amount
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
         # receiver doesn't need same minimum amount, what should he put on channel?
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
@@ -170,35 +177,37 @@ class LN(PlainBitcoin):
         # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
         sender_coins = 2 * (min_amount - value)
+        # counterparty_coins = value if receiver, else 0.
         counterparty_coins = 2 * (min_amount - value)
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
+            # TODO: check if counterparty_coins is needed
+            # TODO: new_channel_offchain_option empty if counterparty is receiver
             'payment_information': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, sender_coins, counterparty_coins, new_channel_offchain_option) }
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
         offchain_option = self.get_offchain_option(sender, receiver, value, future_payments)
-
+        # TODO: list shouldn't be fixed length
         return [bitcoin_option, new_channel_option, offchain_option]
 
     def do(self, payment_information):
         # Should do return sth?
         match payment_information['kind']:
             case 'onchain':
-                data = payment_information['data']
-                self.plain_bitcoin.pay(data)
+                self.plain_bitcoin.pay(payment_information['data'])
             case 'ln-open':
                 sender, receiver, value, counterparty, sender_coins, counterparty_coins, new_channel_offchain_option = payment_information['data']
+                # TODO: maybe make a method
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender and counterparty
-                amount_sender = - (sender_coins + self.plain_bitcoin.get_fee())
+                amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee())
                 self.plain_bitcoin.update_coins(sender, amount_sender)
-                amount_counterparty = - counterparty_coins
-                self.plain_bitcoin.update_coins(counterparty, amount_counterparty)
                 # use ln-pay here to make the off-chain payment after opening a new channel.
+                # TODO: cases for counterparty == receiver and counterparty != receiver
                 self.do(new_channel_offchain_option['payment_information'])
             case 'ln-pay':
                 offchain_path, value = payment_information['data']

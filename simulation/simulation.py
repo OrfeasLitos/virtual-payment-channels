@@ -38,8 +38,7 @@ class Simulation:
 
     def __next__(self):
         try:
-            payment = self.payments.popleft()
-            sender, receiver, value = payment
+            sender, receiver, value = self.payments.popleft()
             # TODO
             # 1. query network for payment methods that satisfy this payment
             #list_of_candidate_payment_methods = self.network.payment_options(payment)
@@ -55,9 +54,9 @@ class Simulation:
 
             payment_options = self.payment_method.get_payment_options(sender, receiver, value)
             # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
-            payment = self.utility.choose_payment_method(payment_options)
-            self.payment_method.do(payment)
-            return payment # ideally, one could take the initial network state and the list of payments and reach the final network state
+            payment_option = self.utility.choose_payment_method(payment_options)
+            self.payment_method.do(payment_option)
+            return payment_option # ideally, one could take the initial network state and the list of payments and reach the final network state
 
         except IndexError:
             raise StopIteration
