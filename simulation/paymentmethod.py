@@ -1,17 +1,17 @@
-from abc import ABC, abstractmethod
-from network import Network
 import math
-import networkx as nx
+from network import Network
 
 # units in millisatoshis
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
-# review: each class that inherits from PaymentMethod should be able to return a payment method, ready to be compared against others by Utility
+# review: each class that inherits from PaymentMethod should be able to return a payment method,
+# ready to be compared against others by Utility
 
 class PlainBitcoin():
     # TODO: check for reasonable default values
-    def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000, bitcoin_delay = 3600):
+    def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
+                bitcoin_delay = 3600):
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
@@ -20,10 +20,10 @@ class PlainBitcoin():
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
-    
+
     def get_fee(self):
         return self.bitcoin_fee
-    
+
     def get_delay(self):
         return self.bitcoin_delay
 
@@ -35,18 +35,14 @@ class PlainBitcoin():
             raise ValueError
         self.coins[sender] -= value + self.get_fee()
         self.coins[receiver] += value
-        return
 
     def update_coins(self, party, amount):
         if self.coins[party] + amount < 0:
             raise ValueError
         self.coins[party] += amount
-        return
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
-# review: this class should return an off-chain payment method (if any is found) and an open-new-channel payment method
-# review: bring back base_fee and add fee_rate. The per-hop fee is base_fee + fee_rate * payment_value
 class LN(PlainBitcoin):
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
@@ -69,14 +65,15 @@ class LN(PlainBitcoin):
 
     def sum_future_payments_to_receiver(self, receiver, future_payments):
         """
-        This method is used to determine a minimum amount that should be put on a new channel between sender and receiver.
+        This is used to determine a minimum amount that should be put on a new channel between sender and receiver.
         """
         future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[1] == receiver]
         return sum([payment[2] for payment in future_payments_to_receiver])
 
     def distance_to_future_parties(self, future_payments):
         """
-        Returns the sum of the distances of the future parties (if parties occur multiple times their distance is summed multiple times)
+        Returns the sum of the distances of the future parties
+        (if parties occur multiple times their distance is summed multiple times)
         """
         # review: this doesn't calculate _our_ distance from others but _future payers'_ distances from others
         # Yes therefore I made the first comment in get_payment_options. I still have to implement a filter method, so that we don't need the assumption there.
@@ -88,13 +85,13 @@ class LN(PlainBitcoin):
         distances = []
         for sender, receiver, value in future_payments:
             cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
-            if cost_and_path != None:
+            if cost_and_path is not None:
                 _, cheapest_path = cost_and_path
                 distances.append(len(cheapest_path)-1)
             else:
                 distances.append(math.inf)
         return distances
-    
+
     def update_balances(self, value, ln_fee, base_fee, path):
         num_intermediaries = len(path) - 2
         sender = path[0]
@@ -110,15 +107,12 @@ class LN(PlainBitcoin):
         # TODO: change this
         for i in range(num_intermediaries):
             self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
-        return
 
-    # This method is defined because we need the offchain option several times in get_payment_options.
-    # For every new_channel and if we do everything off-chain.
     def get_offchain_option(self, sender, receiver, value, future_payments):
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
         offchain_option = None
         offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
-        if offchain_cost_and_path != None:
+        if offchain_cost_and_path is not None:
             offchain_hops, offchain_path = offchain_cost_and_path
             offchain_time = self.get_payment_time(offchain_path)
             payment = (sender, receiver, value)
@@ -172,7 +166,8 @@ class LN(PlainBitcoin):
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
         # TODO: adjust future_payments.
-        new_channel_offchain_option = self.get_offchain_option(sender, receiver, value, future_payments[1:])
+        new_channel_offchain_option = self.get_offchain_option(
+            sender, receiver, value, future_payments[1:])
         self.network.close_channel(sender, receiver)
         # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
@@ -186,7 +181,9 @@ class LN(PlainBitcoin):
             'distance': new_channel_distance,
             # TODO: check if counterparty_coins is needed
             # TODO: new_channel_offchain_option empty if counterparty is receiver
-            'payment_information': { 'kind': 'ln-open', 'data': (sender, receiver, value, counterparty, sender_coins, counterparty_coins, new_channel_offchain_option) }
+            'payment_information': { 'kind': 'ln-open', 'data': (
+                sender, receiver, value, counterparty, sender_coins, counterparty_coins,
+                new_channel_offchain_option) }
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
@@ -200,7 +197,8 @@ class LN(PlainBitcoin):
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
             case 'ln-open':
-                sender, receiver, value, counterparty, sender_coins, counterparty_coins, new_channel_offchain_option = payment_information['data']
+                (sender, _, value, counterparty, sender_coins, counterparty_coins,
+                new_channel_offchain_option) = payment_information['data']
                 # TODO: maybe make a method
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender and counterparty
@@ -218,4 +216,3 @@ class LN(PlainBitcoin):
                     raise Exception("can't make payment")
             case _:
                 raise ValueError
-        return
