@@ -1,15 +1,16 @@
 # TODO: Check __eq__ method for simulation. Ensure that test fails if edges contain strings.
 
+import random
+import sys
+import numpy as np
+import unittest
+
 from simulation import Simulation, random_payments
 from paymentmethod import PlainBitcoin, LN
 from utility import Utility
 from knowledge import Knowledge
 from network import Network
 
-import random
-import sys
-import numpy as np
-import unittest
 
 def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
@@ -38,7 +39,8 @@ def test_cheapest_path():
     cost2, cheapest_path2 = network.find_cheapest_path(0, 4, 5)
     cost_and_path3 = network.find_cheapest_path(0, 4, 12)
     cost4, cheapest_path4 = network.find_cheapest_path(0, 4, 6)
-    return cost1 == 2 and cheapest_path1 == [0,1,4] and cost2 == 3 and cheapest_path2 == [0,2,3,4] and cost_and_path3 == None and cost4 == 4 and cheapest_path4 == [0,1,2,3,4]
+    return (cost1 == 2 and cheapest_path1 == [0,1,4] and cost2 == 3 and cheapest_path2 == [0,2,3,4]
+            and cost_and_path3 is None and cost4 == 4 and cheapest_path4 == [0,1,2,3,4])
 
 def test_get_payment_fee():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
@@ -54,7 +56,8 @@ def test_get_payment_fee():
         sender, receiver, value = payment
         path = lightning.network.find_cheapest_path(sender, receiver, value)
         num_hops = len(path) - 1
-        if get_payment_fee_with_path(base_fee, ln_fee, payment, path) != lightning.get_payment_fee(payment, num_hops):
+        if (get_payment_fee_with_path(base_fee, ln_fee, payment, path) !=
+            lightning.get_payment_fee(payment, num_hops)):
             output = False
     return output
 
@@ -63,15 +66,30 @@ def test_get_payment_options():
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     on_chain_centrality = lightning.network.get_harmonic_centrality()
-    on_chain_option = {'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality, 'distance': [1, 3, 3, 3], 'payment_information': {'kind': 'onchain', 'data': (0, 7, 1.0)}}
-    ln_open_centrality = {0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5, 5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0}
-    ln_open_option = {'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay, 'fee' : lightning.plain_bitcoin.get_fee() * lightning.opening_transaction_size,
-    'centrality' : ln_open_centrality, 'distance': [1,1,1,3], 'payment_information' : {'kind' : 'ln-open', 'data' : (0, 7, 1.0, 7, 5.2, 5.2,
-    {'delay': 0.1, 'fee': 1000.00002, 'centrality': {0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5, 5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0},
-    'distance': [1, 1, 3], 'payment_information': {'kind': 'ln-pay', 'data': ([0, 7], 1.0)}})}}
-    ln_pay_option = {'delay' : lightning.get_payment_time([0,1,4,7]), 'fee' : lightning.get_payment_fee((0, 7, 1.0), 3),
-    'centrality' : {0: 3.666666666666667, 1: 4.333333333333333, 2: 4.333333333333334, 3: 4.5, 4: 4.5, 5: 0, 6: 0, 7: 3.0, 8: 3.0, 9: 0},
-    'distance': [1,3,3,3], 'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}}
+    on_chain_option = {'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
+                    'distance': [1, 3, 3, 3],
+                    'payment_information': {'kind': 'onchain', 'data': (0, 7, 1.0)}}
+    ln_open_centrality = {0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
+                        5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0}
+    ln_open_option = {'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
+                    'fee' : lightning.plain_bitcoin.get_fee() * lightning.opening_transaction_size,
+    'centrality' : ln_open_centrality, 'distance': [1,1,1,3],
+    'payment_information' : {'kind' : 'ln-open',
+                            'data' : (0, 7, 1.0, 7, 5.2, 5.2,
+                                    {'delay': 0.1, 'fee': 1000.00002,
+                                    'centrality': {0: 4.333333333333333, 1: 4.333333333333333,
+                                                    2: 4.5, 3: 4.5, 4: 4.5, 5: 0, 6: 0,
+                                                    7: 3.8333333333333335, 8: 3.0, 9: 0},
+                                    'distance': [1, 1, 3],
+                                    'payment_information': {'kind': 'ln-pay',
+                                                            'data': ([0, 7], 1.0)}})}}
+    ln_pay_option = {'delay' : lightning.get_payment_time([0,1,4,7]),
+                    'fee' : lightning.get_payment_fee((0, 7, 1.0), 3),
+                    'centrality' : {0: 3.666666666666667, 1: 4.333333333333333,
+                                    2: 4.333333333333334, 3: 4.5, 4: 4.5, 5: 0,
+                                    6: 0, 7: 3.0, 8: 3.0, 9: 0},
+                    'distance': [1,3,3,3],
+                    'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}}
     return [on_chain_option, ln_open_option, ln_pay_option] == payment_options
 
 
@@ -79,8 +97,6 @@ def test_choose_payment_method():
     lightning = make_example_network()
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
-    on_chain_centrality = lightning.network.get_harmonic_centrality()
-    on_chain_option = {'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality, 'distance': [1, 3, 3, 3], 'payment_information': {'kind': 'onchain', 'data': (0, 7, 1.0)}}
     def utility_function(fee, delay, distance, centrality):
         distance_array = np.array(distance)
         distance_array = 1 / distance_array
@@ -172,10 +188,13 @@ def test_update_balances():
     value = 2
     lightning1.update_balances(value, fee_intermediary, base_fee1, path)
     # sender 0 has 6. in the beginning on the channel to 1
-    # after update he should have 2 less for the transaction to 7, 1 less for the base fee and 0.00004 less for the intermediaries
+    # after update he should have 2 less for the transaction to 7,
+    # 1 less for the base fee and 0.00004 less for the intermediaries
     # the intermediaries should have 0.00002 more each on the channel with the previous party
-    test1 =  (lightning1.network.graph[0][1]['balance'] == 6-3-0.00004 and lightning1.network.graph[1][0]['balance'] == 7.00002
-            and lightning1.network.graph[4][1]['balance'] == 8.00002 and lightning1.network.graph[7][4]['balance'] == 10.)
+    test1 =  (lightning1.network.graph[0][1]['balance'] == 6-3-0.00004 and
+            lightning1.network.graph[1][0]['balance'] == 7.00002 and
+            lightning1.network.graph[4][1]['balance'] == 8.00002 and
+            lightning1.network.graph[7][4]['balance'] == 10.)
     lightning2 = make_example_network()
     base_fee2 = lightning2.base_fee
     test2 = False
@@ -187,11 +206,11 @@ def test_update_balances():
 
 if __name__ == "__main__":
     #assert(is_deterministic())
-    assert(test_LN())
-    assert(test_cheapest_path())
-    assert(test_get_payment_fee())
+    assert test_LN()
+    assert test_cheapest_path()
+    assert test_get_payment_fee()
     #assert(test_update_balances())
-    assert(test_get_payment_options())
+    assert test_get_payment_options()
     # TODO: fee's have changed, account for that in the tests.
     #assert(test_do())
     test_choose_payment_method()

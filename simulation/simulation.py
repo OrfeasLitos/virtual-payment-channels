@@ -7,7 +7,7 @@ from utility import Utility
 
 def random_payments(num_pays, players, max_pay):
     res = collections.deque()
-    for i in range(num_pays):
+    for _ in range(num_pays):
         sender = random.randrange(players)
         receiver = random.randrange(players)
         while receiver == sender:
@@ -56,7 +56,8 @@ class Simulation:
             # Here method means just PlainBitcoin vs new channel on-chain vs new channel off-chain (for want of a better word).
             payment_option = self.utility.choose_payment_method(payment_options)
             self.payment_method.do(payment_option)
-            return payment_option # ideally, one could take the initial network state and the list of payments and reach the final network state
+            # ideally, one could take the initial network state and the list of payments and reach the final network state
+            return payment_option
 
         except IndexError:
             raise StopIteration
@@ -70,8 +71,7 @@ class Simulation:
     def __eq__(self, other):
         # two simulations are equal iff all attributes are equal.
         return (
-            self.network == other.network
-            and self.payments == other.payments
+            self.payments == other.payments
             and self.payment_method == other.payment_method
             and self.knowledge == other.knowledge
             and self.utility == other.utility
@@ -120,4 +120,3 @@ if __name__ == "__main__":
                             # for step in sim:
                             #    print(step)
     """
-
