@@ -147,7 +147,7 @@ def test_LN():
     return result == 3.6
 
 def test_do():
-    lightning = make_example_network(base_fee = 1)
+    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     # first test on-chain option
@@ -160,7 +160,7 @@ def test_do():
     # now test off-chain option
     payment_information_offchain = payment_options[2]['payment_information']
     # path is [0,1,4,7]
-    lightning = make_example_network(base_fee=1)
+    lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
     lightning.do(payment_information_offchain)
     test_offchain =  lightning.plain_bitcoin.coins[0] == MAX_COINS and lightning.plain_bitcoin.coins[7] == MAX_COINS
     np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'], 6-2-0.00004)
@@ -169,7 +169,7 @@ def test_do():
     np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 9.)
     # now test new-channel option
     payment_information_new_channel = payment_options[1]['payment_information']
-    lightning = make_example_network(base_fee=1)
+    lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
     min_amount = lightning.sum_future_payments_to_receiver(7, future_payments)
@@ -195,7 +195,7 @@ def test_update_balances():
             lightning1.network.graph[1][0]['balance'] == 7.00002 and
             lightning1.network.graph[4][1]['balance'] == 8.00002 and
             lightning1.network.graph[7][4]['balance'] == 10.)
-    lightning2 = make_example_network()
+    lightning2 = make_example_network(base_fee=1000, ln_fee = 0.00002)
     base_fee2 = lightning2.base_fee
     test2 = False
     try:
