@@ -104,9 +104,11 @@ class LN(PlainBitcoin):
         self.network.graph[sender][path[1]]['balance'] -= cost_sender
         self.network.graph[receiver][path[-2]]['balance'] += value
         # Now have to update the balances of the intermediaries.
-        # TODO: change this
-        for i in range(num_intermediaries):
-            self.network.graph[path[i+1]][path[i]]['balance'] += fee_intermediary
+        for i in range(1, num_intermediaries + 1):
+            received = num_intermediaries * fee_intermediary
+            transfered = received - fee_intermediary
+            self.network.graph[path[i]][path[i-1]]['balance'] += received
+            self.network.graph[path[i]][path[i+1]]['balance'] -= transfered
 
     def get_offchain_option(self, sender, receiver, value, future_payments):
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option

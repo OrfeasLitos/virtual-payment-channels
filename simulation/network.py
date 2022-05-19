@@ -44,12 +44,14 @@ class Network:
             return math.inf
         return weight_function
 
+    
     def find_cheapest_path(self, sender, receiver, amount):
         try:
             weight_function = self.get_weight_function(amount)
             cheapest_path = nx.shortest_path(self.graph, sender, receiver, weight_function)
             # this is a check that the cheapest path really can be used for a transaction
             # (cheapest path could still have distance math.inf)
+            # TODO: incorporate fee in this check.
             for i in range(len(cheapest_path)-1):
                 sender = cheapest_path[i]
                 receiver = cheapest_path[i+1]
