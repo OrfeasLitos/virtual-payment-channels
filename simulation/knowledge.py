@@ -16,5 +16,12 @@ class Knowledge:
         return self.knowledge_function(self.party, self.payments)
 
     def __eq__(self, other):
+        # review: this is my favorite style, if you like this try to apply this everywhere:
+        # return (
+        #     self.party == other.party
+        #     and self.payments == other.payments
+        #     and self.knowledge_function == other.knowledge_function
+        # )
+        # review: note that the parentheses are redundant and the first clause could also go to the `return` line
         return (self.party == other.party and self.payments == other.payments
         and self.knowledge_function == other.knowledge_function)

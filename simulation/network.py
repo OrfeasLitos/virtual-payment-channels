@@ -22,6 +22,8 @@ class Network:
 
     def add_channel(self, idA, balA, idB, balB):
         assert(balA > 0 or balB > 0)
+        # review: {...} defines a dict, so dict({...}) is redundant
+        # review: consider using my favorite style (as in knowledge.py)
         edges = [(idA, idB, dict({'balance': balA, 'cost' : UNIT_COST})),
                 (idB, idA, dict({'balance': balB, 'cost' : UNIT_COST}))]
         self.graph.add_edges_from(edges)
@@ -44,7 +46,6 @@ class Network:
             return math.inf
         return weight_function
 
-    
     def find_cheapest_path(self, sender, receiver, amount):
         try:
             weight_function = self.get_weight_function(amount)

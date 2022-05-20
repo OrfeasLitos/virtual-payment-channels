@@ -67,12 +67,14 @@ def test_get_payment_options():
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     on_chain_centrality = lightning.network.get_harmonic_centrality()
     on_chain_option = {'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
+    # review: I don't like identations that depend on the length of variable names
                     'distance': [1, 3, 3, 3],
                     'payment_information': {'kind': 'onchain', 'data': (0, 7, 1.0)}}
     ln_open_centrality = {0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
                         5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0}
     ln_open_option = {'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
                     'fee' : lightning.plain_bitcoin.get_fee() * lightning.opening_transaction_size,
+    # review: next two lines should be indented 4 spaces
     'centrality' : ln_open_centrality, 'distance': [1,1,1,3],
     'payment_information' : {'kind' : 'ln-open',
                             'data' : (0, 7, 1.0, 7, 5.2, 5.2,
@@ -191,6 +193,7 @@ def test_update_balances():
     # after update he should have 2 less for the transaction to 7,
     # 1 less for the base fee and 0.00004 less for the intermediaries
     # the intermediaries should have 0.00002 more each on the channel with the previous party
+    # review: move `and`s to line beginnings, remove parentheses, indent 4 spaces
     test1 =  (lightning1.network.graph[0][1]['balance'] == 6-3-0.00004 and
             lightning1.network.graph[1][0]['balance'] == 7.00002 and
             lightning1.network.graph[4][1]['balance'] == 8.00002 and

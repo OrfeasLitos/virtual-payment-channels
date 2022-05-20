@@ -93,6 +93,7 @@ class LN(PlainBitcoin):
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
+        # review: we could also get `fee_intermediary` directly as input, to reduce parameters
         fee_intermediary = ln_fee * value + base_fee
         cost_sender = value + num_intermediaries * fee_intermediary
         if self.network.graph[sender][path[1]]['balance'] - cost_sender < 0:
@@ -101,6 +102,7 @@ class LN(PlainBitcoin):
         self.network.graph[receiver][path[-2]]['balance'] += value
         # Now have to update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
+            # review: should be `received = (num_intermediaries - i) * fee_intermediary + value
             received = num_intermediaries * fee_intermediary
             transfered = received - fee_intermediary
             self.network.graph[path[i]][path[i-1]]['balance'] += received
@@ -156,11 +158,16 @@ class LN(PlainBitcoin):
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
             'payment_information': { 'kind': 'ln-open', 'data': (
+            # review: like above, `)}` in new line. Also split tuple elements evenly in two lines
                 sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) }
         }
         return new_channel_option
 
     def get_offchain_option(self, sender, receiver, value, future_payments):
+        # review: if offchain_cost_path is None: return None
+        # review: otherwise return the dict immediately
+        # review: this way we don't need the offchain_option var at all
+        # review: and the logic is more "local"
         offchain_option = None
         offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
         if offchain_cost_and_path is not None:
@@ -168,7 +175,9 @@ class LN(PlainBitcoin):
             offchain_time = self.get_payment_time(offchain_path)
             payment = (sender, receiver, value)
             offchain_fee = self.get_payment_fee(payment, offchain_hops)
+            # review: we should do the payment, get centrality and distance, undo the payment
             offchain_centrality = self.network.get_harmonic_centrality()
+            # review: rename distance_to_future_parties to get_distance_to_future_parties for homogeneity
             offchain_distance = self.distance_to_future_parties(future_payments)
             offchain_option = {
                 'delay': offchain_time,
@@ -196,6 +205,7 @@ class LN(PlainBitcoin):
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
             case 'ln-open':
+                # review: lint
                 (sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) = (
                     payment_information['data'])
                 counterparty_coins = value if counterparty == receiver else 0
