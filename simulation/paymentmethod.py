@@ -174,7 +174,6 @@ class LN(PlainBitcoin):
         # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
         sender_coins = min(self.plain_bitcoin.coins[sender] , 2 * min_amount - value)
-        counterparty_coins = value if counterparty == receiver else 0
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
@@ -183,8 +182,7 @@ class LN(PlainBitcoin):
             # TODO: check if counterparty_coins is needed
             # TODO: new_channel_offchain_option empty if counterparty is receiver
             'payment_information': { 'kind': 'ln-open', 'data': (
-                sender, receiver, value, counterparty, sender_coins, counterparty_coins,
-                new_channel_offchain_option) }
+                sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) }
         }
 
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
@@ -198,15 +196,15 @@ class LN(PlainBitcoin):
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
             case 'ln-open':
-                (sender, receiver, value, counterparty, sender_coins, counterparty_coins,
-                new_channel_offchain_option) = payment_information['data']
+                (sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) = (
+                    payment_information['data'])
                 # TODO: maybe make a method
+                counterparty_coins = value if counterparty == receiver else 0
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
-                # next update the coins of sender and counterparty
+                # next update the coins of sender
                 amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee())
                 self.plain_bitcoin.update_coins(sender, amount_sender)
                 # use ln-pay here to make the off-chain payment after opening a new channel.
-                # TODO: cases for counterparty == receiver and counterparty != receiver
                 if counterparty != receiver:
                     self.do(new_channel_offchain_option['payment_information'])
             case 'ln-pay':
