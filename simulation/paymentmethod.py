@@ -141,10 +141,15 @@ class LN(PlainBitcoin):
         new_channel_offchain_option = self.get_offchain_option(
             sender, receiver, value, future_payments[1:])
         self.network.close_channel(sender, receiver)
-        # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
-        # TODO: adjust onchain coins of sender
-        sender_coins = min(self.plain_bitcoin.coins[sender] , 2 * min_amount - value)
+        # TODO: the formula below isn't entirely correct yet, as it should also include possible offchain fees
+        # in case the counterparty is not the receiver.
+        # TODO: discuss what to do if sender doesn't have enough money for future transactions,
+        # but could open channel and make the transaction.
+        if value + new_channel_fee > self.plain_bitcoin.coins[sender]:
+            raise ValueError
+        sender_coins = min(self.plain_bitcoin.coins[sender] , 2 * min_amount) - value - new_channel_fee
+        # TODO: check whether sender has enough onchain coins.
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
@@ -184,7 +189,7 @@ class LN(PlainBitcoin):
 
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
-
+        # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments, counterparty)
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
