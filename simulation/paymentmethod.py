@@ -110,6 +110,21 @@ class LN(PlainBitcoin):
             self.network.graph[path[i]][path[i-1]]['balance'] += received
             self.network.graph[path[i]][path[i+1]]['balance'] -= transfered
 
+    def get_onchain_option(self, sender, receiver, value, future_payments):
+        onchain_time = self.plain_bitcoin.get_delay()
+        # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
+        onchain_fee = self.plain_bitcoin.get_fee()
+        onchain_centrality = self.network.get_harmonic_centrality()
+        onchain_distance = self.distance_to_future_parties(future_payments)
+        onchain_option = {
+            'delay': onchain_time,
+            'fee': onchain_fee,
+            'centrality': onchain_centrality,
+            'distance': onchain_distance,
+            'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
+        }
+        return onchain_option
+
     def get_offchain_option(self, sender, receiver, value, future_payments):
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
         offchain_option = None
@@ -136,23 +151,7 @@ class LN(PlainBitcoin):
         # TODO: check if some of the stuff that happens here should be in separate functions.
         # review: I like that the offchain option is a function, let's make on-chain and ln-open into separate functions as well
 
-        # off-chain option
-        # TODO: make separate function
-        bitcoin_time = self.plain_bitcoin.get_delay()
-        # is the fee fixed?
-        # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
-        bitcoin_fee = self.plain_bitcoin.get_fee()
-        # if centrality or distance was already a attribute I could use this attribute straightaway as PlainBitcoin payment doesn't change the network.
-        bitcoin_centrality = self.network.get_harmonic_centrality()
-        bitcoin_distance = self.distance_to_future_parties(future_payments)
-        bitcoin_option = {
-            'delay': bitcoin_time,
-            'fee': bitcoin_fee,
-            'centrality': bitcoin_centrality,
-            'distance': bitcoin_distance,
-            'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
-        }
-
+        onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
         # maybe make methods for new_channel time and fee as well
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
@@ -188,7 +187,7 @@ class LN(PlainBitcoin):
         # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
         offchain_option = self.get_offchain_option(sender, receiver, value, future_payments)
         # TODO: list shouldn't be fixed length
-        return [bitcoin_option, new_channel_option, offchain_option]
+        return [onchain_option, new_channel_option, offchain_option]
 
     def do(self, payment_information):
         # Should do return sth?
