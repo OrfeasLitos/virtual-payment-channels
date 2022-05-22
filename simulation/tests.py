@@ -66,32 +66,39 @@ def test_get_payment_options():
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     on_chain_centrality = lightning.network.get_harmonic_centrality()
-    on_chain_option = {'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
+    on_chain_option = {
+        'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
-                    'distance': [1, 3, 3, 3],
-                    'payment_information': {'kind': 'onchain', 'data': (0, 7, 1.0)}}
-    ln_open_centrality = {0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
-                        5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0}
-    ln_open_option = {'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
-                    'fee' : lightning.plain_bitcoin.get_fee() * lightning.opening_transaction_size,
-    # review: next two lines should be indented 4 spaces
-    'centrality' : ln_open_centrality, 'distance': [1,1,1,3],
-    'payment_information' : {'kind' : 'ln-open',
-                            'data' : (0, 7, 1.0, 7, 5.2, 5.2,
-                                    {'delay': 0.1, 'fee': 1000.00002,
-                                    'centrality': {0: 4.333333333333333, 1: 4.333333333333333,
-                                                    2: 4.5, 3: 4.5, 4: 4.5, 5: 0, 6: 0,
-                                                    7: 3.8333333333333335, 8: 3.0, 9: 0},
-                                    'distance': [1, 1, 3],
-                                    'payment_information': {'kind': 'ln-pay',
-                                                            'data': ([0, 7], 1.0)}})}}
-    ln_pay_option = {'delay' : lightning.get_payment_time([0,1,4,7]),
-                    'fee' : lightning.get_payment_fee((0, 7, 1.0), 3),
-                    'centrality' : {0: 3.666666666666667, 1: 4.333333333333333,
-                                    2: 4.333333333333334, 3: 4.5, 4: 4.5, 5: 0,
-                                    6: 0, 7: 3.0, 8: 3.0, 9: 0},
-                    'distance': [1,3,3,3],
-                    'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}}
+        'distance': [1, 3, 3, 3], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}}
+    ln_open_centrality = {
+        0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5, 
+        5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0
+    }
+    ln_open_option = {
+        'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
+        'fee' : lightning.plain_bitcoin.get_fee() * lightning.opening_transaction_size,
+        'centrality' : ln_open_centrality, 'distance': [1,1,1,3],
+        'payment_information' : {
+            'kind' : 'ln-open',
+            'data' : (0, 7, 1.0, 7, 5.2, 5.2, {
+                'delay': 0.1, 'fee': 1000.00002,
+                'centrality': {
+                    0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
+                    5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0},
+                'distance': [1, 1, 3],
+                'payment_information': {'kind': 'ln-pay', 'data': ([0, 7], 1.0)}
+            })
+        }
+    }
+    ln_pay_option = {
+        'delay' : lightning.get_payment_time([0,1,4,7]),
+        'fee' : lightning.get_payment_fee((0, 7, 1.0), 3),
+        'centrality' : {
+            0: 3.666666666666667, 1: 4.333333333333333, 2: 4.333333333333334, 3: 4.5,
+            4: 4.5, 5: 0, 6: 0, 7: 3.0, 8: 3.0, 9: 0
+        },
+        'distance': [1,3,3,3],
+        'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}}
     return [on_chain_option, ln_open_option, ln_pay_option] == payment_options
 
 
