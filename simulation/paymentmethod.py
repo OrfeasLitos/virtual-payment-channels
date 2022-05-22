@@ -130,22 +130,25 @@ class LN(PlainBitcoin):
         # review: our initial coins should be slightly higher than the minimum needed,
         # review: in order to accommodate for future payments and act as intermediary.
         # review: we can say e.g. `min(our on-chain coins, 2 * (min_amount - value))` and we can improve from there
-        self.network.add_channel(sender, min_amount, receiver, min_amount)
-        new_channel_centrality = self.network.get_harmonic_centrality()
-        new_channel_distance = self.distance_to_future_parties(future_payments)
-        # TODO: adjust future_payments.
-        new_channel_offchain_option = self.get_offchain_option(
-            sender, receiver, value, future_payments[1:])
-        self.network.close_channel(sender, receiver)
-        counterparty = receiver
-        # TODO: the formula below isn't entirely correct yet, as it should also include possible offchain fees
+        sender_coins = min(self.plain_bitcoin.coins[sender] , 2 * min_amount) - value - new_channel_fee
+        if sender_coins + value + new_channel_fee > self.plain_bitcoin.coins[sender]:
+            raise ValueError
+        # TODO: the formula above isn't entirely correct yet, as it should also include possible offchain fees
         # in case the counterparty is not the receiver.
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
         # but could open channel and make the transaction.
-        if value + new_channel_fee > self.plain_bitcoin.coins[sender]:
-            raise ValueError
-        sender_coins = min(self.plain_bitcoin.coins[sender] , 2 * min_amount) - value - new_channel_fee
-        # TODO: check whether sender has enough onchain coins.
+        self.network.add_channel(sender, min_amount, counterparty, value)
+        new_channel_centrality = self.network.get_harmonic_centrality()
+        new_channel_distance = self.distance_to_future_parties(future_payments)
+        
+        if counterparty == receiver:
+            # TODO: adjust future_payments.
+            new_channel_offchain_option = self.get_offchain_option(
+                sender, receiver, value, future_payments[1:])
+        else:
+            new_channel_offchain_option = None
+        
+        self.network.close_channel(sender, counterparty)
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
