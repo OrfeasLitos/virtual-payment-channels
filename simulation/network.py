@@ -22,10 +22,10 @@ class Network:
 
     def add_channel(self, idA, balA, idB, balB):
         assert(balA > 0 or balB > 0)
-        # review: {...} defines a dict, so dict({...}) is redundant
-        # review: consider using my favorite style (as in knowledge.py)
-        edges = [(idA, idB, dict({'balance': balA, 'cost' : UNIT_COST})),
-                (idB, idA, dict({'balance': balB, 'cost' : UNIT_COST}))]
+        edges = [
+            (idA, idB, {'balance': balA, 'cost' : UNIT_COST}),
+            (idB, idA, {'balance': balB, 'cost' : UNIT_COST})
+        ]
         self.graph.add_edges_from(edges)
         self.edge_id += 1
 

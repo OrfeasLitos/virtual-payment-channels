@@ -67,7 +67,7 @@ class LN(PlainBitcoin):
         future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[1] == receiver]
         return sum([payment[2] for payment in future_payments_to_receiver])
 
-    def distance_to_future_parties(self, future_payments):
+    def get_distance_to_future_parties(self, future_payments):
         """
         Returns the sum of the distances of the future parties
         (if parties occur multiple times their distance is summed multiple times)
@@ -102,8 +102,7 @@ class LN(PlainBitcoin):
         self.network.graph[receiver][path[-2]]['balance'] += value
         # Now have to update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
-            # review: should be `received = (num_intermediaries - i) * fee_intermediary + value
-            received = num_intermediaries * fee_intermediary
+            received = (num_intermediaries - i) * fee_intermediary
             transfered = received - fee_intermediary
             self.network.graph[path[i]][path[i-1]]['balance'] += received
             self.network.graph[path[i]][path[i+1]]['balance'] -= transfered
@@ -115,7 +114,7 @@ class LN(PlainBitcoin):
         if onchain_fee + value > self.plain_bitcoin.coins[sender]:
             return None
         onchain_centrality = self.network.get_harmonic_centrality()
-        onchain_distance = self.distance_to_future_parties(future_payments)
+        onchain_distance = self.get_distance_to_future_parties(future_payments)
         onchain_option = {
             'delay': onchain_time,
             'fee': onchain_fee,
@@ -143,7 +142,7 @@ class LN(PlainBitcoin):
         # but could open channel and make the transaction.
         self.network.add_channel(sender, min_amount, counterparty, value)
         new_channel_centrality = self.network.get_harmonic_centrality()
-        new_channel_distance = self.distance_to_future_parties(future_payments)
+        new_channel_distance = self.get_distance_to_future_parties(future_payments)
         if counterparty == receiver:
             # TODO: adjust future_payments. Maybe in Simulation
             new_channel_offchain_option = self.get_offchain_option(
@@ -157,9 +156,13 @@ class LN(PlainBitcoin):
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
-            'payment_information': { 'kind': 'ln-open', 'data': (
-            # review: like above, `)}` in new line. Also split tuple elements evenly in two lines
-                sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) }
+            'payment_information': {
+                'kind': 'ln-open',
+                'data': (
+                sender, receiver, value, counterparty,
+                sender_coins, new_channel_offchain_option
+                )
+            }
         }
         return new_channel_option
 
@@ -177,8 +180,7 @@ class LN(PlainBitcoin):
             offchain_fee = self.get_payment_fee(payment, offchain_hops)
             # review: we should do the payment, get centrality and distance, undo the payment
             offchain_centrality = self.network.get_harmonic_centrality()
-            # review: rename distance_to_future_parties to get_distance_to_future_parties for homogeneity
-            offchain_distance = self.distance_to_future_parties(future_payments)
+            offchain_distance = self.get_distance_to_future_parties(future_payments)
             offchain_option = {
                 'delay': offchain_time,
                 'fee': offchain_fee,

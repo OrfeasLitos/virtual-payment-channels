@@ -23,5 +23,8 @@ class Knowledge:
         #     and self.knowledge_function == other.knowledge_function
         # )
         # review: note that the parentheses are redundant and the first clause could also go to the `return` line
-        return (self.party == other.party and self.payments == other.payments
-        and self.knowledge_function == other.knowledge_function)
+        return (
+            self.party == other.party
+            and self.payments == other.payments
+            and self.knowledge_function == other.knowledge_function
+        )
