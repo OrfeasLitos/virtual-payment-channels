@@ -5,9 +5,6 @@ from network import Network
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
-# review: each class that inherits from PaymentMethod should be able to return a payment method,
-# ready to be compared against others by Utility
-
 class PlainBitcoin():
     # TODO: check for reasonable default values
     def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
@@ -96,7 +93,6 @@ class LN(PlainBitcoin):
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
-        # TODO: check whether this formula is correct.
         fee_intermediary = ln_fee * value + base_fee
         cost_sender = value + num_intermediaries * fee_intermediary
         if self.network.graph[sender][path[1]]['balance'] - cost_sender < 0:
@@ -184,8 +180,6 @@ class LN(PlainBitcoin):
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
-        # TODO: check if some of the stuff that happens here should be in separate functions.
-        # review: I like that the offchain option is a function, let's make on-chain and ln-open into separate functions as well
 
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
@@ -198,14 +192,12 @@ class LN(PlainBitcoin):
         return [onchain_option, new_channel_option, offchain_option]
 
     def do(self, payment_information):
-        # Should do return sth?
         match payment_information['kind']:
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
             case 'ln-open':
                 (sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) = (
                     payment_information['data'])
-                # TODO: maybe make a method
                 counterparty_coins = value if counterparty == receiver else 0
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender
