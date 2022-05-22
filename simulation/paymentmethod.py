@@ -115,14 +115,13 @@ class LN(PlainBitcoin):
             return None
         onchain_centrality = self.network.get_harmonic_centrality()
         onchain_distance = self.get_distance_to_future_parties(future_payments)
-        onchain_option = {
+        return {
             'delay': onchain_time,
             'fee': onchain_fee,
             'centrality': onchain_centrality,
             'distance': onchain_distance,
             'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
         }
-        return onchain_option
 
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
@@ -151,7 +150,7 @@ class LN(PlainBitcoin):
             new_channel_offchain_option = None
         self.network.close_channel(sender, counterparty)
 
-        new_channel_option = {
+        return {
             'delay': new_channel_time,
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
@@ -164,7 +163,6 @@ class LN(PlainBitcoin):
                 )
             }
         }
-        return new_channel_option
 
     def get_offchain_option(self, sender, receiver, value, future_payments):
         # review: if offchain_cost_path is None: return None
