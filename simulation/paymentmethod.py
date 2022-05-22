@@ -110,6 +110,8 @@ class LN(PlainBitcoin):
         onchain_time = self.plain_bitcoin.get_delay()
         # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
         onchain_fee = self.plain_bitcoin.get_fee()
+        if onchain_fee + value > self.plain_bitcoin.coins[sender]:
+            return None
         onchain_centrality = self.network.get_harmonic_centrality()
         onchain_distance = self.distance_to_future_parties(future_payments)
         onchain_option = {
@@ -141,7 +143,7 @@ class LN(PlainBitcoin):
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
         if counterparty == receiver:
-            # TODO: adjust future_payments.
+            # TODO: adjust future_payments. Maybe in Simulation
             new_channel_offchain_option = self.get_offchain_option(
                 sender, receiver, value, future_payments[1:])
         else:
@@ -153,14 +155,12 @@ class LN(PlainBitcoin):
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
-            # TODO: new_channel_offchain_option empty if counterparty is receiver
             'payment_information': { 'kind': 'ln-open', 'data': (
                 sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) }
         }
         return new_channel_option
 
     def get_offchain_option(self, sender, receiver, value, future_payments):
-        # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
         offchain_option = None
         offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
         if offchain_cost_and_path is not None:
@@ -177,7 +177,6 @@ class LN(PlainBitcoin):
                 'distance': offchain_distance,
                 'payment_information': {'kind': 'ln-pay', 'data': (offchain_path, value)}
             }
-
         return offchain_option
 
     def get_payment_options(self, sender, receiver, value, future_payments):
