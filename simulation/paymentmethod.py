@@ -165,28 +165,23 @@ class LN(PlainBitcoin):
         }
 
     def get_offchain_option(self, sender, receiver, value, future_payments):
-        # review: if offchain_cost_path is None: return None
-        # review: otherwise return the dict immediately
-        # review: this way we don't need the offchain_option var at all
-        # review: and the logic is more "local"
-        offchain_option = None
         offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
-        if offchain_cost_and_path is not None:
-            offchain_hops, offchain_path = offchain_cost_and_path
-            offchain_time = self.get_payment_time(offchain_path)
-            payment = (sender, receiver, value)
-            offchain_fee = self.get_payment_fee(payment, offchain_hops)
-            # review: we should do the payment, get centrality and distance, undo the payment
-            offchain_centrality = self.network.get_harmonic_centrality()
-            offchain_distance = self.get_distance_to_future_parties(future_payments)
-            offchain_option = {
-                'delay': offchain_time,
-                'fee': offchain_fee,
-                'centrality': offchain_centrality,
-                'distance': offchain_distance,
-                'payment_information': {'kind': 'ln-pay', 'data': (offchain_path, value)}
-            }
-        return offchain_option
+        if offchain_cost_and_path is None:
+            return None
+        offchain_hops, offchain_path = offchain_cost_and_path
+        offchain_time = self.get_payment_time(offchain_path)
+        payment = (sender, receiver, value)
+        offchain_fee = self.get_payment_fee(payment, offchain_hops)
+        # review: we should do the payment, get centrality and distance, undo the payment
+        offchain_centrality = self.network.get_harmonic_centrality()
+        offchain_distance = self.get_distance_to_future_parties(future_payments)
+        return {
+            'delay': offchain_time,
+            'fee': offchain_fee,
+            'centrality': offchain_centrality,
+            'distance': offchain_distance,
+            'payment_information': {'kind': 'ln-pay', 'data': (offchain_path, value)}
+        }
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         # atm assume for simplicity that future_payments are only payments the sender makes.
