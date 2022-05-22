@@ -140,15 +140,14 @@ class LN(PlainBitcoin):
         self.network.add_channel(sender, min_amount, counterparty, value)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.distance_to_future_parties(future_payments)
-        
         if counterparty == receiver:
             # TODO: adjust future_payments.
             new_channel_offchain_option = self.get_offchain_option(
                 sender, receiver, value, future_payments[1:])
         else:
             new_channel_offchain_option = None
-        
         self.network.close_channel(sender, counterparty)
+
         new_channel_option = {
             'delay': new_channel_time,
             'fee': new_channel_fee,
@@ -189,10 +188,9 @@ class LN(PlainBitcoin):
         # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments, counterparty)
-        # TODO: check if there's a better method to say that there is no path than to return None as offchain_option
         offchain_option = self.get_offchain_option(sender, receiver, value, future_payments)
-        # TODO: list shouldn't be fixed length
-        return [onchain_option, new_channel_option, offchain_option]
+        options = [onchain_option, new_channel_option, offchain_option]
+        return [option for option in options if option is not None]
 
     def do(self, payment_information):
         match payment_information['kind']:
