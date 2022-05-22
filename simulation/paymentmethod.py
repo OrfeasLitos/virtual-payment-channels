@@ -6,7 +6,6 @@ from network import Network
 # default max coins loosely copied from real world USD figures
 
 class PlainBitcoin():
-    # TODO: check for reasonable default values
     def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
                 bitcoin_delay = 3600):
         self.max_coins = max_coins
@@ -24,19 +23,20 @@ class PlainBitcoin():
     def get_delay(self):
         return self.bitcoin_delay
 
-    def pay(self, data):
-        # TODO: use update coins in pay
-        sender, receiver, value = data
-        # should self.get_fee() also be multiplied with value
-        if self.coins[sender] - (value + self.get_fee()) < 0:
-            raise ValueError
-        self.coins[sender] -= value + self.get_fee()
-        self.coins[receiver] += value
-
     def update_coins(self, party, amount):
         if self.coins[party] + amount < 0:
             raise ValueError
         self.coins[party] += amount
+
+    def pay(self, data):
+        sender, receiver, value = data
+        # should self.get_fee() also be multiplied with value
+        try:
+            amount_sender = - value - self.get_fee()
+            self.update_coins(sender, amount_sender)
+            self.update_coins(receiver, value)
+        except ValueError:
+            raise
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
