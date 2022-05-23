@@ -113,7 +113,7 @@ class LN(PlainBitcoin):
         if pay == True and self.update_possible(value, ln_fee, base_fee, path) == False:
             raise ValueError
         # TODO: think about if this is understandable.
-        # It's shorter than making a function that undoes that update,
+        # It's shorter than making ifs for the updates,
         # but the code is harder to understand at first glance.
         op1 = operator.add if pay == True else operator.sub
         op2 = operator.sub if pay == True else operator.add
@@ -197,12 +197,12 @@ class LN(PlainBitcoin):
         offchain_time = self.get_payment_time(offchain_path)
         payment = (sender, receiver, value)
         payment_information = {'kind': 'ln-pay', 'data': (offchain_path, value)}
-        #self.do(payment_information)
+        self.do(payment_information)
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
         # review: we should do the payment, get centrality and distance, undo the payment
         offchain_centrality = self.network.get_harmonic_centrality()
         offchain_distance = self.get_distance_to_future_parties(future_payments)
-        #self.undo(payment_information)
+        self.undo(payment_information)
         return {
             'delay': offchain_time,
             'fee': offchain_fee,
@@ -257,6 +257,6 @@ class LN(PlainBitcoin):
                 pass
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
-                #self.get_previous_balances(value, self.ln_fee, self.base_fee, offchain_path)
+                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, False)
             case _:
                 raise ValueError

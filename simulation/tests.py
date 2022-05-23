@@ -46,11 +46,10 @@ def test_get_payment_fee():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
         sender, receiver, value = payment
         return (base_fee +  value * ln_fee) * (len(path) - 1)
-    base_fee = 1000
+    base_fee = 1
     ln_fee = 0.00002
-    lightning = make_example_network()
+    lightning = make_example_network(base_fee, ln_fee)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     output = True
     for payment in future_payments:
         sender, receiver, value = payment
@@ -103,7 +102,7 @@ def test_get_payment_options():
 
 
 def test_choose_payment_method():
-    lightning = make_example_network()
+    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     def utility_function(fee, delay, distance, centrality):
