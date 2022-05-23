@@ -164,7 +164,10 @@ class LN(PlainBitcoin):
         # in case the counterparty is not the receiver.
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
         # but could open channel and make the transaction.
-        self.network.add_channel(sender, min_amount, counterparty, value)
+        if counterparty == receiver:
+            self.network.add_channel(sender, sender_coins, counterparty, value)
+        else:
+            self.network.add_channel(sender, sender_coins, counterparty, 0)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.get_distance_to_future_parties(future_payments)
         if counterparty == receiver:
