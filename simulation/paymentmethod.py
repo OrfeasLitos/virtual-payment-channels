@@ -132,6 +132,7 @@ class LN(PlainBitcoin):
             self.network.graph[path[i]][path[i-1]]['balance'] = op1(self.network.graph[path[i]][path[i-1]]['balance'], received)
             self.network.graph[path[i]][path[i+1]]['balance'] = op2(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
 
+    # TODO: use do also for get_onchain_option and get_new_channel_option
     def get_onchain_option(self, sender, receiver, value, future_payments):
         onchain_time = self.plain_bitcoin.get_delay()
         # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
@@ -157,11 +158,9 @@ class LN(PlainBitcoin):
         # review: our initial coins should be slightly higher than the minimum needed,
         # review: in order to accommodate for future payments and act as intermediary.
         # review: we can say e.g. `min(our on-chain coins, 2 * (min_amount - value))` and we can improve from there
-        sender_coins = min(self.plain_bitcoin.coins[sender] , 2 * min_amount) - value - new_channel_fee
-        if sender_coins + value + new_channel_fee > self.plain_bitcoin.coins[sender]:
+        sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee , 2 * min_amount)
+        if sender_coins < 0:
             raise ValueError
-        # TODO: the formula above isn't entirely correct yet, as it should also include possible offchain fees
-        # in case the counterparty is not the receiver.
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
         # but could open channel and make the transaction.
         if counterparty == receiver:
@@ -229,7 +228,10 @@ class LN(PlainBitcoin):
     def do(self, payment_information):
         match payment_information['kind']:
             case 'onchain':
-                self.plain_bitcoin.pay(payment_information['data'])
+                try:
+                    self.plain_bitcoin.pay(payment_information['data'])
+                except ValueError:
+                    raise
             case 'ln-open':
                 # review: lint
                 (sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) = (
@@ -238,7 +240,10 @@ class LN(PlainBitcoin):
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender
                 amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee())
-                self.plain_bitcoin.update_coins(sender, amount_sender)
+                try:
+                    self.plain_bitcoin.update_coins(sender, amount_sender)
+                except ValueError:
+                    raise
                 # use ln-pay here to make the off-chain payment after opening a new channel.
                 if counterparty != receiver:
                     self.do(new_channel_offchain_option['payment_information'])
@@ -248,7 +253,7 @@ class LN(PlainBitcoin):
                     self.update_balances(value, self.ln_fee, self.base_fee, offchain_path)
                 except ValueError:
                     # TODO: think of what should happen in case of a ValueError
-                    raise Exception("can't make payment")
+                    raise
             case _:
                 raise ValueError
 
