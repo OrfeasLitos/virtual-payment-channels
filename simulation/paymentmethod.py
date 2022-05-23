@@ -89,15 +89,32 @@ class LN(PlainBitcoin):
                 distances.append(math.inf)
         return distances
 
+    def update_possible(self, value, ln_fee, base_fee, path):
+        # TODO: maybe outsource first lines in extra method as it's used several times.
+        # TODO: using this in update_balances we do some stuff twice,
+        # but it makes it easier to handle. Think about how to optimize it.
+        num_intermediaries = len(path) - 2
+        sender = path[0]
+        fee_intermediary = ln_fee * value + base_fee
+        cost_sender = value + num_intermediaries * fee_intermediary
+        if self.network.graph[sender][path[1]]['balance'] - cost_sender < 0:
+            return False
+        for i in range(1, num_intermediaries + 1):
+            received = (num_intermediaries - i) * fee_intermediary
+            transfered = received - fee_intermediary
+            if transfered > self.network.graph[path[i]][path[i+1]]['balance']:
+                return False
+        return True
+
     def update_balances(self, value, ln_fee, base_fee, path):
+        if self.update_possible(value, ln_fee, base_fee, path) == False:
+            raise ValueError
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
         # review: we could also get `fee_intermediary` directly as input, to reduce parameters
         fee_intermediary = ln_fee * value + base_fee
         cost_sender = value + num_intermediaries * fee_intermediary
-        if self.network.graph[sender][path[1]]['balance'] - cost_sender < 0:
-            raise ValueError
         self.network.graph[sender][path[1]]['balance'] -= cost_sender
         self.network.graph[receiver][path[-2]]['balance'] += value
         # Now have to update the balances of the intermediaries.
@@ -106,6 +123,12 @@ class LN(PlainBitcoin):
             transfered = received - fee_intermediary
             self.network.graph[path[i]][path[i-1]]['balance'] += received
             self.network.graph[path[i]][path[i+1]]['balance'] -= transfered
+
+    def get_previous_balances(self, value, ln_fee, base_fee, path):
+        num_intermediaries = len(path) - 2
+        sender = path[0]
+        receiver = path[-1]
+        fee_intermediary = ln_fee * value + base_fee
 
     def get_onchain_option(self, sender, receiver, value, future_payments):
         onchain_time = self.plain_bitcoin.get_delay()
@@ -231,6 +254,7 @@ class LN(PlainBitcoin):
             case 'ln-open':
                 pass
             case 'ln-pay':
-                pass
+                offchain_path, value = payment_information['data']
+                #self.get_previous_balances(value, self.ln_fee, self.base_fee, offchain_path)
             case _:
                 raise ValueError
