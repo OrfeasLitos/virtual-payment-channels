@@ -171,16 +171,19 @@ class LN(PlainBitcoin):
         offchain_hops, offchain_path = offchain_cost_and_path
         offchain_time = self.get_payment_time(offchain_path)
         payment = (sender, receiver, value)
+        payment_information = {'kind': 'ln-pay', 'data': (offchain_path, value)}
+        #self.do(payment_information)
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
         # review: we should do the payment, get centrality and distance, undo the payment
         offchain_centrality = self.network.get_harmonic_centrality()
         offchain_distance = self.get_distance_to_future_parties(future_payments)
+        #self.undo(payment_information)
         return {
             'delay': offchain_time,
             'fee': offchain_fee,
             'centrality': offchain_centrality,
             'distance': offchain_distance,
-            'payment_information': {'kind': 'ln-pay', 'data': (offchain_path, value)}
+            'payment_information': payment_information
         }
 
     def get_payment_options(self, sender, receiver, value, future_payments):
@@ -218,5 +221,16 @@ class LN(PlainBitcoin):
                 except ValueError:
                     # TODO: think of what should happen in case of a ValueError
                     raise Exception("can't make payment")
+            case _:
+                raise ValueError
+
+    def undo(self, payment_information):
+        match payment_information['kind']:
+            case 'onchain':
+                pass
+            case 'ln-open':
+                pass
+            case 'ln-pay':
+                pass
             case _:
                 raise ValueError
