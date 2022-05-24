@@ -116,8 +116,8 @@ class LN(PlainBitcoin):
         # TODO: think about if this is understandable.
         # It's shorter than making ifs for the updates,
         # but the code is harder to understand at first glance.
-        op1 = operator.add if pay else operator.sub
-        op2 = operator.sub if pay else operator.add
+        # TODO: change names
+        op1, op2 = (operator.add, operator.sub) if pay else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
@@ -130,8 +130,11 @@ class LN(PlainBitcoin):
         for i in range(1, num_intermediaries + 1):
             received = (num_intermediaries - i) * fee_intermediary
             transfered = received - fee_intermediary
-            self.network.graph[path[i]][path[i-1]]['balance'] = op1(self.network.graph[path[i]][path[i-1]]['balance'], received)
-            self.network.graph[path[i]][path[i+1]]['balance'] = op2(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
+            new_taker_balance = op1(self.network.graph[path[i]][path[i-1]]['balance'], received)
+            new_giver_balance = op2(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
+            # if ...
+            self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
+            self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
 
     # TODO: use do also for get_onchain_option and get_new_channel_option
     def get_onchain_option(self, sender, receiver, value, future_payments):
@@ -153,13 +156,13 @@ class LN(PlainBitcoin):
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
-        # TODO: incorporate counterparty in min_amount
-        min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
+        # TODO: incorporate counterparty in sum_future_payments
+        sum_future_payments = self.sum_future_payments_to_receiver(receiver, future_payments)
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
         # review: our initial coins should be slightly higher than the minimum needed,
         # review: in order to accommodate for future payments and act as intermediary.
-        # review: we can say e.g. `min(our on-chain coins, 2 * (min_amount - value))` and we can improve from there
-        sender_coins = min(self.plain_bitcoin.coins[sender], 2 * min_amount) - value - new_channel_fee 
+        # review: we can say e.g. `min(our on-chain coins, 2 * (sum_future_payments - value))` and we can improve from there
+        sender_coins = min(self.plain_bitcoin.coins[sender], 2 * sum_future_payments) - value - new_channel_fee 
         if sender_coins < 0:
             return None
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
@@ -203,7 +206,6 @@ class LN(PlainBitcoin):
         payment_information = {'kind': 'ln-pay', 'data': (offchain_path, value)}
         self.do(payment_information)
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
-        # review: we should do the payment, get centrality and distance, undo the payment
         offchain_centrality = self.network.get_harmonic_centrality()
         offchain_distance = self.get_distance_to_future_parties(future_payments)
         self.undo(payment_information)
