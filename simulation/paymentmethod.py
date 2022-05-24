@@ -32,11 +32,14 @@ class PlainBitcoin():
     def pay(self, data):
         sender, receiver, value = data
         # should self.get_fee() also be multiplied with value
+        # review: no, the on-chain fee depends only on the tx size.
+        # review: let's add a parameter to get_fee() that takes the tx size and multiplies that with a base fee.
         try:
             amount_sender = - value - self.get_fee()
             self.update_coins(sender, amount_sender)
             self.update_coins(receiver, value)
         except ValueError:
+            # review: what if the 1st update succeeds but the 2nd fails?
             raise
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
@@ -159,6 +162,7 @@ class LN(PlainBitcoin):
         # review: in order to accommodate for future payments and act as intermediary.
         # review: we can say e.g. `min(our on-chain coins, 2 * (min_amount - value))` and we can improve from there
         sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee , 2 * min_amount)
+        # review: why not `return None`?
         if sender_coins < 0:
             raise ValueError
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
@@ -185,6 +189,7 @@ class LN(PlainBitcoin):
             'payment_information': {
                 'kind': 'ln-open',
                 'data': (
+                # review: next 2 lines need 1 more level of identation
                 sender, receiver, value, counterparty,
                 sender_coins, new_channel_offchain_option
                 )
@@ -239,6 +244,7 @@ class LN(PlainBitcoin):
                 counterparty_coins = value if counterparty == receiver else 0
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender
+                # review: fee inconsistent with `get_new_channel_option()`, 2nd line
                 amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee())
                 try:
                     self.plain_bitcoin.update_coins(sender, amount_sender)
