@@ -37,8 +37,7 @@ class PlainBitcoin():
             self.update_coins(sender, amount_sender)
             self.update_coins(receiver, value)
         except ValueError:
-            # review: what if the 1st update succeeds but the 2nd fails?
-            # 2nd shouldn't fail as the receiver should have more money afterwards.
+            # only the first update_coins can fail, no bookkeeping is required.
             raise
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
@@ -160,7 +159,7 @@ class LN(PlainBitcoin):
         # review: our initial coins should be slightly higher than the minimum needed,
         # review: in order to accommodate for future payments and act as intermediary.
         # review: we can say e.g. `min(our on-chain coins, 2 * (min_amount - value))` and we can improve from there
-        sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee , 2 * min_amount)
+        sender_coins = min(self.plain_bitcoin.coins[sender], 2 * min_amount) - value - new_channel_fee 
         if sender_coins < 0:
             return None
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
@@ -174,7 +173,8 @@ class LN(PlainBitcoin):
         if counterparty == receiver:
             # TODO: adjust future_payments. Maybe in Simulation
             new_channel_offchain_option = self.get_offchain_option(
-                sender, receiver, value, future_payments[1:])
+                sender, receiver, value, future_payments[1:]
+            )
         else:
             new_channel_offchain_option = None
         self.network.close_channel(sender, counterparty)
