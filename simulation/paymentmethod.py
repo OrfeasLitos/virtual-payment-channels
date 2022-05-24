@@ -18,7 +18,8 @@ class PlainBitcoin():
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
 
-    def get_fee(self):
+    def get_fee(self, tx_size = 1):
+        # TODO: lookup reasonable transaction size
         return self.bitcoin_fee
 
     def get_delay(self):
@@ -31,15 +32,13 @@ class PlainBitcoin():
 
     def pay(self, data):
         sender, receiver, value = data
-        # should self.get_fee() also be multiplied with value
-        # review: no, the on-chain fee depends only on the tx size.
-        # review: let's add a parameter to get_fee() that takes the tx size and multiplies that with a base fee.
         try:
             amount_sender = - value - self.get_fee()
             self.update_coins(sender, amount_sender)
             self.update_coins(receiver, value)
         except ValueError:
             # review: what if the 1st update succeeds but the 2nd fails?
+            # 2nd shouldn't fail as the receiver should have more money afterwards.
             raise
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
@@ -154,7 +153,7 @@ class LN(PlainBitcoin):
 
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
-        new_channel_fee = self.plain_bitcoin.get_fee() * self.opening_transaction_size
+        new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         # TODO: incorporate counterparty in min_amount
         min_amount = self.sum_future_payments_to_receiver(receiver, future_payments)
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
@@ -162,9 +161,8 @@ class LN(PlainBitcoin):
         # review: in order to accommodate for future payments and act as intermediary.
         # review: we can say e.g. `min(our on-chain coins, 2 * (min_amount - value))` and we can improve from there
         sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee , 2 * min_amount)
-        # review: why not `return None`?
         if sender_coins < 0:
-            raise ValueError
+            return None
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
         # but could open channel and make the transaction.
         if counterparty == receiver:
@@ -189,9 +187,8 @@ class LN(PlainBitcoin):
             'payment_information': {
                 'kind': 'ln-open',
                 'data': (
-                # review: next 2 lines need 1 more level of identation
-                sender, receiver, value, counterparty,
-                sender_coins, new_channel_offchain_option
+                    sender, receiver, value, counterparty,
+                    sender_coins, new_channel_offchain_option
                 )
             }
         }
@@ -244,8 +241,7 @@ class LN(PlainBitcoin):
                 counterparty_coins = value if counterparty == receiver else 0
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender
-                # review: fee inconsistent with `get_new_channel_option()`, 2nd line
-                amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee())
+                amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee(self.opening_transaction_size))
                 try:
                     self.plain_bitcoin.update_coins(sender, amount_sender)
                 except ValueError:
