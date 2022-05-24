@@ -110,7 +110,7 @@ class LN(PlainBitcoin):
                 return False
         return True
 
-    def update_balances(self, value, ln_fee, base_fee, path, pay = True):
+    def update_balances(self, value, ln_fee, base_fee, path, pay = False):
         # the pay argument tells whether this corresponds to making a payment
         # or undoing it.
         if pay == True and self.update_possible(value, ln_fee, base_fee, path) == False:
@@ -256,7 +256,7 @@ class LN(PlainBitcoin):
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
                 try:
-                    self.update_balances(value, self.ln_fee, self.base_fee, offchain_path)
+                    self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = True)
                 except ValueError:
                     # TODO: think of what should happen in case of a ValueError
                     raise
@@ -271,6 +271,6 @@ class LN(PlainBitcoin):
                 pass
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
-                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, False)
+                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = False)
             case _:
                 raise ValueError
