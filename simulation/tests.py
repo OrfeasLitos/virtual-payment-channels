@@ -68,9 +68,10 @@ def test_get_payment_options():
     on_chain_option = {
         'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
-        'distance': [1, 3, 3, 3], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}}
+        'distance': [1, 3, 3, 3], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
+    }
     ln_open_centrality = {
-        0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5, 
+        0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
         5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0
     }
     ln_open_option = {
@@ -97,7 +98,8 @@ def test_get_payment_options():
             4: 4.5, 5: 0, 6: 0, 7: 3.0, 8: 3.0, 9: 0
         },
         'distance': [1,3,3,3],
-        'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}}
+        'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
+    }
     return [on_chain_option, ln_open_option, ln_pay_option] == payment_options
 
 
