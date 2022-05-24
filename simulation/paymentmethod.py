@@ -113,13 +113,13 @@ class LN(PlainBitcoin):
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
         # the pay argument tells whether this corresponds to making a payment
         # or undoing it.
-        if pay == True and self.update_possible(value, ln_fee, base_fee, path) == False:
+        if pay and not self.update_possible(value, ln_fee, base_fee, path):
             raise ValueError
         # TODO: think about if this is understandable.
         # It's shorter than making ifs for the updates,
         # but the code is harder to understand at first glance.
-        op1 = operator.add if pay == True else operator.sub
-        op2 = operator.sub if pay == True else operator.add
+        op1 = operator.add if pay else operator.sub
+        op2 = operator.sub if pay else operator.add
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
