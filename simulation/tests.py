@@ -190,37 +190,50 @@ def test_do():
     test_ln_open = lightning.network.graph[0][7]['balance'] == sender_coins - 2 and lightning.network.graph[7][0]['balance'] == receiver_coins + 1
     return test_onchain and test_offchain and test_coins and test_ln_open
 
-def test_update_balances():
-    lightning1 = make_example_network(base_fee = 1, ln_fee = 0.00002)
-    base_fee1 = lightning1.base_fee
-    fee_intermediary = lightning1.ln_fee
+def test_update_balances_pay_enough_money():
+    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    base_fee1 = lightning.base_fee
+    ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
     value = 2
-    lightning1.update_balances(value, fee_intermediary, base_fee1, path)
+    fee_intermediary = 1 + 2*ln_fee
+    lightning.update_balances(value, ln_fee, base_fee1, path, pay=True)
     # sender 0 has 6. in the beginning on the channel to 1
-    # after update he should have 2 less for the transaction to 7,
-    # 1 less for the base fee and 0.00004 less for the intermediaries
-    # the intermediaries should have 0.00002 more each on the channel with the previous party
-    # review: move `and`s to line beginnings, remove parentheses, indent 4 spaces
-    test1 =  (lightning1.network.graph[0][1]['balance'] == 6-3-0.00004 and
-            lightning1.network.graph[1][0]['balance'] == 7.00002 and
-            lightning1.network.graph[4][1]['balance'] == 8.00002 and
-            lightning1.network.graph[7][4]['balance'] == 10.)
-    lightning2 = make_example_network(base_fee=1000, ln_fee = 0.00002)
-    base_fee2 = lightning2.base_fee
-    test2 = False
+    # after update he should have 2 less for the transaction to 7 and 2*fee_intermediary less for the fee,
+    np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6-4-0.00008)
+    # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
+    np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7 + value + 2*fee_intermediary)
+    # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
+    np.testing.assert_almost_equal(lightning.network.graph[1][4]['balance'], 4 - value - fee_intermediary)
+    np.testing.assert_almost_equal(lightning.network.graph[4][1]['balance'], 8 + value + fee_intermediary)
+    np.testing.assert_almost_equal(lightning.network.graph[4][7]['balance'], 10 - value)
+    np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 10)
+    np.testing.assert_almost_equal(lightning.network.graph[1][2]['balance'], 10)
+    return True
+
+def test_update_balances_pay_not_enough_money():
+    lightning = make_example_network(base_fee=1000, ln_fee = 0.00002)
+    base_fee = lightning.base_fee
+    ln_fee = lightning.ln_fee
+    path = [0, 1, 4, 7]
+    value = 2
     try:
-        lightning2.update_balances(value, fee_intermediary, base_fee2, path)
+        lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
+        return False
     except ValueError:
-        test2 = True
-    return test1 and test2
+        return True
+
+def test_update_balances():
+    test_pay_enough_money = test_update_balances_pay_enough_money()
+    test_pay_not_enough_money = test_update_balances_pay_not_enough_money()
+    return test_pay_enough_money and test_pay_not_enough_money
 
 if __name__ == "__main__":
     #assert(is_deterministic())
     assert test_LN()
     assert test_cheapest_path()
     assert test_get_payment_fee()
-    #assert(test_update_balances())
+    assert(test_update_balances())
     #assert test_get_payment_options()
     # TODO: fee's have changed, account for that in the tests.
     #assert(test_do())

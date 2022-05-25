@@ -128,7 +128,7 @@ class LN(PlainBitcoin):
         self.network.graph[receiver][path[-2]]['balance'] = op1(self.network.graph[receiver][path[-2]]['balance'], value)
         # Now have to update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
-            received = (num_intermediaries - i) * fee_intermediary
+            received = value + (num_intermediaries - (i-1)) * fee_intermediary
             transfered = received - fee_intermediary
             new_taker_balance = op1(self.network.graph[path[i]][path[i-1]]['balance'], received)
             new_giver_balance = op2(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
