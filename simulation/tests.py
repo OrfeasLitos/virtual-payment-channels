@@ -130,7 +130,7 @@ def test_choose_payment_method_offchain_best():
         distance_array = 1 / distance_array
         return 10000/fee + 5000/delay + sum(distance_array) + sum(centrality)
     utility = Utility(utility_function)
-    # utilities for onchain and new channel are about 50
+    # utilities for onchain and new channel are between 30 and 40
     # for offchain several orders of magnitude higher, just consider delay.
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-pay'
@@ -142,15 +142,35 @@ def test_choose_payment_method_new_channel_best():
     def utility_function(fee, delay, distance, centrality):
         distance_array = np.array(distance)
         distance_array = 1 / distance_array
-        return 10000/fee + 50000/delay + sum(distance_array) + sum(centrality)
+        # there's no offchain option
+        # the first two terms are both smaller than one for new_channel and onchain
+        # the difference for the third term is over 100 in favor of new channel
+        # the difference between the last two is about 2 in favor of new channel
+        return 10000/fee + 50000/delay + 100 * sum(distance_array) + sum(centrality)
     utility = Utility(utility_function)
-    # 
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-open'
+
+def test_choose_payment_method_onchain_best():
+    lightning = make_example_network(base_fee = 1000, ln_fee = 0.00002)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    def utility_function(fee, delay, distance, centrality):
+        distance_array = np.array(distance)
+        distance_array = 1 / distance_array
+        # there's no offchain option
+        # the first two terms are both smaller than one for new_channel and onchain
+        # the difference for the third term is over 100 in favor of new channel
+        # the difference between the last two is about 2 in favor of new channel
+        return 1/fee
+    utility = Utility(utility_function)
+    payment_method = utility.choose_payment_method(payment_options)
+    assert payment_method['kind'] == 'onchain'
 
 def test_choose_payment_method():
     test_choose_payment_method_offchain_best()
     test_choose_payment_method_new_channel_best()
+    test_choose_payment_method_onchain_best()
 
 def is_deterministic():
     bitcoin = PlainBitcoin()

@@ -26,6 +26,8 @@ class Utility:
                 delay = option['delay']
                 centrality = option['centrality']
                 distance = option['distance']
-                if self.get_utility(fee, delay, distance, centrality) > best_score:
+                utility = self.get_utility(fee, delay, distance, centrality)
+                if utility > best_score:
                     best = option['payment_information']
+                    best_score = utility
         return best
