@@ -167,19 +167,21 @@ class LN(PlainBitcoin):
             return None
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
         # but could open channel and make the transaction.
-        if counterparty == receiver:
-            self.network.add_channel(sender, sender_coins, counterparty, value)
-        else:
+        if counterparty != receiver:
             self.network.add_channel(sender, sender_coins, counterparty, 0)
-        new_channel_centrality = self.network.get_harmonic_centrality()
-        new_channel_distance = self.get_distance_to_future_parties(future_payments)
-        if counterparty == receiver:
             # TODO: adjust future_payments. Maybe in Simulation
             new_channel_offchain_option = self.get_offchain_option(
                 sender, receiver, value, future_payments[1:]
             )
+            new_channel_centrality = new_channel_offchain_option['centrality']
+            new_channel_distance = new_channel_offchain_option['distance']
+            new_channel_time = new_channel_time + new_channel_offchain_option['delay']
+            new_channel_fee = new_channel_fee + new_channel_offchain_option['fee']
         else:
+            self.network.add_channel(sender, sender_coins, counterparty, value)
             new_channel_offchain_option = None
+            new_channel_centrality = self.network.get_harmonic_centrality()
+            new_channel_distance = self.get_distance_to_future_parties(future_payments)
         self.network.close_channel(sender, counterparty)
 
         return {
