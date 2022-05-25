@@ -192,12 +192,12 @@ def test_do():
 
 def test_update_balances_pay_enough_money():
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
-    base_fee1 = lightning.base_fee
+    base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
     value = 2
     fee_intermediary = 1 + 2*ln_fee
-    lightning.update_balances(value, ln_fee, base_fee1, path, pay=True)
+    lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # sender 0 has 6. in the beginning on the channel to 1
     # after update he should have 2 less for the transaction to 7 and 2*fee_intermediary less for the fee,
     np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6-4-0.00008)
@@ -207,7 +207,7 @@ def test_update_balances_pay_enough_money():
     np.testing.assert_almost_equal(lightning.network.graph[1][4]['balance'], 4 - value - fee_intermediary)
     np.testing.assert_almost_equal(lightning.network.graph[4][1]['balance'], 8 + value + fee_intermediary)
     np.testing.assert_almost_equal(lightning.network.graph[4][7]['balance'], 10 - value)
-    np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 10)
+    np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 8 + 2)
     np.testing.assert_almost_equal(lightning.network.graph[1][2]['balance'], 10)
     return True
 
@@ -223,10 +223,31 @@ def test_update_balances_pay_not_enough_money():
     except ValueError:
         return True
 
+def test_update_balances_reverse():
+    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    base_fee = lightning.base_fee
+    ln_fee = lightning.ln_fee
+    path = [0, 1, 4, 7]
+    value = 2
+    lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
+    # balances are updated, now we want to revert it
+    lightning.update_balances(value, ln_fee, base_fee, path, pay=False)
+    np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6)
+    # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
+    np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7)
+    # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
+    np.testing.assert_almost_equal(lightning.network.graph[1][4]['balance'], 4)
+    np.testing.assert_almost_equal(lightning.network.graph[4][1]['balance'], 8)
+    np.testing.assert_almost_equal(lightning.network.graph[4][7]['balance'], 10)
+    np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 8)
+    np.testing.assert_almost_equal(lightning.network.graph[1][2]['balance'], 10)
+    return True
+
 def test_update_balances():
     test_pay_enough_money = test_update_balances_pay_enough_money()
     test_pay_not_enough_money = test_update_balances_pay_not_enough_money()
-    return test_pay_enough_money and test_pay_not_enough_money
+    test_reverse = test_update_balances_reverse()
+    return test_pay_enough_money and test_pay_not_enough_money and test_reverse
 
 if __name__ == "__main__":
     #assert(is_deterministic())
