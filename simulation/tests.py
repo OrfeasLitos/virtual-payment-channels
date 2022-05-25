@@ -196,13 +196,12 @@ def test_update_balances_pay_enough_money():
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
     value = 2
-    # review: 1 -> base_fee, 2 -> len(path) - 2
+    # 1 -> base_fee, 2 -> len(path) - 2
     fee_intermediary = 1 + 2*ln_fee
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # sender 0 has 6. in the beginning on the channel to 1
     # after update he should have 2 less for the transaction to 7 and 2*fee_intermediary less for the fee,
-    # review: now that I see it, better not use `magic numbers` at all in the asserts and replace them with the respective variables
-    np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6-4-0.00008)
+    np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6-value-2*fee_intermediary)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
     np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7 + value + 2*fee_intermediary)
     # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
@@ -211,7 +210,6 @@ def test_update_balances_pay_enough_money():
     np.testing.assert_almost_equal(lightning.network.graph[4][7]['balance'], 10 - value)
     np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 8 + 2)
     np.testing.assert_almost_equal(lightning.network.graph[1][2]['balance'], 10)
-    return True
 
 def test_update_balances_pay_not_enough_money():
     lightning = make_example_network(base_fee=1000, ln_fee = 0.00002)
@@ -221,10 +219,9 @@ def test_update_balances_pay_not_enough_money():
     value = 2
     try:
         lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
-        # review: when migrating to internal asserts, put an `assert False, "update_balances() should raise a ValueError"` under here and change `return True` under `except` to `pass`
-        return False
+        assert False, 'update_balances() should raise a ValueError'
     except ValueError:
-        return True
+        pass
 
 def test_update_balances_reverse():
     # review: store initial balances of parties before the forward payment and compare parties' balances against the stored ones after reversing. This way the balances in the assertions are "obviously" the expected ones.
@@ -248,20 +245,18 @@ def test_update_balances_reverse():
     np.testing.assert_almost_equal(lightning.network.graph[4][7]['balance'], 10)
     np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 8)
     np.testing.assert_almost_equal(lightning.network.graph[1][2]['balance'], 10)
-    return True
 
 def test_update_balances():
-    test_pay_enough_money = test_update_balances_pay_enough_money()
-    test_pay_not_enough_money = test_update_balances_pay_not_enough_money()
-    test_reverse = test_update_balances_reverse()
-    return test_pay_enough_money and test_pay_not_enough_money and test_reverse
+    test_update_balances_pay_enough_money()
+    test_update_balances_pay_not_enough_money()
+    test_update_balances_reverse()
 
 if __name__ == "__main__":
     #assert(is_deterministic())
     assert test_LN()
     assert test_cheapest_path()
     assert test_get_payment_fee()
-    assert(test_update_balances())
+    test_update_balances()
     #assert test_get_payment_options()
     # TODO: fee's have changed, account for that in the tests.
     #assert(test_do())
