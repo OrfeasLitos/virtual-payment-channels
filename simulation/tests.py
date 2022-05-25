@@ -196,10 +196,12 @@ def test_update_balances_pay_enough_money():
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
     value = 2
+    # review: 1 -> base_fee, 2 -> len(path) - 2
     fee_intermediary = 1 + 2*ln_fee
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # sender 0 has 6. in the beginning on the channel to 1
     # after update he should have 2 less for the transaction to 7 and 2*fee_intermediary less for the fee,
+    # review: now that I see it, better not use `magic numbers` at all in the asserts and replace them with the respective variables
     np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6-4-0.00008)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
     np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7 + value + 2*fee_intermediary)
@@ -219,11 +221,13 @@ def test_update_balances_pay_not_enough_money():
     value = 2
     try:
         lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
+        # review: when migrating to internal asserts, put an `assert False, "update_balances() should raise a ValueError"` under here and change `return True` under `except` to `pass`
         return False
     except ValueError:
         return True
 
 def test_update_balances_reverse():
+    # review: store initial balances of parties before the forward payment and compare parties' balances against the stored ones after reversing. This way the balances in the assertions are "obviously" the expected ones.
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
@@ -232,6 +236,9 @@ def test_update_balances_reverse():
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # balances are updated, now we want to revert it
     lightning.update_balances(value, ln_fee, base_fee, path, pay=False)
+    # review: I like having asserts inside the test_ functions a lot, as it is here
+    # review: This way a potential error will show exactly where it breaks
+    # review: Let's migrate to that style, eventually removing all the `assert`s from the last few lines of the file
     np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
     np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7)
