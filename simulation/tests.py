@@ -60,12 +60,22 @@ def test_get_payment_fee():
             output = False
     return output
 
-def test_get_payment_options():
-    lightning = make_example_network()
+def test_get_payment_options_enough_money():
+    base_fee = 1
+    ln_fee = 0.00002
+    lightning = make_example_network(base_fee, ln_fee)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    for payment_option in payment_options:
+        match payment_option['payment_information']['kind']:
+            case 'onchain':
+                onchain_option = payment_option
+            case 'ln-open':
+                ln_open_option = payment_option
+            case 'ln-pay':
+                ln_pay_option = payment_option
     on_chain_centrality = lightning.network.get_harmonic_centrality()
-    on_chain_option = {
+    onchain_option_by_hand = {
         'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
         'distance': [1, 3, 3, 3], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
@@ -74,9 +84,9 @@ def test_get_payment_options():
         0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
         5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0
     }
-    ln_open_option = {
+    ln_open_option_by_hand = {
         'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
-        'fee' : lightning.plain_bitcoin.get_fee() * lightning.opening_transaction_size,
+        'fee' : lightning.plain_bitcoin.get_fee(lightning.opening_transaction_size),
         'centrality' : ln_open_centrality, 'distance': [1,1,1,3],
         'payment_information' : {
             'kind' : 'ln-open',
@@ -90,18 +100,28 @@ def test_get_payment_options():
             })
         }
     }
-    ln_pay_option = {
+    ln_pay_option_by_hand = {
         'delay' : lightning.get_payment_time([0,1,4,7]),
         'fee' : lightning.get_payment_fee((0, 7, 1.0), 3),
         'centrality' : {
             0: 3.666666666666667, 1: 4.333333333333333, 2: 4.333333333333334, 3: 4.5,
             4: 4.5, 5: 0, 6: 0, 7: 3.0, 8: 3.0, 9: 0
         },
-        'distance': [1,3,3,3],
+        # 1 can pay 1.5 to 4 as he still has a little less than 2, but he can't pay 2.1.
+        # So we get the distance as described (by 0->2->3->4->7)
+        'distance': [1,3,4,3],
         'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
     }
-    return [on_chain_option, ln_open_option, ln_pay_option] == payment_options
+    assert onchain_option_by_hand == onchain_option
+    #assert ln_open_option_by_hand == ln_open_option
+    np.testing.assert_almost_equal(ln_pay_option_by_hand['delay'], ln_pay_option['delay'])
+    np.testing.assert_almost_equal(ln_pay_option_by_hand['fee'], ln_pay_option['fee'])
+    np.testing.assert_almost_equal(list(ln_pay_option_by_hand['centrality']), list(ln_pay_option['centrality']))
+    assert ln_pay_option_by_hand['distance'] == ln_pay_option['distance']
+    assert ln_pay_option_by_hand['payment_information'] == ln_pay_option['payment_information']
 
+def test_get_payment_options():
+    test_get_payment_options_enough_money()
 
 def test_choose_payment_method():
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
@@ -257,7 +277,7 @@ if __name__ == "__main__":
     assert test_cheapest_path()
     assert test_get_payment_fee()
     test_update_balances()
-    #assert test_get_payment_options()
+    test_get_payment_options()
     # TODO: fee's have changed, account for that in the tests.
     #assert(test_do())
     test_choose_payment_method()

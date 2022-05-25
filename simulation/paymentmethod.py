@@ -265,10 +265,6 @@ class LN(PlainBitcoin):
 
     def undo(self, payment_information):
         match payment_information['kind']:
-            case 'onchain':
-                pass
-            case 'ln-open':
-                pass
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
                 self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = False)
