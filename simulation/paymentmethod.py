@@ -20,7 +20,7 @@ class PlainBitcoin():
 
     def get_fee(self, tx_size = 1):
         # TODO: lookup reasonable transaction size
-        return self.bitcoin_fee
+        return self.bitcoin_fee * tx_size
 
     def get_delay(self):
         return self.bitcoin_delay
