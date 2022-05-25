@@ -230,6 +230,20 @@ def test_do_onchain():
     assert lightning.plain_bitcoin.coins[7] == MAX_COINS + 1.
     # TODO: test for exceptions
 
+def test_do_onchain_exception():
+    base_fee = 1
+    ln_fee = 0.00002
+    lightning = make_example_network(base_fee, ln_fee)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_information_onchain = { 
+        'kind': 'onchain', 'data': (0, 7, 999999999999999999999.)
+    }
+    try:
+        lightning.do(payment_information_onchain)
+        assert False, 'should raise exception as amount is too high'
+    except ValueError:
+        pass
+
 def test_do_offchain():
     base_fee = 1
     ln_fee = 0.00002
@@ -258,13 +272,25 @@ def test_do_offchain():
     np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 8 + value)
     np.testing.assert_almost_equal(lightning.network.graph[1][2]['balance'], 10)
 
+def test_do_offchain_exception():
+    base_fee = 10
+    ln_fee = 0.00002
+    lightning = make_example_network(base_fee, ln_fee)
+    payment_information_offchain = {
+        'kind': 'ln-pay', 'data': ([0,1,4,7], 1.)
+    }
+    try:
+        lightning.do(payment_information_offchain)
+        assert False, 'fee is too high, should raise Exception'
+    except ValueError:
+        pass
+
 def test_do_new_channel():
     base_fee = 1
     ln_fee = 0.00002
     lightning = make_example_network(base_fee, ln_fee)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
-    fee_intermediary = base_fee + 1*ln_fee
     value = 1
     MAX_COINS = lightning.plain_bitcoin.max_coins
     # first test on-chain option
@@ -285,10 +311,30 @@ def test_do_new_channel():
     assert lightning.network.graph[0][7]['balance'] == sender_coins 
     assert lightning.network.graph[7][0]['balance'] == receiver_coins
 
+def test_do_new_channel_exception():
+    base_fee = 1
+    ln_fee = 0.00002
+    lightning = make_example_network(base_fee, ln_fee)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    value = 1
+    payment_information_new_channel = {
+        'kind': 'ln-open',
+        'data': (0, 7, 1, 7, 99999999999999999999999, None)
+    }
+    try:
+        lightning.do(payment_information_new_channel)
+        assert False, "sender can't put more on channel than he has"
+    except ValueError:
+        pass
+
 def test_do():
     test_do_onchain()
+    test_do_onchain_exception()
     test_do_offchain()
+    test_do_offchain_exception()
     test_do_new_channel()
+    test_do_new_channel_exception()
 
 def test_update_balances_pay_enough_money():
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
@@ -333,9 +379,6 @@ def test_update_balances_reverse():
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # balances are updated, now we want to revert it
     lightning.update_balances(value, ln_fee, base_fee, path, pay=False)
-    # review: I like having asserts inside the test_ functions a lot, as it is here
-    # review: This way a potential error will show exactly where it breaks
-    # review: Let's migrate to that style, eventually removing all the `assert`s from the last few lines of the file
     np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'],6)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
     np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7)
@@ -358,7 +401,6 @@ if __name__ == "__main__":
     test_get_payment_fee()
     test_update_balances()
     test_get_payment_options()
-    # TODO: fee's have changed, account for that in the tests.
     test_do()
     test_choose_payment_method()
     print("Success")

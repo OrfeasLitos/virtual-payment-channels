@@ -1,4 +1,5 @@
 import math
+from multiprocessing.sharedctypes import Value
 import operator
 from network import Network
 
@@ -255,7 +256,10 @@ class LN(PlainBitcoin):
                     raise
                 # use ln-pay here to make the off-chain payment after opening a new channel.
                 if counterparty != receiver:
-                    self.do(new_channel_offchain_option['payment_information'])
+                    try:
+                        self.do(new_channel_offchain_option['payment_information'])
+                    except ValueError:
+                        raise
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
                 try:
