@@ -215,11 +215,11 @@ def test_do():
     # check first the coins of the parties
     sum_future_payments = lightning.sum_future_payments_to_receiver(7, future_payments)
     sender_coins = 2 * sum_future_payments
-    receiver_coins = 2 * sum_future_payments
-    #test_coins = lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins and lightning.plain_bitcoin.coins[7] == MAX_COINS - receiver_coins
+    receiver_coins = value
+    test_coins = lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins - receiver_coins and lightning.plain_bitcoin.coins[7] == MAX_COINS
     # test the balances on ln (-2 for base fee and payment, +1 for payment).
-    #test_ln_open = lightning.network.graph[0][7]['balance'] == sender_coins - 2 and lightning.network.graph[7][0]['balance'] == receiver_coins + 1
-    return test_onchain and test_offchain #and test_coins and test_ln_open
+    test_ln_open = lightning.network.graph[0][7]['balance'] == sender_coins and lightning.network.graph[7][0]['balance'] == receiver_coins
+    return test_onchain and test_offchain and test_coins and test_ln_open
 
 def test_update_balances_pay_enough_money():
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
