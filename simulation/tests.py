@@ -175,29 +175,37 @@ def test_LN():
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     assert result == 3.6
 
-def test_do():
+def test_do_onchain():
     base_fee = 1
     ln_fee = 0.00002
     lightning = make_example_network(base_fee, ln_fee)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     fee_intermediary = base_fee + 1*ln_fee
-    # first test on-chain option
+    MAX_COINS = lightning.plain_bitcoin.max_coins
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
             case 'onchain':
                 payment_information_onchain = payment_option['payment_information']
-            case 'ln-open':
-                payment_information_new_channel = payment_option['payment_information']
-            case 'ln-pay':
-                payment_information_offchain = payment_option['payment_information']
     lightning.do(payment_information_onchain)
-    MAX_COINS = lightning.plain_bitcoin.max_coins
     # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - 1. - lightning.plain_bitcoin.get_fee() 
     assert lightning.plain_bitcoin.coins[7] == MAX_COINS + 1.
     # TODO: test for exceptions
-    # now test off-chain option
+
+def test_do_offchain():
+    base_fee = 1
+    ln_fee = 0.00002
+    lightning = make_example_network(base_fee, ln_fee)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    fee_intermediary = base_fee + 1*ln_fee
+    MAX_COINS = lightning.plain_bitcoin.max_coins
+    for payment_option in payment_options:
+        match payment_option['payment_information']['kind']:
+            case 'ln-pay':
+                payment_information_offchain = payment_option['payment_information']
+
     # path is [0,1,4,7]
     lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
     lightning.do(payment_information_offchain)
@@ -212,7 +220,22 @@ def test_do():
     np.testing.assert_almost_equal(lightning.network.graph[4][7]['balance'], 10 - value)
     np.testing.assert_almost_equal(lightning.network.graph[7][4]['balance'], 8 + value)
     np.testing.assert_almost_equal(lightning.network.graph[1][2]['balance'], 10)
-    # now test new-channel option
+
+def test_do_new_channel():
+    base_fee = 1
+    ln_fee = 0.00002
+    lightning = make_example_network(base_fee, ln_fee)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    fee_intermediary = base_fee + 1*ln_fee
+    value = 1
+    MAX_COINS = lightning.plain_bitcoin.max_coins
+    # first test on-chain option
+    for payment_option in payment_options:
+        match payment_option['payment_information']['kind']:
+            case 'ln-open':
+                payment_information_new_channel = payment_option['payment_information']
+
     lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
@@ -224,6 +247,11 @@ def test_do():
     # test the balances on ln (-2 for base fee and payment, +1 for payment).
     assert lightning.network.graph[0][7]['balance'] == sender_coins 
     assert lightning.network.graph[7][0]['balance'] == receiver_coins
+
+def test_do():
+    test_do_onchain()
+    test_do_offchain()
+    test_do_new_channel()
 
 def test_update_balances_pay_enough_money():
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
