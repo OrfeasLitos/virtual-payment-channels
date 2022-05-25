@@ -193,13 +193,15 @@ def test_do():
     lightning.do(payment_information_onchain)
     MAX_COINS = lightning.plain_bitcoin.max_coins
     # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
-    test_onchain = lightning.plain_bitcoin.coins[0] == MAX_COINS - 1. - lightning.plain_bitcoin.get_fee() and lightning.plain_bitcoin.coins[7] == MAX_COINS + 1.
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - 1. - lightning.plain_bitcoin.get_fee() 
+    assert lightning.plain_bitcoin.coins[7] == MAX_COINS + 1.
     # TODO: test for exceptions
     # now test off-chain option
     # path is [0,1,4,7]
     lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
     lightning.do(payment_information_offchain)
-    test_offchain =  lightning.plain_bitcoin.coins[0] == MAX_COINS and lightning.plain_bitcoin.coins[7] == MAX_COINS
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS 
+    assert lightning.plain_bitcoin.coins[7] == MAX_COINS
     value = 1
     np.testing.assert_almost_equal(lightning.network.graph[0][1]['balance'], 6-1 - 2*fee_intermediary)
     np.testing.assert_almost_equal(lightning.network.graph[1][0]['balance'], 7 + value + 2*fee_intermediary)
@@ -216,10 +218,11 @@ def test_do():
     sum_future_payments = lightning.sum_future_payments_to_receiver(7, future_payments)
     sender_coins = 2 * sum_future_payments
     receiver_coins = value
-    test_coins = lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins - receiver_coins and lightning.plain_bitcoin.coins[7] == MAX_COINS
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins - receiver_coins 
+    assert lightning.plain_bitcoin.coins[7] == MAX_COINS
     # test the balances on ln (-2 for base fee and payment, +1 for payment).
-    test_ln_open = lightning.network.graph[0][7]['balance'] == sender_coins and lightning.network.graph[7][0]['balance'] == receiver_coins
-    return test_onchain and test_offchain and test_coins and test_ln_open
+    assert lightning.network.graph[0][7]['balance'] == sender_coins 
+    assert lightning.network.graph[7][0]['balance'] == receiver_coins
 
 def test_update_balances_pay_enough_money():
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
@@ -290,7 +293,7 @@ if __name__ == "__main__":
     test_update_balances()
     test_get_payment_options()
     # TODO: fee's have changed, account for that in the tests.
-    assert(test_do())
+    test_do()
     test_choose_payment_method()
     print("Success")
 
