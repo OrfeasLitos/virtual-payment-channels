@@ -90,14 +90,7 @@ def test_get_payment_options_enough_money():
         'centrality' : ln_open_centrality, 'distance': [1,1,1,3],
         'payment_information' : {
             'kind' : 'ln-open',
-            'data' : (0, 7, 1.0, 7, 5.2, 5.2, {
-                'delay': 0.1, 'fee': 1000.00002,
-                'centrality': {
-                    0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
-                    5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0},
-                'distance': [1, 1, 3],
-                'payment_information': {'kind': 'ln-pay', 'data': ([0, 7], 1.0)}
-            })
+            'data' : (0, 7, 1.0, 7, 7.2, None)
         }
     }
     ln_pay_option_by_hand = {
@@ -113,7 +106,12 @@ def test_get_payment_options_enough_money():
         'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
     }
     assert onchain_option_by_hand == onchain_option
-    #assert ln_open_option_by_hand == ln_open_option
+    np.testing.assert_almost_equal(ln_open_option_by_hand['fee'], ln_open_option['fee'])
+    np.testing.assert_almost_equal(ln_open_option_by_hand['delay'], ln_open_option['delay'])
+    np.testing.assert_almost_equal(list(ln_open_option_by_hand['centrality']), list(ln_open_option['centrality']))
+    assert ln_open_option_by_hand['distance'] == ln_open_option['distance']
+    assert ln_open_option_by_hand['payment_information']['data'] == ln_open_option['payment_information']['data']
+
     np.testing.assert_almost_equal(ln_pay_option_by_hand['delay'], ln_pay_option['delay'])
     np.testing.assert_almost_equal(ln_pay_option_by_hand['fee'], ln_pay_option['fee'])
     np.testing.assert_almost_equal(list(ln_pay_option_by_hand['centrality']), list(ln_pay_option['centrality']))

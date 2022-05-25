@@ -162,7 +162,7 @@ class LN(PlainBitcoin):
         # review: our initial coins should be slightly higher than the minimum needed,
         # review: in order to accommodate for future payments and act as intermediary.
         # review: we can say e.g. `min(our on-chain coins, 2 * (sum_future_payments - value))` and we can improve from there
-        sender_coins = min(self.plain_bitcoin.coins[sender], 2 * sum_future_payments) - value - new_channel_fee 
+        sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, 2 * sum_future_payments)
         if sender_coins < 0:
             return None
         # TODO: discuss what to do if sender doesn't have enough money for future transactions,
@@ -171,7 +171,7 @@ class LN(PlainBitcoin):
             self.network.add_channel(sender, sender_coins, counterparty, 0)
             # TODO: adjust future_payments. Maybe in Simulation
             new_channel_offchain_option = self.get_offchain_option(
-                sender, receiver, value, future_payments[1:]
+                sender, receiver, value, future_payments
             )
             new_channel_centrality = new_channel_offchain_option['centrality']
             new_channel_distance = new_channel_offchain_option['distance']
