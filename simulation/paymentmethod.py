@@ -206,7 +206,10 @@ class LN(PlainBitcoin):
         offchain_time = self.get_payment_time(offchain_path)
         payment = (sender, receiver, value)
         payment_information = {'kind': 'ln-pay', 'data': (offchain_path, value)}
-        self.do(payment_information)
+        try:
+            self.do(payment_information)
+        except ValueError:
+            return None
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
         offchain_centrality = self.network.get_harmonic_centrality()
         offchain_distance = self.get_distance_to_future_parties(future_payments)

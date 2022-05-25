@@ -121,7 +121,7 @@ def test_get_payment_options_enough_money():
 def test_get_payment_options():
     test_get_payment_options_enough_money()
 
-def test_choose_payment_method():
+def test_choose_payment_method_offchain_best():
     lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
@@ -134,6 +134,23 @@ def test_choose_payment_method():
     # for offchain several orders of magnitude higher, just consider delay.
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-pay'
+
+def test_choose_payment_method_new_channel_best():
+    lightning = make_example_network(base_fee = 1000, ln_fee = 0.00002)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    def utility_function(fee, delay, distance, centrality):
+        distance_array = np.array(distance)
+        distance_array = 1 / distance_array
+        return 10000/fee + 50000/delay + sum(distance_array) + sum(centrality)
+    utility = Utility(utility_function)
+    # 
+    payment_method = utility.choose_payment_method(payment_options)
+    assert payment_method['kind'] == 'ln-open'
+
+def test_choose_payment_method():
+    test_choose_payment_method_offchain_best()
+    test_choose_payment_method_new_channel_best()
 
 def is_deterministic():
     bitcoin = PlainBitcoin()
