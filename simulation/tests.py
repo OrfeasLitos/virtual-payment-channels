@@ -36,11 +36,13 @@ def test_cheapest_path():
     network.add_channel(1, 10, 2, 8)
 
     cost1, cheapest_path1 = network.find_cheapest_path(0, 4, 3)
+    assert cost1 == 2 and cheapest_path1 == [0,1,4]
     cost2, cheapest_path2 = network.find_cheapest_path(0, 4, 5)
+    assert cost2 == 3 and cheapest_path2 == [0,2,3,4]
     cost_and_path3 = network.find_cheapest_path(0, 4, 12)
+    assert cost_and_path3 is None
     cost4, cheapest_path4 = network.find_cheapest_path(0, 4, 6)
-    return (cost1 == 2 and cheapest_path1 == [0,1,4] and cost2 == 3 and cheapest_path2 == [0,2,3,4]
-            and cost_and_path3 is None and cost4 == 4 and cheapest_path4 == [0,1,2,3,4])
+    assert cost4 == 4 and cheapest_path4 == [0,1,2,3,4]
 
 def test_get_payment_fee():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
@@ -55,10 +57,9 @@ def test_get_payment_fee():
         sender, receiver, value = payment
         path = lightning.network.find_cheapest_path(sender, receiver, value)
         num_hops = len(path) - 1
-        if (get_payment_fee_with_path(base_fee, ln_fee, payment, path) !=
-            lightning.get_payment_fee(payment, num_hops)):
-            output = False
-    return output
+        assert (get_payment_fee_with_path(base_fee, ln_fee, payment, path) ==
+            lightning.get_payment_fee(payment, num_hops)
+        )
 
 def test_get_payment_options_enough_money():
     base_fee = 1
@@ -172,7 +173,7 @@ def test_LN():
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     result = lightning.sum_future_payments_to_receiver(7, future_payments)
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
-    return result == 3.6
+    assert result == 3.6
 
 def test_do():
     base_fee = 1
@@ -287,9 +288,9 @@ def test_update_balances():
 
 if __name__ == "__main__":
     #assert(is_deterministic())
-    assert test_LN()
-    assert test_cheapest_path()
-    assert test_get_payment_fee()
+    test_LN()
+    test_cheapest_path()
+    test_get_payment_fee()
     test_update_balances()
     test_get_payment_options()
     # TODO: fee's have changed, account for that in the tests.
