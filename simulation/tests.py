@@ -52,7 +52,6 @@ def test_get_payment_fee():
     ln_fee = 0.00002
     lightning = make_example_network(base_fee, ln_fee)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
-    output = True
     for payment in future_payments:
         sender, receiver, value = payment
         path = lightning.network.find_cheapest_path(sender, receiver, value)
@@ -131,9 +130,10 @@ def test_choose_payment_method():
         distance_array = 1 / distance_array
         return 10000/fee + 5000/delay + sum(distance_array) + sum(centrality)
     utility = Utility(utility_function)
+    # utilities for onchain and new channel are about 50
+    # for offchain several orders of magnitude higher, just consider delay.
     payment_method = utility.choose_payment_method(payment_options)
-    print(payment_method)
-    return
+    assert payment_method['kind'] == 'ln-pay'
 
 def is_deterministic():
     bitcoin = PlainBitcoin()
