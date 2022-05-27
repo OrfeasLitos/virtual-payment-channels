@@ -113,22 +113,23 @@ class LN(PlainBitcoin):
         # or undoing it.
         if pay and not self.update_possible(value, ln_fee, base_fee, path):
             raise ValueError
-        # TODO: change names
-        op1, op2 = (operator.add, operator.sub) if pay else (operator.sub, operator.add)
+        # all the "speaking names" like op_take, received, etc are in the case of a payment
+        # in case of undoing they do the opposite.
+        op_take, op_give = (operator.add, operator.sub) if pay else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
         # review: we could also get `fee_intermediary` directly as input, to reduce parameters
         fee_intermediary = ln_fee * value + base_fee
         cost_sender = value + num_intermediaries * fee_intermediary
-        self.network.graph[sender][path[1]]['balance'] = op2(self.network.graph[sender][path[1]]['balance'], cost_sender)
-        self.network.graph[receiver][path[-2]]['balance'] = op1(self.network.graph[receiver][path[-2]]['balance'], value)
+        self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
+        self.network.graph[receiver][path[-2]]['balance'] = op_take(self.network.graph[receiver][path[-2]]['balance'], value)
         # Now have to update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
             received = value + (num_intermediaries - (i-1)) * fee_intermediary
             transfered = received - fee_intermediary
-            new_taker_balance = op1(self.network.graph[path[i]][path[i-1]]['balance'], received)
-            new_giver_balance = op2(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
+            new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
+            new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
             # if ...
             self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
             self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
