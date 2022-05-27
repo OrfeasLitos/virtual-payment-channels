@@ -109,6 +109,8 @@ def test_get_payment_options_enough_money():
     assert onchain_option_by_hand == onchain_option
     np.testing.assert_almost_equal(ln_open_option_by_hand['fee'], ln_open_option['fee'])
     np.testing.assert_almost_equal(ln_open_option_by_hand['delay'], ln_open_option['delay'])
+    for key in ln_open_option_by_hand['centrality'].keys():
+        np.testing.assert_almost_equal(ln_open_option_by_hand['centrality'][key], ln_open_option['centrality'][key])
     np.testing.assert_almost_equal(list(ln_open_option_by_hand['centrality']), list(ln_open_option['centrality']))
     # TODO: asserts for centrality are wrong. Fix that.
     assert ln_open_option_by_hand['distance'] == ln_open_option['distance']
