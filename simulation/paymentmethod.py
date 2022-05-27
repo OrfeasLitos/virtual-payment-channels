@@ -122,17 +122,23 @@ class LN(PlainBitcoin):
         # review: we could also get `fee_intermediary` directly as input, to reduce parameters
         fee_intermediary = ln_fee * value + base_fee
         cost_sender = value + num_intermediaries * fee_intermediary
-        self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
-        self.network.graph[receiver][path[-2]]['balance'] = op_take(self.network.graph[receiver][path[-2]]['balance'], value)
         # Now have to update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
             received = value + (num_intermediaries - (i-1)) * fee_intermediary
             transfered = received - fee_intermediary
             new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
             new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
-            # if ...
+            # we test just for new_giver_balance < 0 use in case of the payment only giver_balance gets smaller
+            # and in case of undoing it should have been done before, so it should there shouldn't occur
+            # numbers < 0.
+            if new_giver_balance < 0:
+                for j in range(1, i):
+                    pass
+                raise ValueError
             self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
             self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
+        self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
+        self.network.graph[receiver][path[-2]]['balance'] = op_take(self.network.graph[receiver][path[-2]]['balance'], value)
 
     def get_onchain_option(self, sender, receiver, value, future_payments):
         onchain_time = self.plain_bitcoin.get_delay()
