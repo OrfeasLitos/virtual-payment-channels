@@ -3,6 +3,7 @@
 import random
 import sys
 import numpy as np
+import networkx as nx
 import unittest
 
 from simulation import Simulation, random_payments
@@ -109,6 +110,7 @@ def test_get_payment_options_enough_money():
     np.testing.assert_almost_equal(ln_open_option_by_hand['fee'], ln_open_option['fee'])
     np.testing.assert_almost_equal(ln_open_option_by_hand['delay'], ln_open_option['delay'])
     np.testing.assert_almost_equal(list(ln_open_option_by_hand['centrality']), list(ln_open_option['centrality']))
+    # TODO: asserts for centrality are wrong. Fix that.
     assert ln_open_option_by_hand['distance'] == ln_open_option['distance']
     assert ln_open_option_by_hand['payment_information']['data'] == ln_open_option['payment_information']['data']
 
@@ -363,8 +365,12 @@ def test_update_balances_pay_not_enough_money():
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
     value = 2
+    balances = nx.get_edge_attributes(lightning.network.graph, "balance")
     try:
         lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
+        balances_after_failure = nx.get_edge_attributes(lightning.network.graph, "balance")
+        for key in balances.keys():
+            np.testing.assert_almost_equal(balances[key], balances_after_failure[key])
         assert False, 'update_balances() should raise a ValueError'
     except ValueError:
         pass

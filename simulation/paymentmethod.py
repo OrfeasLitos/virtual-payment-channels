@@ -111,8 +111,6 @@ class LN(PlainBitcoin):
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
         # the pay argument tells whether this corresponds to making a payment
         # or undoing it.
-        #if pay and not self.update_possible(value, ln_fee, base_fee, path):
-        #    raise ValueError
         # all the "speaking names" like op_take, received, etc are in the case of a payment
         # in case of undoing they do the opposite.
         op_take, op_give = (operator.add, operator.sub) if pay else (operator.sub, operator.add)
