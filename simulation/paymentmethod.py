@@ -91,23 +91,6 @@ class LN(PlainBitcoin):
                 distances.append(math.inf)
         return distances
 
-    def update_possible(self, value, ln_fee, base_fee, path, pay = True):
-        # TODO: maybe outsource first lines in extra method as it's used several times.
-        # TODO: using this in update_balances we do some stuff twice,
-        # but it makes it easier to handle. Think about how to optimize it.
-        num_intermediaries = len(path) - 2
-        sender = path[0]
-        fee_intermediary = ln_fee * value + base_fee
-        cost_sender = value + num_intermediaries * fee_intermediary
-        if self.network.graph[sender][path[1]]['balance'] - cost_sender < 0:
-            return False
-        for i in range(1, num_intermediaries + 1):
-            received = (num_intermediaries - i) * fee_intermediary
-            transfered = received - fee_intermediary
-            if transfered > self.network.graph[path[i]][path[i+1]]['balance']:
-                return False
-        return True
-
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
         # the pay argument tells whether this corresponds to making a payment
         # or undoing it.
