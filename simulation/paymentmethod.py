@@ -70,7 +70,7 @@ class LN(PlainBitcoin):
         future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[1] == receiver]
         return sum([payment[2] for payment in future_payments_to_receiver])
 
-    def get_distance_to_future_parties(self, future_payments):
+    def get_distance_to_future_parties(self, sender, future_payments):
         """
         Returns the sum of the distances of the future parties
         (if parties occur multiple times their distance is summed multiple times)
@@ -83,7 +83,8 @@ class LN(PlainBitcoin):
         # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
         # review: in orfer to combine the distances of various future payments, we may need to also store sender/receiver info in the list
         distances = []
-        for sender, receiver, value in future_payments:
+        future_payments_from_sender = filter(lambda lst: lst[0] == sender, future_payments)
+        for _, receiver, value in future_payments_from_sender:
             cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
             if cost_and_path is not None:
                 _, cheapest_path = cost_and_path
@@ -145,7 +146,7 @@ class LN(PlainBitcoin):
         if onchain_fee + value > self.plain_bitcoin.coins[sender]:
             return None
         onchain_centrality = self.network.get_harmonic_centrality()
-        onchain_distance = self.get_distance_to_future_parties(future_payments)
+        onchain_distance = self.get_distance_to_future_parties(sender, future_payments)
         return {
             'delay': onchain_time,
             'fee': onchain_fee,
@@ -182,7 +183,7 @@ class LN(PlainBitcoin):
             self.network.add_channel(sender, sender_coins, counterparty, value)
             new_channel_offchain_option = None
             new_channel_centrality = self.network.get_harmonic_centrality()
-            new_channel_distance = self.get_distance_to_future_parties(future_payments)
+            new_channel_distance = self.get_distance_to_future_parties(sender, future_payments)
         self.network.close_channel(sender, counterparty)
 
         return {
@@ -213,7 +214,7 @@ class LN(PlainBitcoin):
             return None
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
         offchain_centrality = self.network.get_harmonic_centrality()
-        offchain_distance = self.get_distance_to_future_parties(future_payments)
+        offchain_distance = self.get_distance_to_future_parties(sender, future_payments)
         self.undo(payment_information)
         return {
             'delay': offchain_time,
