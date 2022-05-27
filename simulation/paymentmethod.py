@@ -63,12 +63,20 @@ class LN(PlainBitcoin):
         sender, receiver, value = payment
         return (self.base_fee +  value * self.ln_fee) * num_hops
 
-    def sum_future_payments_to_receiver(self, receiver, future_payments):
+    def sum_future_payments_over_counterparty(self, sender, counterparty, future_payments):
         """
         This is used to determine a minimum amount that should be put on a new channel between sender and receiver.
         """
-        future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[1] == receiver]
+        sum_future_payments = 0
+        for future_sender, future_receiver, value in future_payments:
+            cost_and_path = self.network.find_cheapest_path(future_sender, future_receiver, value)
+            if cost_and_path is not None:
+                _, cheapest_path = cost_and_path
+                if cheapest_path[:2] == [sender, counterparty]:
+                    sum_future_payments += value
+        future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[0] == sender and future_payment[1] == counterparty]
         return sum([payment[2] for payment in future_payments_to_receiver])
+        #return sum_future_payments
 
     def get_distance_to_future_parties(self, sender, future_payments):
         """
@@ -144,11 +152,8 @@ class LN(PlainBitcoin):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         # TODO: incorporate counterparty in sum_future_payments
-        sum_future_payments = self.sum_future_payments_to_receiver(receiver, future_payments)
+        sum_future_payments = self.sum_future_payments_over_counterparty(sender, counterparty, future_payments)
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
-        # review: our initial coins should be slightly higher than the minimum needed,
-        # review: in order to accommodate for future payments and act as intermediary.
-        # review: we can say e.g. `min(our on-chain coins, 2 * (sum_future_payments - value))` and we can improve from there
         sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, 2 * sum_future_payments)
         if sender_coins < 0:
             return None

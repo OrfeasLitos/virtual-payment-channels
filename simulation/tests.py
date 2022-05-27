@@ -111,14 +111,13 @@ def test_get_payment_options_enough_money():
     np.testing.assert_almost_equal(ln_open_option_by_hand['delay'], ln_open_option['delay'])
     for key in ln_open_option_by_hand['centrality'].keys():
         np.testing.assert_almost_equal(ln_open_option_by_hand['centrality'][key], ln_open_option['centrality'][key])
-    np.testing.assert_almost_equal(list(ln_open_option_by_hand['centrality']), list(ln_open_option['centrality']))
-    # TODO: asserts for centrality are wrong. Fix that.
     assert ln_open_option_by_hand['distance'] == ln_open_option['distance']
     assert ln_open_option_by_hand['payment_information']['data'] == ln_open_option['payment_information']['data']
 
     np.testing.assert_almost_equal(ln_pay_option_by_hand['delay'], ln_pay_option['delay'])
     np.testing.assert_almost_equal(ln_pay_option_by_hand['fee'], ln_pay_option['fee'])
-    np.testing.assert_almost_equal(list(ln_pay_option_by_hand['centrality']), list(ln_pay_option['centrality']))
+    for key in ln_pay_option_by_hand['centrality'].keys():
+        np.testing.assert_almost_equal(ln_pay_option_by_hand['centrality'][key], ln_pay_option_by_hand['centrality'][key])
     assert ln_pay_option_by_hand['distance'] == ln_pay_option['distance']
     assert ln_pay_option_by_hand['payment_information'] == ln_pay_option['payment_information']
 
@@ -212,7 +211,7 @@ def test_LN():
     nr_players = 10
     lightning = LN(nr_players)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
-    result = lightning.sum_future_payments_to_receiver(7, future_payments)
+    result = lightning.sum_future_payments_over_counterparty(0, 7, future_payments)
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     assert result == 3.6
 
@@ -306,7 +305,7 @@ def test_do_new_channel():
     lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
-    sum_future_payments = lightning.sum_future_payments_to_receiver(7, future_payments)
+    sum_future_payments = lightning.sum_future_payments_over_counterparty(0, 7, future_payments)
     sender_coins = 2 * sum_future_payments
     receiver_coins = value
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins - receiver_coins 
