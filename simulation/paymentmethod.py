@@ -111,8 +111,8 @@ class LN(PlainBitcoin):
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
         # the pay argument tells whether this corresponds to making a payment
         # or undoing it.
-        if pay and not self.update_possible(value, ln_fee, base_fee, path):
-            raise ValueError
+        #if pay and not self.update_possible(value, ln_fee, base_fee, path):
+        #    raise ValueError
         # all the "speaking names" like op_take, received, etc are in the case of a payment
         # in case of undoing they do the opposite.
         op_take, op_give = (operator.add, operator.sub) if pay else (operator.sub, operator.add)
@@ -133,7 +133,10 @@ class LN(PlainBitcoin):
             # numbers < 0.
             if new_giver_balance < 0:
                 for j in range(1, i):
-                    pass
+                    received = value + (num_intermediaries - (j-1)) * fee_intermediary
+                    transfered = received - fee_intermediary
+                    new_taker_balance = op_give(self.network.graph[path[j]][path[j-1]]['balance'], received)
+                    new_giver_balance = op_take(self.network.graph[path[j]][path[j+1]]['balance'], transfered)
                 raise ValueError
             self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
             self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
