@@ -75,8 +75,6 @@ class LN(PlainBitcoin):
         Returns the sum of the distances of the future parties
         (if parties occur multiple times their distance is summed multiple times)
         """
-        # review: this doesn't calculate _our_ distance from others but _future payers'_ distances from others
-        # Yes therefore I made the first comment in get_payment_options. I still have to implement a filter method, so that we don't need the assumption there.
         # review: instead of filtering them out, we could exploit the data on payments that don't include us by e.g.
         # review: wanting to have a shorter distance to those parties as well
         # review: (and give our distance to them bonus weight if we project the unrelated payment to go through us)
@@ -115,9 +113,6 @@ class LN(PlainBitcoin):
         # or undoing it.
         if pay and not self.update_possible(value, ln_fee, base_fee, path):
             raise ValueError
-        # TODO: think about if this is understandable.
-        # It's shorter than making ifs for the updates,
-        # but the code is harder to understand at first glance.
         # TODO: change names
         op1, op2 = (operator.add, operator.sub) if pay else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
@@ -138,7 +133,6 @@ class LN(PlainBitcoin):
             self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
             self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
 
-    # TODO: use do also for get_onchain_option and get_new_channel_option
     def get_onchain_option(self, sender, receiver, value, future_payments):
         onchain_time = self.plain_bitcoin.get_delay()
         # review: bitcoin fee depends on tx size. we should hardcode the sizes of the various txs of interest and use the simple tx (a.k.a. P2WP2KH) fee here
@@ -167,8 +161,6 @@ class LN(PlainBitcoin):
         sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, 2 * sum_future_payments)
         if sender_coins < 0:
             return None
-        # TODO: discuss what to do if sender doesn't have enough money for future transactions,
-        # but could open channel and make the transaction.
         if counterparty != receiver:
             self.network.add_channel(sender, sender_coins, counterparty, 0)
             # TODO: adjust future_payments. Maybe in Simulation
@@ -266,7 +258,6 @@ class LN(PlainBitcoin):
                 try:
                     self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = True)
                 except ValueError:
-                    # TODO: think of what should happen in case of a ValueError
                     raise
             case _:
                 raise ValueError
