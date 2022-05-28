@@ -28,6 +28,7 @@ class Simulation:
         """
         payments should be a deque.
         """
+        # TODO: nr_players is not necessary atm. Check if we can remove it.
         self.payments = payments
         self.payment_method = payment_method
         self.knowledge = knowledge
@@ -53,7 +54,7 @@ class Simulation:
             #self.network = self.network.apply(best_method)
 
             # TODO: determine parameter future_payments in get_payment_options with help of the knowledge function.
-            future_payments = self.payments
+            future_payments = self.knowledge.get_knowledge(sender, self.payments)
             payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)
             payment_option = self.utility.choose_payment_method(payment_options)
             self.payment_method.do(payment_option)

@@ -402,7 +402,21 @@ def test_update_balances():
     test_update_balances_reverse()
 
 def test_simulation_with_ln():
-    pass
+    lightning = LN(10)
+    seed = 0
+    random.seed(seed)
+    def know_all(party, payments):
+        return payments
+    knowledge = Knowledge(know_all)
+    payments = random_payments(20, 10, 2000000000000000)
+    def utility_function(fee, delay, distance, centrality):
+        distance_array = np.array(distance)
+        distance_array = 1 / distance_array
+        return 10000/fee + 5000/delay + sum(distance_array) + sum(centrality)
+    utility = Utility(utility_function)
+    simulation = Simulation(10, payments, lightning, knowledge, utility)
+    output = simulation.run()
+    print(output)
 
 if __name__ == "__main__":
     #assert(is_deterministic())
@@ -413,7 +427,7 @@ if __name__ == "__main__":
     test_get_payment_options()
     test_do()
     test_choose_payment_method()
-    test_simulation_with_ln()
+    #test_simulation_with_ln()
     print("Success")
 
 
