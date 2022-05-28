@@ -55,6 +55,7 @@ class Simulation:
 
             # TODO: determine parameter future_payments in get_payment_options with help of the knowledge function.
             future_payments = self.knowledge.get_knowledge(sender, self.payments)
+            # TODO: check if the list payment_options is nonempty.
             payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)
             payment_option = self.utility.choose_payment_method(payment_options)
             self.payment_method.do(payment_option)
@@ -79,6 +80,7 @@ class Simulation:
             and self.utility == other.utility
         )
 
+"""
 if __name__ == "__main__":
 
     #seed = random.randrange(sys.maxsize)
@@ -103,7 +105,7 @@ if __name__ == "__main__":
     print(len(network.edges))
     print(payments_with_method[:30])
     print(list(network.edges)[:60])
-    """
+    
     for parties in [10, 100, 1000, 10000]:
         for num_payments in [100, 1000, 10000, 100000]:
             for payments in random_payments(num_payments, parties, MAX_COINS/5) * 10:
@@ -121,4 +123,5 @@ if __name__ == "__main__":
                             sim.run()
                             # for step in sim:
                             #    print(step)
-    """
+    
+"""
