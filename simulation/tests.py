@@ -401,6 +401,9 @@ def test_update_balances():
     test_update_balances_pay_not_enough_money()
     test_update_balances_reverse()
 
+def test_simulation_with_ln():
+    pass
+
 if __name__ == "__main__":
     #assert(is_deterministic())
     test_LN()
@@ -410,6 +413,7 @@ if __name__ == "__main__":
     test_get_payment_options()
     test_do()
     test_choose_payment_method()
+    test_simulation_with_ln()
     print("Success")
 
 

@@ -53,7 +53,8 @@ class Simulation:
             #self.network = self.network.apply(best_method)
 
             # TODO: determine parameter future_payments in get_payment_options with help of the knowledge function.
-            payment_options = self.payment_method.get_payment_options(sender, receiver, value)
+            future_payments = self.payments
+            payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)
             payment_option = self.utility.choose_payment_method(payment_options)
             self.payment_method.do(payment_option)
             # ideally, one could take the initial network state and the list of payments and reach the final network state
