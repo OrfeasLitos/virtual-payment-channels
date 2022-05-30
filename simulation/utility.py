@@ -21,13 +21,12 @@ class Utility:
 
         best_score = 0
         for option in payment_options:
-            if option is not None:
-                fee = option['fee']
-                delay = option['delay']
-                centrality = option['centrality']
-                distance = option['distance']
-                utility = self.get_utility(fee, delay, distance, centrality)
-                if utility > best_score:
-                    best = option['payment_information']
-                    best_score = utility
+            fee = option['fee']
+            delay = option['delay']
+            centrality = option['centrality']
+            distance = option['distance']
+            utility = self.get_utility(fee, delay, distance, centrality)
+            if utility > best_score:
+                best = option['payment_information']
+                best_score = utility
         return best
