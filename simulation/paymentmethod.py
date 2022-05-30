@@ -97,6 +97,27 @@ class LN(PlainBitcoin):
                 distances.append(len(cheapest_path)-1)
             else:
                 distances.append(math.inf)
+        """
+        # weight if we are sender
+        weight_sender = 100
+        # weight if we are possible intermediary
+        weight_intermediary = 1
+        for future_sender, receiver, value in future_payments:
+            if future_sender == sender:
+                cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
+                if cost_and_path is not None:
+                    _, cheapest_path = cost_and_path
+                    distances.append((len(cheapest_path)-1)*weight_sender)
+            else:
+                cost_and_path_to_future_sender = self.network.find_cheapest_path(future_sender, sender, value)
+                cost_and_path_to_future_receiver = self.network.find_cheapest_path(sender, receiver, value)
+                if cost_and_path_to_future_sender is not None:
+                    _, cheapest_path_to_future_sender = cost_and_path_to_future_sender
+                    distances.append((len(cheapest_path_to_future_sender)-1)*weight_intermediary)
+                if cost_and_path_to_future_receiver is not None:
+                    _, cheapest_path_to_future_receiver = cost_and_path_to_future_receiver
+                    distances.append((len(cheapest_path_to_future_receiver)-1)*weight_intermediary)
+        """
         return distances
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
