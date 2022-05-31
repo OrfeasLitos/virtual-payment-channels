@@ -91,21 +91,34 @@ class LN(PlainBitcoin):
         weight_sender = 100
         # weight if we are possible intermediary
         weight_intermediary = 1
-        for future_sender, receiver, value in future_payments:
+        for future_sender, future_receiver, value in future_payments:
             if future_sender == sender:
-                cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
+                cost_and_path = self.network.find_cheapest_path(sender, future_receiver, value)
                 if cost_and_path is not None:
                     _, cheapest_path = cost_and_path
                     distances.append((len(cheapest_path)-1)*weight_sender)
+                else:
+                    distances.append(math.inf)
+            elif sender == future_receiver:
+                cost_and_path = self.network.find_cheapest_path(future_sender, future_receiver, value)
+                if cost_and_path is not None:
+                    _, cheapest_path = cost_and_path
+                    distances.append((len(cheapest_path)-1)*weight_sender)
+                else:
+                    distances.append(math.inf)
             else:
                 cost_and_path_to_future_sender = self.network.find_cheapest_path(future_sender, sender, value)
-                cost_and_path_to_future_receiver = self.network.find_cheapest_path(sender, receiver, value)
+                cost_and_path_to_future_receiver = self.network.find_cheapest_path(sender, future_receiver, value)
                 if cost_and_path_to_future_sender is not None:
                     _, cheapest_path_to_future_sender = cost_and_path_to_future_sender
                     distances.append((len(cheapest_path_to_future_sender)-1)*weight_intermediary)
+                else:
+                    distances.append(math.inf)
                 if cost_and_path_to_future_receiver is not None:
                     _, cheapest_path_to_future_receiver = cost_and_path_to_future_receiver
                     distances.append((len(cheapest_path_to_future_receiver)-1)*weight_intermediary)
+                else:
+                    distances.append(math.inf)
         return distances
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
@@ -163,7 +176,7 @@ class LN(PlainBitcoin):
         # TODO: incorporate counterparty in sum_future_payments
         sum_future_payments = self.sum_future_payments_over_counterparty(sender, counterparty, future_payments)
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
-        sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, 2 * sum_future_payments)
+        sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, 20 * sum_future_payments)
         if sender_coins < 0:
             return None
         if counterparty != receiver:

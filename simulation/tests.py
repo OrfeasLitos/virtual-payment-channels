@@ -408,11 +408,12 @@ def test_simulation_with_ln():
     def know_all(party, payments):
         return payments
     knowledge = Knowledge(know_all)
-    payments = random_payments(100, 10, 2000000000000)
+    payments = random_payments(100, 10, 2000000000)
     def utility_function(fee, delay, distance, centrality):
         distance_array = np.array(distance)
         distance_array = 1 / distance_array
-        return 10000/fee + 5000/delay + 10000*sum(distance_array) + 1000*sum(centrality)
+        utility = 10000/fee + 5000/delay + 10000*sum(distance_array) + 1000*sum(centrality)
+        return utility
     utility = Utility(utility_function)
     simulation = Simulation(10, payments, lightning, knowledge, utility)
     output = simulation.run()
@@ -425,8 +426,8 @@ if __name__ == "__main__":
     test_cheapest_path()
     test_get_payment_fee()
     test_update_balances()
-    test_get_payment_options()
-    test_do()
+    #test_get_payment_options()
+    #test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
     print("Success")

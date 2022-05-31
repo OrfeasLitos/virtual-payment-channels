@@ -20,13 +20,15 @@ class Utility:
         """
 
         best_score = 0
+        if payment_options is []:
+            raise ValueError
         for option in payment_options:
             fee = option['fee']
             delay = option['delay']
             centrality = option['centrality']
             distance = option['distance']
             utility = self.get_utility(fee, delay, distance, centrality)
-            if utility > best_score:
+            if utility >= best_score:
                 best = option['payment_information']
                 best_score = utility
         return best
