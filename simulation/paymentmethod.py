@@ -89,15 +89,6 @@ class LN(PlainBitcoin):
         # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
         # review: in orfer to combine the distances of various future payments, we may need to also store sender/receiver info in the list
         distances = []
-        future_payments_from_sender = filter(lambda lst: lst[0] == sender, future_payments)
-        for _, receiver, value in future_payments_from_sender:
-            cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
-            if cost_and_path is not None:
-                _, cheapest_path = cost_and_path
-                distances.append(len(cheapest_path)-1)
-            else:
-                distances.append(math.inf)
-        """
         # weight if we are sender
         weight_sender = 100
         # weight if we are possible intermediary
@@ -117,7 +108,6 @@ class LN(PlainBitcoin):
                 if cost_and_path_to_future_receiver is not None:
                     _, cheapest_path_to_future_receiver = cost_and_path_to_future_receiver
                     distances.append((len(cheapest_path_to_future_receiver)-1)*weight_intermediary)
-        """
         return distances
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):

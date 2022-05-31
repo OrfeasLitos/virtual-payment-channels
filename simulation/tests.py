@@ -425,7 +425,7 @@ if __name__ == "__main__":
     test_cheapest_path()
     test_get_payment_fee()
     test_update_balances()
-    test_get_payment_options()
+    #test_get_payment_options()
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
