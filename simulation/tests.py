@@ -79,7 +79,7 @@ def test_get_payment_options_enough_money():
     onchain_option_by_hand = {
         'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
-        'distance': [1, 3, 3, 3], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
+        'distance': [100, 300, 300, 300], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
     }
     ln_open_centrality = {
         0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
@@ -88,7 +88,7 @@ def test_get_payment_options_enough_money():
     ln_open_option_by_hand = {
         'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
         'fee' : lightning.plain_bitcoin.get_fee(lightning.opening_transaction_size),
-        'centrality' : ln_open_centrality, 'distance': [1,1,1,3],
+        'centrality' : ln_open_centrality, 'distance': [100,100,100,300],
         'payment_information' : {
             'kind' : 'ln-open',
             'data' : (0, 7, 1.0, 7, 7.2, None)
@@ -103,7 +103,7 @@ def test_get_payment_options_enough_money():
         },
         # 1 can pay 1.5 to 4 as he still has a little less than 2, but he can't pay 2.1.
         # So we get the distance as described (by 0->2->3->4->7)
-        'distance': [1,3,4,3],
+        'distance': [100,300,400,300],
         'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
     }
     assert onchain_option_by_hand == onchain_option
@@ -425,7 +425,7 @@ if __name__ == "__main__":
     test_cheapest_path()
     test_get_payment_fee()
     test_update_balances()
-    #test_get_payment_options()
+    test_get_payment_options()
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()

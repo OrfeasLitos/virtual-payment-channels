@@ -67,6 +67,7 @@ class LN(PlainBitcoin):
         """
         This is used to determine a minimum amount that should be put on a new channel between sender and receiver.
         """
+        """
         sum_future_payments = 0
         for future_sender, future_receiver, value in future_payments:
             cost_and_path = self.network.find_cheapest_path(future_sender, future_receiver, value)
@@ -74,20 +75,17 @@ class LN(PlainBitcoin):
                 _, cheapest_path = cost_and_path
                 if cheapest_path[:2] == [sender, counterparty]:
                     sum_future_payments += value
+        return sum_future_payments
+        """
+        # TODO: think if we should use code above and maybe combine it with get_distance_to_future_parties.
         future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[0] == sender and future_payment[1] == counterparty]
         return sum([payment[2] for payment in future_payments_to_receiver])
-        #return sum_future_payments
 
     def get_distance_to_future_parties(self, sender, future_payments):
         """
         Returns the sum of the distances of the future parties
         (if parties occur multiple times their distance is summed multiple times)
         """
-        # review: instead of filtering them out, we could exploit the data on payments that don't include us by e.g.
-        # review: wanting to have a shorter distance to those parties as well
-        # review: (and give our distance to them bonus weight if we project the unrelated payment to go through us)
-        # TODO: save calculated distances to parties in a list to prevent multiple calls to find_cheapest_path
-        # review: in orfer to combine the distances of various future payments, we may need to also store sender/receiver info in the list
         distances = []
         # weight if we are sender
         weight_sender = 100
