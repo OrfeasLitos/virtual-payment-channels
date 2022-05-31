@@ -1,6 +1,5 @@
 # TODO: Check __eq__ method for simulation. Ensure that test fails if edges contain strings.
 
-# review: `from numpy.testing import assert_almost_equal as assert_eq` and replace it everywhere, it's now too long
 import random
 import sys
 import numpy as np
@@ -28,6 +27,11 @@ def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning.network.add_channel(4, 10., 7, 8.)
     lightning.network.add_channel(3, 10., 8, 8.)
     return lightning
+
+def make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002):
+    lightning = make_example_network(base_fee, ln_fee)
+    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    return base_fee, ln_fee, lightning, future_payments
 
 def test_cheapest_path():
     network = Network(5)
