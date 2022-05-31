@@ -1,5 +1,6 @@
 # TODO: Check __eq__ method for simulation. Ensure that test fails if edges contain strings.
 
+# review: `from numpy.testing import assert_almost_equal as assert_eq` and replace it everywhere, it's now too long
 import random
 import sys
 import numpy as np
@@ -67,6 +68,7 @@ def test_get_payment_options_enough_money():
     lightning = make_example_network(base_fee, ln_fee)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    # review: this `for` overwrites `_option` if there are more than one similar options. This should be guarded against and fail the test otherwise. If we expect exactly one of each kind, better not do it in a `for`.
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
             case 'onchain':
@@ -76,6 +78,7 @@ def test_get_payment_options_enough_money():
             case 'ln-pay':
                 ln_pay_option = payment_option
     on_chain_centrality = lightning.network.get_harmonic_centrality()
+    # review: maybe rename `onchain_option` -> `actual_onchain_option` & `onchain_option_by_hand` -> `expected_onchain_option`, likewise for the other 2
     onchain_option_by_hand = {
         'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
@@ -216,6 +219,7 @@ def test_LN():
     assert result == 3.6
 
 def test_do_onchain():
+    # review: the next few lines are duplicated many times. The first few are also used in _exception()s, a few more only in the 2 other `do` tests
     base_fee = 1
     ln_fee = 0.00002
     lightning = make_example_network(base_fee, ln_fee)
@@ -223,6 +227,7 @@ def test_do_onchain():
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     fee_intermediary = base_fee + 1*ln_fee
     MAX_COINS = lightning.plain_bitcoin.max_coins
+    # review: this `for` overwrites `payment_information_onchain` if there are more than one 'onchain' options. This should be guarded against and fail the test otherwise
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
             case 'onchain':
@@ -297,6 +302,7 @@ def test_do_new_channel():
     value = 1
     MAX_COINS = lightning.plain_bitcoin.max_coins
     # first test on-chain option
+    # review: this `for` overwrites `payment_information_new_channel` if there are more than one 'ln-open' options. This should be guarded against and fail the test otherwise
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
             case 'ln-open':
