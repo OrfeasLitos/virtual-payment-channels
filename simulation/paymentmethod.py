@@ -33,6 +33,7 @@ class PlainBitcoin():
 
     def pay(self, data):
         sender, receiver, value = data
+        # review: I just realized that this specific try-except-raise construct is redundant, as it is equivalent to just having the contents of the try block.
         try:
             amount_sender = - value - self.get_fee()
             self.update_coins(sender, amount_sender)
@@ -236,6 +237,7 @@ class LN(PlainBitcoin):
     def do(self, payment_information):
         match payment_information['kind']:
             case 'onchain':
+                # review: try-except-raise redundant
                 try:
                     self.plain_bitcoin.pay(payment_information['data'])
                 except ValueError:
@@ -248,18 +250,21 @@ class LN(PlainBitcoin):
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender
                 amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee(self.opening_transaction_size))
+                # review: try-except-raise redundant
                 try:
                     self.plain_bitcoin.update_coins(sender, amount_sender)
                 except ValueError:
                     raise
                 # use ln-pay here to make the off-chain payment after opening a new channel.
                 if counterparty != receiver:
+                    # review: try-except-raise redundant
                     try:
                         self.do(new_channel_offchain_option['payment_information'])
                     except ValueError:
                         raise
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
+                # review: try-except-raise redundant
                 try:
                     self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = True)
                 except ValueError:
