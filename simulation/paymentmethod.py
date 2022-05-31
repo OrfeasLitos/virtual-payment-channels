@@ -33,14 +33,11 @@ class PlainBitcoin():
 
     def pay(self, data):
         sender, receiver, value = data
-        # review: I just realized that this specific try-except-raise construct is redundant, as it is equivalent to just having the contents of the try block.
-        try:
-            amount_sender = - value - self.get_fee()
-            self.update_coins(sender, amount_sender)
-            self.update_coins(receiver, value)
-        except ValueError:
-            # only the first update_coins can fail, no bookkeeping is required.
-            raise
+        amount_sender = - value - self.get_fee()
+        self.update_coins(sender, amount_sender)
+        # only the first update_coins can fail, no bookkeeping is required.
+        self.update_coins(receiver, value)
+            
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
@@ -250,11 +247,7 @@ class LN(PlainBitcoin):
     def do(self, payment_information):
         match payment_information['kind']:
             case 'onchain':
-                # review: try-except-raise redundant
-                try:
-                    self.plain_bitcoin.pay(payment_information['data'])
-                except ValueError:
-                    raise
+                self.plain_bitcoin.pay(payment_information['data'])
             case 'ln-open':
                 # review: lint
                 (sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) = (
@@ -263,18 +256,10 @@ class LN(PlainBitcoin):
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender
                 amount_sender = - (sender_coins + counterparty_coins + self.plain_bitcoin.get_fee(self.opening_transaction_size))
-                # review: try-except-raise redundant
-                try:
-                    self.plain_bitcoin.update_coins(sender, amount_sender)
-                except ValueError:
-                    raise
+                self.plain_bitcoin.update_coins(sender, amount_sender)
                 # use ln-pay here to make the off-chain payment after opening a new channel.
                 if counterparty != receiver:
-                    # review: try-except-raise redundant
-                    try:
-                        self.do(new_channel_offchain_option['payment_information'])
-                    except ValueError:
-                        raise
+                    self.do(new_channel_offchain_option['payment_information'])
             case 'ln-pay':
                 offchain_path, value = payment_information['data']
                 # review: try-except-raise redundant
