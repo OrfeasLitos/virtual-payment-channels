@@ -72,14 +72,13 @@ def test_get_payment_options_enough_money():
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
             case 'onchain':
-                onchain_option = payment_option
+                actual_onchain_option = payment_option
             case 'ln-open':
-                ln_open_option = payment_option
+                actual_ln_open_option = payment_option
             case 'ln-pay':
-                ln_pay_option = payment_option
+                actual_ln_pay_option = payment_option
     on_chain_centrality = lightning.network.get_harmonic_centrality()
-    # review: maybe rename `onchain_option` -> `actual_onchain_option` & `onchain_option_by_hand` -> `expected_onchain_option`, likewise for the other 2
-    onchain_option_by_hand = {
+    expected_onchain_option = {
         'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
         'distance': [100, 300, 300, 300], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
@@ -88,7 +87,7 @@ def test_get_payment_options_enough_money():
         0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
         5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0
     }
-    ln_open_option_by_hand = {
+    expected_ln_open_option = {
         'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
         'fee' : lightning.plain_bitcoin.get_fee(lightning.opening_transaction_size),
         'centrality' : ln_open_centrality, 'distance': [100,100,100,300],
@@ -97,7 +96,7 @@ def test_get_payment_options_enough_money():
             'data' : (0, 7, 1.0, 7, 7.2, None)
         }
     }
-    ln_pay_option_by_hand = {
+    expected_ln_pay_option = {
         'delay' : lightning.get_payment_time([0,1,4,7]),
         'fee' : lightning.get_payment_fee((0, 7, 1.0), 3),
         'centrality' : {
@@ -109,20 +108,20 @@ def test_get_payment_options_enough_money():
         'distance': [100,300,400,300],
         'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
     }
-    assert onchain_option_by_hand == onchain_option
-    np.testing.assert_almost_equal(ln_open_option_by_hand['fee'], ln_open_option['fee'])
-    np.testing.assert_almost_equal(ln_open_option_by_hand['delay'], ln_open_option['delay'])
-    for key in ln_open_option_by_hand['centrality'].keys():
-        np.testing.assert_almost_equal(ln_open_option_by_hand['centrality'][key], ln_open_option['centrality'][key])
-    assert ln_open_option_by_hand['distance'] == ln_open_option['distance']
-    assert ln_open_option_by_hand['payment_information']['data'] == ln_open_option['payment_information']['data']
+    assert expected_onchain_option == actual_onchain_option
+    np.testing.assert_almost_equal(expected_ln_open_option['fee'], actual_ln_open_option['fee'])
+    np.testing.assert_almost_equal(expected_ln_open_option['delay'], actual_ln_open_option['delay'])
+    for key in expected_ln_open_option['centrality'].keys():
+        np.testing.assert_almost_equal(expected_ln_open_option['centrality'][key], actual_ln_open_option['centrality'][key])
+    assert expected_ln_open_option['distance'] == actual_ln_open_option['distance']
+    assert expected_ln_open_option['payment_information']['data'] == actual_ln_open_option['payment_information']['data']
 
-    np.testing.assert_almost_equal(ln_pay_option_by_hand['delay'], ln_pay_option['delay'])
-    np.testing.assert_almost_equal(ln_pay_option_by_hand['fee'], ln_pay_option['fee'])
-    for key in ln_pay_option_by_hand['centrality'].keys():
-        np.testing.assert_almost_equal(ln_pay_option_by_hand['centrality'][key], ln_pay_option_by_hand['centrality'][key])
-    assert ln_pay_option_by_hand['distance'] == ln_pay_option['distance']
-    assert ln_pay_option_by_hand['payment_information'] == ln_pay_option['payment_information']
+    np.testing.assert_almost_equal(expected_ln_pay_option['delay'], actual_ln_pay_option['delay'])
+    np.testing.assert_almost_equal(expected_ln_pay_option['fee'], actual_ln_pay_option['fee'])
+    for key in expected_ln_pay_option['centrality'].keys():
+        np.testing.assert_almost_equal(expected_ln_pay_option['centrality'][key], actual_ln_pay_option['centrality'][key])
+    assert expected_ln_pay_option['distance'] == actual_ln_pay_option['distance']
+    assert expected_ln_pay_option['payment_information'] == actual_ln_pay_option['payment_information']
 
 def test_get_payment_options():
     test_get_payment_options_enough_money()
