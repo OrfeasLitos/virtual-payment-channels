@@ -74,11 +74,16 @@ class LN(PlainBitcoin):
         (if parties occur multiple times their distance is summed multiple times)
         """
         distances = []
-        # weight if we are source
+        # weight if we are endpoint
         weight_endpoint = 100
         # weight if we are possible intermediary
-        weight_intermediary = 1
+        weight_intermediary = 10
+        # weight for other parties
+        weight_other = 1
+        future_parties = set()
         for future_sender, future_receiver, value in future_payments:
+            future_parties.add(future_sender)
+            future_parties.add(future_receiver)
             path_data = []
             if future_sender != source:
                 path_data.append((
@@ -101,8 +106,14 @@ class LN(PlainBitcoin):
                     _, cheapest_path = cost_and_path
                     distances.append((weight, len(cheapest_path)-1))
 
-            #for each party that we've not seen before:
-                #distances.append((even_smaller_weight, len(path_to_that_party)-1))
+            for party in (set(self.network.graph.nodes()).difference(future_parties)):
+                # TODO: think of reasonable amount in find cheapest path in here
+                cost_and_path = self.network.find_cheapest_path(source, party, 1)
+                if cost_and_path is None:
+                    distances.append((weight_other, math.inf))
+                else:
+                    _, cheapest_path = cost_and_path
+                    distances.append((weight_other, len(cheapest_path)-1))
         return distances
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
