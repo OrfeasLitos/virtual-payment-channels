@@ -65,58 +65,44 @@ class LN(PlainBitcoin):
         """
         This is used to determine a minimum amount that should be put on a new channel between sender and receiver.
         """
-        """
-        sum_future_payments = 0
-        for future_sender, future_receiver, value in future_payments:
-            cost_and_path = self.network.find_cheapest_path(future_sender, future_receiver, value)
-            if cost_and_path is not None:
-                _, cheapest_path = cost_and_path
-                if cheapest_path[:2] == [sender, counterparty]:
-                    sum_future_payments += value
-        return sum_future_payments
-        """
-        # TODO: think if we should use code above and maybe combine it with get_distance_to_future_parties.
         future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[0] == sender and future_payment[1] == counterparty]
         return sum([payment[2] for payment in future_payments_to_receiver])
 
-    def get_distance_to_future_parties(self, sender, future_payments):
+    def get_distances(self, source, future_payments):
         """
         Returns the sum of the distances of the future parties
         (if parties occur multiple times their distance is summed multiple times)
         """
         distances = []
-        # weight if we are sender
-        weight_sender = 100
+        # weight if we are source
+        weight_endpoint = 100
         # weight if we are possible intermediary
         weight_intermediary = 1
         for future_sender, future_receiver, value in future_payments:
-            if future_sender == sender:
-                cost_and_path = self.network.find_cheapest_path(sender, future_receiver, value)
-                if cost_and_path is not None:
+            path_data = []
+            if future_sender != source:
+                path_data.append((
+                    future_sender,
+                    future_receiver == source,
+                    self.network.find_cheapest_path(future_sender, source, value)
+                ))
+            if future_receiver != source:
+                path_data.append((
+                    future_receiver,
+                    future_sender == source,
+                    self.network.find_cheapest_path(source, future_receiver, value)
+                ))
+
+            for counterparty, source_is_endpoint, cost_and_path in path_data:
+                weight = weight_endpoint if source_is_endpoint else weight_intermediary
+                if cost_and_path is None:
+                    distances.append((weight, math.inf))
+                else:
                     _, cheapest_path = cost_and_path
-                    distances.append((len(cheapest_path)-1)*weight_sender)
-                else:
-                    distances.append(math.inf)
-            elif sender == future_receiver:
-                cost_and_path = self.network.find_cheapest_path(future_sender, future_receiver, value)
-                if cost_and_path is not None:
-                    _, cheapest_path = cost_and_path
-                    distances.append((len(cheapest_path)-1)*weight_sender)
-                else:
-                    distances.append(math.inf)
-            else:
-                cost_and_path_to_future_sender = self.network.find_cheapest_path(future_sender, sender, value)
-                cost_and_path_to_future_receiver = self.network.find_cheapest_path(sender, future_receiver, value)
-                if cost_and_path_to_future_sender is not None:
-                    _, cheapest_path_to_future_sender = cost_and_path_to_future_sender
-                    distances.append((len(cheapest_path_to_future_sender)-1)*weight_intermediary)
-                else:
-                    distances.append(math.inf)
-                if cost_and_path_to_future_receiver is not None:
-                    _, cheapest_path_to_future_receiver = cost_and_path_to_future_receiver
-                    distances.append((len(cheapest_path_to_future_receiver)-1)*weight_intermediary)
-                else:
-                    distances.append(math.inf)
+                    distances.append((weight, len(cheapest_path)-1))
+
+            #for each party that we've not seen before:
+                #distances.append((even_smaller_weight, len(path_to_that_party)-1))
         return distances
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
@@ -159,7 +145,7 @@ class LN(PlainBitcoin):
         if onchain_fee + value > self.plain_bitcoin.coins[sender]:
             return None
         onchain_centrality = self.network.get_harmonic_centrality()
-        onchain_distance = self.get_distance_to_future_parties(sender, future_payments)
+        onchain_distance = self.get_distances(sender, future_payments)
         return {
             'delay': onchain_time,
             'fee': onchain_fee,
@@ -191,7 +177,7 @@ class LN(PlainBitcoin):
             self.network.add_channel(sender, sender_coins, counterparty, value)
             new_channel_offchain_option = None
             new_channel_centrality = self.network.get_harmonic_centrality()
-            new_channel_distance = self.get_distance_to_future_parties(sender, future_payments)
+            new_channel_distance = self.get_distances(sender, future_payments)
         self.network.close_channel(sender, counterparty)
 
         return {
@@ -222,7 +208,7 @@ class LN(PlainBitcoin):
             return None
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
         offchain_centrality = self.network.get_harmonic_centrality()
-        offchain_distance = self.get_distance_to_future_parties(sender, future_payments)
+        offchain_distance = self.get_distances(sender, future_payments)
         self.undo(payment_information)
         return {
             'delay': offchain_time,

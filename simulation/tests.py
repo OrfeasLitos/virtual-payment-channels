@@ -135,9 +135,11 @@ def test_choose_payment_method_offchain_best():
     )
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     def utility_function(fee, delay, distance, centrality):
-        distance_array = np.array(distance)
-        distance_array = 1 / distance_array
-        return 10000/fee + 5000/delay + sum(distance_array) + sum(centrality)
+        weight_distance_array = np.array(distance)
+        inverse_distance_array = 1/ weight_distance_array[:,1]
+        weight_array = weight_distance_array[:,0]
+        combined_weight_inverse_distance = inverse_distance_array * weight_array
+        return 10000/fee + 5000/delay + sum(combined_weight_inverse_distance) + sum(centrality)
     utility = Utility(utility_function)
     # utilities for onchain and new channel are between 30 and 40
     # for offchain several orders of magnitude higher, just consider delay.
@@ -150,13 +152,15 @@ def test_choose_payment_method_new_channel_best():
     )
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     def utility_function(fee, delay, distance, centrality):
-        distance_array = np.array(distance)
-        distance_array = 1 / distance_array
+        weight_distance_array = np.array(distance)
+        inverse_distance_array = 1/ weight_distance_array[:,1]
+        weight_array = weight_distance_array[:,0]
+        combined_weight_inverse_distance = inverse_distance_array * weight_array
         # there's no offchain option
         # the first two terms are both smaller than one for new_channel and onchain
         # the difference for the third term is over 100 in favor of new channel
         # the difference between the last two is about 2 in favor of new channel
-        return 10000/fee + 50000/delay + 100 * sum(distance_array) + sum(centrality)
+        return 10000/fee + 50000/delay + 100 * sum(combined_weight_inverse_distance) + sum(centrality)
     utility = Utility(utility_function)
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-open'
@@ -167,8 +171,10 @@ def test_choose_payment_method_onchain_best():
     )
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     def utility_function(fee, delay, distance, centrality):
-        distance_array = np.array(distance)
-        distance_array = 1 / distance_array
+        weight_distance_array = np.array(distance)
+        inverse_distance_array = 1/ weight_distance_array[:,1]
+        weight_array = weight_distance_array[:,0]
+        combined_weight_inverse_distance = inverse_distance_array * weight_array
         # there's no offchain option
         # the first two terms are both smaller than one for new_channel and onchain
         # the difference for the third term is over 100 in favor of new channel
@@ -410,9 +416,11 @@ def test_simulation_with_ln():
     knowledge = Knowledge(know_all)
     payments = random_payments(100, 10, 2000000000)
     def utility_function(fee, delay, distance, centrality):
-        distance_array = np.array(distance)
-        distance_array = 1 / distance_array
-        utility = 10000/fee + 5000/delay + 10000*sum(distance_array) + 1000*sum(centrality)
+        weight_distance_array = np.array(distance)
+        inverse_distance_array = 1/ weight_distance_array[:,1]
+        weight_array = weight_distance_array[:,0]
+        combined_weight_inverse_distance = inverse_distance_array * weight_array
+        utility = 10000/fee + 5000/delay + 10000*sum(combined_weight_inverse_distance) + 1000*sum(centrality)
         return utility
     utility = Utility(utility_function)
     simulation = Simulation(10, payments, lightning, knowledge, utility)
