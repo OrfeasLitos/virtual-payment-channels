@@ -7,6 +7,8 @@ from network import Network
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
+MULTIPLIER_CHANNEL_BALANCE_LN = 20
+
 class PlainBitcoin():
     def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
                 bitcoin_delay = 3600):
@@ -171,7 +173,7 @@ class LN(PlainBitcoin):
         # TODO: incorporate counterparty in sum_future_payments
         sum_future_payments = self.sum_future_payments_over_counterparty(sender, counterparty, future_payments)
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
-        sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, 20 * sum_future_payments)
+        sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, MULTIPLIER_CHANNEL_BALANCE_LN * sum_future_payments)
         if sender_coins < 0:
             return None
         if counterparty != receiver:
