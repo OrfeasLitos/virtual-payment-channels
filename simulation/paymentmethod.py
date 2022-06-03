@@ -1,5 +1,5 @@
 import math
-from multiprocessing.sharedctypes import Value
+import numpy as np
 import operator
 from network import Network
 
@@ -108,9 +108,9 @@ class LN(PlainBitcoin):
                     _, cheapest_path = cost_and_path
                     distances.append((weight, len(cheapest_path)-1))
 
+            dummy_amount = np.mean([payment[2] for payment in future_payments])
             for party in (set(self.network.graph.nodes()).difference(future_parties)):
-                # TODO: think of reasonable amount in find cheapest path in here
-                cost_and_path = self.network.find_cheapest_path(source, party, 1)
+                cost_and_path = self.network.find_cheapest_path(source, party, dummy_amount)
                 if cost_and_path is None:
                     distances.append((weight_other, math.inf))
                 else:
