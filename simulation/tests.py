@@ -3,6 +3,7 @@
 import random
 import sys
 import numpy as np
+import math
 from numpy.testing import assert_almost_equal as assert_eq
 import networkx as nx
 import unittest
@@ -84,7 +85,8 @@ def test_get_payment_options_enough_money():
     expected_onchain_option = {
         'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
-        'distance': set({()}), 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
+        'distance': [(100, 3), (100, 3), (100, 3), (100, 1), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
+        'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
     }
     ln_open_centrality = {
         0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
@@ -93,10 +95,11 @@ def test_get_payment_options_enough_money():
     expected_ln_open_option = {
         'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
         'fee' : lightning.plain_bitcoin.get_fee(lightning.opening_transaction_size),
-        'centrality' : ln_open_centrality, 'distance': [100,100,100,300],
+        'centrality' : ln_open_centrality,
+        'distance': [(100, 1), (100, 1), (100, 1), (100, 3), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
         'payment_information' : {
             'kind' : 'ln-open',
-            'data' : (0, 7, 1.0, 7, 7.2, None)
+            'data' : (0, 7, 1.0, 7, 72.0, None)
         }
     }
     expected_ln_pay_option = {
@@ -108,22 +111,34 @@ def test_get_payment_options_enough_money():
         },
         # 1 can pay 1.5 to 4 as he still has a little less than 2, but he can't pay 2.1.
         # So we get the distance as described (by 0->2->3->4->7)
-        'distance': [100,300,400,300],
+        'distance': [(100, 1), (100, 3), (100, 4), (100, 3), (1, 1), (1, 2), (1, 3), (1, math.inf), (1, math.inf), (1, math.inf)],
         'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
     }
-    print(actual_onchain_option)
-    assert expected_onchain_option == actual_onchain_option
+    assert expected_onchain_option['delay'] == actual_onchain_option['delay']
+    assert expected_onchain_option['fee'] == actual_onchain_option['fee']
+    assert expected_onchain_option['centrality'] == actual_onchain_option['centrality']
+    expected_onchain_option['distance'].sort()
+    actual_onchain_option['distance'].sort()
+    assert expected_onchain_option['distance'] == actual_onchain_option['distance']
+    assert expected_onchain_option['payment_information'] == actual_onchain_option['payment_information']
+
     assert_eq(expected_ln_open_option['fee'], actual_ln_open_option['fee'])
     assert_eq(expected_ln_open_option['delay'], actual_ln_open_option['delay'])
     for key in expected_ln_open_option['centrality'].keys():
         assert_eq(expected_ln_open_option['centrality'][key], actual_ln_open_option['centrality'][key])
+    expected_ln_open_option['distance'].sort()
+    actual_ln_open_option['distance'].sort()
     assert expected_ln_open_option['distance'] == actual_ln_open_option['distance']
+    print(actual_ln_open_option['payment_information']['data'])
     assert expected_ln_open_option['payment_information']['data'] == actual_ln_open_option['payment_information']['data']
 
     assert_eq(expected_ln_pay_option['delay'], actual_ln_pay_option['delay'])
     assert_eq(expected_ln_pay_option['fee'], actual_ln_pay_option['fee'])
     for key in expected_ln_pay_option['centrality'].keys():
         assert_eq(expected_ln_pay_option['centrality'][key], actual_ln_pay_option['centrality'][key])
+    expected_ln_pay_option['distance'].sort()
+    actual_ln_pay_option['distance'].sort()
+    print(actual_ln_pay_option['distance'])
     assert expected_ln_pay_option['distance'] == actual_ln_pay_option['distance']
     assert expected_ln_pay_option['payment_information'] == actual_ln_pay_option['payment_information']
 
@@ -435,7 +450,7 @@ if __name__ == "__main__":
     test_cheapest_path()
     test_get_payment_fee()
     test_update_balances()
-    #test_get_payment_options()
+    test_get_payment_options()
     #test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
