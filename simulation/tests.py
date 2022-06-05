@@ -84,7 +84,7 @@ def test_get_payment_options_enough_money():
     expected_onchain_option = {
         'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
-        'distance': [100, 300, 300, 300], 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
+        'distance': set({()}), 'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
     }
     ln_open_centrality = {
         0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
@@ -111,6 +111,7 @@ def test_get_payment_options_enough_money():
         'distance': [100,300,400,300],
         'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
     }
+    print(actual_onchain_option)
     assert expected_onchain_option == actual_onchain_option
     assert_eq(expected_ln_open_option['fee'], actual_ln_open_option['fee'])
     assert_eq(expected_ln_open_option['delay'], actual_ln_open_option['delay'])
