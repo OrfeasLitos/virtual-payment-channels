@@ -265,7 +265,7 @@ def test_do_onchain():
     # TODO: test for exceptions
 
 def test_do_onchain_exception():
-    lightning, = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
     payment_information_onchain = { 
         'kind': 'onchain', 'data': (0, 7, 999999999999999999999.)
     }
@@ -333,7 +333,7 @@ def test_do_new_channel():
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
     sum_future_payments = lightning.sum_future_payments_over_counterparty(0, 7, future_payments)
-    sender_coins = 2 * sum_future_payments
+    sender_coins = 20 * sum_future_payments
     receiver_coins = value
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins - receiver_coins 
     assert lightning.plain_bitcoin.coins[7] == MAX_COINS
@@ -451,7 +451,7 @@ if __name__ == "__main__":
     test_get_payment_fee()
     test_update_balances()
     test_get_payment_options()
-    #test_do()
+    test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
     print("Success")
