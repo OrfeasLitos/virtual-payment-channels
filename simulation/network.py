@@ -4,21 +4,12 @@ import networkx as nx
 
 
 UNIT_COST = 1
-# TODO: Check whether that's reasonable
-INIT_ONCHAIN_COINS = 10000
 
 class Network:
 
     def __init__(self, nr_vertices):
         self.graph = nx.empty_graph(nr_vertices, create_using=nx.DiGraph)
         self.edge_id = 0
-        for vertex in range(nr_vertices):
-            self.graph.nodes[vertex]['balance_wallet'] = INIT_ONCHAIN_COINS
-
-    def add_node(self, node):
-        self.graph.add_node(node)
-        # do we need this method?
-        # convention that a new vertex gets the number len(self.vertices)?
 
     def add_channel(self, idA, balA, idB, balB):
         assert(balA > 0 or balB > 0)
