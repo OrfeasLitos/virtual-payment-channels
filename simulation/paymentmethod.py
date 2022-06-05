@@ -108,14 +108,14 @@ class LN(PlainBitcoin):
                     _, cheapest_path = cost_and_path
                     distances.append((weight, len(cheapest_path)-1))
 
-            dummy_amount = np.mean([payment[2] for payment in future_payments])
-            for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
-                cost_and_path = self.network.find_cheapest_path(source, party, dummy_amount)
-                if cost_and_path is None:
-                    distances.append((weight_other, math.inf))
-                else:
-                    _, cheapest_path = cost_and_path
-                    distances.append((weight_other, len(cheapest_path)-1))
+        dummy_amount = np.mean([payment[2] for payment in future_payments])
+        for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
+            cost_and_path = self.network.find_cheapest_path(source, party, dummy_amount)
+            if cost_and_path is None:
+                distances.append((weight_other, math.inf))
+            else:
+                _, cheapest_path = cost_and_path
+                distances.append((weight_other, len(cheapest_path)-1))
         return distances
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
