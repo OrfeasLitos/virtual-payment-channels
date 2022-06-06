@@ -242,7 +242,7 @@ def test_LN():
     nr_players = 10
     lightning = LN(nr_players)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
-    result = lightning.sum_future_payments_over_counterparty(0, 7, future_payments)
+    result = lightning.sum_future_payments_to_counterparty(0, 7, future_payments)
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     assert result == 3.6
 
@@ -333,7 +333,7 @@ def test_do_new_channel():
     lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
-    sum_future_payments = lightning.sum_future_payments_over_counterparty(0, 7, future_payments)
+    sum_future_payments = lightning.sum_future_payments_to_counterparty(0, 7, future_payments)
     sender_coins = 20 * sum_future_payments
     receiver_coins = value
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins - receiver_coins 

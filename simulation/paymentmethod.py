@@ -65,17 +65,20 @@ class LN(PlainBitcoin):
         sender, receiver, value = payment
         return (self.base_fee +  value * self.ln_fee) * num_hops
 
-    def sum_future_payments_over_counterparty(self, sender, counterparty, future_payments):
+    def sum_future_payments_to_counterparty(self, sender, counterparty, future_payments):
         """
         This is used to determine a minimum amount that should be put on a new channel between sender and receiver.
         """
-        future_payments_to_receiver = [future_payment for future_payment in future_payments if future_payment[0] == sender and future_payment[1] == counterparty]
+        future_payments_to_receiver = [
+            future_payment for future_payment in future_payments if future_payment[0] == sender
+            and future_payment[1] == counterparty
+        ]
         return sum([payment[2] for payment in future_payments_to_receiver])
 
     def get_distances(self, source, future_payments):
         """
-        Returns the sum of the distances of the future parties
-        (if parties occur multiple times their distance is summed multiple times)
+        Returns weighted distances to the future parties and to parties not occuring in future payments.
+        Muiltiple payments to same party give multiple distances.
         """
         distances = []
         # weight if we are endpoint
@@ -85,10 +88,10 @@ class LN(PlainBitcoin):
         # weight for other parties
         weight_other = 1
         encountered_parties = set({source})
+        path_data = []
         for future_sender, future_receiver, value in future_payments:
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
-            path_data = []
             if future_sender != source:
                 path_data.append((
                     future_sender,
@@ -102,13 +105,13 @@ class LN(PlainBitcoin):
                     self.network.find_cheapest_path(source, future_receiver, value)
                 ))
 
-            for counterparty, source_is_endpoint, cost_and_path in path_data:
-                weight = weight_endpoint if source_is_endpoint else weight_intermediary
-                if cost_and_path is None:
-                    distances.append((weight, math.inf))
-                else:
-                    _, cheapest_path = cost_and_path
-                    distances.append((weight, len(cheapest_path)-1))
+        for counterparty, source_is_endpoint, cost_and_path in path_data:
+            weight = weight_endpoint if source_is_endpoint else weight_intermediary
+            if cost_and_path is None:
+                distances.append((weight, math.inf))
+            else:
+                _, cheapest_path = cost_and_path
+                distances.append((weight, len(cheapest_path)-1))
 
         dummy_amount = np.mean([payment[2] for payment in future_payments])
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
@@ -173,7 +176,7 @@ class LN(PlainBitcoin):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         # TODO: incorporate counterparty in sum_future_payments
-        sum_future_payments = self.sum_future_payments_over_counterparty(sender, counterparty, future_payments)
+        sum_future_payments = self.sum_future_payments_to_counterparty(sender, counterparty, future_payments)
         # review: give receiver the current payment value (corresponds to `push_msat` of LN).
         sender_coins = min(self.plain_bitcoin.coins[sender] - value - new_channel_fee, MULTIPLIER_CHANNEL_BALANCE_LN * sum_future_payments)
         if sender_coins < 0:
