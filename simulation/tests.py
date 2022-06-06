@@ -82,8 +82,9 @@ def test_get_payment_options_enough_money():
             case 'ln-pay':
                 actual_ln_pay_option = payment_option
     on_chain_centrality = lightning.network.get_harmonic_centrality()
+    onchain_fee = lightning.plain_bitcoin.get_fee()
     expected_onchain_option = {
-        'delay' : 3600, 'fee': 1000000, 'centrality': on_chain_centrality,
+        'delay' : 3600, 'fee': onchain_fee, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
         'distance': [(100, 3), (100, 3), (100, 3), (100, 1), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
         'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}

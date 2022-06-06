@@ -10,7 +10,9 @@ from network import Network
 MULTIPLIER_CHANNEL_BALANCE_LN = 20
 
 class PlainBitcoin():
-    def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
+    # the total fee is num_vbytes * price_per_vbyte
+    # price per vbyte currently at about 1 satoshi
+    def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000,
                 bitcoin_delay = 3600):
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
@@ -21,8 +23,8 @@ class PlainBitcoin():
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
 
-    def get_fee(self, tx_size = 1):
-        # TODO: lookup reasonable transaction size
+    # tx_size for 1-input-2-output P2WPKH
+    def get_fee(self, tx_size = 140.5):
         return self.bitcoin_fee * tx_size
 
     def get_delay(self):
