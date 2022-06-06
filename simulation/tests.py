@@ -439,7 +439,7 @@ def test_simulation_with_ln():
         utility = 10000/fee + 5000/delay + 10000*sum(combined_weight_inverse_distance) + 1000*sum(centrality)
         return utility
     utility = Utility(utility_function)
-    simulation = Simulation(10, payments, lightning, knowledge, utility)
+    simulation = Simulation(payments, lightning, knowledge, utility)
     output = simulation.run()
     print(output)
 

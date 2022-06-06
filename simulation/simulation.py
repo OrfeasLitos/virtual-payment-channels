@@ -20,11 +20,10 @@ class Simulation:
     """
     Here the simulation takes place.
 
-    There's an update method which is one step in the simulation.
-    Running the simulation is equivalent to calling the update method as long as it's possible.
+    This is implemented as an iterator
     """
 
-    def __init__(self, nr_players, payments, payment_method, knowledge, utility):
+    def __init__(self, payments, payment_method, knowledge, utility):
         """
         payments should be a deque.
         """
@@ -53,7 +52,6 @@ class Simulation:
             # 3. instruct network to carry out cheapest method
             #self.network = self.network.apply(best_method)
 
-            # TODO: determine parameter future_payments in get_payment_options with help of the knowledge function.
             future_payments = self.knowledge.get_knowledge(sender, self.payments)
             # TODO: check if the list payment_options is nonempty.
             payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)

@@ -4,7 +4,7 @@ class Utility:
 
     def __init__(self, utility_function):
         """
-        Utility function should have cost, time and knowledge as input
+        Utility function should have fee, delay, centrality and distances as input
         """
         self.utility_function = utility_function
 
