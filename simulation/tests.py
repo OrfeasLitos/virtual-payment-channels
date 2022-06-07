@@ -130,7 +130,6 @@ def test_get_payment_options_enough_money():
     expected_ln_open_option['distance'].sort()
     actual_ln_open_option['distance'].sort()
     assert expected_ln_open_option['distance'] == actual_ln_open_option['distance']
-    print(actual_ln_open_option['payment_information']['data'])
     assert expected_ln_open_option['payment_information']['data'] == actual_ln_open_option['payment_information']['data']
 
     assert_eq(expected_ln_pay_option['delay'], actual_ln_pay_option['delay'])
@@ -139,7 +138,6 @@ def test_get_payment_options_enough_money():
         assert_eq(expected_ln_pay_option['centrality'][key], actual_ln_pay_option['centrality'][key])
     expected_ln_pay_option['distance'].sort()
     actual_ln_pay_option['distance'].sort()
-    print(actual_ln_pay_option['distance'])
     assert expected_ln_pay_option['distance'] == actual_ln_pay_option['distance']
     assert expected_ln_pay_option['payment_information'] == actual_ln_pay_option['payment_information']
 
