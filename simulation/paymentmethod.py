@@ -95,34 +95,31 @@ class LN(PlainBitcoin):
             if future_sender != source:
                 path_data.append((
                     future_sender,
-                    future_receiver == source,
+                    weight_endpoint if future_receiver == source else weight_intermediary,
                     self.network.find_cheapest_path(future_sender, source, value)
                 ))
             if future_receiver != source:
                 path_data.append((
                     future_receiver,
-                    future_sender == source,
+                    weight_endpoint if future_sender == source else weight_intermediary,
                     self.network.find_cheapest_path(source, future_receiver, value)
                 ))
 
-        # review: merge the two loops by adding each party not in encountered_parties to path_data here.
-        # review: the true/false element of the triple must be replaced with a tri-state variable.
-        for counterparty, source_is_endpoint, cost_and_path in path_data:
-            weight = weight_endpoint if source_is_endpoint else weight_intermediary
+        dummy_amount = np.mean([payment[2] for payment in future_payments])
+        for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
+            path_data.append((
+                None,
+                weight_other,
+                self.network.find_cheapest_path(source, party, dummy_amount)
+            ))
+        
+        for counterparty, weight, cost_and_path in path_data:
             if cost_and_path is None:
                 distances.append((weight, math.inf))
             else:
                 _, cheapest_path = cost_and_path
                 distances.append((weight, len(cheapest_path)-1))
 
-        dummy_amount = np.mean([payment[2] for payment in future_payments])
-        for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
-            cost_and_path = self.network.find_cheapest_path(source, party, dummy_amount)
-            if cost_and_path is None:
-                distances.append((weight_other, math.inf))
-            else:
-                _, cheapest_path = cost_and_path
-                distances.append((weight_other, len(cheapest_path)-1))
         return distances
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
