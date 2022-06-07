@@ -105,6 +105,8 @@ class LN(PlainBitcoin):
                     self.network.find_cheapest_path(source, future_receiver, value)
                 ))
 
+        # review: merge the two loops by adding each party not in encountered_parties to path_data here.
+        # review: the true/false element of the triple must be replaced with a tri-state variable.
         for counterparty, source_is_endpoint, cost_and_path in path_data:
             weight = weight_endpoint if source_is_endpoint else weight_intermediary
             if cost_and_path is None:
