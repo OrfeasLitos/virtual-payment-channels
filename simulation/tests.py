@@ -144,17 +144,23 @@ def test_get_payment_options_enough_money():
 def test_get_payment_options():
     test_get_payment_options_enough_money()
 
+# TODO: debug for warnings.
+
 def test_choose_payment_method_offchain_best():
     _, _, lightning, future_payments = (
         make_example_network_and_future_payments(base_fee = 1, ln_fee = 0.00002)
     )
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    # TODO: define utility function outside.
+    # TODO: make constants for numbers
     def utility_function(fee, delay, distance, centrality):
         weight_distance_array = np.array(distance)
         inverse_distance_array = 1/ weight_distance_array[:,1]
         weight_array = weight_distance_array[:,0]
+        # TODO: matrix multiplication.
         combined_weight_inverse_distance = inverse_distance_array * weight_array
-        return 10000/fee + 5000/delay + sum(combined_weight_inverse_distance) + sum(centrality)
+        # TODO: sum centrality.values()
+        return 10000/fee + 5000/delay + sum(combined_weight_inverse_distance) + sum(centrality.values())
     utility = Utility(utility_function)
     # utilities for onchain and new channel are between 30 and 40
     # for offchain several orders of magnitude higher, just consider delay.

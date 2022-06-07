@@ -93,6 +93,7 @@ class LN(PlainBitcoin):
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
             if future_sender != source:
+                # TODO: think about discarding first part of the tuple.
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
@@ -108,7 +109,7 @@ class LN(PlainBitcoin):
         dummy_amount = np.mean([payment[2] for payment in future_payments])
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
-                None,
+                party,
                 weight_other,
                 self.network.find_cheapest_path(source, party, dummy_amount)
             ))
