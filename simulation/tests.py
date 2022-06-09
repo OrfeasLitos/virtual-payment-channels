@@ -56,13 +56,14 @@ def test_cheapest_path():
     network.add_channel(2, 9, 3, 2)
     network.add_channel(1, 10, 2, 8)
 
-    cost1, cheapest_path1 = network.find_cheapest_path(0, 4, 3)
+    fee_intermediary = 0
+    cost1, cheapest_path1 = network.find_cheapest_path(0, 4, 3, fee_intermediary)
     assert cost1 == 2 and cheapest_path1 == [0,1,4]
-    cost2, cheapest_path2 = network.find_cheapest_path(0, 4, 5)
+    cost2, cheapest_path2 = network.find_cheapest_path(0, 4, 5, fee_intermediary)
     assert cost2 == 3 and cheapest_path2 == [0,2,3,4]
-    cost_and_path3 = network.find_cheapest_path(0, 4, 12)
+    cost_and_path3 = network.find_cheapest_path(0, 4, 12, fee_intermediary)
     assert cost_and_path3 is None
-    cost4, cheapest_path4 = network.find_cheapest_path(0, 4, 6)
+    cost4, cheapest_path4 = network.find_cheapest_path(0, 4, 6, fee_intermediary)
     assert cost4 == 4 and cheapest_path4 == [0,1,2,3,4]
 
 def test_get_payment_fee():
@@ -74,7 +75,8 @@ def test_get_payment_fee():
     )
     for payment in future_payments:
         sender, receiver, value = payment
-        path = lightning.network.find_cheapest_path(sender, receiver, value)
+        fee_intermediary = base_fee + value * ln_fee
+        path = lightning.network.find_cheapest_path(sender, receiver, value, fee_intermediary)
         num_hops = len(path) - 1
         assert (get_payment_fee_with_path(base_fee, ln_fee, payment, path) ==
             lightning.get_payment_fee(payment, num_hops)

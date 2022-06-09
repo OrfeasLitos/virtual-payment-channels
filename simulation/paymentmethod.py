@@ -90,6 +90,7 @@ class LN(PlainBitcoin):
         encountered_parties = set({source})
         path_data = []
         for future_sender, future_receiver, value in future_payments:
+            fee_intermediary = self.ln_fee * value + self.base_fee
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
             if future_sender != source:
@@ -97,23 +98,24 @@ class LN(PlainBitcoin):
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
-                    self.network.find_cheapest_path(future_sender, source, value)
+                    self.network.find_cheapest_path(future_sender, source, value, fee_intermediary)
                 ))
             if future_receiver != source:
                 path_data.append((
                     future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
-                    self.network.find_cheapest_path(source, future_receiver, value)
+                    self.network.find_cheapest_path(source, future_receiver, value, fee_intermediary)
                 ))
 
         # taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
         # is quite old source. # TODO: look for newer source.
         dummy_amount = 500000000
+        fee_intermediary = self.ln_fee * dummy_amount + self.base_fee
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
                 party,
                 weight_other,
-                self.network.find_cheapest_path(source, party, dummy_amount)
+                self.network.find_cheapest_path(source, party, dummy_amount, fee_intermediary)
             ))
         
         for counterparty, weight, cost_and_path in path_data:
@@ -213,7 +215,8 @@ class LN(PlainBitcoin):
         }
 
     def get_offchain_option(self, sender, receiver, value, future_payments):
-        offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value)
+        fee_intermediary = fee_intermediary = self.ln_fee * value + self.base_fee
+        offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value, fee_intermediary)
         if offchain_cost_and_path is None:
             return None
         offchain_hops, offchain_path = offchain_cost_and_path
