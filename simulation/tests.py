@@ -18,20 +18,20 @@ from network import Network
 def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
 
-    lightning.network.add_channel(0, 3., 2, 7.)
-    lightning.network.add_channel(0, 6., 1, 7.)
-    lightning.network.add_channel(1, 4., 4, 8.)
-    lightning.network.add_channel(0, 5., 2, 6.)
-    lightning.network.add_channel(3, 9., 4, 8.)
-    lightning.network.add_channel(2, 9., 3, 2.)
-    lightning.network.add_channel(1, 10., 2, 8.)
-    lightning.network.add_channel(4, 10., 7, 8.)
-    lightning.network.add_channel(3, 10., 8, 8.)
+    lightning.network.add_channel(0, 3000000000., 2, 7000000000.)
+    lightning.network.add_channel(0, 6000000000., 1, 7000000000.)
+    lightning.network.add_channel(1, 4000000000., 4, 8000000000.)
+    lightning.network.add_channel(0, 5000000000., 2, 6000000000.)
+    lightning.network.add_channel(3, 9000000000., 4, 8000000000.)
+    lightning.network.add_channel(2, 9000000000., 3, 2000000000.)
+    lightning.network.add_channel(1, 10000000000., 2, 8000000000.)
+    lightning.network.add_channel(4, 10000000000., 7, 8000000000.)
+    lightning.network.add_channel(3, 10000000000., 8, 8000000000.)
     return lightning
 
 def make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002):
     lightning = make_example_network(base_fee, ln_fee)
-    future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return base_fee, ln_fee, lightning, future_payments
 
 def make_example_utility_function(factor_fee, factor_delay, factor_distance, factor_centrality):
@@ -82,9 +82,9 @@ def test_get_payment_fee():
 
 def test_get_payment_options_enough_money():
     base_fee, ln_fee, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1, ln_fee = 0.00002)
+        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
     # review: this `for` overwrites `_option` if there are more than one similar options. This should be guarded against and fail the test otherwise. If we expect exactly one of each kind, better not do it in a `for`.
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
@@ -100,7 +100,7 @@ def test_get_payment_options_enough_money():
         'delay' : 3600, 'fee': onchain_fee, 'centrality': on_chain_centrality,
     # review: I don't like identations that depend on the length of variable names
         'distance': [(100, 3), (100, 3), (100, 3), (100, 1), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
-        'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1.0)}
+        'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1000000000.)}
     }
     ln_open_centrality = {
         0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
@@ -113,20 +113,20 @@ def test_get_payment_options_enough_money():
         'distance': [(100, 1), (100, 1), (100, 1), (100, 3), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
         'payment_information' : {
             'kind' : 'ln-open',
-            'data' : (0, 7, 1.0, 7, 72.0, None)
+            'data' : (0, 7, 1000000000., 7, 72000000000., None)
         }
     }
     expected_ln_pay_option = {
         'delay' : lightning.get_payment_time([0,1,4,7]),
-        'fee' : lightning.get_payment_fee((0, 7, 1.0), 3),
+        'fee' : lightning.get_payment_fee((0, 7, 1000000000.), 3),
         'centrality' : {
             0: 3.666666666666667, 1: 4.333333333333333, 2: 4.333333333333334, 3: 4.5,
             4: 4.5, 5: 0, 6: 0, 7: 3.0, 8: 3.0, 9: 0
         },
         # 1 can pay 1.5 to 4 as he still has a little less than 2, but he can't pay 2.1.
         # So we get the distance as described (by 0->2->3->4->7)
-        'distance': [(100, 1), (100, 3), (100, 4), (100, 3), (1, 1), (1, 2), (1, 3), (1, math.inf), (1, math.inf), (1, math.inf)],
-        'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1.0)}
+        'distance': [(100, 1), (100, 3), (100, 3), (100, 3), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
+        'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1000000000.)}
     }
     assert expected_onchain_option['delay'] == actual_onchain_option['delay']
     assert expected_onchain_option['fee'] == actual_onchain_option['fee']
@@ -173,9 +173,9 @@ def test_choose_payment_method_offchain_best():
 
 def test_choose_payment_method_new_channel_best():
     _, _, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
+        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 200)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
     # there's no offchain option
     # the first two terms in utility are both smaller than one for new_channel and onchain
     # the difference for the third term is over 100 in favor of new channel
@@ -187,13 +187,11 @@ def test_choose_payment_method_new_channel_best():
 
 def test_choose_payment_method_onchain_best():
     _, _, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
+        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 200)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
     # there's no offchain option
-    # the first two terms of the utility function are both smaller than one for new_channel and onchain
-    # the difference for the third term is over 100 in favor of new channel
-    # the difference between the last two is about 2 in favor of new channel
+    # the fee in the utility favors the onchain option.
     utility_function = make_example_utility_function(1, 0, 0, 0)
     utility = Utility(utility_function)
     payment_method = utility.choose_payment_method(payment_options)
@@ -247,10 +245,11 @@ def test_LN():
 def test_do_onchain():
     # review: the next few lines are duplicated many times. The first few are also used in _exception()s, a few more only in the 2 other `do` tests
     base_fee, ln_fee, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1, ln_fee = 0.00002)
+        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
-    fee_intermediary = base_fee + 1*ln_fee
+    value = 1000000000.
+    payment_options = lightning.get_payment_options(0, 7, value, future_payments)
+    fee_intermediary = base_fee + value*ln_fee
     MAX_COINS = lightning.plain_bitcoin.max_coins
     # review: this `for` overwrites `payment_information_onchain` if there are more than one 'onchain' options. This should be guarded against and fail the test otherwise
     for payment_option in payment_options:
@@ -259,12 +258,12 @@ def test_do_onchain():
                 payment_information_onchain = payment_option['payment_information']
     lightning.do(payment_information_onchain)
     # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
-    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - 1. - lightning.plain_bitcoin.get_fee() 
-    assert lightning.plain_bitcoin.coins[7] == MAX_COINS + 1.
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - value - lightning.plain_bitcoin.get_fee() 
+    assert lightning.plain_bitcoin.coins[7] == MAX_COINS + value
     # TODO: test for exceptions
 
 def test_do_onchain_exception():
-    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    lightning = make_example_network(base_fee = 1000, ln_fee = 0.00002)
     payment_information_onchain = { 
         'kind': 'onchain', 'data': (0, 7, 999999999999999999999.)
     }
@@ -276,10 +275,11 @@ def test_do_onchain_exception():
 
 def test_do_offchain():
     base_fee, ln_fee, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1, ln_fee = 0.00002)
+        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
-    fee_intermediary = base_fee + 1*ln_fee
+    value = 1000000000.
+    payment_options = lightning.get_payment_options(0, 7, value, future_payments)
+    fee_intermediary = base_fee + value*ln_fee
     MAX_COINS = lightning.plain_bitcoin.max_coins
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
@@ -287,26 +287,25 @@ def test_do_offchain():
                 payment_information_offchain = payment_option['payment_information']
 
     # path is [0,1,4,7]
-    lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
+    lightning = make_example_network(base_fee=1000, ln_fee = 0.00002)
     lightning.do(payment_information_offchain)
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS 
     assert lightning.plain_bitcoin.coins[7] == MAX_COINS
-    value = 1
-    assert_eq(lightning.network.graph[0][1]['balance'], 6-1 - 2*fee_intermediary)
-    assert_eq(lightning.network.graph[1][0]['balance'], 7 + value + 2*fee_intermediary)
+    assert_eq(lightning.network.graph[0][1]['balance'], 6000000000-1000000000 - 2*fee_intermediary)
+    assert_eq(lightning.network.graph[1][0]['balance'], 7000000000 + value + 2*fee_intermediary)
     # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
-    assert_eq(lightning.network.graph[1][4]['balance'], 4 - value - fee_intermediary)
-    assert_eq(lightning.network.graph[4][1]['balance'], 8 + value + fee_intermediary)
-    assert_eq(lightning.network.graph[4][7]['balance'], 10 - value)
-    assert_eq(lightning.network.graph[7][4]['balance'], 8 + value)
-    assert_eq(lightning.network.graph[1][2]['balance'], 10)
+    assert_eq(lightning.network.graph[1][4]['balance'], 4000000000 - value - fee_intermediary)
+    assert_eq(lightning.network.graph[4][1]['balance'], 8000000000 + value + fee_intermediary)
+    assert_eq(lightning.network.graph[4][7]['balance'], 10000000000 - value)
+    assert_eq(lightning.network.graph[7][4]['balance'], 8000000000 + value)
+    assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
 
 def test_do_offchain_exception():
-    base_fee = 10
-    ln_fee = 0.00002
+    base_fee = 1000
+    ln_fee = 200
     lightning = make_example_network(base_fee, ln_fee)
     payment_information_offchain = {
-        'kind': 'ln-pay', 'data': ([0,1,4,7], 1.)
+        'kind': 'ln-pay', 'data': ([0,1,4,7], 1000000000)
     }
     try:
         lightning.do(payment_information_offchain)
@@ -316,10 +315,10 @@ def test_do_offchain_exception():
 
 def test_do_new_channel():
     _, _, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1, ln_fee = 0.00002)
+        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
-    value = 1
+    value = 1000000000.
+    payment_options = lightning.get_payment_options(0, 7, value, future_payments)
     MAX_COINS = lightning.plain_bitcoin.max_coins
     # first test on-chain option
     # review: this `for` overwrites `payment_information_new_channel` if there are more than one 'ln-open' options. This should be guarded against and fail the test otherwise
@@ -328,7 +327,7 @@ def test_do_new_channel():
             case 'ln-open':
                 payment_information_new_channel = payment_option['payment_information']
 
-    lightning = make_example_network(base_fee=1, ln_fee = 0.00002)
+    lightning = make_example_network(base_fee=1000, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
     sum_future_payments = lightning.sum_future_payments_to_counterparty(0, 7, future_payments)
@@ -361,32 +360,32 @@ def test_do():
     test_do_new_channel_exception()
 
 def test_update_balances_pay_enough_money():
-    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    lightning = make_example_network(base_fee = 1000, ln_fee = 0.00002)
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
-    value = 2
+    value = 2000000000
     # 1 -> base_fee, 2 -> len(path) - 2
-    fee_intermediary = 1 + 2*ln_fee
+    fee_intermediary = base_fee + value*ln_fee
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
-    # sender 0 has 6. in the beginning on the channel to 1
-    # after update he should have 2 less for the transaction to 7 and 2*fee_intermediary less for the fee,
-    assert_eq(lightning.network.graph[0][1]['balance'],6-value-2*fee_intermediary)
+    # sender 0 has 6000000000. in the beginning on the channel to 1
+    # after update he should have value less for the transaction to 7 and 2*fee_intermediary less for the fee,
+    assert_eq(lightning.network.graph[0][1]['balance'],6000000000-value-2*fee_intermediary)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
-    assert_eq(lightning.network.graph[1][0]['balance'], 7 + value + 2*fee_intermediary)
+    assert_eq(lightning.network.graph[1][0]['balance'], 7000000000 + value + 2*fee_intermediary)
     # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
-    assert_eq(lightning.network.graph[1][4]['balance'], 4 - value - fee_intermediary)
-    assert_eq(lightning.network.graph[4][1]['balance'], 8 + value + fee_intermediary)
-    assert_eq(lightning.network.graph[4][7]['balance'], 10 - value)
-    assert_eq(lightning.network.graph[7][4]['balance'], 8 + 2)
-    assert_eq(lightning.network.graph[1][2]['balance'], 10)
+    assert_eq(lightning.network.graph[1][4]['balance'], 4000000000 - value - fee_intermediary)
+    assert_eq(lightning.network.graph[4][1]['balance'], 8000000000 + value + fee_intermediary)
+    assert_eq(lightning.network.graph[4][7]['balance'], 10000000000 - value)
+    assert_eq(lightning.network.graph[7][4]['balance'], 8000000000 + value)
+    assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
 
 def test_update_balances_pay_not_enough_money():
     lightning = make_example_network(base_fee=1000, ln_fee = 0.00002)
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
-    value = 2
+    value = 2000000000000
     balances = nx.get_edge_attributes(lightning.network.graph, "balance")
     try:
         lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
@@ -399,23 +398,23 @@ def test_update_balances_pay_not_enough_money():
 
 def test_update_balances_reverse():
     # review: store initial balances of parties before the forward payment and compare parties' balances against the stored ones after reversing. This way the balances in the assertions are "obviously" the expected ones.
-    lightning = make_example_network(base_fee = 1, ln_fee = 0.00002)
+    lightning = make_example_network(base_fee = 1000, ln_fee = 0.00002)
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
-    value = 2
+    value = 2000000000
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # balances are updated, now we want to revert it
     lightning.update_balances(value, ln_fee, base_fee, path, pay=False)
-    assert_eq(lightning.network.graph[0][1]['balance'],6)
+    assert_eq(lightning.network.graph[0][1]['balance'],6000000000)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
-    assert_eq(lightning.network.graph[1][0]['balance'], 7)
+    assert_eq(lightning.network.graph[1][0]['balance'], 7000000000)
     # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
-    assert_eq(lightning.network.graph[1][4]['balance'], 4)
-    assert_eq(lightning.network.graph[4][1]['balance'], 8)
-    assert_eq(lightning.network.graph[4][7]['balance'], 10)
-    assert_eq(lightning.network.graph[7][4]['balance'], 8)
-    assert_eq(lightning.network.graph[1][2]['balance'], 10)
+    assert_eq(lightning.network.graph[1][4]['balance'], 4000000000)
+    assert_eq(lightning.network.graph[4][1]['balance'], 8000000000)
+    assert_eq(lightning.network.graph[4][7]['balance'], 10000000000)
+    assert_eq(lightning.network.graph[7][4]['balance'], 8000000000)
+    assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
 
 def test_update_balances():
     test_update_balances_pay_enough_money()

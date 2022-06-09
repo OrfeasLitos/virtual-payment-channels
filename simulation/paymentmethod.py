@@ -106,7 +106,9 @@ class LN(PlainBitcoin):
                     self.network.find_cheapest_path(source, future_receiver, value)
                 ))
 
-        dummy_amount = np.mean([payment[2] for payment in future_payments])
+        # taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
+        # is quite old source. # TODO: look for newer source.
+        dummy_amount = 500000000
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
                 party,
