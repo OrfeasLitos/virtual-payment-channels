@@ -22,11 +22,11 @@ assert random_payments1 == random_payments2
 
 def test_random_payments_seed_inside():
     random.seed(5)
-    random_payments_seed_outside = random_payments(100, 10, 2000000000)
+    random_payments_seed_inside1 = random_payments(100, 10, 2000000000)
     random.seed(5)
-    random_payments_seed_inside = random_payments(100, 10, 2000000000)
-    assert random_payments1 == random_payments_seed_inside
-    assert random_payments_seed_inside == random_payments_seed_outside
+    random_payments_seed_inside2 = random_payments(100, 10, 2000000000)
+    assert random_payments1 == random_payments_seed_inside2
+    assert random_payments_seed_inside1 == random_payments_seed_inside2
 
 random.seed(5)
 
