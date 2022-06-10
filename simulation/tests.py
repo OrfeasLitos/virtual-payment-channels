@@ -20,13 +20,22 @@ random.seed(5)
 random_payments2 = random_payments(100, 10, 2000000000)
 assert random_payments1 == random_payments2
 
-def test_random_payments():
-    #random.seed(5)
+def test_random_payments_seed_inside():
+    random.seed(5)
     random_payments_seed_outside = random_payments(100, 10, 2000000000)
     random.seed(5)
     random_payments_seed_inside = random_payments(100, 10, 2000000000)
     assert random_payments1 == random_payments_seed_inside
     assert random_payments_seed_inside == random_payments_seed_outside
+
+random.seed(5)
+
+def test_random_payments_seed_outside():
+    random_payments_seed_outside = random_payments(100, 10, 2000000000)
+    random.seed(5)
+    random_payments_seed_inside = random_payments(100, 10, 2000000000)
+    assert random_payments1 == random_payments_seed_inside
+    assert random_payments_seed_inside != random_payments_seed_outside
 
 def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
@@ -459,7 +468,8 @@ if __name__ == "__main__":
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
-    test_random_payments()
+    test_random_payments_seed_inside()
+    test_random_payments_seed_outside()
     print("Success")
 
 
