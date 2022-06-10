@@ -14,6 +14,18 @@ from utility import Utility
 from knowledge import Knowledge
 from network import Network
 
+random.seed(5)
+random_payments1 = random_payments(100, 10, 2000000000)
+random.seed(5)
+random_payments2 = random_payments(100, 10, 2000000000)
+assert random_payments1 == random_payments2
+
+def test_random_payments():
+    #random.seed(5)
+    random_payments_seed_outside = random_payments(100, 10, 2000000000)
+    random.seed(5)
+    random_payments_seed_inside = random_payments(100, 10, 2000000000)
+    assert random_payments_seed_inside == random_payments_seed_outside
 
 def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
@@ -158,8 +170,6 @@ def test_get_payment_options_enough_money():
 
 def test_get_payment_options():
     test_get_payment_options_enough_money()
-
-# TODO: debug for warnings.
 
 def test_choose_payment_method_offchain_best():
     _, _, lightning, future_payments = (
@@ -448,6 +458,7 @@ if __name__ == "__main__":
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
+    test_random_payments()
     print("Success")
 
 
