@@ -1,3 +1,4 @@
+import random
 import math
 import numpy as np
 import operator
@@ -13,12 +14,17 @@ class PlainBitcoin():
     # the total fee is num_vbytes * price_per_vbyte
     # price per vbyte currently at about 1 satoshi
     def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000,
-                bitcoin_delay = 3600):
+                bitcoin_delay = 3600, coins_for_parties = "max_value"):
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
-        # TODO: different amount for different parties
-        self.coins = {i: max_coins for i in range(nr_players)}
+        match coins_for_parties:
+            case "max_value":
+                self.coins = {i: max_coins for i in range(nr_players)}
+            case "small_value":
+                self.coins = {i: bitcoin_fee * 100 for i in range(nr_players)}
+            case "random":
+                self.coins = {i: random.randrange(max_coins) for i in range(nr_players)}
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
