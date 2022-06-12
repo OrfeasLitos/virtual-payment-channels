@@ -419,9 +419,15 @@ def test_update_balances():
 def test_simulation_with_ln():
     simulation1 = make_example_simulation_ln(seed = 0)
     results1 = simulation1.run()
+    lightning1 = simulation1.payment_method
+    plainbitcoin1 = lightning1.plain_bitcoin
     simulation2 = make_example_simulation_ln(seed = 0)
+    lightning2 = simulation2.payment_method
+    plainbitcoin2 = lightning2.plain_bitcoin
     results2 = simulation2.run()
     assert results1 == results2
+    for party in plainbitcoin1.coins.keys():
+        assert_eq(plainbitcoin1.coins[party], plainbitcoin2.coins[party])
     print(results1)
 
 
