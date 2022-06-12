@@ -52,14 +52,16 @@ class Simulation:
             # 3. instruct network to carry out cheapest method
             #self.network = self.network.apply(best_method)
 
-            future_payments = self.knowledge.get_knowledge(sender, self.payments)
-            # TODO: check if the list payment_options is nonempty.
-            payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)
-            # TODO: try-except.
-            payment_option = self.utility.choose_payment_method(payment_options)
-            self.payment_method.do(payment_option)
             # ideally, one could take the initial network state and the list of payments and reach the final network state
-            return payment_option
+            future_payments = self.knowledge.get_knowledge(sender, self.payments)
+            payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)
+            try:
+                payment_option = self.utility.choose_payment_method(payment_options)
+                self.payment_method.do(payment_option)
+                # True for payment done, False if not done.
+                return True, payment_option
+            except ValueError:
+                return False, (sender, receiver, value)
 
         except IndexError:
             raise StopIteration
