@@ -428,6 +428,15 @@ def test_simulation_with_ln():
     assert results1 == results2
     for party in plainbitcoin1.coins.keys():
         assert_eq(plainbitcoin1.coins[party], plainbitcoin2.coins[party])
+    for sender in lightning1.network.graph.nodes():
+        for receiver in lightning1.network.graph.nodes():
+            if lightning1.network.graph.get_edge_data(sender, receiver) == None:
+                assert lightning2.network.graph.get_edge_data(sender, receiver) == None
+            else:
+                assert_eq(
+                    lightning1.network.graph[sender][receiver]['balance'],
+                    lightning2.network.graph[sender][receiver]['balance']
+                )
     print(results1)
 
 
