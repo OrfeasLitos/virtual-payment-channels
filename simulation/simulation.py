@@ -27,7 +27,6 @@ class Simulation:
         """
         payments should be a deque.
         """
-        # TODO: nr_players is not necessary atm. Check if we can remove it.
         self.payments = payments
         self.payment_method = payment_method
         self.knowledge = knowledge

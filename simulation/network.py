@@ -43,9 +43,6 @@ class Network:
             cheapest_path = nx.shortest_path(self.graph, sender, receiver, weight_function)
             # this is a check that the cheapest path really can be used for a transaction
             # (cheapest path could still have distance math.inf)
-            # TODO: one can incorporate fee in the check, but to make it in agreement with
-            # the real protocol, the fee would have to be part of the algorithm
-            # which we can't do if we use the shortest_path algorithm from the library.
             for i in range(len(cheapest_path)-1):
                 sender = cheapest_path[i]
                 receiver = cheapest_path[i+1]
