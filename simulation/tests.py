@@ -63,8 +63,8 @@ def make_example_utility_function(factor_fee, factor_delay, factor_distance, fac
             )
     return utility_function
 
-def make_example_simulation_ln(seed = 0):
-    lightning = LN(10)
+def make_example_simulation_ln(seed = 0, coins_for_parties = 'max_value'):
+    lightning = LN(10, coins_for_parties = coins_for_parties)
     random.seed(seed)
     def know_all(party, payments):
         return payments
@@ -416,12 +416,12 @@ def test_update_balances():
     test_update_balances_pay_not_enough_money()
     test_update_balances_reverse()
 
-def test_simulation_with_ln():
-    simulation1 = make_example_simulation_ln(seed = 0)
+def test_simulation_with_ln_different_coins(coins_for_parties):
+    simulation1 = make_example_simulation_ln(seed = 0, coins_for_parties = coins_for_parties)
     results1 = simulation1.run()
     lightning1 = simulation1.payment_method
     plainbitcoin1 = lightning1.plain_bitcoin
-    simulation2 = make_example_simulation_ln(seed = 0)
+    simulation2 = make_example_simulation_ln(seed = 0, coins_for_parties = coins_for_parties)
     lightning2 = simulation2.payment_method
     plainbitcoin2 = lightning2.plain_bitcoin
     results2 = simulation2.run()
@@ -439,6 +439,9 @@ def test_simulation_with_ln():
                 )
     print(results1)
 
+def test_simulation_with_ln():
+    for coins_for_parties in ['max_value', 'small_value', 'random']:
+        test_simulation_with_ln_different_coins(coins_for_parties)
 
 if __name__ == "__main__":
     test_LN()

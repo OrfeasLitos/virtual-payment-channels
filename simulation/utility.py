@@ -20,7 +20,7 @@ class Utility:
         """
 
         best_score = 0
-        if payment_options is []:
+        if payment_options == []:
             raise ValueError
         for option in payment_options:
             fee = option['fee']

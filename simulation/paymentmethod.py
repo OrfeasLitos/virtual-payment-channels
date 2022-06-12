@@ -55,14 +55,14 @@ class LN(PlainBitcoin):
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
-        opening_transaction_size = 200, base_fee = 1000
+        opening_transaction_size = 200, base_fee = 1000, coins_for_parties = "max_value"
     ):
         self.ln_fee = ln_fee
         self.ln_delay = ln_delay
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         self.base_fee = base_fee
-        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay)
+        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
 
     def get_payment_time(self, path):
         return self.ln_delay * len(path)
