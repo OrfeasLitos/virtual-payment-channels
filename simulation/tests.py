@@ -63,6 +63,17 @@ def make_example_utility_function(factor_fee, factor_delay, factor_distance, fac
             )
     return utility_function
 
+def make_example_simulation_ln(seed = 0):
+    lightning = LN(10)
+    random.seed(seed)
+    def know_all(party, payments):
+        return payments
+    knowledge = Knowledge(know_all)
+    payments = random_payments(100, 10, 2000000000)
+    utility_function = make_example_utility_function(10000, 5000, 10000, 1000)
+    utility = Utility(utility_function)
+    return Simulation(payments, lightning, knowledge, utility)
+
 def test_cheapest_path():
     network = Network(5)
     network.add_channel(0, 6, 1, 7)
@@ -217,38 +228,6 @@ def test_choose_payment_method():
     test_choose_payment_method_offchain_best()
     test_choose_payment_method_new_channel_best()
     test_choose_payment_method_onchain_best()
-
-def is_deterministic():
-    bitcoin = PlainBitcoin()
-
-    # Player knows everything
-    def knowledge_function(party, payments):
-        return payments
-
-    # very simple utility function
-    def utility_add(cost, time, knowledge):
-        return cost + time
-    utility = Utility(utility_add)
-
-    nr_players = 20
-
-    seed = random.randrange(sys.maxsize)
-
-    random.seed(seed)
-    payments = random_payments(1000, 100, 100000)
-    knowledge = Knowledge(0, payments, knowledge_function)
-    simulation1 = Simulation(nr_players, payments, bitcoin, knowledge, utility)
-    simulation1.run()
-
-    random.seed(seed)
-    payments = random_payments(1000, 100, 100000)
-    knowledge = Knowledge(0, payments, knowledge_function)
-    simulation2 = Simulation(nr_players, payments, bitcoin, knowledge, utility)
-    simulation2.run()
-
-    print(list(simulation1.network.edges)[:6])
-    print(list(simulation2.network.edges)[:6])
-    return simulation1 == simulation2
 
 def test_LN():
     nr_players = 10
@@ -438,22 +417,15 @@ def test_update_balances():
     test_update_balances_reverse()
 
 def test_simulation_with_ln():
-    lightning = LN(10)
-    seed = 0
-    random.seed(seed)
-    def know_all(party, payments):
-        return payments
-    knowledge = Knowledge(know_all)
-    payments = random_payments(100, 10, 2000000000)
-    utility_function = make_example_utility_function(10000, 5000, 10000, 1000)
-    utility = Utility(utility_function)
-    simulation = Simulation(payments, lightning, knowledge, utility)
-    output = simulation.run()
-    print(output)
+    simulation1 = make_example_simulation_ln(seed = 0)
+    results1 = simulation1.run()
+    simulation2 = make_example_simulation_ln(seed = 0)
+    results2 = simulation2.run()
+    assert results1 == results2
+    print(results1)
 
 
 if __name__ == "__main__":
-    #assert(is_deterministic())
     test_LN()
     test_cheapest_path()
     test_get_payment_fee()
