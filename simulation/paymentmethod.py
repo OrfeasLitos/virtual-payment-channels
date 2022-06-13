@@ -315,8 +315,7 @@ class LN(PlainBitcoin):
                 ):
                     return False
                 else:
-                    # TODO: use approximation instead of !=
-                    if self.network.graph[sender][receiver]['balance'] != other.network.graph[sender][receiver]['balance']:
+                    if np.isclose(self.network.graph[sender][receiver]['balance'], other.network.graph[sender][receiver]['balance']):
                         return False
         return True
                 
