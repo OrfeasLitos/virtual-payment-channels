@@ -13,10 +13,9 @@ class Utility:
 
     def choose_payment_method(self, payment_options):
         """
-        This method should compare the utility of on-chain transactions
+        This method compares the utility of on-chain transactions
         with the utility of a new channel (opened on chain)
-        and completely off-chain transactions and should return the best of these possibilities.
-        Returns 0 for off-chain, 1 for new channel, 2 for PlainBitcoin
+        and completely off-chain transactions and returns the best of these possibilities.
         """
 
         best_score = 0
