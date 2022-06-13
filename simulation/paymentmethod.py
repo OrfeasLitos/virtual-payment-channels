@@ -314,8 +314,13 @@ class LN(PlainBitcoin):
                     other.network.graph.get_edge_data(sender, receiver) != None
                 ):
                     return False
+                elif (
+                    self.network.graph.get_edge_data(sender, receiver) == None and
+                    other.network.graph.get_edge_data(sender, receiver) == None
+                ):
+                    pass
                 else:
-                    if np.isclose(self.network.graph[sender][receiver]['balance'], other.network.graph[sender][receiver]['balance']):
+                    if not np.isclose(self.network.graph[sender][receiver]['balance'], other.network.graph[sender][receiver]['balance']):
                         return False
         return True
                 
@@ -326,7 +331,7 @@ class LN(PlainBitcoin):
             self.ln_fee == other.ln_fee and
             self.ln_delay == other.ln_delay and
             self.opening_transaction_size == other.opening_transaction_size and
-            self.equal_channels(self, other) and
+            self.equal_channels(other) and
             self.base_fee == other.base_fee and
             self.plain_bitcoin == other.plain_bitcoin
         )
