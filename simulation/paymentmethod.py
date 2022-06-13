@@ -299,12 +299,35 @@ class LN(PlainBitcoin):
             case _:
                 raise ValueError
 
+    def equal_channels(self, other):
+        if self.network.graph.nodes() != other.network.graph.nodes():
+            return False
+        for sender in self.network.graph.nodes():
+            for receiver in self.network.graph.nodes():
+                if (
+                    self.network.graph.get_edge_data(sender, receiver) != None and
+                    other.network.graph.get_edge_data(sender, receiver) == None
+                ):
+                    return False
+                elif (
+                    self.network.graph.get_edge_data(sender, receiver) == None and
+                    other.network.graph.get_edge_data(sender, receiver) != None
+                ):
+                    return False
+                else:
+                    # TODO: use approximation instead of !=
+                    if self.network.graph[sender][receiver]['balance'] != other.network.graph[sender][receiver]['balance']:
+                        return False
+        return True
+                
+
+
     def __eq__(self, other):
         return (
             self.ln_fee == other.ln_fee and
             self.ln_delay == other.ln_delay and
             self.opening_transaction_size == other.opening_transaction_size and
-            self.network == other.network and
+            self.equal_channels(self, other) and
             self.base_fee == other.base_fee and
             self.plain_bitcoin == other.plain_bitcoin
         )

@@ -54,7 +54,3 @@ class Network:
 
     def get_harmonic_centrality(self):
         return nx.harmonic_centrality(self.graph)
-
-    def __eq__(self, other):
-        # review: is this method tested? does networkx graph equality work as expected?
-        return self.graph == other.graph
