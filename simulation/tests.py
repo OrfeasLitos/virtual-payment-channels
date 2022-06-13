@@ -392,8 +392,8 @@ def test_update_balances_pay_not_enough_money():
         pass
 
 def test_update_balances_reverse():
-    # review: store initial balances of parties before the forward payment and compare parties' balances against the stored ones after reversing. This way the balances in the assertions are "obviously" the expected ones.
     lightning = make_example_network(base_fee = 1000, ln_fee = 0.00002)
+    channels_before = [channel for channel in lightning.network.graph.edges.data("balance")]
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
@@ -401,6 +401,9 @@ def test_update_balances_reverse():
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # balances are updated, now we want to revert it
     lightning.update_balances(value, ln_fee, base_fee, path, pay=False)
+    channels_after = [channel for channel in lightning.network.graph.edges.data("balance")]
+    for i in range(len(channels_before)):
+        assert_eq(channels_before[i][2], channels_after[i][2])
     assert_eq(lightning.network.graph[0][1]['balance'],6000000000)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
     assert_eq(lightning.network.graph[1][0]['balance'], 7000000000)
