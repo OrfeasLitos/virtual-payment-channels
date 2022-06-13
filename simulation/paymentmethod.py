@@ -153,7 +153,6 @@ class LN(PlainBitcoin):
         num_intermediaries = len(path) - 2
         sender = path[0]
         receiver = path[-1]
-        # review: we could also get `fee_intermediary` directly as input, to reduce parameters
         fee_intermediary = ln_fee * value + base_fee
         cost_sender = value + num_intermediaries * fee_intermediary
         # update the balances of the intermediaries.

@@ -1,4 +1,3 @@
-# TODO: Check __eq__ method for simulation. Ensure that test fails if edges contain strings.
 
 import random
 import sys
@@ -113,7 +112,7 @@ def test_get_payment_fee():
         )
 
 def test_get_payment_options_enough_money():
-    base_fee, ln_fee, lightning, future_payments = (
+    _, _, lightning, future_payments = (
         make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
     payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
