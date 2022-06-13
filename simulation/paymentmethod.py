@@ -25,6 +25,8 @@ class PlainBitcoin():
                 self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
             case "random":
                 self.coins = {i: random.randrange(max_coins) for i in range(nr_players)}
+            case _:
+                raise ValueError
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
@@ -47,6 +49,14 @@ class PlainBitcoin():
         self.update_coins(sender, amount_sender)
         # only the first update_coins can fail, no bookkeeping is required.
         self.update_coins(receiver, value)
+
+    def __eq__(self, other):
+        return (
+            self.max_coins == other.max_coins and
+            self.bitcoin_fee == other.bitcoin_fee and
+            self.bitcoin_delay == other.bitcoin_delay and
+            self.coins == other.coins
+        )
             
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
@@ -288,3 +298,13 @@ class LN(PlainBitcoin):
                 self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = False)
             case _:
                 raise ValueError
+
+    def __eq__(self, other):
+        return (
+            self.ln_fee == other.ln_fee and
+            self.ln_delay == other.ln_delay and
+            self.opening_transaction_size == other.opening_transaction_size and
+            self.network == other.network and
+            self.base_fee == other.base_fee and
+            self.plain_bitcoin == other.plain_bitcoin
+        )

@@ -255,7 +255,6 @@ def test_do_onchain():
     # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - value - lightning.plain_bitcoin.get_fee() 
     assert lightning.plain_bitcoin.coins[7] == MAX_COINS + value
-    # TODO: test for exceptions
 
 def test_do_onchain_exception():
     lightning = make_example_network(base_fee = 1000, ln_fee = 0.00002)
