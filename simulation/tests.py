@@ -246,15 +246,20 @@ def test_LN():
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     assert result == 3.6
 
-def test_do_onchain():
-    # review: the next few lines are duplicated many times. The first few are also used in _exception()s, a few more only in the 2 other `do` tests
+def make_example_values_for_do():
     base_fee, ln_fee, lightning, future_payments = (
         make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
     value = 1000000000.
     payment_options = lightning.get_payment_options(0, 7, value, future_payments)
-    fee_intermediary = base_fee + value*ln_fee
     MAX_COINS = lightning.plain_bitcoin.max_coins
+    return base_fee, ln_fee, lightning, future_payments, value, payment_options, MAX_COINS
+
+
+def test_do_onchain():
+    base_fee, ln_fee, lightning, future_payments, value, payment_options, MAX_COINS = (
+        make_example_values_for_do()
+    )
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     payment_information_onchain = payment_options[0]['payment_information']
     lightning.do(payment_information_onchain)
@@ -274,13 +279,10 @@ def test_do_onchain_exception():
         pass
 
 def test_do_offchain():
-    base_fee, ln_fee, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
+    base_fee, ln_fee, lightning, future_payments, value, payment_options, MAX_COINS = (
+        make_example_values_for_do()
     )
-    value = 1000000000.
-    payment_options = lightning.get_payment_options(0, 7, value, future_payments)
     fee_intermediary = base_fee + value*ln_fee
-    MAX_COINS = lightning.plain_bitcoin.max_coins
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
             case 'ln-pay':
@@ -314,18 +316,11 @@ def test_do_offchain_exception():
         pass
 
 def test_do_new_channel():
-    _, _, lightning, future_payments = (
-        make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
+    _, _, lightning, future_payments, value, payment_options, MAX_COINS = (
+        make_example_values_for_do()
     )
-    value = 1000000000.
-    payment_options = lightning.get_payment_options(0, 7, value, future_payments)
-    MAX_COINS = lightning.plain_bitcoin.max_coins
-    # first test on-chain option
-    # review: this `for` overwrites `payment_information_new_channel` if there are more than one 'ln-open' options. This should be guarded against and fail the test otherwise
-    for payment_option in payment_options:
-        match payment_option['payment_information']['kind']:
-            case 'ln-open':
-                payment_information_new_channel = payment_option['payment_information']
+    assert payment_options[1]['payment_information']['kind'] == 'ln-open'
+    payment_information_new_channel = payment_options[1]['payment_information']
 
     lightning = make_example_network(base_fee=1000, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
