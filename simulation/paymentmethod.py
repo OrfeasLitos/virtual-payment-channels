@@ -270,10 +270,10 @@ class LN(PlainBitcoin):
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
             case 'ln-open':
-                # review: lint
-                (sender, receiver, value, counterparty, sender_coins, new_channel_offchain_option) = (
-                    payment_information['data']
-                )
+                (
+                    sender, receiver, value, counterparty, sender_coins,
+                    new_channel_offchain_option
+                ) = payment_information['data']
                 counterparty_coins = value if counterparty == receiver else 0
                 self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
                 # next update the coins of sender

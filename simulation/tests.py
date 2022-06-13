@@ -117,21 +117,23 @@ def test_get_payment_options_enough_money():
         make_example_network_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
     payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
-    # review: this `for` overwrites `_option` if there are more than one similar options. This should be guarded against and fail the test otherwise. If we expect exactly one of each kind, better not do it in a `for`.
-    for payment_option in payment_options:
-        match payment_option['payment_information']['kind']:
-            case 'onchain':
-                actual_onchain_option = payment_option
-            case 'ln-open':
-                actual_ln_open_option = payment_option
-            case 'ln-pay':
-                actual_ln_pay_option = payment_option
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    actual_onchain_option = payment_options[0]
+    assert payment_options[1]['payment_information']['kind'] == 'ln-open'
+    actual_ln_open_option = payment_options[1]
+    assert payment_options[2]['payment_information']['kind'] == 'ln-pay'
+    actual_ln_pay_option = payment_options[2]
+
     on_chain_centrality = lightning.network.get_harmonic_centrality()
     onchain_fee = lightning.plain_bitcoin.get_fee()
     expected_onchain_option = {
-        'delay' : 3600, 'fee': onchain_fee, 'centrality': on_chain_centrality,
-    # review: I don't like identations that depend on the length of variable names
-        'distance': [(100, 3), (100, 3), (100, 3), (100, 1), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
+        'delay' : 3600,
+        'fee': onchain_fee,
+        'centrality': on_chain_centrality,
+        'distance': [
+            (100, 3), (100, 3), (100, 3), (100, 1), (1, 1), (1, 2),(1, 2),
+            (1, math.inf), (1, math.inf), (1, math.inf)
+        ],
         'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1000000000.)}
     }
     ln_open_centrality = {
@@ -142,7 +144,10 @@ def test_get_payment_options_enough_money():
         'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
         'fee' : lightning.plain_bitcoin.get_fee(lightning.opening_transaction_size),
         'centrality' : ln_open_centrality,
-        'distance': [(100, 1), (100, 1), (100, 1), (100, 3), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
+        'distance': [
+            (100, 1), (100, 1), (100, 1), (100, 3), (1, 1), (1, 2), (1, 2),
+            (1, math.inf), (1, math.inf), (1, math.inf)
+        ],
         'payment_information' : {
             'kind' : 'ln-open',
             'data' : (0, 7, 1000000000., 7, 72000000000., None)
@@ -155,9 +160,10 @@ def test_get_payment_options_enough_money():
             0: 3.666666666666667, 1: 4.333333333333333, 2: 4.333333333333334, 3: 4.5,
             4: 4.5, 5: 0, 6: 0, 7: 3.0, 8: 3.0, 9: 0
         },
-        # 1 can pay 1.5 to 4 as he still has a little less than 2, but he can't pay 2.1.
-        # So we get the distance as described (by 0->2->3->4->7)
-        'distance': [(100, 1), (100, 3), (100, 3), (100, 3), (1, 1), (1, 2), (1, 2), (1, math.inf), (1, math.inf), (1, math.inf)],
+        'distance': [
+            (100, 1), (100, 3), (100, 3), (100, 3), (1, 1), (1, 2), (1, 2),
+            (1, math.inf), (1, math.inf), (1, math.inf)
+        ],
         'payment_information' : {'kind' : 'ln-pay', 'data' : ([0,1,4,7], 1000000000.)}
     }
     assert expected_onchain_option['delay'] == actual_onchain_option['delay']
@@ -249,11 +255,8 @@ def test_do_onchain():
     payment_options = lightning.get_payment_options(0, 7, value, future_payments)
     fee_intermediary = base_fee + value*ln_fee
     MAX_COINS = lightning.plain_bitcoin.max_coins
-    # review: this `for` overwrites `payment_information_onchain` if there are more than one 'onchain' options. This should be guarded against and fail the test otherwise
-    for payment_option in payment_options:
-        match payment_option['payment_information']['kind']:
-            case 'onchain':
-                payment_information_onchain = payment_option['payment_information']
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    payment_information_onchain = payment_options[0]['payment_information']
     lightning.do(payment_information_onchain)
     # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - value - lightning.plain_bitcoin.get_fee() 
