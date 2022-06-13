@@ -63,14 +63,17 @@ def make_example_utility_function(factor_fee, factor_delay, factor_distance, fac
             )
     return utility_function
 
+def know_all(party, payments):
+    return payments
+
+example_utility_function_for_simulation = make_example_utility_function(10000, 5000, 10000, 1000)
+
 def make_example_simulation_ln(seed = 0, coins_for_parties = 'max_value'):
     lightning = LN(10, coins_for_parties = coins_for_parties)
     random.seed(seed)
-    def know_all(party, payments):
-        return payments
     knowledge = Knowledge(know_all)
     payments = random_payments(100, 10, 2000000000)
-    utility_function = make_example_utility_function(10000, 5000, 10000, 1000)
+    utility_function = example_utility_function_for_simulation
     utility = Utility(utility_function)
     return Simulation(payments, lightning, knowledge, utility)
 
@@ -425,6 +428,7 @@ def test_simulation_with_ln_different_coins(coins_for_parties):
     plainbitcoin2 = lightning2.plain_bitcoin
     results2 = simulation2.run()
     assert results1 == results2
+    assert simulation1 == simulation2
     for party in plainbitcoin1.coins.keys():
         assert_eq(plainbitcoin1.coins[party], plainbitcoin2.coins[party])
     for sender in lightning1.network.graph.nodes():

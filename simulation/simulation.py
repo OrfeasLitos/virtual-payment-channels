@@ -75,7 +75,7 @@ class Simulation:
         # two simulations are equal iff all attributes are equal.
         return (
             self.payments == other.payments
-            and self.payment_method == other.payment_method
+            #and self.payment_method == other.payment_method
             and self.knowledge == other.knowledge
             and self.utility == other.utility
         )

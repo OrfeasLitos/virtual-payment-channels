@@ -32,3 +32,6 @@ class Utility:
                 best = option['payment_information']
                 best_score = utility
         return best
+
+    def __eq__(self, other):
+        return self.utility_function == other.utility_function
