@@ -69,8 +69,8 @@ def know_all(party, payments):
 example_utility_function_for_simulation = make_example_utility_function(10000, 5000, 10000, 1000)
 
 def make_example_simulation_ln(seed = 0, coins_for_parties = 'max_value'):
-    lightning = LN(10, coins_for_parties = coins_for_parties)
     random.seed(seed)
+    lightning = LN(10, coins_for_parties = coins_for_parties)
     knowledge = Knowledge(know_all)
     payments = random_payments(100, 10, 2000000000)
     utility_function = example_utility_function_for_simulation
@@ -439,6 +439,8 @@ def test_simulation_with_ln_different_coins(coins_for_parties):
                     lightning2.network.graph[sender][receiver]['balance']
                 )
     print(results1)
+    simulation3 = make_example_simulation_ln(seed = 1, coins_for_parties = coins_for_parties)
+    assert simulation1 != simulation3
 
 def test_simulation_with_ln():
     for coins_for_parties in ['max_value', 'small_value', 'random']:

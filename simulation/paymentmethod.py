@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 import random
 import math
 import numpy as np
@@ -302,29 +303,33 @@ class LN(PlainBitcoin):
     def equal_channels(self, other):
         if self.network.graph.nodes() != other.network.graph.nodes():
             return False
-        for sender in self.network.graph.nodes():
-            for receiver in self.network.graph.nodes():
-                if (
-                    self.network.graph.get_edge_data(sender, receiver) != None and
-                    other.network.graph.get_edge_data(sender, receiver) == None
-                ):
-                    return False
-                elif (
-                    self.network.graph.get_edge_data(sender, receiver) == None and
-                    other.network.graph.get_edge_data(sender, receiver) != None
-                ):
-                    return False
-                elif (
-                    self.network.graph.get_edge_data(sender, receiver) == None and
-                    other.network.graph.get_edge_data(sender, receiver) == None
-                ):
-                    pass
-                else:
-                    if not np.isclose(self.network.graph[sender][receiver]['balance'], other.network.graph[sender][receiver]['balance']):
-                        return False
-        return True
-                
+        # assuming that other network is also built as expected,
+        # i.e in dict exists 'balance' key.
+        for channel in self.network.graph.edges.data("balance"):
+            sender, receiver, balance = channel
+            if other.network.graph.get_edge_data(sender, receiver) == None:
+                return False
+            elif (
+                not np.isclose(
+                    balance,
+                    other.network.graph[sender][receiver]['balance']
+                )
+            ):
+                return False
 
+        for channel in other.network.graph.edges.data("balance"):
+            sender, receiver, balance = channel
+            if self.network.graph.get_edge_data(sender, receiver) == None:
+                return False
+            elif (
+                not np.isclose(
+                    balance,
+                    self.network.graph[sender][receiver]['balance']
+                )
+            ):
+                return False
+
+        return True
 
     def __eq__(self, other):
         return (
