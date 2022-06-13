@@ -441,6 +441,7 @@ def test_simulation_with_ln_different_coins(coins_for_parties):
 
 def test_simulation_with_ln():
     for coins_for_parties in ['max_value', 'small_value', 'random']:
+        print(coins_for_parties)
         test_simulation_with_ln_different_coins(coins_for_parties)
 
 if __name__ == "__main__":

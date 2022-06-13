@@ -22,7 +22,7 @@ class PlainBitcoin():
             case "max_value":
                 self.coins = {i: max_coins for i in range(nr_players)}
             case "small_value":
-                self.coins = {i: bitcoin_fee * 100 for i in range(nr_players)}
+                self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
             case "random":
                 self.coins = {i: random.randrange(max_coins) for i in range(nr_players)}
 
