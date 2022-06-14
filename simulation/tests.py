@@ -327,7 +327,8 @@ def test_do_new_channel():
     sum_future_payments = lightning.sum_future_payments_to_counterparty(0, 7, future_payments)
     sender_coins = 20 * sum_future_payments
     receiver_coins = value
-    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(200) - sender_coins - receiver_coins 
+    tx_size = lightning.opening_transaction_size
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
     assert lightning.plain_bitcoin.coins[7] == MAX_COINS
     # test the balances on ln (-2 for base fee and payment, +1 for payment).
     assert lightning.network.graph[0][7]['balance'] == sender_coins 

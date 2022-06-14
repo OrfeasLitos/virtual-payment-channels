@@ -32,8 +32,8 @@ class PlainBitcoin():
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
 
-    # tx_size for 1-input-2-output P2WPKH
-    def get_fee(self, tx_size = 140.5):
+    # tx_size for 1-input-1-output P2WPKH (tx size in vbytes)
+    def get_fee(self, tx_size = 109.5):
         return self.bitcoin_fee * tx_size
 
     def get_delay(self):
@@ -66,7 +66,7 @@ class LN(PlainBitcoin):
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
-        opening_transaction_size = 200, base_fee = 1000, coins_for_parties = "max_value"
+        opening_transaction_size = 121.5, base_fee = 1000, coins_for_parties = "max_value"
     ):
         self.ln_fee = ln_fee
         self.ln_delay = ln_delay
