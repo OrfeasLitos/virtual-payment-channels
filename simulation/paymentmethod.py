@@ -309,11 +309,9 @@ class LN(PlainBitcoin):
             sender, receiver, balance = channel
             if other.network.graph.get_edge_data(sender, receiver) == None:
                 return False
-            elif (
-                not np.isclose(
+            elif not np.isclose(
                     balance,
                     other.network.graph[sender][receiver]['balance']
-                )
             ):
                 return False
 
@@ -321,11 +319,9 @@ class LN(PlainBitcoin):
             sender, receiver, balance = channel
             if self.network.graph.get_edge_data(sender, receiver) == None:
                 return False
-            elif (
-                not np.isclose(
-                    balance,
-                    self.network.graph[sender][receiver]['balance']
-                )
+            elif not np.isclose(
+                balance,
+                self.network.graph[sender][receiver]['balance']
             ):
                 return False
 
@@ -340,3 +336,12 @@ class LN(PlainBitcoin):
             self.base_fee == other.base_fee and
             self.plain_bitcoin == other.plain_bitcoin
         )
+
+class Elmo(PlainBitcoin):
+    def __init__(
+        self, nr_players, max_coins = 2000000000000000,
+        bitcoin_fee = 1000000, bitcoin_delay = 3600, 
+        coins_for_parties = "max_value"
+    ):
+        self.plainbitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        self.network = Network(nr_players)
