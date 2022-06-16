@@ -25,7 +25,8 @@ class PlainBitcoin():
             case "small_value":
                 self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
             case "random":
-                self.coins = {i: random.randrange(max_coins) for i in range(nr_players)}
+                # maybe better Pareto distribution?
+                self.coins = {i: random.normalvariate(max_coins/2, max_coins/4) for i in range(nr_players)}
             case _:
                 raise ValueError
 
