@@ -13,22 +13,6 @@ from utility import Utility
 from knowledge import Knowledge
 from network import Network
 
-random.seed(5)
-random_payments1 = random_payments(100, 10, 2000000000)
-random_payments2 = random_payments(100, 10, 2000000000)
-
-def test_random_payments_seed_inside():
-    random.seed(5)
-    random_payments_seed_inside1 = random_payments(100, 10, 2000000000)
-    random_payments_seed_inside2 = random_payments(100, 10, 2000000000)
-    assert random_payments1 == random_payments_seed_inside1
-    assert random_payments2 == random_payments_seed_inside2
-
-def test_random_payments_seed_outside():
-    random_payments_seed_outside1 = random_payments(100, 10, 2000000000)
-    random_payments_seed_outside2 = random_payments(100, 10, 2000000000)
-    assert random_payments1 == random_payments_seed_outside1
-    assert random_payments2 == random_payments_seed_outside2
 
 def make_example_network(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
@@ -441,13 +425,11 @@ def test_simulation_with_ln_different_coins(coins_for_parties):
                     lightning1.network.graph[sender][receiver]['balance'],
                     lightning2.network.graph[sender][receiver]['balance']
                 )
-    print(results1)
     simulation3 = make_example_simulation_ln(seed = 1, coins_for_parties = coins_for_parties)
     assert simulation1 != simulation3
 
 def test_simulation_with_ln():
     for coins_for_parties in ['max_value', 'small_value', 'random']:
-        print(coins_for_parties)
         test_simulation_with_ln_different_coins(coins_for_parties)
 
 if __name__ == "__main__":
@@ -459,9 +441,6 @@ if __name__ == "__main__":
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
-    test_random_payments_seed_inside()
-    random.seed(5)
-    test_random_payments_seed_outside()
     print("Success")
 
 
