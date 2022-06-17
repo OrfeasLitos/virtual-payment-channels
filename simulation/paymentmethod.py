@@ -345,3 +345,27 @@ class Elmo(PlainBitcoin):
     ):
         self.plainbitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
+
+    def get_distances(self, source, future_payments):
+        pass
+
+    # copied from LN.
+    # TODO: check how much we care about centrality
+    def get_onchain_option(self, sender, receiver, value, future_payments):
+        onchain_time = self.plain_bitcoin.get_delay()
+        onchain_fee = self.plain_bitcoin.get_fee()
+        if onchain_fee + value > self.plain_bitcoin.coins[sender]:
+            return None
+        onchain_centrality = self.network.get_harmonic_centrality()
+        onchain_distance = self.get_distances(sender, future_payments)
+        return {
+            'delay': onchain_time,
+            'fee': onchain_fee,
+            'centrality': onchain_centrality,
+            'distance': onchain_distance,
+            'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
+        }    
+
+    def get_payment_options(self, sender, receiver, value, future_payments):
+        onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
+
