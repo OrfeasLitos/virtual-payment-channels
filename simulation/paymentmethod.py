@@ -338,16 +338,65 @@ class LN(PlainBitcoin):
         )
 
 class Elmo(PlainBitcoin):
+    # TODO: find reasonable value for fee_intermediary and locked_coins
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
-        coins_for_parties = "max_value"
+        coins_for_parties = "max_value", fee_intermediary = 1,
+        locked_coins = 1
     ):
         self.plainbitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
+        self.fee_intermediary = fee_intermediary
+        self.locked_coins = locked_coins
 
+    # adjusted from LN
     def get_distances(self, source, future_payments):
-        pass
+        """
+        Returns weighted distances to the future parties and to parties not occuring in future payments.
+        Muiltiple payments to same party give multiple distances.
+        """
+        distances = []
+        # weight if we are endpoint
+        weight_endpoint = 100
+        # weight if we are possible intermediary
+        weight_intermediary = 10
+        # weight for other parties
+        weight_other = 1
+        encountered_parties = set({source})
+        path_data = []
+        for future_sender, future_receiver, value in future_payments:
+            encountered_parties.add(future_sender)
+            encountered_parties.add(future_receiver)
+            if future_sender != source:
+                # TODO: think about discarding first part of the tuple.
+                path_data.append((
+                    future_sender,
+                    weight_endpoint if future_receiver == source else weight_intermediary,
+                    self.network.find_cheapest_path(future_sender, source, self.locked_coins, self.fee_intermediary)
+                ))
+            if future_receiver != source:
+                path_data.append((
+                    future_receiver,
+                    weight_endpoint if future_sender == source else weight_intermediary,
+                    self.network.find_cheapest_path(source, future_receiver, self.locked_coins, self.fee_intermediary)
+                ))
+
+        for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
+            path_data.append((
+                party,
+                weight_other,
+                self.network.find_cheapest_path(source, party, self.locked_coins, self.fee_intermediary)
+            ))
+        
+        for counterparty, weight, cost_and_path in path_data:
+            if cost_and_path is None:
+                distances.append((weight, math.inf))
+            else:
+                _, cheapest_path = cost_and_path
+                distances.append((weight, len(cheapest_path)-1))
+
+        return distances
 
     # copied from LN.
     # TODO: check how much we care about centrality
