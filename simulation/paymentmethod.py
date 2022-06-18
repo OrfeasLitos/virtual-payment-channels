@@ -9,7 +9,7 @@ from network import Network
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
-MULTIPLIER_CHANNEL_BALANCE_LN = 20
+MULTIPLIER_CHANNEL_BALANCE_LN = MULTIPLIER_CHANNEL_BALANCE_ELMO = 20
 
 class PlainBitcoin():
     # the total fee is num_vbytes * price_per_vbyte
@@ -338,17 +338,18 @@ class LN(PlainBitcoin):
         )
 
 class Elmo(PlainBitcoin):
-    # TODO: find reasonable value for fee_intermediary and locked_coins
+    # TODO: find reasonable value for fee_intermediary, locked_coins and opening_transaction_size
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
         coins_for_parties = "max_value", fee_intermediary = 1,
-        locked_coins = 1
+        locked_coins = 1, opening_transaction_size = 200
     ):
         self.plainbitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
         self.fee_intermediary = fee_intermediary
         self.locked_coins = locked_coins
+        self.opening_transaction_size = opening_transaction_size
 
     # adjusted from LN
     def get_distances(self, source, future_payments):
@@ -415,6 +416,35 @@ class Elmo(PlainBitcoin):
             'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
         }    
 
+    # adjusted from LN
+    def get_new_channel_option(self, sender, receiver, value, future_payments):
+        new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
+        new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
+        sum_future_payments = self.sum_future_payments_to_counterparty(sender, receiver, future_payments)
+        sender_coins = min(
+            self.plain_bitcoin.coins[sender] - value - new_channel_fee,
+            MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
+        )
+        if sender_coins < 0:
+            return None
+        self.network.add_channel(sender, sender_coins, receiver, value)
+        new_channel_centrality = self.network.get_harmonic_centrality()
+        new_channel_distance = self.get_distances(sender, future_payments)
+        self.network.close_channel(sender, receiver)
+
+        return {
+            'delay': new_channel_time,
+            'fee': new_channel_fee,
+            'centrality': new_channel_centrality,
+            'distance': new_channel_distance,
+            'payment_information': {
+                'kind': 'ln-open',
+                'data': (sender, receiver, value, sender_coins)
+            }
+        }
+
     def get_payment_options(self, sender, receiver, value, future_payments):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
+        # other options: new_channel, new_virtual_channel, Elmo_pay
+        new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
 
