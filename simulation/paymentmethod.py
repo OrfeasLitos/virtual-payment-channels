@@ -431,20 +431,24 @@ class Elmo(PlainBitcoin):
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.get_distances(sender, future_payments)
         self.network.close_channel(sender, receiver)
-
+        # TODO: Does opening a new channel (not virtual) include giving the value to the receiver as in LN?
         return {
             'delay': new_channel_time,
             'fee': new_channel_fee,
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
             'payment_information': {
-                'kind': 'ln-open',
+                'kind': 'Elmo-open-channel',
                 'data': (sender, receiver, value, sender_coins)
             }
         }
+
+    def get_new_virtual_channel_option(sender, receiver, value, future_payments):
+        pass
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         # other options: new_channel, new_virtual_channel, Elmo_pay
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
+        new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
 
