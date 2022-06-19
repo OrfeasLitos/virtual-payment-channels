@@ -353,8 +353,8 @@ class Elmo(PlainBitcoin):
         self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)
         self.elmo_delay = elmo_delay
-        # the amount currently locked (should be pair (i, j) as key and value the amount that is locked on that channel)
-        self.locked_coins = {}
+
+    # TODO: use key 'locked coins' on edges of network
 
     # adjusted from LN
     def get_distances(self, source, future_payments):
@@ -462,7 +462,7 @@ class Elmo(PlainBitcoin):
         hops, path = cost_and_path
         time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
         # TODO: think if lock_value and fee_intermediary should be in data.
-        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, self.lock_value, self.fee_intermediary)}
+        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value)}
         try:
             self.do(payment_information)
         except ValueError:
@@ -486,12 +486,18 @@ class Elmo(PlainBitcoin):
         new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
 
     def lock_coins(self, path):
-        pass
+        for i in range(len(path) - 1):
+            # TODO: check if coins are locked on the right channel
+            sender = path[i]
+            receiver = path[i+1]
+            self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - self.lock_value
+            self.network.graph[sender][receiver]['locked_coins'] = self.network.graph[sender][receiver]['locked_coins'] + self.lock_value
+
 
     def do(self, payment_information):
         match payment_information['kind']:
             case 'Elmo-open-virtual-channel':
-                path, value, lock_value, fee_intermediary = payment_information['data']
+                path, value = payment_information['data']
             case _:
                 pass
 

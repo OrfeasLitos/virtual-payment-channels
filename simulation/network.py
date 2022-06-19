@@ -12,10 +12,11 @@ class Network:
         self.edge_id = 0
 
     def add_channel(self, idA, balA, idB, balB):
+        # TODO: discuss if keyword 'locked_coins' is a problem as it isn't used in LN.
         assert(balA > 0 or balB > 0)
         edges = [
-            (idA, idB, {'balance': balA, 'cost' : UNIT_COST}),
-            (idB, idA, {'balance': balB, 'cost' : UNIT_COST})
+            (idA, idB, {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST}),
+            (idB, idA, {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST})
         ]
         self.graph.add_edges_from(edges)
         self.edge_id += 1
