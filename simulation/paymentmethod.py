@@ -338,18 +338,21 @@ class LN(PlainBitcoin):
         )
 
 class Elmo(PlainBitcoin):
-    # TODO: find reasonable value for fee_intermediary, locked_coins and opening_transaction_size
+    # TODO: find reasonable value for fee_intermediary, locked_coins, opening_transaction_size, elmo_delay
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
         coins_for_parties = "max_value", fee_intermediary = 1,
-        locked_coins = 1, opening_transaction_size = 200
+        locked_coins = 1, opening_transaction_size = 200,
+        elmo_delay = 1
     ):
         self.plainbitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
         self.fee_intermediary = fee_intermediary
         self.locked_coins = locked_coins
         self.opening_transaction_size = opening_transaction_size
+        # delay for opening new virtual channel (per hop)
+        self.elmo_delay = elmo_delay
 
     # adjusted from LN
     def get_distances(self, source, future_payments):
@@ -399,11 +402,11 @@ class Elmo(PlainBitcoin):
 
         return distances
 
-    def get_new_virtual_channel_time(self, offchain_path):
-        pass
+    def get_new_virtual_channel_time(self, hops):
+        return self.elmo_delay * hops
 
-    def get_new_virtual_channel_fee(self, hops):
-        pass
+    def get_new_virtual_channel_fee(self, path):
+        return self.fee_intermediary * (len(path) - 1)
 
     # copied from LN.
     # TODO: check how much we care about centrality
@@ -455,13 +458,13 @@ class Elmo(PlainBitcoin):
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
-        time_new_virtual_channel = self.get_new_virtual_channel_time(path)
+        time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
         payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, self.locked_coins, self.fee_intermediary)}
         try:
             self.do(payment_information)
         except ValueError:
             return None
-        fee_new_virtual_channel = self.get_new_virtual_channel_fee(hops)
+        fee_new_virtual_channel = self.get_new_virtual_channel_fee(path)
         centrality_new_virtual_channel = self.network.get_harmonic_centrality()
         distance_new_virtual_channel = self.get_distances(sender, future_payments)
         self.undo(payment_information)
