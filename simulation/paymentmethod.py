@@ -399,6 +399,12 @@ class Elmo(PlainBitcoin):
 
         return distances
 
+    def get_new_virtual_channel_time(self, offchain_path):
+        pass
+
+    def get_new_virtual_channel_fee(self, hops):
+        pass
+
     # copied from LN.
     # TODO: check how much we care about centrality
     def get_onchain_option(self, sender, receiver, value, future_payments):
@@ -443,12 +449,36 @@ class Elmo(PlainBitcoin):
             }
         }
 
-    def get_new_virtual_channel_option(sender, receiver, value, future_payments):
-        pass
+    # adjusted from LN get_offchain_option
+    def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
+        cost_and_path = self.network.find_cheapest_path(sender, receiver, self.locked_coins, self.fee_intermediary)
+        if cost_and_path is None:
+            return None
+        hops, path = cost_and_path
+        time_new_virtual_channel = self.get_new_virtual_channel_time(path)
+        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, self.locked_coins, self.fee_intermediary)}
+        try:
+            self.do(payment_information)
+        except ValueError:
+            return None
+        fee_new_virtual_channel = self.get_new_virtual_channel_fee(hops)
+        centrality_new_virtual_channel = self.network.get_harmonic_centrality()
+        distance_new_virtual_channel = self.get_distances(sender, future_payments)
+        self.undo(payment_information)
+        return {
+            'delay': time_new_virtual_channel,
+            'fee': fee_new_virtual_channel,
+            'centrality': centrality_new_virtual_channel,
+            'distance': distance_new_virtual_channel,
+            'payment_information': payment_information
+        }
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         # other options: new_channel, new_virtual_channel, Elmo_pay
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
         new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
+
+    def do(self, payment_information):
+        pass
 
