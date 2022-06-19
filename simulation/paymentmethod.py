@@ -338,21 +338,23 @@ class LN(PlainBitcoin):
         )
 
 class Elmo(PlainBitcoin):
-    # TODO: find reasonable value for fee_intermediary, locked_coins, opening_transaction_size, elmo_delay
+    # TODO: find reasonable value for fee_intermediary, lock_value, opening_transaction_size, elmo_delay
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
         coins_for_parties = "max_value", fee_intermediary = 1,
-        locked_coins = 1, opening_transaction_size = 200,
+        lock_value = 1, opening_transaction_size = 200,
         elmo_delay = 1
     ):
         self.plainbitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
         self.fee_intermediary = fee_intermediary
-        self.locked_coins = locked_coins
+        self.lock_value = lock_value
         self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)
         self.elmo_delay = elmo_delay
+        # the amount currently locked (should be pair (i, j) as key and value the amount that is locked on that channel)
+        self.locked_coins = {}
 
     # adjusted from LN
     def get_distances(self, source, future_payments):
@@ -377,20 +379,20 @@ class Elmo(PlainBitcoin):
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
-                    self.network.find_cheapest_path(future_sender, source, self.locked_coins, self.fee_intermediary)
+                    self.network.find_cheapest_path(future_sender, source, self.lock_value, self.fee_intermediary)
                 ))
             if future_receiver != source:
                 path_data.append((
                     future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
-                    self.network.find_cheapest_path(source, future_receiver, self.locked_coins, self.fee_intermediary)
+                    self.network.find_cheapest_path(source, future_receiver, self.lock_value, self.fee_intermediary)
                 ))
 
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
                 party,
                 weight_other,
-                self.network.find_cheapest_path(source, party, self.locked_coins, self.fee_intermediary)
+                self.network.find_cheapest_path(source, party, self.lock_value, self.fee_intermediary)
             ))
         
         for counterparty, weight, cost_and_path in path_data:
@@ -454,12 +456,13 @@ class Elmo(PlainBitcoin):
 
     # adjusted from LN get_offchain_option
     def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
-        cost_and_path = self.network.find_cheapest_path(sender, receiver, self.locked_coins, self.fee_intermediary)
+        cost_and_path = self.network.find_cheapest_path(sender, receiver, self.lock_value, self.fee_intermediary)
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
         time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
-        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, self.locked_coins, self.fee_intermediary)}
+        # TODO: think if lock_value and fee_intermediary should be in data.
+        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, self.lock_value, self.fee_intermediary)}
         try:
             self.do(payment_information)
         except ValueError:
@@ -482,6 +485,13 @@ class Elmo(PlainBitcoin):
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
         new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
 
-    def do(self, payment_information):
+    def lock_coins(self, path):
         pass
+
+    def do(self, payment_information):
+        match payment_information['kind']:
+            case 'Elmo-open-virtual-channel':
+                path, value, lock_value, fee_intermediary = payment_information['data']
+            case _:
+                pass
 
