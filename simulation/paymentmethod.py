@@ -493,11 +493,15 @@ class Elmo(PlainBitcoin):
             self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - self.lock_value
             self.network.graph[sender][receiver]['locked_coins'] = self.network.graph[sender][receiver]['locked_coins'] + self.lock_value
 
+    # Question: one which channels are the fees for the intermediaries?
+    def update_balances(self, path):
+        pass
 
     def do(self, payment_information):
         match payment_information['kind']:
             case 'Elmo-open-virtual-channel':
                 path, value = payment_information['data']
+                self.lock_coins(path)
             case _:
                 pass
 
