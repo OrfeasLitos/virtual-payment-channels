@@ -460,13 +460,15 @@ class Elmo(PlainBitcoin):
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
-        time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
+        # TODO: think of reasonable value for sender_coins
+        sender_coins = 1
         # TODO: think if lock_value and fee_intermediary should be in data.
-        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value)}
+        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, sender_coins)}
         try:
             self.do(payment_information)
         except ValueError:
             return None
+        time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
         fee_new_virtual_channel = self.get_new_virtual_channel_fee(path)
         centrality_new_virtual_channel = self.network.get_harmonic_centrality()
         distance_new_virtual_channel = self.get_distances(sender, future_payments)
@@ -528,11 +530,17 @@ class Elmo(PlainBitcoin):
 
         self.lock_coins(path)
 
+    def pay(self, sender, receiver, value):
+        pass
+
     def do(self, payment_information):
         match payment_information['kind']:
             case 'Elmo-open-virtual-channel':
-                path, value = payment_information['data']
+                path, value, sender_coins = payment_information['data']
+                sender = path[0]
+                receiver = path[-1]
                 self.update_balances_new_virtual_channel(path)
+                self.network.add_channel(sender, sender_coins, receiver, value)
             case _:
                 pass
 
