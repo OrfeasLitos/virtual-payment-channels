@@ -25,6 +25,7 @@ class PlainBitcoin():
                 self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
             case "random":
                 # maybe better Pareto distribution?
+                # review: to avoid negative coins, max(0, normal)
                 self.coins = {i: random.normalvariate(max_coins/2, max_coins/4) for i in range(nr_players)}
             case _:
                 raise ValueError
@@ -92,6 +93,9 @@ class LN(PlainBitcoin):
         ]
         return sum([payment[2] for payment in future_payments_to_receiver])
 
+    # review: This should be minimum for parties with a channel,
+    # review: progressively larger for parties that can open a channel on a progressively larger virtual layer
+    # review: and infinite for disconnected parties. Let's discuss this.
     def get_distances(self, source, future_payments):
         """
         Returns weighted distances to the future parties and to parties not occuring in future payments.
@@ -410,6 +414,7 @@ class Elmo(PlainBitcoin):
         return self.fee_intermediary * (len(path) - 2)
 
     # copied from LN.
+    # review: copying is bad, could we move this function to PlainBitcoin?
     # TODO: check how much we care about centrality
     def get_onchain_option(self, sender, receiver, value, future_payments):
         onchain_time = self.plain_bitcoin.get_delay()
@@ -443,6 +448,7 @@ class Elmo(PlainBitcoin):
         new_channel_distance = self.get_distances(sender, future_payments)
         self.network.close_channel(sender, receiver)
         # TODO: Does opening a new channel (not virtual) include giving the value to the receiver as in LN?
+        # review: yes
         return {
             'delay': new_channel_time,
             'fee': new_channel_fee,
@@ -474,6 +480,7 @@ class Elmo(PlainBitcoin):
             self.do(payment_information)
         except ValueError:
             return None
+        # review: put first word last, like in LN.get_offchain_option()
         time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
         centrality_new_virtual_channel = self.network.get_harmonic_centrality()
         distance_new_virtual_channel = self.get_distances(sender, future_payments)
@@ -513,10 +520,13 @@ class Elmo(PlainBitcoin):
     def lock_coins(self, path):
         for i in range(len(path) - 1):
             # TODO: check if coins are locked on the right channel
+            # review: locking done correctly
             sender = path[i]
             receiver = path[i+1]
+            # review: in case of error, we need to undo changes up to now
             if self.network.graph[sender][receiver]['balance'] < self.lock_value:
                 raise ValueError
+            # review: use x += 1 syntax for brevity
             self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - self.lock_value
             self.network.graph[sender][receiver]['locked_coins'] = self.network.graph[sender][receiver]['locked_coins'] + self.lock_value
 
@@ -573,8 +583,10 @@ class Elmo(PlainBitcoin):
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
                 self.update_balances_new_virtual_channel(path)
+                # review: x -= 1 syntax
                 self.plainbitcoin.coins[sender] = self.plainbitcoin.coins[sender] - (sender_coins + value)
                 # should receiver get value or more?
+                # review: the receiver should just get the value of this payment, no more
                 self.network.add_channel(sender, sender_coins, receiver, value)
 
             case 'Elmo-pay':
