@@ -1,7 +1,5 @@
-from multiprocessing.sharedctypes import Value
 import random
 import math
-from turtle import undo
 import numpy as np
 import operator
 from network import Network
@@ -489,10 +487,6 @@ class Elmo(PlainBitcoin):
         }
 
     def get_elmo_pay_option(self, sender, receiver, value, future_payments):
-        if self.network.graph.get_edge_data(sender, receiver) is None:
-            return None
-        elif self.network.graph[sender][receiver]['balance'] < value:
-            return None
         payment_information = {'kind': 'Elmo-pay', 'data': (sender, receiver, value)}
         try:
             self.do(payment_information)
@@ -568,10 +562,24 @@ class Elmo(PlainBitcoin):
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
                 receiver = path[-1]
+                # Questions are coins for new virtual channel taken from onchain-coins or from coins of some existing channel?
+                if self.plainbitcoin.coins[sender] < sender_coins + value:
+                    raise ValueError
+                # important that next line is at that position so that Error gets raised in case update is not possible
+                # before anything else is done.
                 self.update_balances_new_virtual_channel(path)
+                self.plainbitcoin.coins[sender] = self.plainbitcoin.coins[sender] - (sender_coins + value)
+                # should receiver get value or more?
                 self.network.add_channel(sender, sender_coins, receiver, value)
+
             case 'Elmo-pay':
-                pass
+                sender, receiver, value = payment_information['data']
+                if self.network.graph.get_edge_data(sender, receiver) is None:
+                    raise ValueError
+                elif self.network.graph[sender][receiver]['balance'] < value:
+                    raise ValueError
+                self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - value
+                self.network.graph[receiver][sender]['balance'] = self.network.graph[receiver][sender]['balance'] + value
             case _:
                 pass
 
