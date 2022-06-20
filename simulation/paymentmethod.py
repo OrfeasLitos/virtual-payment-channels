@@ -1,6 +1,7 @@
 from multiprocessing.sharedctypes import Value
 import random
 import math
+from turtle import undo
 import numpy as np
 import operator
 from network import Network
@@ -408,7 +409,7 @@ class Elmo(PlainBitcoin):
         return self.elmo_delay * hops
 
     def get_new_virtual_channel_fee(self, path):
-        return self.fee_intermediary * (len(path) - 1)
+        return self.fee_intermediary * (len(path) - 2)
 
     # copied from LN.
     # TODO: check how much we care about centrality
@@ -431,6 +432,7 @@ class Elmo(PlainBitcoin):
     def get_new_channel_option(self, sender, receiver, value, future_payments):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
+        # TODO: implement sum_future_payments_to_counterparty
         sum_future_payments = self.sum_future_payments_to_counterparty(sender, receiver, future_payments)
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_channel_fee,
@@ -460,8 +462,14 @@ class Elmo(PlainBitcoin):
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
-        # TODO: think of reasonable value for sender_coins
-        sender_coins = 1
+        fee_new_virtual_channel = self.get_new_virtual_channel_fee(path)
+        sum_future_payments = self.sum_future_payments_to_counterparty(sender, receiver, future_payments)
+        sender_coins = min(
+            self.plain_bitcoin.coins[sender] - value - fee_new_virtual_channel,
+            MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
+        )
+        if sender_coins < 0:
+            return None
         # TODO: think if lock_value and fee_intermediary should be in data.
         payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, sender_coins)}
         try:
@@ -469,7 +477,6 @@ class Elmo(PlainBitcoin):
         except ValueError:
             return None
         time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
-        fee_new_virtual_channel = self.get_new_virtual_channel_fee(path)
         centrality_new_virtual_channel = self.network.get_harmonic_centrality()
         distance_new_virtual_channel = self.get_distances(sender, future_payments)
         self.undo(payment_information)
@@ -481,11 +488,33 @@ class Elmo(PlainBitcoin):
             'payment_information': payment_information
         }
 
+    def get_elmo_pay_option(self, sender, receiver, value, future_payments):
+        if self.network.graph.get_edge_data(sender, receiver) is None:
+            return None
+        elif self.network.graph[sender][receiver]['balance'] < value:
+            return None
+        payment_information = {'kind': 'Elmo-pay', 'data': (sender, receiver, value)}
+        try:
+            self.do(payment_information)
+        except ValueError:
+            return None
+        centrality_elmo_pay = self.network.get_harmonic_centrality()
+        distance_elmo_pay = self.get_distances(sender, future_payments)
+        self.undo(payment_information)
+        return {
+            'delay': self.elmo_delay,
+            'fee': 0,
+            'centrality': centrality_elmo_pay,
+            'distance': distance_elmo_pay,
+            'payment_information': payment_information
+        }
+
     def get_payment_options(self, sender, receiver, value, future_payments):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         # other options: new_channel, new_virtual_channel, Elmo_pay
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
         new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
+        elmo_pay_option = self.get_elmo_pay_option(sender, receiver, value, future_payments)
 
     def lock_coins(self, path):
         for i in range(len(path) - 1):
@@ -541,6 +570,8 @@ class Elmo(PlainBitcoin):
                 receiver = path[-1]
                 self.update_balances_new_virtual_channel(path)
                 self.network.add_channel(sender, sender_coins, receiver, value)
+            case 'Elmo-pay':
+                pass
             case _:
                 pass
 
