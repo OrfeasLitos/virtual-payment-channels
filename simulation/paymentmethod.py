@@ -490,18 +490,49 @@ class Elmo(PlainBitcoin):
             # TODO: check if coins are locked on the right channel
             sender = path[i]
             receiver = path[i+1]
+            if self.network.graph[sender][receiver]['balance'] < self.lock_value:
+                raise ValueError
             self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - self.lock_value
             self.network.graph[sender][receiver]['locked_coins'] = self.network.graph[sender][receiver]['locked_coins'] + self.lock_value
 
     # Question: one which channels are the fees for the intermediaries?
-    def update_balances(self, path):
-        pass
+    # Is this the correct way to give fees to intermediaries?
+    # adjusted from LN
+    def update_balances_new_virtual_channel(self, path, new_channel = False):
+        # the pay argument tells whether this corresponds to making a payment
+        # or undoing it.
+        # all the "speaking names" like op_take, received, etc are in the case of a payment
+        # in case of undoing they do the opposite.
+        op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
+        num_intermediaries = len(path) - 2
+        sender = path[0]
+        cost_sender = num_intermediaries * self.fee_intermediary
+        # update the balances of the intermediaries.
+        for i in range(1, num_intermediaries + 1):
+            received = (num_intermediaries - (i-1)) * self.fee_intermediary
+            transfered = received - self.fee_intermediary
+            new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
+            new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
+            # we test just for new_giver_balance < 0 as in case of new virtual channel only giver_balance gets smaller
+            # In case of undoing it, there was a payment done before, so there shouldn't occur numbers < 0.
+            if new_giver_balance < 0:
+                for j in range(1, i):
+                    received = (num_intermediaries - (j-1)) * self.fee_intermediary
+                    transfered = received - self.fee_intermediary
+                    new_taker_balance = op_give(self.network.graph[path[j]][path[j-1]]['balance'], received)
+                    new_giver_balance = op_take(self.network.graph[path[j]][path[j+1]]['balance'], transfered)
+                raise ValueError
+            self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
+            self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
+        self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
+
+        self.lock_coins(path)
 
     def do(self, payment_information):
         match payment_information['kind']:
             case 'Elmo-open-virtual-channel':
                 path, value = payment_information['data']
-                self.lock_coins(path)
+                self.update_balances_new_virtual_channel(path)
             case _:
                 pass
 
