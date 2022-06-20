@@ -554,7 +554,12 @@ class Elmo(PlainBitcoin):
         self.lock_coins(path)
 
     def pay(self, sender, receiver, value):
-        pass
+        if self.network.graph.get_edge_data(sender, receiver) is None:
+            raise ValueError
+        elif self.network.graph[sender][receiver]['balance'] < value:
+            raise ValueError
+        self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - value
+        self.network.graph[receiver][sender]['balance'] = self.network.graph[receiver][sender]['balance'] + value
 
     def do(self, payment_information):
         match payment_information['kind']:
@@ -574,12 +579,9 @@ class Elmo(PlainBitcoin):
 
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
-                if self.network.graph.get_edge_data(sender, receiver) is None:
-                    raise ValueError
-                elif self.network.graph[sender][receiver]['balance'] < value:
-                    raise ValueError
-                self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - value
-                self.network.graph[receiver][sender]['balance'] = self.network.graph[receiver][sender]['balance'] + value
+                self.pay(sender, receiver, value)
             case _:
                 pass
 
+    def undo(self, payment_information):
+        pass
