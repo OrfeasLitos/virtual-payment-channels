@@ -508,7 +508,6 @@ class Elmo(PlainBitcoin):
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
-        # other options: new_channel, new_virtual_channel, Elmo_pay
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
         new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
         elmo_pay_option = self.get_elmo_pay_option(sender, receiver, value, future_payments)
@@ -521,8 +520,12 @@ class Elmo(PlainBitcoin):
             # review: locking done correctly
             sender = path[i]
             receiver = path[i+1]
-            # review: in case of error, we need to undo changes up to now
             if self.network.graph[sender][receiver]['balance'] < self.lock_value:
+                for j in range(i):
+                    sender = path[j]
+                    receiver = path[j+1]
+                    self.network.graph[sender][receiver]['balance'] += self.lock_value
+                    self.network.graph[sender][receiver]['locked_coins'] -= self.lock_value
                 raise ValueError
             self.network.graph[sender][receiver]['balance'] -= self.lock_value
             self.network.graph[sender][receiver]['locked_coins'] += self.lock_value
@@ -574,7 +577,7 @@ class Elmo(PlainBitcoin):
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
                 receiver = path[-1]
-                # Questions are coins for new virtual channel taken from onchain-coins or from coins of some existing channel?
+                # Question: are coins for new virtual channel taken from onchain-coins or from coins of some existing channel?
                 if self.plain_bitcoin.coins[sender] < sender_coins + value:
                     raise ValueError
                 # important that next line is at that position so that Error gets raised in case update is not possible
