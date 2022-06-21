@@ -436,7 +436,7 @@ def test_get_payment_options_elmo():
     elmo = Elmo(10)
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     payment_options = elmo.get_payment_options(2, 5, 10., future_payments)
-    #print(payment_options)
+    print(payment_options)
 
 if __name__ == "__main__":
     test_LN()

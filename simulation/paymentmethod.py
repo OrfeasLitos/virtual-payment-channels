@@ -512,7 +512,9 @@ class Elmo(PlainBitcoin):
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
         new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
         elmo_pay_option = self.get_elmo_pay_option(sender, receiver, value, future_payments)
-
+        options = [onchain_option, new_channel_option, new_virtual_channel_option, elmo_pay_option]
+        return [option for option in options if option is not None]
+        
     def lock_coins(self, path):
         for i in range(len(path) - 1):
             # TODO: check if coins are locked on the right channel
