@@ -573,6 +573,10 @@ class Elmo(PlainBitcoin):
 
     def do(self, payment_information):
         match payment_information['kind']:
+            case 'onchain':
+                pass
+            case 'Elmo-open-channel':
+                pass
             case 'Elmo-open-virtual-channel':
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
@@ -585,12 +589,17 @@ class Elmo(PlainBitcoin):
                 self.update_balances_new_virtual_channel(path)
                 self.plain_bitcoin.coins[sender] -= sender_coins + value
                 self.network.add_channel(sender, sender_coins, receiver, value)
-
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
                 self.pay(sender, receiver, value)
             case _:
-                pass
+                raise ValueError
 
     def undo(self, payment_information):
-        pass
+        match payment_information['kind']:
+            case 'Elmo-open-virtual-channel':
+                pass
+            case 'Elmo-pay':
+                pass
+            case _:
+                raise ValueError
