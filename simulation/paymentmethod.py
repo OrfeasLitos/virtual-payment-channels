@@ -530,6 +530,10 @@ class Elmo(PlainBitcoin):
             self.network.graph[sender][receiver]['balance'] -= self.lock_value
             self.network.graph[sender][receiver]['locked_coins'] += self.lock_value
 
+    # Question: Do we unlock all coins at once?
+    def unlock_coins(self, path):
+        pass
+
     # Question: one which channels are the fees for the intermediaries?
     # Is this the correct way to give fees to intermediaries?
     # adjusted from LN
@@ -561,8 +565,6 @@ class Elmo(PlainBitcoin):
             self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
         self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
 
-        self.lock_coins(path)
-
     def pay(self, sender, receiver, value):
         if self.network.graph.get_edge_data(sender, receiver) is None:
             raise ValueError
@@ -574,7 +576,7 @@ class Elmo(PlainBitcoin):
     def do(self, payment_information):
         match payment_information['kind']:
             case 'onchain':
-                pass
+                self.plain_bitcoin.pay(payment_information['data'])
             case 'Elmo-open-channel':
                 pass
             case 'Elmo-open-virtual-channel':
@@ -586,7 +588,8 @@ class Elmo(PlainBitcoin):
                     raise ValueError
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
-                self.update_balances_new_virtual_channel(path)
+                self.update_balances_new_virtual_channel(path, new_channel=True)
+                self.lock_coins(path)
                 self.plain_bitcoin.coins[sender] -= sender_coins + value
                 self.network.add_channel(sender, sender_coins, receiver, value)
             case 'Elmo-pay':
@@ -598,7 +601,13 @@ class Elmo(PlainBitcoin):
     def undo(self, payment_information):
         match payment_information['kind']:
             case 'Elmo-open-virtual-channel':
-                pass
+                path, value, sender_coins = payment_information['data']
+                sender = path[0]
+                receiver = path[-1]
+                self.update_balances_new_virtual_channel(path, new_channel=False)
+                self.unlock_coins(path)
+                self.plain_bitcoin.coins[sender] += sender_coins + value
+                self.network.close_channel(sender, receiver)
             case 'Elmo-pay':
                 pass
             case _:
