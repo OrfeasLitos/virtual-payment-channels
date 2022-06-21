@@ -10,6 +10,17 @@ from network import Network
 
 MULTIPLIER_CHANNEL_BALANCE_LN = MULTIPLIER_CHANNEL_BALANCE_ELMO = 20
 
+def sum_future_payments_to_counterparty(sender, counterparty, future_payments):
+    """
+    This is used to determine a minimum amount that should be put on a new channel between sender and receiver.
+    """
+    future_payments_to_receiver = [
+        future_payment for future_payment in future_payments if future_payment[0] == sender
+        and future_payment[1] == counterparty
+    ]
+    return sum([payment[2] for payment in future_payments_to_receiver])
+
+
 class PlainBitcoin():
     # the total fee is num_vbytes * price_per_vbyte
     # price per vbyte currently at about 1 satoshi
@@ -81,16 +92,6 @@ class LN(PlainBitcoin):
     def get_payment_fee(self, payment, num_hops):
         sender, receiver, value = payment
         return (self.base_fee +  value * self.ln_fee) * num_hops
-
-    def sum_future_payments_to_counterparty(self, sender, counterparty, future_payments):
-        """
-        This is used to determine a minimum amount that should be put on a new channel between sender and receiver.
-        """
-        future_payments_to_receiver = [
-            future_payment for future_payment in future_payments if future_payment[0] == sender
-            and future_payment[1] == counterparty
-        ]
-        return sum([payment[2] for payment in future_payments_to_receiver])
 
     # review: This should be minimum for parties with a channel,
     # review: progressively larger for parties that can open a channel on a progressively larger virtual layer
@@ -196,7 +197,7 @@ class LN(PlainBitcoin):
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
-        sum_future_payments = self.sum_future_payments_to_counterparty(sender, counterparty, future_payments)
+        sum_future_payments = sum_future_payments_to_counterparty(sender, counterparty, future_payments)
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_channel_fee,
             MULTIPLIER_CHANNEL_BALANCE_LN * sum_future_payments
@@ -348,7 +349,7 @@ class Elmo(PlainBitcoin):
         lock_value = 1, opening_transaction_size = 200,
         elmo_delay = 1
     ):
-        self.plainbitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
         self.fee_intermediary = fee_intermediary
         self.lock_value = lock_value
@@ -432,10 +433,9 @@ class Elmo(PlainBitcoin):
 
     # adjusted from LN
     def get_new_channel_option(self, sender, receiver, value, future_payments):
-        new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
+        new_channel_time = self.plain_bitcoin.get_delay() + self.elmo_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
-        # TODO: implement sum_future_payments_to_counterparty
-        sum_future_payments = self.sum_future_payments_to_counterparty(sender, receiver, future_payments)
+        sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_channel_fee,
             MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
@@ -464,9 +464,9 @@ class Elmo(PlainBitcoin):
             return None
         hops, path = cost_and_path
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
-        sum_future_payments = self.sum_future_payments_to_counterparty(sender, receiver, future_payments)
+        sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         sender_coins = min(
-            self.plain_bitcoin.coins[sender] - value - fee_new_virtual_channel,
+            self.plain_bitcoin.coins[sender] - value - new_virtual_channel_fee,
             MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
         )
         if sender_coins < 0:
@@ -573,12 +573,12 @@ class Elmo(PlainBitcoin):
                 sender = path[0]
                 receiver = path[-1]
                 # Questions are coins for new virtual channel taken from onchain-coins or from coins of some existing channel?
-                if self.plainbitcoin.coins[sender] < sender_coins + value:
+                if self.plain_bitcoin.coins[sender] < sender_coins + value:
                     raise ValueError
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
                 self.update_balances_new_virtual_channel(path)
-                self.plainbitcoin.coins[sender] -= sender_coins + value
+                self.plain_bitcoin.coins[sender] -= sender_coins + value
                 self.network.add_channel(sender, sender_coins, receiver, value)
 
             case 'Elmo-pay':

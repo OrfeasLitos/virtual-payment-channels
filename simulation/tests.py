@@ -8,7 +8,7 @@ import networkx as nx
 import unittest
 
 from simulation import Simulation, random_payments
-from paymentmethod import PlainBitcoin, LN
+from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counterparty
 from utility import Utility
 from knowledge import Knowledge
 from network import Network
@@ -225,7 +225,7 @@ def test_LN():
     nr_players = 10
     lightning = LN(nr_players)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
-    result = lightning.sum_future_payments_to_counterparty(0, 7, future_payments)
+    result = sum_future_payments_to_counterparty(0, 7, future_payments)
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     assert result == 3.6
 
@@ -308,7 +308,7 @@ def test_do_new_channel():
     lightning = make_example_network(base_fee=1000, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
-    sum_future_payments = lightning.sum_future_payments_to_counterparty(0, 7, future_payments)
+    sum_future_payments = sum_future_payments_to_counterparty(0, 7, future_payments)
     sender_coins = 20 * sum_future_payments
     receiver_coins = value
     tx_size = lightning.opening_transaction_size
@@ -432,6 +432,12 @@ def test_simulation_with_ln():
     for coins_for_parties in ['max_value', 'small_value', 'random']:
         test_simulation_with_ln_different_coins(coins_for_parties)
 
+def test_get_payment_options_elmo():
+    elmo = Elmo(10)
+    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
+    payment_options = elmo.get_payment_options(2, 5, 10., future_payments)
+    #print(payment_options)
+
 if __name__ == "__main__":
     test_LN()
     test_cheapest_path()
@@ -441,6 +447,7 @@ if __name__ == "__main__":
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
+    test_get_payment_options_elmo()
     print("Success")
 
 
