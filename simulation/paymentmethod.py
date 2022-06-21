@@ -530,9 +530,14 @@ class Elmo(PlainBitcoin):
             self.network.graph[sender][receiver]['balance'] -= self.lock_value
             self.network.graph[sender][receiver]['locked_coins'] += self.lock_value
 
-    # Question: Do we unlock all coins at once?
-    def unlock_coins(self, path):
-        pass
+    def undo_locking(self, path):
+        # TODO: maybe make it similarly as for update_balances and include this with an operator
+        # and boolean variable in lock.
+        for i in range(len(path) - 1):
+            sender = path[i]
+            receiver = path[i+1]
+            self.network.graph[sender][receiver]['balance'] += self.lock_value
+            self.network.graph[sender][receiver]['locked_coins'] -= self.lock_value
 
     # Question: one which channels are the fees for the intermediaries?
     # Is this the correct way to give fees to intermediaries?
@@ -605,7 +610,7 @@ class Elmo(PlainBitcoin):
                 sender = path[0]
                 receiver = path[-1]
                 self.update_balances_new_virtual_channel(path, new_channel=False)
-                self.unlock_coins(path)
+                self.undo_locking(path)
                 self.plain_bitcoin.coins[sender] += sender_coins + value
                 self.network.close_channel(sender, receiver)
             case 'Elmo-pay':
