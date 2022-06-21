@@ -25,8 +25,7 @@ class PlainBitcoin():
                 self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
             case "random":
                 # maybe better Pareto distribution?
-                # review: to avoid negative coins, max(0, normal)
-                self.coins = {i: random.normalvariate(max_coins/2, max_coins/4) for i in range(nr_players)}
+                self.coins = {i: max(0, random.normalvariate(max_coins/2, max_coins/4)) for i in range(nr_players)}
             case _:
                 raise ValueError
 
@@ -447,8 +446,6 @@ class Elmo(PlainBitcoin):
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.get_distances(sender, future_payments)
         self.network.close_channel(sender, receiver)
-        # TODO: Does opening a new channel (not virtual) include giving the value to the receiver as in LN?
-        # review: yes
         return {
             'delay': new_channel_time,
             'fee': new_channel_fee,
@@ -466,7 +463,7 @@ class Elmo(PlainBitcoin):
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
-        fee_new_virtual_channel = self.get_new_virtual_channel_fee(path)
+        new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
         sum_future_payments = self.sum_future_payments_to_counterparty(sender, receiver, future_payments)
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - fee_new_virtual_channel,
@@ -480,16 +477,15 @@ class Elmo(PlainBitcoin):
             self.do(payment_information)
         except ValueError:
             return None
-        # review: put first word last, like in LN.get_offchain_option()
-        time_new_virtual_channel = self.get_new_virtual_channel_time(hops)
-        centrality_new_virtual_channel = self.network.get_harmonic_centrality()
-        distance_new_virtual_channel = self.get_distances(sender, future_payments)
+        new_virtual_channel_time = self.get_new_virtual_channel_time(hops)
+        new_virtual_channel_centrality = self.network.get_harmonic_centrality()
+        new_virtual_channel_distance = self.get_distances(sender, future_payments)
         self.undo(payment_information)
         return {
-            'delay': time_new_virtual_channel,
-            'fee': fee_new_virtual_channel,
-            'centrality': centrality_new_virtual_channel,
-            'distance': distance_new_virtual_channel,
+            'delay': new_virtual_channel_time,
+            'fee': new_virtual_channel_fee,
+            'centrality': new_virtual_channel_centrality,
+            'distance': new_virtual_channel_distance,
             'payment_information': payment_information
         }
 
@@ -526,9 +522,8 @@ class Elmo(PlainBitcoin):
             # review: in case of error, we need to undo changes up to now
             if self.network.graph[sender][receiver]['balance'] < self.lock_value:
                 raise ValueError
-            # review: use x += 1 syntax for brevity
-            self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - self.lock_value
-            self.network.graph[sender][receiver]['locked_coins'] = self.network.graph[sender][receiver]['locked_coins'] + self.lock_value
+            self.network.graph[sender][receiver]['balance'] -= self.lock_value
+            self.network.graph[sender][receiver]['locked_coins'] += self.lock_value
 
     # Question: one which channels are the fees for the intermediaries?
     # Is this the correct way to give fees to intermediaries?
@@ -583,10 +578,7 @@ class Elmo(PlainBitcoin):
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
                 self.update_balances_new_virtual_channel(path)
-                # review: x -= 1 syntax
-                self.plainbitcoin.coins[sender] = self.plainbitcoin.coins[sender] - (sender_coins + value)
-                # should receiver get value or more?
-                # review: the receiver should just get the value of this payment, no more
+                self.plainbitcoin.coins[sender] -= sender_coins + value
                 self.network.add_channel(sender, sender_coins, receiver, value)
 
             case 'Elmo-pay':
