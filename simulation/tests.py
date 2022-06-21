@@ -60,6 +60,15 @@ def make_example_simulation_ln(seed = 0, coins_for_parties = 'max_value'):
     utility = Utility(utility_function)
     return Simulation(payments, lightning, knowledge, utility)
 
+def make_example_simulation_elmo(seed = 0, coins_for_parties = 'max_value'):
+    random.seed(seed)
+    elmo = Elmo(10, coins_for_parties=coins_for_parties)
+    knowledge = Knowledge(know_all)
+    payments = random_payments(100, 10, 2000000000)
+    utility_function = example_utility_function_for_simulation
+    utility = Utility(utility_function)
+    return Simulation(payments, elmo, knowledge, utility)
+
 def test_cheapest_path():
     network = Network(5)
     network.add_channel(0, 6, 1, 7)
@@ -438,6 +447,12 @@ def test_get_payment_options_elmo():
     payment_options = elmo.get_payment_options(2, 5, 10., future_payments)
     print(payment_options)
 
+def test_simulation_with_elmo():
+    # TODO: test with differnt coins for parties and make real tests.
+    simulation = make_example_simulation_elmo()
+    results = simulation.run()
+    print(results)
+
 if __name__ == "__main__":
     test_LN()
     test_cheapest_path()
@@ -448,6 +463,7 @@ if __name__ == "__main__":
     test_choose_payment_method()
     test_simulation_with_ln()
     test_get_payment_options_elmo()
+    test_simulation_with_elmo()
     print("Success")
 
 
