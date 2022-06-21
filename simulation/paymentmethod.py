@@ -533,6 +533,7 @@ class Elmo(PlainBitcoin):
     def undo_locking(self, path):
         # TODO: maybe make it similarly as for update_balances and include this with an operator
         # and boolean variable in lock.
+        # undoes just one lock, doesn't free all locked money.
         for i in range(len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
@@ -583,7 +584,15 @@ class Elmo(PlainBitcoin):
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
             case 'Elmo-open-channel':
-                pass
+                # adjusted from LN-open
+                sender, receiver, value, sender_coins = payment_information['data']
+                self.network.add_channel(sender, sender_coins, receiver, value)
+                # next update the coins of sender
+                amount_sender = - (
+                    sender_coins + value +
+                    self.plain_bitcoin.get_fee(self.opening_transaction_size)
+                )
+                self.plain_bitcoin.update_coins(sender, amount_sender)
             case 'Elmo-open-virtual-channel':
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
@@ -614,6 +623,10 @@ class Elmo(PlainBitcoin):
                 self.plain_bitcoin.coins[sender] += sender_coins + value
                 self.network.close_channel(sender, receiver)
             case 'Elmo-pay':
-                pass
+                sender, receiver, value = payment_information['data']
+                if self.network.graph.get_edge_data(sender, receiver) is None:
+                    raise ValueError
+                self.network.graph[sender][receiver]['balance'] += value
+                self.network.graph[receiver][sender]['balance'] -= value
             case _:
                 raise ValueError
