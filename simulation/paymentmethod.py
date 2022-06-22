@@ -8,6 +8,7 @@ from network import Network
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
+# TODO: maybe make these dependent on the size of the network or number of future payments.
 MULTIPLIER_CHANNEL_BALANCE_LN = MULTIPLIER_CHANNEL_BALANCE_ELMO = 20
 
 def sum_future_payments_to_counterparty(sender, counterparty, future_payments):
@@ -346,18 +347,14 @@ class Elmo(PlainBitcoin):
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
         coins_for_parties = "max_value", fee_intermediary = 1,
-        lock_value = 1, opening_transaction_size = 200,
-        elmo_delay = 1
+        opening_transaction_size = 200,elmo_delay = 1
     ):
         self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
         self.fee_intermediary = fee_intermediary
-        self.lock_value = lock_value
         self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)
         self.elmo_delay = elmo_delay
-
-    # TODO: use key 'locked coins' on edges of network
 
     # adjusted from LN
     def get_distances(self, source, future_payments):
@@ -377,25 +374,28 @@ class Elmo(PlainBitcoin):
         for future_sender, future_receiver, value in future_payments:
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
+            # TODO: think of a good lock_value or balance the sender wants to put on a new channel
+            dummy_lock_value = 10 * 500000000 + value
             if future_sender != source:
                 # TODO: think about discarding first part of the tuple.
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
-                    self.network.find_cheapest_path(future_sender, source, self.lock_value, self.fee_intermediary)
+                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.fee_intermediary)
                 ))
             if future_receiver != source:
                 path_data.append((
                     future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
-                    self.network.find_cheapest_path(source, future_receiver, self.lock_value, self.fee_intermediary)
+                    self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.fee_intermediary)
                 ))
 
+        dummy_lock_value = 11 * 500000000
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
                 party,
                 weight_other,
-                self.network.find_cheapest_path(source, party, self.lock_value, self.fee_intermediary)
+                self.network.find_cheapest_path(source, party, dummy_lock_value, self.fee_intermediary)
             ))
         
         for counterparty, weight, cost_and_path in path_data:
@@ -459,19 +459,20 @@ class Elmo(PlainBitcoin):
 
     # adjusted from LN get_offchain_option
     def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
-        cost_and_path = self.network.find_cheapest_path(sender, receiver, self.lock_value, self.fee_intermediary)
+        sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
+        # this is a simplification
+        anticipated_lock_value = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments + value
+        cost_and_path = self.network.find_cheapest_path(sender, receiver, anticipated_lock_value, self.fee_intermediary)
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
-        sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_virtual_channel_fee,
             MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
         )
         if sender_coins < 0:
             return None
-        # TODO: think if lock_value and fee_intermediary should be in data.
         payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, sender_coins)}
         try:
             self.do(payment_information)
@@ -514,31 +515,31 @@ class Elmo(PlainBitcoin):
         options = [onchain_option, new_channel_option, new_virtual_channel_option, elmo_pay_option]
         return [option for option in options if option is not None]
         
-    def lock_coins(self, path):
+    def lock_coins(self, path, lock_value):
         for i in range(len(path) - 1):
             # TODO: check if coins are locked on the right channel
             # review: locking done correctly
             sender = path[i]
             receiver = path[i+1]
-            if self.network.graph[sender][receiver]['balance'] < self.lock_value:
+            if self.network.graph[sender][receiver]['balance'] < lock_value:
                 for j in range(i):
                     sender = path[j]
                     receiver = path[j+1]
-                    self.network.graph[sender][receiver]['balance'] += self.lock_value
-                    self.network.graph[sender][receiver]['locked_coins'] -= self.lock_value
+                    self.network.graph[sender][receiver]['balance'] += lock_value
+                    self.network.graph[sender][receiver]['locked_coins'] -= lock_value
                 raise ValueError
-            self.network.graph[sender][receiver]['balance'] -= self.lock_value
-            self.network.graph[sender][receiver]['locked_coins'] += self.lock_value
+            self.network.graph[sender][receiver]['balance'] -= lock_value
+            self.network.graph[sender][receiver]['locked_coins'] += lock_value
 
-    def undo_locking(self, path):
+    def undo_locking(self, path, lock_value):
         # TODO: maybe make it similarly as for update_balances and include this with an operator
         # and boolean variable in lock.
         # undoes just one lock, doesn't free all locked money.
         for i in range(len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
-            self.network.graph[sender][receiver]['balance'] += self.lock_value
-            self.network.graph[sender][receiver]['locked_coins'] -= self.lock_value
+            self.network.graph[sender][receiver]['balance'] += lock_value
+            self.network.graph[sender][receiver]['locked_coins'] -= lock_value
 
     # Question: one which channels are the fees for the intermediaries?
     # Is this the correct way to give fees to intermediaries?
@@ -603,7 +604,7 @@ class Elmo(PlainBitcoin):
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
                 self.update_balances_new_virtual_channel(path, new_channel=True)
-                self.lock_coins(path)
+                self.lock_coins(path, sender_coins + value)
                 self.plain_bitcoin.coins[sender] -= sender_coins + value
                 self.network.add_channel(sender, sender_coins, receiver, value)
             case 'Elmo-pay':
@@ -619,7 +620,7 @@ class Elmo(PlainBitcoin):
                 sender = path[0]
                 receiver = path[-1]
                 self.update_balances_new_virtual_channel(path, new_channel=False)
-                self.undo_locking(path)
+                self.undo_locking(path, sender_coins + value)
                 self.plain_bitcoin.coins[sender] += sender_coins + value
                 self.network.close_channel(sender, receiver)
             case 'Elmo-pay':
