@@ -94,9 +94,6 @@ class LN(PlainBitcoin):
         sender, receiver, value = payment
         return (self.base_fee +  value * self.ln_fee) * num_hops
 
-    # review: This should be minimum for parties with a channel,
-    # review: progressively larger for parties that can open a channel on a progressively larger virtual layer
-    # review: and infinite for disconnected parties. Let's discuss this.
     def get_distances(self, source, future_payments):
         """
         Returns weighted distances to the future parties and to parties not occuring in future payments.
@@ -357,6 +354,9 @@ class Elmo(PlainBitcoin):
         self.elmo_delay = elmo_delay
 
     # adjusted from LN
+    # review: This should be minimum for parties with a channel,
+    # review: progressively larger for parties that can open a channel on a progressively larger virtual layer
+    # review: and infinite for disconnected parties. Let's discuss this.
     def get_distances(self, source, future_payments):
         """
         Returns weighted distances to the future parties and to parties not occuring in future payments.
