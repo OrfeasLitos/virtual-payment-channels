@@ -118,7 +118,6 @@ class LN(Payment_Network):
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         self.base_fee = base_fee
-        #self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
 
     def get_payment_time(self, path):
         return self.ln_delay * len(path)
@@ -541,8 +540,6 @@ class Elmo(Payment_Network):
             self.network.graph[sender][receiver]['balance'] += lock_value
             self.network.graph[sender][receiver]['locked_coins'] -= lock_value
 
-    # Question: one which channels are the fees for the intermediaries?
-    # Is this the correct way to give fees to intermediaries?
     # adjusted from LN
     def update_balances_new_virtual_channel(self, path, new_channel = False):
         # the pay argument tells whether this corresponds to making a payment
