@@ -2,6 +2,7 @@ import random
 import math
 import numpy as np
 import operator
+from abc import ABC, abstractmethod
 from network import Network
 
 # units in millisatoshis
@@ -71,10 +72,16 @@ class PlainBitcoin():
             self.coins == other.coins
         )
             
+# this should act as super class for LN, Elmo, etc.
+class PaymentMethod(ABC):
+    def __init__(
+        self
+    ):
+        pass
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
-class LN(PlainBitcoin):
+class LN():
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
@@ -338,7 +345,7 @@ class LN(PlainBitcoin):
             self.plain_bitcoin == other.plain_bitcoin
         )
 
-class Elmo(PlainBitcoin):
+class Elmo():
     # TODO: find reasonable value for fee_intermediary, lock_value, opening_transaction_size, elmo_delay
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
