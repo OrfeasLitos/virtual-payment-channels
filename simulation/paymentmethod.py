@@ -2,7 +2,7 @@ import random
 import math
 import numpy as np
 import operator
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 from network import Network
 
 # units in millisatoshis
@@ -73,27 +73,52 @@ class PlainBitcoin():
         )
             
 # this should act as super class for LN, Elmo, etc.
-class PaymentMethod(ABC):
+class Payment_Network(ABC):
     def __init__(
         self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
         bitcoin_delay = 3600, coins_for_parties = "max_value"
     ):
         self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        @property
+        @abstractmethod
+        def network(self):
+            pass
+
+    @abstractmethod
+    def get_distances(self, sender, future_payments):
+        pass
+
+    def get_onchain_option(self, sender, receiver, value, future_payments):
+        onchain_time = self.plain_bitcoin.get_delay()
+        onchain_fee = self.plain_bitcoin.get_fee()
+        if onchain_fee + value > self.plain_bitcoin.coins[sender]:
+            return None
+        onchain_centrality = self.network.get_harmonic_centrality()
+        onchain_distance = self.get_distances(sender, future_payments)
+        return {
+            'delay': onchain_time,
+            'fee': onchain_fee,
+            'centrality': onchain_centrality,
+            'distance': onchain_distance,
+            'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
+        }
+    
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
-class LN():
+class LN(Payment_Network):
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002, ln_delay = 0.05,
         opening_transaction_size = 121.5, base_fee = 1000, coins_for_parties = "max_value"
     ):
+        super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.ln_fee = ln_fee
         self.ln_delay = ln_delay
         self.opening_transaction_size = opening_transaction_size
         self.network = Network(nr_players)
         self.base_fee = base_fee
-        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        #self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
 
     def get_payment_time(self, path):
         return self.ln_delay * len(path)
