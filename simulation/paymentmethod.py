@@ -210,21 +210,6 @@ class LN(Payment_Network):
         self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
         self.network.graph[receiver][path[-2]]['balance'] = op_take(self.network.graph[receiver][path[-2]]['balance'], value)
 
-    def get_onchain_option(self, sender, receiver, value, future_payments):
-        onchain_time = self.plain_bitcoin.get_delay()
-        onchain_fee = self.plain_bitcoin.get_fee()
-        if onchain_fee + value > self.plain_bitcoin.coins[sender]:
-            return None
-        onchain_centrality = self.network.get_harmonic_centrality()
-        onchain_distance = self.get_distances(sender, future_payments)
-        return {
-            'delay': onchain_time,
-            'fee': onchain_fee,
-            'centrality': onchain_centrality,
-            'distance': onchain_distance,
-            'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
-        }
-
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
@@ -371,7 +356,7 @@ class LN(Payment_Network):
             self.plain_bitcoin == other.plain_bitcoin
         )
 
-class Elmo():
+class Elmo(Payment_Network):
     # TODO: find reasonable value for fee_intermediary, lock_value, opening_transaction_size, elmo_delay
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
@@ -379,7 +364,7 @@ class Elmo():
         coins_for_parties = "max_value", fee_intermediary = 1,
         opening_transaction_size = 200,elmo_delay = 1
     ):
-        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
         self.fee_intermediary = fee_intermediary
         self.opening_transaction_size = opening_transaction_size
@@ -445,24 +430,6 @@ class Elmo():
 
     def get_new_virtual_channel_fee(self, path):
         return self.fee_intermediary * (len(path) - 2)
-
-    # copied from LN.
-    # review: copying is bad, could we move this function to PlainBitcoin?
-    # TODO: check how much we care about centrality
-    def get_onchain_option(self, sender, receiver, value, future_payments):
-        onchain_time = self.plain_bitcoin.get_delay()
-        onchain_fee = self.plain_bitcoin.get_fee()
-        if onchain_fee + value > self.plain_bitcoin.coins[sender]:
-            return None
-        onchain_centrality = self.network.get_harmonic_centrality()
-        onchain_distance = self.get_distances(sender, future_payments)
-        return {
-            'delay': onchain_time,
-            'fee': onchain_fee,
-            'centrality': onchain_centrality,
-            'distance': onchain_distance,
-            'payment_information': { 'kind': 'onchain', 'data': (sender, receiver, value) }
-        }    
 
     # adjusted from LN
     def get_new_channel_option(self, sender, receiver, value, future_payments):
