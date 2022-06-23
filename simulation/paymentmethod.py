@@ -75,9 +75,10 @@ class PlainBitcoin():
 # this should act as super class for LN, Elmo, etc.
 class PaymentMethod(ABC):
     def __init__(
-        self
+        self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
+        bitcoin_delay = 3600, coins_for_parties = "max_value"
     ):
-        pass
+        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
 
 # LN fees from https://www.reddit.com/r/lightningnetwork/comments/tmn1kc/bmonthly_ln_fee_report/
 
