@@ -360,15 +360,17 @@ class Elmo(Payment_Network):
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
-        coins_for_parties = "max_value", fee_intermediary = 1,
-        opening_transaction_size = 200,elmo_delay = 1
+        coins_for_parties = "max_value", fee_intermediary = 10000,
+        opening_transaction_size = 200, elmo_pay_delay = 0.05,
+        elmo_new_virtual_channel_delay = 1
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.network = Network(nr_players)
         self.fee_intermediary = fee_intermediary
         self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)
-        self.elmo_delay = elmo_delay
+        self.elmo_pay_delay = elmo_pay_delay
+        self.elmo_new_virtual_channel_delay = elmo_new_virtual_channel_delay
 
     # adjusted from LN
     # review: This should be minimum for parties with a channel,
@@ -425,14 +427,14 @@ class Elmo(Payment_Network):
         return distances
 
     def get_new_virtual_channel_time(self, hops):
-        return self.elmo_delay * hops
+        return self.elmo_new_virtual_channel_delay * hops
 
     def get_new_virtual_channel_fee(self, path):
         return self.fee_intermediary * (len(path) - 2)
 
     # adjusted from LN
     def get_new_channel_option(self, sender, receiver, value, future_payments):
-        new_channel_time = self.plain_bitcoin.get_delay() + self.elmo_delay
+        new_channel_time = self.plain_bitcoin.get_delay() + self.elmo_pay_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         sender_coins = min(
@@ -499,7 +501,7 @@ class Elmo(Payment_Network):
         distance_elmo_pay = self.get_distances(sender, future_payments)
         self.undo(payment_information)
         return {
-            'delay': self.elmo_delay,
+            'delay': self.elmo_pay_delay,
             'fee': 0,
             'centrality': centrality_elmo_pay,
             'distance': distance_elmo_pay,

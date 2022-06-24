@@ -12,8 +12,6 @@ class Network:
         self.edge_id = 0
 
     def add_channel(self, idA, balA, idB, balB):
-        # TODO: discuss if keyword 'locked_coins' is a problem as it isn't used in LN.
-        # review: `locked_coins` is fine; if needed, set to 0 for LN
         assert(balA > 0 or balB > 0)
         edges = [
             (idA, idB, {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST}),
