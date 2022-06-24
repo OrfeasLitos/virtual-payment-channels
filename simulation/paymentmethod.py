@@ -3,7 +3,7 @@ import math
 import numpy as np
 import operator
 from abc import ABC, abstractmethod, abstractproperty
-from network import Network
+from network import Network, Network_Elmo
 
 # units in millisatoshis
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
@@ -365,7 +365,7 @@ class Elmo(Payment_Network):
         elmo_new_virtual_channel_delay = 1
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
-        self.network = Network(nr_players)
+        self.network = Network_Elmo(nr_players)
         self.fee_intermediary = fee_intermediary
         self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)

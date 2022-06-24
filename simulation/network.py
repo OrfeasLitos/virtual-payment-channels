@@ -14,8 +14,8 @@ class Network:
     def add_channel(self, idA, balA, idB, balB):
         assert(balA > 0 or balB > 0)
         edges = [
-            (idA, idB, {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST}),
-            (idB, idA, {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST})
+            (idA, idB, {'balance': balA, 'cost' : UNIT_COST}),
+            (idB, idA, {'balance': balB, 'cost' : UNIT_COST})
         ]
         self.graph.add_edges_from(edges)
         self.edge_id += 1
@@ -54,3 +54,16 @@ class Network:
 
     def get_harmonic_centrality(self):
         return nx.harmonic_centrality(self.graph)
+
+class Network_Elmo(Network):
+    def __init__(self, nr_vertices):
+        super().__init__(nr_vertices)
+
+    def add_channel(self, idA, balA, idB, balB):
+        assert(balA > 0 or balB > 0)
+        edges = [
+            (idA, idB, {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST}),
+            (idB, idA, {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST})
+        ]
+        self.graph.add_edges_from(edges)
+        self.edge_id += 1
