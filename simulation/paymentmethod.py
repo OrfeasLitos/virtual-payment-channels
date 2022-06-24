@@ -443,7 +443,7 @@ class Elmo(Payment_Network):
         )
         if sender_coins < 0:
             return None
-        self.network.add_channel(sender, sender_coins, receiver, value)
+        self.network.add_channel(sender, sender_coins, receiver, value, None)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.get_distances(sender, future_payments)
         self.network.close_channel(sender, receiver)
@@ -586,7 +586,7 @@ class Elmo(Payment_Network):
             case 'Elmo-open-channel':
                 # adjusted from LN-open
                 sender, receiver, value, sender_coins = payment_information['data']
-                self.network.add_channel(sender, sender_coins, receiver, value)
+                self.network.add_channel(sender, sender_coins, receiver, value, None)
                 # next update the coins of sender
                 amount_sender = - (
                     sender_coins + value +
@@ -605,7 +605,7 @@ class Elmo(Payment_Network):
                 self.update_balances_new_virtual_channel(path, new_channel=True)
                 self.lock_coins(path, sender_coins + value)
                 self.plain_bitcoin.coins[sender] -= sender_coins + value
-                self.network.add_channel(sender, sender_coins, receiver, value)
+                self.network.add_channel(sender, sender_coins, receiver, value, path)
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
                 self.pay(sender, receiver, value)
