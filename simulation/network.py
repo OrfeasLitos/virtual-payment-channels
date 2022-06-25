@@ -62,9 +62,22 @@ class Network_Elmo(Network):
     def add_channel(self, idA, balA, idB, balB, path):
         assert(balA > 0 or balB > 0)
         edges = [
-            (idA, idB, {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST, 'channels_underneath' : path}),
+            (idA, idB,
+                {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST,
+                'channels_underneath' : path, 'channels_above': []}
+            ),
             # Question: should I reverse path here?
-            (idB, idA, {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST, 'channels_underneath' : path})
+            (idB, idA,
+                {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
+                'channels_underneath' : path, 'channels_above': []}
+            )
         ]
         self.graph.add_edges_from(edges)
+        if path is not None:
+            for i in range(len(path) - 1):
+                sender = path[i]
+                receiver = path[i+1]
+                # TODO: think if pair is ok here or if we want all the information of the channels to be stored.
+                self.graph[sender][receiver]['channels_above'].append((idA, idB))
+                self.graph[receiver][sender]['channels_above'].append((idA, idB))
         self.edge_id += 1
