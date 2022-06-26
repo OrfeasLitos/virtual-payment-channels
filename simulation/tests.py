@@ -34,7 +34,6 @@ def make_example_network_elmo(fee_intermediary = 1000000):
     elmo.network.add_channel(0, 3000000000., 2, 7000000000., None)
     elmo.network.add_channel(0, 6000000000., 1, 7000000000., None)
     elmo.network.add_channel(1, 4000000000., 4, 8000000000., None)
-    elmo.network.add_channel(0, 5000000000., 2, 6000000000., None)
     elmo.network.add_channel(3, 9000000000., 4, 8000000000., None)
     elmo.network.add_channel(2, 9000000000., 3, 2000000000., None)
     elmo.network.add_channel(1, 10000000000., 2, 8000000000., None)
@@ -46,6 +45,11 @@ def make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.0000
     lightning = make_example_network_ln(base_fee, ln_fee)
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return base_fee, ln_fee, lightning, future_payments
+
+def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
+    elmo = make_example_network_elmo(fee_intermediary)
+    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
+    return fee_intermediary, elmo, future_payments
 
 def make_example_utility_function(factor_fee, factor_delay, factor_distance, factor_centrality):
     def utility_function(fee, delay, distance, centrality):
@@ -118,7 +122,7 @@ def test_get_payment_fee():
             lightning.get_payment_fee(payment, num_hops)
         )
 
-def test_get_payment_options_enough_money():
+def test_get_payment_options_ln_enough_money():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
@@ -198,8 +202,8 @@ def test_get_payment_options_enough_money():
     assert expected_ln_pay_option['distance'] == actual_ln_pay_option['distance']
     assert expected_ln_pay_option['payment_information'] == actual_ln_pay_option['payment_information']
 
-def test_get_payment_options():
-    test_get_payment_options_enough_money()
+def test_get_payment_options_ln():
+    test_get_payment_options_ln_enough_money()
 
 def test_choose_payment_method_offchain_best():
     _, _, lightning, future_payments = (
@@ -455,10 +459,14 @@ def test_simulation_with_ln():
     for coins_for_parties in ['max_value', 'small_value', 'random']:
         test_simulation_with_ln_different_coins(coins_for_parties)
 
-def test_get_payment_options_elmo():
-    elmo = Elmo(10)
-    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
-    payment_options = elmo.get_payment_options(2, 5, 10., future_payments)
+def test_get_payment_options_elmo_all_options():
+    fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
+    payment_options = elmo.get_payment_options(0, 2, 1000000000., future_payments)
+    print(payment_options)
+
+def test_get_payment_options_elmo_no_pay():
+    fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
+    payment_options = elmo.get_payment_options(0, 7, 1000000000., future_payments)
     print(payment_options)
 
 def test_simulation_with_elmo():
@@ -472,11 +480,12 @@ if __name__ == "__main__":
     test_cheapest_path()
     test_get_payment_fee()
     test_update_balances()
-    test_get_payment_options()
+    test_get_payment_options_ln()
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
-    test_get_payment_options_elmo()
+    test_get_payment_options_elmo_all_options()
+    test_get_payment_options_elmo_no_pay()
     test_simulation_with_elmo()
     print("Success")
 

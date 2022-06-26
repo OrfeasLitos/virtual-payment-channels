@@ -434,6 +434,9 @@ class Elmo(Payment_Network):
 
     # adjusted from LN
     def get_new_channel_option(self, sender, receiver, value, future_payments):
+        # in case we have already a channel
+        if self.network.graph.get_edge_data(sender, receiver) is not None:
+            return None
         new_channel_time = self.plain_bitcoin.get_delay() + self.elmo_pay_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
@@ -460,6 +463,9 @@ class Elmo(Payment_Network):
 
     # adjusted from LN get_offchain_option
     def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
+        # in case we have already a channel
+        if self.network.graph.get_edge_data(sender, receiver) is not None:
+            return None
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         # this is a simplification
         anticipated_lock_value = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments + value
