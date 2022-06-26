@@ -459,15 +459,22 @@ def test_simulation_with_ln():
     for coins_for_parties in ['max_value', 'small_value', 'random']:
         test_simulation_with_ln_different_coins(coins_for_parties)
 
-def test_get_payment_options_elmo_all_options():
+def test_get_payment_options_elmo_channel_exists():
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
     payment_options = elmo.get_payment_options(0, 2, 1000000000., future_payments)
     print(payment_options)
+    assert len(payment_options) == 2
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
 
-def test_get_payment_options_elmo_no_pay():
+def test_get_payment_options_elmo_no_channel_exists():
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
     payment_options = elmo.get_payment_options(0, 7, 1000000000., future_payments)
-    print(payment_options)
+    assert len(payment_options) == 2
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    assert payment_options[1]['payment_information']['kind'] == 'Elmo-open-channel'
+
+
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
@@ -484,8 +491,8 @@ if __name__ == "__main__":
     test_do()
     test_choose_payment_method()
     test_simulation_with_ln()
-    test_get_payment_options_elmo_all_options()
-    test_get_payment_options_elmo_no_pay()
+    test_get_payment_options_elmo_channel_exists()
+    test_get_payment_options_elmo_no_channel_exists()
     test_simulation_with_elmo()
     print("Success")
 
