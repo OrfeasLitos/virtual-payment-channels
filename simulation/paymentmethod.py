@@ -210,6 +210,9 @@ class LN(Payment_Network):
         self.network.graph[receiver][path[-2]]['balance'] = op_take(self.network.graph[receiver][path[-2]]['balance'], value)
 
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
+        # case channel already exists.
+        if self.network.graph.get_edge_data(sender, receiver) is not None:
+            return None
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(sender, counterparty, future_payments)
