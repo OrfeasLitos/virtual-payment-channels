@@ -28,6 +28,20 @@ def make_example_network_ln(base_fee = 1000, ln_fee = 0.00002):
     lightning.network.add_channel(3, 10000000000., 8, 8000000000.)
     return lightning
 
+def make_example_network_elmo(fee_intermediary = 1000000):
+    elmo = Elmo(10, fee_intermediary = fee_intermediary)
+
+    elmo.network.add_channel(0, 3000000000., 2, 7000000000., None)
+    elmo.network.add_channel(0, 6000000000., 1, 7000000000., None)
+    elmo.network.add_channel(1, 4000000000., 4, 8000000000., None)
+    elmo.network.add_channel(0, 5000000000., 2, 6000000000., None)
+    elmo.network.add_channel(3, 9000000000., 4, 8000000000., None)
+    elmo.network.add_channel(2, 9000000000., 3, 2000000000., None)
+    elmo.network.add_channel(1, 10000000000., 2, 8000000000., None)
+    elmo.network.add_channel(4, 10000000000., 7, 8000000000., None)
+    elmo.network.add_channel(3, 10000000000., 8, 8000000000., None)
+    return elmo
+
 def make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002):
     lightning = make_example_network_ln(base_fee, ln_fee)
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
