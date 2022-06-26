@@ -49,6 +49,16 @@ def test_get_payment_options_elmo_channel_exists():
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
 
+# adjusted from tests_ln
+def make_example_values_for_do():
+    fee_intermediary, elmo, future_payments = (
+        make_example_network_elmo_and_future_payments(fee_intermediary = 1000000)
+    )
+    value = 1000000000.
+    payment_options = elmo.get_payment_options(0, 7, value, future_payments)
+    MAX_COINS = elmo.plain_bitcoin.max_coins
+    return fee_intermediary, elmo, future_payments, value, payment_options, MAX_COINS
+
 def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible():
     # virtual channel not possible because too much future payments, would need top much balance
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
@@ -70,6 +80,21 @@ def test_get_payment_options_elmo():
     test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible()
     test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible()
 
+# adjusted from tests_ln
+def test_do_onchain():
+    fee_intermediary, elmo, future_payments, value, payment_options, MAX_COINS = (
+        make_example_values_for_do()
+    )
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    payment_information_onchain = payment_options[0]['payment_information']
+    elmo.do(payment_information_onchain)
+    # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
+    assert elmo.plain_bitcoin.coins[0] == MAX_COINS - value - elmo.plain_bitcoin.get_fee() 
+    assert elmo.plain_bitcoin.coins[7] == MAX_COINS + value
+
+def test_do():
+    test_do_onchain()
+
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
     simulation = make_example_simulation_elmo()
@@ -79,4 +104,5 @@ def test_simulation_with_elmo():
 if __name__ == "__main__":
     test_get_payment_options_elmo()
     test_simulation_with_elmo()
+    test_do()
     print("Success")
