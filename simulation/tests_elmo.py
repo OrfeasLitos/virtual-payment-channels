@@ -13,6 +13,7 @@ from utility import Utility
 from knowledge import Knowledge
 from network import Network
 from tests import know_all, make_example_utility_function , example_utility_function_for_simulation
+from paymentmethod import MULTIPLIER_CHANNEL_BALANCE_ELMO
 
 def make_example_network_elmo(fee_intermediary = 1000000):
     elmo = Elmo(10, fee_intermediary = fee_intermediary)
@@ -44,7 +45,6 @@ def make_example_simulation_elmo(seed = 0, coins_for_parties = 'max_value'):
 def test_get_payment_options_elmo_channel_exists():
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
     payment_options = elmo.get_payment_options(0, 2, 1000000000., future_payments)
-    print(payment_options)
     assert len(payment_options) == 2
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
@@ -97,9 +97,21 @@ def test_do_new_channel():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
         make_example_values_for_do()
     )
-    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
-    print(payment_options)
-    #assert payment_options[1]['payment_information']['kind'] == 'Elmo-new-channel'
+    payment_options = elmo.get_payment_options(0, 8, value, future_payments)
+    assert payment_options[1]['payment_information']['kind'] == 'Elmo-open-channel'
+    payment_information_new_channel = payment_options[1]['payment_information']
+
+    elmo.do(payment_information_new_channel)
+    # check first the coins of the parties
+    sum_future_payments = sum_future_payments_to_counterparty(0, 8, future_payments)
+    sender_coins = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
+    receiver_coins = value
+    tx_size = elmo.opening_transaction_size
+    assert elmo.plain_bitcoin.coins[0] == MAX_COINS - elmo.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
+    assert elmo.plain_bitcoin.coins[8] == MAX_COINS
+    # test the balances on ln (-2 for base fee and payment, +1 for payment).
+    assert elmo.network.graph[0][8]['balance'] == sender_coins 
+    assert elmo.network.graph[8][0]['balance'] == receiver_coins
 
 def test_do():
     test_do_onchain()
