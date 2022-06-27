@@ -122,7 +122,11 @@ def test_do_new_virtual_channel():
     assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
 
-    previous_balance01 = copy.copy(elmo.network.graph[0][1]['balance'])
+    previous_balance01 = elmo.network.graph[0][1]['balance']
+    previous_balance10 = elmo.network.graph[1][0]['balance']
+    previous_balance14 = elmo.network.graph[1][4]['balance']
+    previous_balance41 = elmo.network.graph[4][1]['balance']
+    previous_balance12 = elmo.network.graph[1][2]['balance']
 
     elmo.do(payment_information_new_virtual_channel)
     # check first the coins of the parties
@@ -134,8 +138,17 @@ def test_do_new_virtual_channel():
         elmo.network.graph[1][4]['balance'] - value - new_virtual_channel_fee,
         wanted_sender_coins
     )
-    assert elmo.network.graph[1][4]['locked_coins'] == sender_coins + value
+    locked_coins = sender_coins + value
+    assert elmo.network.graph[1][4]['locked_coins'] == locked_coins
     assert elmo.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - value - sender_coins
+    assert elmo.network.graph[1][0]['locked_coins'] == 0
+    assert elmo.network.graph[1][0]['balance'] == previous_balance10 + new_virtual_channel_fee
+    assert elmo.network.graph[1][4]['balance'] == previous_balance14 - locked_coins
+    assert elmo.network.graph[4][1]['balance'] == previous_balance41
+    assert elmo.network.graph[4][1]['locked_coins'] == 0
+    assert elmo.network.graph[1][2]['locked_coins'] == 0
+    assert elmo.network.graph[1][2]['balance'] == previous_balance12
+    assert elmo.network.graph.get_edge_data(5, 0) is None
 
 def test_do():
     test_do_onchain()
