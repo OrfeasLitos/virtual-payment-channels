@@ -477,6 +477,7 @@ class Elmo(Payment_Network):
             return None
         hops, path = cost_and_path
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
+        # TODO: adjust sender_coins
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_virtual_channel_fee,
             MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
