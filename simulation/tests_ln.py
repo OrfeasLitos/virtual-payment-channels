@@ -269,7 +269,6 @@ def test_do_ln_new_channel():
     assert payment_options[1]['payment_information']['kind'] == 'ln-open'
     payment_information_new_channel = payment_options[1]['payment_information']
 
-    lightning = make_example_network_ln(base_fee=1000, ln_fee = 0.00002)
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(0, 7, future_payments)

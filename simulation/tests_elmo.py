@@ -57,7 +57,7 @@ def make_example_values_for_do():
     value = 1000000000.
     payment_options = elmo.get_payment_options(0, 7, value, future_payments)
     MAX_COINS = elmo.plain_bitcoin.max_coins
-    return fee_intermediary, elmo, future_payments, value, payment_options, MAX_COINS
+    return fee_intermediary, elmo, future_payments, value, MAX_COINS
 
 def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible():
     # virtual channel not possible because too much future payments, would need top much balance
@@ -82,9 +82,10 @@ def test_get_payment_options_elmo():
 
 # adjusted from tests_ln
 def test_do_onchain():
-    fee_intermediary, elmo, future_payments, value, payment_options, MAX_COINS = (
+    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
         make_example_values_for_do()
     )
+    payment_options = elmo.get_payment_options(0, 7, value, future_payments)
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     payment_information_onchain = payment_options[0]['payment_information']
     elmo.do(payment_information_onchain)
@@ -92,8 +93,17 @@ def test_do_onchain():
     assert elmo.plain_bitcoin.coins[0] == MAX_COINS - value - elmo.plain_bitcoin.get_fee() 
     assert elmo.plain_bitcoin.coins[7] == MAX_COINS + value
 
+def test_do_new_channel():
+    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
+        make_example_values_for_do()
+    )
+    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
+    print(payment_options)
+    #assert payment_options[1]['payment_information']['kind'] == 'Elmo-new-channel'
+
 def test_do():
     test_do_onchain()
+    test_do_new_channel()
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
