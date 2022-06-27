@@ -464,7 +464,6 @@ class Elmo(Payment_Network):
             }
         }
 
-    # adjusted from LN get_offchain_option
     def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
@@ -477,10 +476,16 @@ class Elmo(Payment_Network):
             return None
         hops, path = cost_and_path
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
-        # TODO: adjust sender_coins
+        # TODO: find better name for channel_balances
+        # TODO: think of reasonable factor.
+        # the factor is introduced so that lower channel doesn't end up with 0 balance.
+        dummy_factor = 2
+        channel_balances = [
+            self.network.graph[path[i]][path[i+1]]['balance'] / dummy_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
+        ]
+        channel_balances.append(MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments)
         sender_coins = min(
-            self.plain_bitcoin.coins[sender] - value - new_virtual_channel_fee,
-            MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
+            channel_balances
         )
         if sender_coins < 0:
             return None
