@@ -54,7 +54,7 @@ def make_example_values_for_do():
     fee_intermediary, elmo, future_payments = (
         make_example_network_elmo_and_future_payments(fee_intermediary = 1000000)
     )
-    value = 1000000000.
+    value = 100000000.
     payment_options = elmo.get_payment_options(0, 7, value, future_payments)
     MAX_COINS = elmo.plain_bitcoin.max_coins
     return fee_intermediary, elmo, future_payments, value, MAX_COINS
@@ -117,7 +117,24 @@ def test_do_new_virtual_channel():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
         make_example_values_for_do()
     )
-    payment_options = elmo.get_payment_options(0, 7, value, future_payments)
+    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
+    print(payment_options)
+    assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+
+    elmo.do(payment_information_new_virtual_channel)
+    # check first the coins of the parties
+    sum_future_payments = sum_future_payments_to_counterparty(0, 4, future_payments)
+    wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
+    new_virtual_channel_fee = elmo.get_new_virtual_channel_fee([0,1,4])
+    sender_coins = min(
+        elmo.network.graph[0][1]['balance'] - value - new_virtual_channel_fee,
+        elmo.network.graph[1][4]['balance'] - value - new_virtual_channel_fee,
+        wanted_sender_coins
+    )
+    print(elmo.network.graph[0][1]['locked_coins'])
+    print(sender_coins)
+    assert elmo.network.graph[0][1]['locked_coins'] == sender_coins + value
 
 def test_do():
     test_do_onchain()

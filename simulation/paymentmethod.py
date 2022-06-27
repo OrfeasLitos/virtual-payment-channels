@@ -469,7 +469,7 @@ class Elmo(Payment_Network):
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
-        # this is a simplification
+        # this is a simplification. TODO: think if this is what we want.
         anticipated_lock_value = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments + value
         cost_and_path = self.network.find_cheapest_path(sender, receiver, anticipated_lock_value, self.fee_intermediary)
         if cost_and_path is None:
