@@ -532,9 +532,8 @@ class Elmo(Payment_Network):
         return [option for option in options if option is not None]
         
     def lock_coins(self, path, lock_value):
-        for i in range(len(path) - 1):
-            # TODO: check if coins are locked on the right channel
-            # review: locking done correctly
+        # Question: are coins on the first channel in the path also locked?
+        for i in range(1, len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
             if self.network.graph[sender][receiver]['balance'] < lock_value:
@@ -551,7 +550,7 @@ class Elmo(Payment_Network):
         # TODO: maybe make it similarly as for update_balances and include this with an operator
         # and boolean variable in lock.
         # undoes just one lock, doesn't free all locked money.
-        for i in range(len(path) - 1):
+        for i in range(1, len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
             self.network.graph[sender][receiver]['balance'] += lock_value

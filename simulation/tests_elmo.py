@@ -3,6 +3,7 @@ import random
 import sys
 import numpy as np
 import math
+import copy
 from numpy.testing import assert_almost_equal as assert_eq
 import networkx as nx
 import unittest
@@ -118,9 +119,10 @@ def test_do_new_virtual_channel():
         make_example_values_for_do()
     )
     payment_options = elmo.get_payment_options(0, 4, value, future_payments)
-    print(payment_options)
     assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
+
+    previous_balance01 = copy.copy(elmo.network.graph[0][1]['balance'])
 
     elmo.do(payment_information_new_virtual_channel)
     # check first the coins of the parties
@@ -132,9 +134,8 @@ def test_do_new_virtual_channel():
         elmo.network.graph[1][4]['balance'] - value - new_virtual_channel_fee,
         wanted_sender_coins
     )
-    print(elmo.network.graph[0][1]['locked_coins'])
-    print(sender_coins)
-    assert elmo.network.graph[0][1]['locked_coins'] == sender_coins + value
+    assert elmo.network.graph[1][4]['locked_coins'] == sender_coins + value
+    assert elmo.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - value - sender_coins
 
 def test_do():
     test_do_onchain()
