@@ -478,8 +478,8 @@ class Elmo(Payment_Network):
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
         # TODO: find better name for channel_balances
         # TODO: think of reasonable factor.
-        # the factor is introduced so that lower channel doesn't end up with 0 balance.
-        dummy_factor = 2
+        # the factor is introduced so that lower channel doesn't end up with 0 balance. Do we want this?
+        dummy_factor = 10
         channel_balances = [
             self.network.graph[path[i]][path[i+1]]['balance'] / dummy_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
         ]
