@@ -552,7 +552,7 @@ class Elmo(Payment_Network):
             self.network.graph[sender][receiver]['locked_coins'] -= lock_value
 
     # adjusted from LN
-    def update_balances_new_virtual_channel(self, path, new_channel = False):
+    def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
         # the pay argument tells whether this corresponds to making a payment
         # or undoing it.
         # all the "speaking names" like op_take, received, etc are in the case of a payment
@@ -560,7 +560,9 @@ class Elmo(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
-        cost_sender = num_intermediaries * self.fee_intermediary
+        # Question: Is this correct? Fee's are handled as in LN and the cost of the sender are fee's
+        # and the coins he wants to put on the new virtual channel.
+        cost_sender = num_intermediaries * self.fee_intermediary + value + sender_coins
         # update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
             received = (num_intermediaries - (i-1)) * self.fee_intermediary
@@ -579,6 +581,7 @@ class Elmo(Payment_Network):
             self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
             self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
         self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
+
 
     def pay(self, sender, receiver, value):
         if self.network.graph.get_edge_data(sender, receiver) is None:
@@ -611,9 +614,8 @@ class Elmo(Payment_Network):
                     raise ValueError
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
-                self.update_balances_new_virtual_channel(path, new_channel=True)
+                self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
                 self.lock_coins(path, sender_coins + value)
-                self.plain_bitcoin.coins[sender] -= sender_coins + value
                 self.network.add_channel(sender, sender_coins, receiver, value, path)
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
@@ -627,7 +629,7 @@ class Elmo(Payment_Network):
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
                 receiver = path[-1]
-                self.update_balances_new_virtual_channel(path, new_channel=False)
+                self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=False)
                 self.undo_locking(path, sender_coins + value)
                 self.plain_bitcoin.coins[sender] += sender_coins + value
                 self.network.close_channel(sender, receiver)
