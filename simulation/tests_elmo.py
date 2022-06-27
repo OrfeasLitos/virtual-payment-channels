@@ -150,10 +150,14 @@ def test_do_new_virtual_channel():
     assert elmo.network.graph[1][2]['balance'] == previous_balance12
     assert elmo.network.graph.get_edge_data(5, 0) is None
 
+def test_do_elmo_pay():
+    pass
+
 def test_do():
     test_do_onchain()
     test_do_new_channel()
     test_do_new_virtual_channel()
+    test_do_elmo_pay()
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
