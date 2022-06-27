@@ -110,12 +110,19 @@ def test_do_new_channel():
     assert elmo.plain_bitcoin.coins[0] == MAX_COINS - elmo.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
     assert elmo.plain_bitcoin.coins[8] == MAX_COINS
     # test the balances on ln (-2 for base fee and payment, +1 for payment).
-    assert elmo.network.graph[0][8]['balance'] == sender_coins 
+    assert elmo.network.graph[0][8]['balance'] == sender_coins
     assert elmo.network.graph[8][0]['balance'] == receiver_coins
+
+def test_do_new_virtual_channel():
+    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
+        make_example_values_for_do()
+    )
+    payment_options = elmo.get_payment_options(0, 7, value, future_payments)
 
 def test_do():
     test_do_onchain()
     test_do_new_channel()
+    test_do_new_virtual_channel()
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
