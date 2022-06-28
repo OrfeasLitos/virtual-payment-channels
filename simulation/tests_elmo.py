@@ -57,11 +57,12 @@ def make_example_values_for_do():
     )
     value = 100000000.
     payment_options = elmo.get_payment_options(0, 7, value, future_payments)
+    # review: ALL_CAPS case is customarily reserved for user-adjustable global constants
     MAX_COINS = elmo.plain_bitcoin.max_coins
     return fee_intermediary, elmo, future_payments, value, MAX_COINS
 
 def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible():
-    # virtual channel not possible because too much future payments, would need top much balance
+    # virtual channel not possible because too much future payments, would need too much balance
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
     payment_options = elmo.get_payment_options(0, 7, 1000000000., future_payments)
     assert len(payment_options) == 2
@@ -139,6 +140,7 @@ def test_do_new_virtual_channel():
         wanted_sender_coins
     )
     locked_coins = sender_coins + value
+    # review: consider testing all channels in two for loops: one for the on-path channels, of which the balances & locked coins have changed, and one for all untouched coins
     assert elmo.network.graph[1][4]['locked_coins'] == locked_coins
     assert elmo.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - value - sender_coins
     assert elmo.network.graph[1][0]['locked_coins'] == 0

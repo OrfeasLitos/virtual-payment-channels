@@ -55,6 +55,7 @@ class Network:
     def get_harmonic_centrality(self):
         return nx.harmonic_centrality(self.graph)
 
+# review: why do we need a separate Network class for Elmo?
 class Network_Elmo(Network):
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
@@ -67,6 +68,7 @@ class Network_Elmo(Network):
                 'channels_underneath' : path, 'channels_above': []}
             ),
             # Question: should I reverse path here?
+            # review: leave it like this for now, we can reverse it if needed later
             (idB, idA,
                 {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
                 'channels_underneath' : path, 'channels_above': []}
@@ -78,6 +80,7 @@ class Network_Elmo(Network):
                 sender = path[i]
                 receiver = path[i+1]
                 # TODO: think if pair is ok here or if we want all the information of the channels to be stored.
+                # review: let's update this on an as-needed basis
                 self.graph[sender][receiver]['channels_above'].append((idA, idB))
                 self.graph[receiver][sender]['channels_above'].append((idA, idB))
         self.edge_id += 1

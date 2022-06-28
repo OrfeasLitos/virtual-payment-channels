@@ -2,6 +2,7 @@ import random
 import math
 import numpy as np
 import operator
+# review: discuss the new class model
 from abc import ABC, abstractmethod, abstractproperty
 from network import Network, Network_Elmo
 
@@ -10,6 +11,7 @@ from network import Network, Network_Elmo
 # default max coins loosely copied from real world USD figures
 
 # TODO: maybe make these dependent on the size of the network or number of future payments.
+# review: or we can instead just keep it fixed for simplicity. Maybe 20 is too much, I was thinking more like 5
 MULTIPLIER_CHANNEL_BALANCE_LN = MULTIPLIER_CHANNEL_BALANCE_ELMO = 20
 
 def sum_future_payments_to_counterparty(sender, counterparty, future_payments):
@@ -213,6 +215,7 @@ class LN(Payment_Network):
 
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
         # case channel already exists.
+        # review: I think this check shouldn't be here. If there is a channel already, it will presumably be cheaper and it will be preferred to a new one anyway. Also this check here currently doesn't ensure that there is enough money in the channel to carry out the payment. This is a premature optimization, let's only do it later if needed. (this applies to Elmo as well)
         if self.network.graph.get_edge_data(sender, counterparty) is not None:
             return None
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
@@ -481,10 +484,12 @@ class Elmo(Payment_Network):
         # TODO: find better name for channel_balances
         # TODO: think of reasonable factor.
         # the factor is introduced so that lower channel doesn't end up with 0 balance. Do we want this?
+        # review: let's discuss the dummy factor
         dummy_factor = 10
         channel_balances = [
             self.network.graph[path[i]][path[i+1]]['balance'] / dummy_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
         ]
+        # review: I'm not sure what is this append doing
         channel_balances.append(MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments)
         sender_coins = min(
             channel_balances
@@ -535,6 +540,7 @@ class Elmo(Payment_Network):
         
     def lock_coins(self, path, lock_value):
         # Question: are coins on the first channel in the path also locked?
+        # review: yes, the sender locks these coins in its base channel as well.
         for i in range(1, len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
