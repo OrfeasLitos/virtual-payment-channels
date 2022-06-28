@@ -169,10 +169,14 @@ def test_do_elmo_pay():
     assert elmo.network.graph[0][1]['balance'] == previous_balance01
 
 def test_do():
+    # TODO: test exceptions
     test_do_onchain()
     test_do_new_channel()
     test_do_new_virtual_channel()
     test_do_elmo_pay()
+
+def test_update_balances():
+    pass
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
@@ -182,6 +186,7 @@ def test_simulation_with_elmo():
 
 if __name__ == "__main__":
     test_get_payment_options_elmo()
-    test_simulation_with_elmo()
     test_do()
+    test_update_balances()
+    test_simulation_with_elmo()
     print("Success")

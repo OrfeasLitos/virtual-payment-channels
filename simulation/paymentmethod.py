@@ -565,8 +565,6 @@ class Elmo(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
-        # Question: Is this correct? Fee's are handled as in LN and the cost of the sender are fee's
-        # and the coins he wants to put on the new virtual channel.
         cost_sender = num_intermediaries * self.fee_intermediary + value + sender_coins
         # update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
