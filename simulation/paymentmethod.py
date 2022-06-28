@@ -189,6 +189,8 @@ class LN(Payment_Network):
         receiver = path[-1]
         fee_intermediary = ln_fee * value + base_fee
         cost_sender = value + num_intermediaries * fee_intermediary
+        if pay == True and cost_sender > self.network.graph[sender][path[1]]['balance']:
+            raise ValueError
         # update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
             received = value + (num_intermediaries - (i-1)) * fee_intermediary
@@ -566,6 +568,8 @@ class Elmo(Payment_Network):
         num_intermediaries = len(path) - 2
         sender = path[0]
         cost_sender = num_intermediaries * self.fee_intermediary + value + sender_coins
+        if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
+            raise ValueError
         # update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
             received = (num_intermediaries - (i-1)) * self.fee_intermediary

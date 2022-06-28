@@ -211,9 +211,25 @@ def test_update_balances_new_virtual_channel_reverse():
     assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
     assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
 
+def test_update_balances_new_virtual_channel_not_enough_money():
+    elmo = make_example_network_elmo()
+    path = [0, 1, 4, 7]
+    value = 2000000000000
+    balances = nx.get_edge_attributes(elmo.network.graph, "balance")
+    sender_coins = 100000000
+    try:
+        elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
+        balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")
+        for key in balances.keys():
+            assert_eq(balances[key], balances_after_failure[key])
+        assert False, 'update_balances() should raise a ValueError'
+    except ValueError:
+        pass
+
 def test_update_balances_new_virtual_channel():
     test_update_balances_new_virtual_channel_true()
     test_update_balances_new_virtual_channel_reverse()
+    test_update_balances_new_virtual_channel_not_enough_money()
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
