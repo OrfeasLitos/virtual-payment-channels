@@ -151,7 +151,22 @@ def test_do_new_virtual_channel():
     assert elmo.network.graph.get_edge_data(5, 0) is None
 
 def test_do_elmo_pay():
-    pass
+    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
+        make_example_values_for_do()
+    )
+    payment_options = elmo.get_payment_options(0, 2, value, future_payments)
+    assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
+    payment_information_pay = payment_options[1]['payment_information']
+
+    previous_balance02 = elmo.network.graph[0][2]['balance']
+    previous_balance20 = elmo.network.graph[2][0]['balance']
+    previous_balance01 = elmo.network.graph[0][1]['balance']
+
+    elmo.do(payment_information_pay)
+    assert elmo.network.graph[0][2]['balance'] == previous_balance02 - value
+    assert elmo.network.graph[2][0]['balance'] == previous_balance20 + value
+    assert elmo.network.graph[0][2]['locked_coins'] == 0
+    assert elmo.network.graph[0][1]['balance'] == previous_balance01
 
 def test_do():
     test_do_onchain()
