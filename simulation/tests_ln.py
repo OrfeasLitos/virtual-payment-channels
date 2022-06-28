@@ -331,12 +331,12 @@ def test_update_balances_pay_not_enough_money():
     balances = nx.get_edge_attributes(lightning.network.graph, "balance")
     try:
         lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
+        assert False, 'update_balances() should raise a ValueError'
+    except ValueError:
         balances_after_failure = nx.get_edge_attributes(lightning.network.graph, "balance")
         for key in balances.keys():
             assert_eq(balances[key], balances_after_failure[key])
-        assert False, 'update_balances() should raise a ValueError'
-    except ValueError:
-        pass
+        
 
 def test_update_balances_reverse():
     lightning = make_example_network_ln(base_fee = 1000, ln_fee = 0.00002)

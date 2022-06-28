@@ -219,12 +219,11 @@ def test_update_balances_new_virtual_channel_not_enough_money():
     sender_coins = 100000000
     try:
         elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
+        assert False, 'update_balances() should raise a ValueError'
+    except ValueError:
         balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")
         for key in balances.keys():
             assert_eq(balances[key], balances_after_failure[key])
-        assert False, 'update_balances() should raise a ValueError'
-    except ValueError:
-        pass
 
 def test_update_balances_new_virtual_channel():
     test_update_balances_new_virtual_channel_true()
