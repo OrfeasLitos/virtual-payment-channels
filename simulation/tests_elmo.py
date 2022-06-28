@@ -230,6 +230,9 @@ def test_update_balances_new_virtual_channel():
     test_update_balances_new_virtual_channel_reverse()
     test_update_balances_new_virtual_channel_not_enough_money()
 
+def test_lock_and_unlock():
+    pass
+
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
     simulation = make_example_simulation_elmo()
@@ -240,5 +243,6 @@ if __name__ == "__main__":
     test_get_payment_options_elmo()
     test_do()
     test_update_balances_new_virtual_channel()
+    test_lock_and_unlock()
     test_simulation_with_elmo()
     print("Success")
