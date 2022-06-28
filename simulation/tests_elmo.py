@@ -175,12 +175,25 @@ def test_do():
     test_do_new_virtual_channel()
     test_do_elmo_pay()
 
-def test_update_balances_new_virtual_channel():
+def test_update_balances_new_virtual_channel_true():
+    # Here locking isn't done yet.
     elmo = make_example_network_elmo()
     path = [0, 1, 4, 7]
     value = 2000000000
-    sender_coins = 10000000
-    elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = False)
+    fee_intermediary = elmo.fee_intermediary
+    sender_coins = 100000000
+    elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
+    assert_eq(elmo.network.graph[0][1]['balance'],6000000000- value - sender_coins -  2*fee_intermediary)
+    assert_eq(elmo.network.graph[1][0]['balance'], 7000000000 + 2*fee_intermediary)
+    assert_eq(elmo.network.graph[1][4]['balance'], 4000000000 - fee_intermediary)
+    assert_eq(elmo.network.graph[4][1]['balance'], 8000000000 + fee_intermediary)
+    assert_eq(elmo.network.graph[4][7]['balance'], 10000000000)
+    assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
+    assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
+
+
+def test_update_balances_new_virtual_channel():
+    test_update_balances_new_virtual_channel_true()
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
