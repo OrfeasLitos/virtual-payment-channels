@@ -352,9 +352,7 @@ def test_update_balances_reverse():
     for i in range(len(channels_before)):
         assert_eq(channels_before[i][2], channels_after[i][2])
     assert_eq(lightning.network.graph[0][1]['balance'],6000000000)
-    # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
     assert_eq(lightning.network.graph[1][0]['balance'], 7000000000)
-    # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
     assert_eq(lightning.network.graph[1][4]['balance'], 4000000000)
     assert_eq(lightning.network.graph[4][1]['balance'], 8000000000)
     assert_eq(lightning.network.graph[4][7]['balance'], 10000000000)

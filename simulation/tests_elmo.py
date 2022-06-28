@@ -191,9 +191,29 @@ def test_update_balances_new_virtual_channel_true():
     assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
     assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
 
+def test_update_balances_new_virtual_channel_reverse():
+    elmo = make_example_network_elmo()
+    channels_before = [channel for channel in elmo.network.graph.edges.data("balance")]
+    path = [0, 1, 4, 7]
+    value = 2000000000
+    sender_coins = 100000000
+    elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
+    # balances are updated, now we want to revert it
+    elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = False)
+    channels_after = [channel for channel in elmo.network.graph.edges.data("balance")]
+    for i in range(len(channels_before)):
+        assert_eq(channels_before[i][2], channels_after[i][2])
+    assert_eq(elmo.network.graph[0][1]['balance'],6000000000)
+    assert_eq(elmo.network.graph[1][0]['balance'], 7000000000)
+    assert_eq(elmo.network.graph[1][4]['balance'], 4000000000)
+    assert_eq(elmo.network.graph[4][1]['balance'], 8000000000)
+    assert_eq(elmo.network.graph[4][7]['balance'], 10000000000)
+    assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
+    assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
 
 def test_update_balances_new_virtual_channel():
     test_update_balances_new_virtual_channel_true()
+    test_update_balances_new_virtual_channel_reverse()
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
