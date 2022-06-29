@@ -481,10 +481,9 @@ class Elmo(Payment_Network):
         # TODO: find better name for channel_balances
         # TODO: think of reasonable factor.
         # the factor is introduced so that lower channel doesn't end up with 0 balance. Do we want this?
-        # review: let's discuss the dummy factor
-        dummy_factor = 10
+        availability_factor = 4
         channel_balances = [
-            self.network.graph[path[i]][path[i+1]]['balance'] / dummy_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
+            self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
         ]
         # review: I'm not sure what is this append doing
         channel_balances.append(MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments)
