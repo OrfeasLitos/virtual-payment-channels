@@ -9,12 +9,11 @@ import networkx as nx
 import unittest
 
 from simulation import Simulation, random_payments
-from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counterparty
+from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_ELMO
 from utility import Utility
 from knowledge import Knowledge
 from network import Network
 from tests import know_all, make_example_utility_function , example_utility_function_for_simulation
-from paymentmethod import MULTIPLIER_CHANNEL_BALANCE_ELMO
 
 def make_example_network_elmo(fee_intermediary = 1000000):
     elmo = Elmo(10, fee_intermediary = fee_intermediary)

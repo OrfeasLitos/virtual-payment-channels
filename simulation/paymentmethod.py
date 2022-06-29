@@ -10,9 +10,7 @@ from network import Network, Network_Elmo
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
-# TODO: maybe make these dependent on the size of the network or number of future payments.
-# review: or we can instead just keep it fixed for simplicity. Maybe 20 is too much, I was thinking more like 5
-MULTIPLIER_CHANNEL_BALANCE_LN = MULTIPLIER_CHANNEL_BALANCE_ELMO = 20
+MULTIPLIER_CHANNEL_BALANCE_LN = MULTIPLIER_CHANNEL_BALANCE_ELMO = 5
 
 def sum_future_payments_to_counterparty(sender, counterparty, future_payments):
     """

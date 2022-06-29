@@ -8,7 +8,7 @@ import networkx as nx
 import unittest
 
 from simulation import Simulation, random_payments
-from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counterparty
+from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_LN
 from utility import Utility
 from knowledge import Knowledge
 from network import Network
@@ -97,7 +97,7 @@ def test_get_payment_options_ln_enough_money():
         ],
         'payment_information' : {
             'kind' : 'ln-open',
-            'data' : (0, 7, 1000000000., 7, 72000000000., None)
+            'data' : (0, 7, 1000000000., 7, 18000000000., None)
         }
     }
     expected_ln_pay_option = {
@@ -272,7 +272,7 @@ def test_do_ln_new_channel():
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(0, 7, future_payments)
-    sender_coins = 20 * sum_future_payments
+    sender_coins = MULTIPLIER_CHANNEL_BALANCE_LN * sum_future_payments
     receiver_coins = value
     tx_size = lightning.opening_transaction_size
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
