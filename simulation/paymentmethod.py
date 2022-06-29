@@ -213,7 +213,6 @@ class LN(Payment_Network):
 
     def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
         # case channel already exists.
-        # review: I think this check shouldn't be here. If there is a channel already, it will presumably be cheaper and it will be preferred to a new one anyway. Also this check here currently doesn't ensure that there is enough money in the channel to carry out the payment. This is a premature optimization, let's only do it later if needed. (this applies to Elmo as well)
         if self.network.graph.get_edge_data(sender, counterparty) is not None:
             return None
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
