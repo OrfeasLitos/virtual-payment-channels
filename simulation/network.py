@@ -11,12 +11,16 @@ class Network:
         self.graph = nx.empty_graph(nr_vertices, create_using=nx.DiGraph)
         self.edge_id = 0
 
-    def add_channel(self, idA, balA, idB, balB):
+    def get_new_edges(self, idA, balA, idB, balB, method_data):
         assert(balA > 0 or balB > 0)
         edges = [
             (idA, idB, {'balance': balA, 'cost' : UNIT_COST}),
             (idB, idA, {'balance': balB, 'cost' : UNIT_COST})
         ]
+        return edges
+
+    def add_channel(self, idA, balA, idB, balB, method_data = None):
+        edges = self.get_new_edges(idA, balA, idB, balB, method_data)
         self.graph.add_edges_from(edges)
         self.edge_id += 1
 

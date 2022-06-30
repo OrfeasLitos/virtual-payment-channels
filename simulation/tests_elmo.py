@@ -311,7 +311,7 @@ def test_pay_not_enough_balance():
     value = 20000000000000
     try:
         elmo.pay(sender, receiver, value)
-        assert False, "should raise ValueErro"
+        assert False, "should raise ValueError"
     except ValueError:
         assert_eq(elmo.network.graph[sender][receiver]['balance'], 3000000000)
         assert_eq(elmo.network.graph[receiver][sender]['balance'], 7000000000)
