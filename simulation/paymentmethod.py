@@ -482,14 +482,16 @@ class Elmo(Payment_Network):
         # TODO: think of reasonable factor.
         # the factor is introduced so that lower channel doesn't end up with 0 balance. Do we want this?
         availability_factor = 4
-        channel_balances = [
+        base_channels_max_lock_values = [
             self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
         ]
         # review: I'm not sure what is this append doing
-        channel_balances.append(MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments)
-        sender_coins = min(
-            channel_balances
+        base_channels_max_lock_values
+        max_common_lock_value = min(
+            base_channels_max_lock_values
         )
+        desired_virtual_coins = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
+        sender_coins = min(max_common_lock_value, desired_virtual_coins)
         if sender_coins < 0:
             return None
         payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, sender_coins)}
