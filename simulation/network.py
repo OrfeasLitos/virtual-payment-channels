@@ -64,7 +64,7 @@ class Network_Elmo(Network):
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
 
-    def add_channel(self, idA, balA, idB, balB, path):
+    def get_new_edges(self, idA, balA, idB, balB, path):
         assert(balA > 0 or balB > 0)
         edges = [
             (idA, idB,
@@ -78,7 +78,12 @@ class Network_Elmo(Network):
                 'channels_underneath' : path, 'channels_above': []}
             )
         ]
+        return edges
+
+    def add_channel(self, idA, balA, idB, balB, path):
+        edges = self.get_new_edges(idA, balA, idB, balB, path)
         self.graph.add_edges_from(edges)
+        
         if path is not None:
             for i in range(len(path) - 1):
                 sender = path[i]
