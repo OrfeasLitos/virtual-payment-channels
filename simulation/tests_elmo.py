@@ -293,6 +293,24 @@ def test_lock_and_unlock():
     test_locking_and_unlocking_enough_balance()
     test_locking_not_enough_balance()
 
+def test_pay_enough_balance():
+    elmo = make_example_network_elmo()
+    sender = 0
+    receiver = 2
+    value = 20000000
+    elmo.pay(sender, receiver, value)
+    assert_eq(elmo.network.graph[sender][receiver]['balance'], 3000000000 - value)
+    assert_eq(elmo.network.graph[receiver][sender]['balance'], 7000000000 + value)
+    assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
+    assert_eq(elmo.network.graph[sender][receiver]['locked_coins'], 0)
+
+def test_pay_not_enough_balance():
+    pass
+
+def test_pay():
+    test_pay_enough_balance()
+    test_pay_not_enough_balance()
+
 def test_undo_new_virtual_channel():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
         make_example_values_for_do()
@@ -346,6 +364,7 @@ if __name__ == "__main__":
     test_do()
     test_update_balances_new_virtual_channel()
     test_lock_and_unlock()
+    test_pay()
     test_undo()
     test_simulation_with_elmo()
     print("Success")
