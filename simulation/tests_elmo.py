@@ -305,7 +305,18 @@ def test_pay_enough_balance():
     assert_eq(elmo.network.graph[sender][receiver]['locked_coins'], 0)
 
 def test_pay_not_enough_balance():
-    pass
+    elmo = make_example_network_elmo()
+    sender = 0
+    receiver = 2
+    value = 20000000000000
+    try:
+        elmo.pay(sender, receiver, value)
+        assert False, "should raise ValueErro"
+    except ValueError:
+        assert_eq(elmo.network.graph[sender][receiver]['balance'], 3000000000)
+        assert_eq(elmo.network.graph[receiver][sender]['balance'], 7000000000)
+        assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
+        assert_eq(elmo.network.graph[sender][receiver]['locked_coins'], 0)
 
 def test_pay():
     test_pay_enough_balance()
