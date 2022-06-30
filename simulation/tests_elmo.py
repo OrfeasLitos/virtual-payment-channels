@@ -184,7 +184,7 @@ def test_update_balances_new_virtual_channel_true():
     fee_intermediary = elmo.fee_intermediary
     sender_coins = 100000000
     elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
-    assert_eq(elmo.network.graph[0][1]['balance'],6000000000- value - sender_coins -  2*fee_intermediary)
+    assert_eq(elmo.network.graph[0][1]['balance'],6000000000 - 2*fee_intermediary)
     assert_eq(elmo.network.graph[1][0]['balance'], 7000000000 + 2*fee_intermediary)
     assert_eq(elmo.network.graph[1][4]['balance'], 4000000000 - fee_intermediary)
     assert_eq(elmo.network.graph[4][1]['balance'], 8000000000 + fee_intermediary)
@@ -214,6 +214,7 @@ def test_update_balances_new_virtual_channel_reverse():
 
 def test_update_balances_new_virtual_channel_not_enough_money():
     elmo = make_example_network_elmo()
+    elmo.fee_intermediary = 9999999999999999
     path = [0, 1, 4, 7]
     value = 2000000000000
     balances = nx.get_edge_attributes(elmo.network.graph, "balance")

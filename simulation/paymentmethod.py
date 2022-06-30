@@ -539,7 +539,7 @@ class Elmo(Payment_Network):
     def lock_coins(self, path, lock_value):
         # Question: are coins on the first channel in the path also locked?
         # review: yes, the sender locks these coins in its base channel as well.
-        for i in range(1, len(path) - 1):
+        for i in range(len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
             if self.network.graph[sender][receiver]['balance'] < lock_value:
@@ -571,7 +571,7 @@ class Elmo(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
-        cost_sender = num_intermediaries * self.fee_intermediary + value + sender_coins
+        cost_sender = num_intermediaries * self.fee_intermediary
         if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
             raise ValueError
         # update the balances of the intermediaries.
