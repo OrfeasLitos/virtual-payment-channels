@@ -233,7 +233,26 @@ def test_update_balances_new_virtual_channel():
     test_update_balances_new_virtual_channel_not_enough_money()
 
 def test_lock_and_unlock():
-    pass
+    elmo = make_example_network_elmo()
+    path = [0, 1, 4, 7]
+    value = 2000000000
+    sender_coins = 100000000
+    lock_value = value + sender_coins
+    elmo.lock_coins(path, lock_value)
+    assert_eq(elmo.network.graph[0][1]['balance'],6000000000 - lock_value)
+    assert_eq(elmo.network.graph[1][0]['balance'], 7000000000)
+    assert_eq(elmo.network.graph[1][4]['balance'], 4000000000 - lock_value)
+    assert_eq(elmo.network.graph[4][1]['balance'], 8000000000)
+    assert_eq(elmo.network.graph[4][7]['balance'], 10000000000 - lock_value)
+    assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
+    assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
+    assert_eq(elmo.network.graph[0][1]['locked_coins'], lock_value)
+    assert_eq(elmo.network.graph[1][0]['locked_coins'], 0)
+    assert_eq(elmo.network.graph[1][4]['locked_coins'], lock_value)
+    assert_eq(elmo.network.graph[4][1]['locked_coins'], 0)
+    assert_eq(elmo.network.graph[4][7]['locked_coins'], lock_value)
+    assert_eq(elmo.network.graph[7][4]['locked_coins'], 0)
+    assert_eq(elmo.network.graph[1][2]['locked_coins'], 0)
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
