@@ -19,10 +19,14 @@ class Network:
         ]
         return edges
 
+    def update_channels(self, idA, balA, idB, balB, method_data):
+        pass
+
     def add_channel(self, idA, balA, idB, balB, method_data = None):
         edges = self.get_new_edges(idA, balA, idB, balB, method_data)
         self.graph.add_edges_from(edges)
         self.edge_id += 1
+        self.update_channels(idA, balA, idB, balB, method_data)
 
     def close_channel(self, idA, idB):
         edges = [(idA, idB) ,(idB, idA)]
@@ -80,10 +84,7 @@ class Network_Elmo(Network):
         ]
         return edges
 
-    def add_channel(self, idA, balA, idB, balB, path):
-        edges = self.get_new_edges(idA, balA, idB, balB, path)
-        self.graph.add_edges_from(edges)
-        
+    def update_channels(self, idA, balA, idB, balB, path):
         if path is not None:
             for i in range(len(path) - 1):
                 sender = path[i]
@@ -93,3 +94,4 @@ class Network_Elmo(Network):
                 self.graph[sender][receiver]['channels_above'].append((idA, idB))
                 self.graph[receiver][sender]['channels_above'].append((idA, idB))
         self.edge_id += 1
+
