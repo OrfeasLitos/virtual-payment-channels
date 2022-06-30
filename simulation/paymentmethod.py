@@ -556,7 +556,7 @@ class Elmo(Payment_Network):
         # TODO: maybe make it similarly as for update_balances and include this with an operator
         # and boolean variable in lock.
         # undoes just one lock, doesn't free all locked money.
-        for i in range(1, len(path) - 1):
+        for i in range(len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
             self.network.graph[sender][receiver]['balance'] += lock_value
