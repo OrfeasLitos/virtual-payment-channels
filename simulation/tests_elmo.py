@@ -289,10 +289,35 @@ def test_locking_not_enough_balance():
         for key in locked_coins_before.keys():
             assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
 
-
 def test_lock_and_unlock():
     test_locking_and_unlocking_enough_balance()
     test_locking_not_enough_balance()
+
+def test_undo_new_virtual_channel():
+    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
+        make_example_values_for_do()
+    )
+    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
+    assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+    balances_before = nx.get_edge_attributes(elmo.network.graph, "balance")
+    locked_coins_before = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
+
+    elmo.do(payment_information_new_virtual_channel)
+    elmo.undo(payment_information_new_virtual_channel)
+    balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")
+    locked_coins_after_failure = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
+    for key in balances_before.keys():
+        assert_eq(balances_before[key], balances_after_failure[key])
+    for key in locked_coins_before.keys():
+        assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
+
+def test_undo_elmo_pay():
+    pass
+
+def test_undo():
+    test_undo_new_virtual_channel()
+    test_undo_elmo_pay()
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
@@ -305,5 +330,6 @@ if __name__ == "__main__":
     test_do()
     test_update_balances_new_virtual_channel()
     test_lock_and_unlock()
+    test_undo()
     test_simulation_with_elmo()
     print("Success")
