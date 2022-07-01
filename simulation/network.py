@@ -1,5 +1,6 @@
 # maybe Network should extend a class "LabeledGraph"
 import math
+import copy
 import networkx as nx
 
 
@@ -69,20 +70,22 @@ class Network_Elmo(Network):
         super().__init__(nr_vertices)
 
     def get_new_edges(self, idA, balA, idB, balB, path):
+        # convention: path goes from A to B (makes it easier to think about it in close channel)
+        copied_path = copy.copy(path)
         assert(balA > 0 or balB > 0)
-        edges = [
-            (idA, idB,
-                {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST,
-                'channels_underneath' : path, 'channels_above': []}
-            ),
-            # Question: should I reverse path here?
-            # review: leave it like this for now, we can reverse it if needed later
-            (idB, idA,
-                {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
-                'channels_underneath' : path, 'channels_above': []}
-            )
-        ]
-        return edges
+        edge_A_to_B = (
+            idA, idB,
+            {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST,
+            'channels_underneath' : copied_path, 'channels_above': []}
+        )
+        if copied_path is not None:
+            copied_path.reverse()
+        edge_B_to_A = (
+            idB, idA,
+            {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
+            'channels_underneath' : copied_path, 'channels_above': []}
+        )
+        return [edge_A_to_B, edge_B_to_A]
 
     def update_channels(self, idA, balA, idB, balB, path):
         if path is not None:
@@ -96,4 +99,37 @@ class Network_Elmo(Network):
         self.edge_id += 1
 
     def close_channel(self, idA, idB):
-        pass
+        # this is only for adjusting the lower level channels of the channels above, e.g.
+        # for A - > E via A -> C, C -> E and A - > C via A -> B, B -> C and A -> C closes,
+        # then channels underneath A -> E before closing are A -> C, C -> E,  and afterwards
+        # A -> B, B -> C, C -> E.
+        # TODO: test this!!!
+        # TODO: try to simplify this
+        channels_underneath_reference_layer_A_to_B = self.graph[idA][idB]['channels_underneath']
+        channels_underneath_reference_layer_B_to_A = self.graph[idB][idA]['channels_underneath']
+        channels_above = self.graph[idA][idB]['channels_above']
+        for channel in channels_above:
+            idC, idD = channel
+            channels_underneath_upper_layer_C_to_D = self.graph[idC][idD]['channels_underneath']
+            channels_underneath_upper_layer_D_to_C = self.graph[idC][idD]['channels_underneath']
+            # assume that channel can occur only once in upper layer, i.e. no cycles.
+            i = channels_underneath_upper_layer_C_to_D.index(idA)
+            j = channels_underneath_upper_layer_C_to_D.index(idB)
+            k = channels_underneath_upper_layer_D_to_C.index(idA)
+            l = channels_underneath_upper_layer_D_to_C.index(idB)
+            if i < j:
+                startpath_C_to_D = self.graph[idC][idD]['channels_underneath'][:i]
+                endpath_C_to_D = self.graph[idC][idD]['channels_underneath'][j+1:]
+                startpath_D_to_C = self.graph[idD][idC]['channels_underneath'][:l]
+                endpath_D_to_C = self.graph[idD][idC]['channels_underneath'][k+1:]
+                self.graph[idC][idD]['channels_underneath'] = startpath_C_to_D + channels_underneath_reference_layer_A_to_B + endpath_C_to_D
+                self.graph[idD][idC]['channels_underneath'] = startpath_D_to_C + channels_underneath_reference_layer_B_to_A + endpath_D_to_C
+            else:
+                startpath_C_to_D = self.graph[idC][idD]['channels_underneath'][:j]
+                endpath_C_to_D = self.graph[idC][idD]['channels_underneath'][i+1:]
+                startpath_D_to_C = self.graph[idD][idC]['channels_underneath'][:k]
+                endpath_D_to_C = self.graph[idD][idC]['channels_underneath'][l+1:]
+                self.graph[idC][idD]['channels_underneath'] = startpath_C_to_D + channels_underneath_reference_layer_B_to_A + endpath_C_to_D
+                self.graph[idD][idC]['channels_underneath'] = startpath_D_to_C + channels_underneath_reference_layer_A_to_B + endpath_D_to_C
+        # TODO: adjust channels above.
+
