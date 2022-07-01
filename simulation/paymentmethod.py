@@ -238,7 +238,7 @@ class LN(Payment_Network):
             new_channel_offchain_option = None
             new_channel_centrality = self.network.get_harmonic_centrality()
             new_channel_distance = self.get_distances(sender, future_payments)
-        self.network.close_channel(sender, counterparty)
+        self.network.remove_channel(sender, counterparty)
 
         return {
             'delay': new_channel_time,
@@ -454,7 +454,7 @@ class Elmo(Payment_Network):
         self.network.add_channel(sender, sender_coins, receiver, value, None)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.get_distances(sender, future_payments)
-        self.network.close_channel(sender, receiver)
+        self.network.remove_channel(sender, receiver)
         return {
             'delay': new_channel_time,
             'fee': new_channel_fee,
@@ -562,6 +562,7 @@ class Elmo(Payment_Network):
             self.network.graph[sender][receiver]['balance'] += lock_value
             self.network.graph[sender][receiver]['locked_coins'] -= lock_value
 
+    # TODO: think if update balances, locking, etc should be in network.
     # adjusted from LN
     def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
         # the pay argument tells whether this corresponds to making a payment
@@ -643,7 +644,7 @@ class Elmo(Payment_Network):
                 self.undo_locking(path, sender_coins + value)
                 self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=False)
                 self.plain_bitcoin.coins[sender] += sender_coins + value
-                self.network.close_channel(sender, receiver)
+                self.network.remove_channel(sender, receiver)
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
                 if self.network.graph.get_edge_data(sender, receiver) is None:

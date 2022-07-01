@@ -28,7 +28,7 @@ class Network:
         self.edge_id += 1
         self.update_channels(idA, balA, idB, balB, method_data)
 
-    def close_channel(self, idA, idB):
+    def remove_channel(self, idA, idB):
         edges = [(idA, idB) ,(idB, idA)]
         self.graph.remove_edges_from(edges)
 
@@ -95,3 +95,5 @@ class Network_Elmo(Network):
                 self.graph[receiver][sender]['channels_above'].append((idA, idB))
         self.edge_id += 1
 
+    def close_channel(self, idA, idB):
+        pass
