@@ -107,9 +107,9 @@ class Network_Elmo(Network):
         # TODO: try to simplify this
         channels_underneath_reference_layer_A_to_B = self.graph[idA][idB]['channels_underneath']
         channels_underneath_reference_layer_B_to_A = self.graph[idB][idA]['channels_underneath']
-        channels_above = self.graph[idA][idB]['channels_above']
+        channels_above_reference_layer = self.graph[idA][idB]['channels_above']
         if channels_underneath_reference_layer_A_to_B is not None:
-            for channel in channels_above:
+            for channel in channels_above_reference_layer:
                 idC, idD = channel
                 channels_underneath_upper_layer_C_to_D = self.graph[idC][idD]['channels_underneath']
                 channels_underneath_upper_layer_D_to_C = self.graph[idC][idD]['channels_underneath']
@@ -132,12 +132,22 @@ class Network_Elmo(Network):
                     endpath_D_to_C = self.graph[idD][idC]['channels_underneath'][l+1:]
                     self.graph[idC][idD]['channels_underneath'] = startpath_C_to_D + channels_underneath_reference_layer_B_to_A + endpath_C_to_D
                     self.graph[idD][idC]['channels_underneath'] = startpath_D_to_C + channels_underneath_reference_layer_A_to_B + endpath_D_to_C
+            #adjust channels above.
+            for path in channels_underneath_reference_layer_A_to_B:
+                for i in range(len(path)-1):
+                    # remove old channel above
+                    if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
+                        self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
+                    if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
+                        self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
+                    # add new channels above.
+                    self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_layer
+                
         else:
-            for channel in channels_above:
+            for channel in channels_above_reference_layer:
                 idC, idD = channel
                 self.graph[idC][idD]['channels_underneath'] = None
                 self.graph[idD][idC]['channels_underneath'] = None
-        # TODO: adjust channels above.
         # TODO: handle balances.
 
 
