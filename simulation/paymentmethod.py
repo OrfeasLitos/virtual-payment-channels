@@ -644,6 +644,7 @@ class Elmo(Payment_Network):
                 self.undo_locking(path, sender_coins + value)
                 self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=False)
                 self.plain_bitcoin.coins[sender] += sender_coins + value
+                # TODO: if I only remove the channels_above are changed by do() but this isn't undone here.
                 self.network.remove_channel(sender, receiver)
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
