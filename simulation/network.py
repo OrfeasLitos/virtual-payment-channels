@@ -71,19 +71,19 @@ class Network_Elmo(Network):
 
     def get_new_edges(self, idA, balA, idB, balB, path):
         # convention: path goes from A to B (makes it easier to think about it in close channel)
-        copied_path = copy.copy(path)
         assert(balA > 0 or balB > 0)
         edge_A_to_B = (
             idA, idB,
             {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST,
-            'channels_underneath' : copied_path, 'channels_above': []}
+            'channels_underneath' : path, 'channels_above': []}
         )
-        if copied_path is not None:
-            copied_path.reverse()
+        reversed_path = copy.copy(path)
+        if reversed_path is not None:
+            reversed_path.reverse()
         edge_B_to_A = (
             idB, idA,
             {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
-            'channels_underneath' : copied_path, 'channels_above': []}
+            'channels_underneath' : reversed_path, 'channels_above': []}
         )
         return [edge_A_to_B, edge_B_to_A]
 

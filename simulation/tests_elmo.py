@@ -364,6 +364,18 @@ def test_undo():
     test_undo_new_virtual_channel()
     test_undo_elmo_pay()
 
+def test_close_channel():
+    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
+        make_example_values_for_do()
+    )
+    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
+    assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+
+    elmo.do(payment_information_new_virtual_channel)
+    assert elmo.network.graph[0][4]['channels_underneath'] == [0,1,4]
+    assert elmo.network.graph[4][0]['channels_underneath'] == [4,1,0]
+
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
     simulation = make_example_simulation_elmo()
@@ -378,4 +390,5 @@ if __name__ == "__main__":
     test_pay()
     test_undo()
     test_simulation_with_elmo()
+    test_close_channel()
     print("Success")
