@@ -138,10 +138,13 @@ class Network_Elmo(Network):
                 # remove old channel above
                 if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
                     self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
+                    self.graph[path[i+1]][path[i]]['channels_above'].remove((idA, idB))
                 if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
                     self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
+                    self.graph[path[i+1]][path[i]]['channels_above'].remove((idB, idA))
                 # add new channels above.
                 self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_layer
+                self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_layer
                 
         else:
             for channel in channels_above_reference_layer:
@@ -149,5 +152,6 @@ class Network_Elmo(Network):
                 self.graph[idC][idD]['channels_underneath'] = None
                 self.graph[idD][idC]['channels_underneath'] = None
         # TODO: handle balances.
+        # TODO: remove the actual channel!
 
 
