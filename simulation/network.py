@@ -133,15 +133,15 @@ class Network_Elmo(Network):
                     self.graph[idC][idD]['channels_underneath'] = startpath_C_to_D + channels_underneath_reference_layer_B_to_A + endpath_C_to_D
                     self.graph[idD][idC]['channels_underneath'] = startpath_D_to_C + channels_underneath_reference_layer_A_to_B + endpath_D_to_C
             #adjust channels above.
-            for path in channels_underneath_reference_layer_A_to_B:
-                for i in range(len(path)-1):
-                    # remove old channel above
-                    if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
-                        self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
-                    if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
-                        self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
-                    # add new channels above.
-                    self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_layer
+            path = channels_underneath_reference_layer_A_to_B
+            for i in range(len(path)-1):
+                # remove old channel above
+                if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
+                    self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
+                if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
+                    self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
+                # add new channels above.
+                self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_layer
                 
         else:
             for channel in channels_above_reference_layer:
