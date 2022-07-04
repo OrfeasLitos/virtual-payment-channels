@@ -368,7 +368,7 @@ def test_undo():
     test_undo_new_virtual_channel()
     test_undo_elmo_pay()
 
-def test_close_channel():
+def test_close_channel_first_virtual_layer_no_layer_above():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
         make_example_values_for_do()
     )
@@ -391,6 +391,26 @@ def test_close_channel():
     assert elmo.network.graph[1][0]['channels_above'] == []
     assert elmo.network.graph[4][1]['channels_above'] == []
     assert elmo.network.graph[1][4]['channels_above'] == []
+
+def test_close_channel_first_virtual_layer_one_layer_above():
+    _, elmo, future_payments = make_example_network_elmo_and_future_payments()
+    value1 = 100000000
+    payment_options1 = elmo.get_payment_options(0, 3, value1, future_payments)
+    assert payment_options1[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options1[2]['payment_information']
+
+    elmo.do(payment_information_new_virtual_channel)
+
+    value2 = 1000000
+    payment_options2 = elmo.get_payment_options(0, 8, value2, future_payments)
+    #assert payment_options2[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    #payment_information_new_virtual_channel = payment_options2[2]['payment_information']
+    
+
+
+def test_close_channel():
+    test_close_channel_first_virtual_layer_no_layer_above()
+    test_close_channel_first_virtual_layer_one_layer_above()
 
 
 def test_simulation_with_elmo():
