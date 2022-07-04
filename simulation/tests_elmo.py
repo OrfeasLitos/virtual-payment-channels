@@ -381,6 +381,16 @@ def test_close_channel():
     assert elmo.network.graph[4][0]['channels_underneath'] == [4,1,0]
     assert elmo.network.graph[0][1]['channels_above'] == [(0,4)]
     assert elmo.network.graph[1][0]['channels_above'] == [(0,4)]
+    assert elmo.network.graph[4][1]['channels_above'] == [(0,4)]
+    assert elmo.network.graph[1][4]['channels_above'] == [(0,4)]
+    assert elmo.network.graph[0][2]['channels_above'] == []
+    assert elmo.network.graph[2][0]['channels_above'] == []
+    elmo.network.close_channel(0, 4)
+    assert elmo.network.graph[0][1]['channels_above'] == []
+    assert elmo.network.graph[0][1]['channels_underneath'] is None
+    assert elmo.network.graph[1][0]['channels_above'] == []
+    assert elmo.network.graph[4][1]['channels_above'] == []
+    assert elmo.network.graph[1][4]['channels_above'] == []
 
 
 def test_simulation_with_elmo():
