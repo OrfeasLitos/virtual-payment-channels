@@ -327,6 +327,8 @@ def test_undo_new_virtual_channel():
         make_example_values_for_do()
     )
     payment_options = elmo.get_payment_options(0, 4, value, future_payments)
+    sender_coins = elmo.plain_bitcoin.coins[0]
+    receiver_coins = elmo.plain_bitcoin.coins[4]
     assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
     balances_before = nx.get_edge_attributes(elmo.network.graph, "balance")
@@ -340,6 +342,8 @@ def test_undo_new_virtual_channel():
         assert_eq(balances_before[key], balances_after_failure[key])
     for key in locked_coins_before.keys():
         assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
+    assert sender_coins == elmo.plain_bitcoin.coins[0]
+    assert receiver_coins == elmo.plain_bitcoin.coins[4]
 
 def test_undo_elmo_pay():
     #TODO: tests are very similar. Check how to unify them.

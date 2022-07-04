@@ -643,7 +643,6 @@ class Elmo(Payment_Network):
                 receiver = path[-1]
                 self.undo_locking(path, sender_coins + value)
                 self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=False)
-                self.plain_bitcoin.coins[sender] += sender_coins + value
                 self.network.close_channel(sender, receiver)
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
