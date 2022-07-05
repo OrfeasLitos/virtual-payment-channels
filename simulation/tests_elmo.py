@@ -63,7 +63,7 @@ def make_example_values_for_do():
 def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible():
     # virtual channel not possible because too much future payments, would need too much balance
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
-    payment_options = elmo.get_payment_options(0, 7, 1000000000., future_payments)
+    payment_options = elmo.get_payment_options(0, 7, 10000000000., future_payments)
     assert len(payment_options) == 2
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-open-channel'
@@ -397,14 +397,17 @@ def test_close_channel_first_virtual_layer_one_layer_above():
     value1 = 100000000
     payment_options1 = elmo.get_payment_options(0, 3, value1, future_payments)
     assert payment_options1[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
-    payment_information_new_virtual_channel = payment_options1[2]['payment_information']
+    payment_information_new_virtual_channel1 = payment_options1[2]['payment_information']
 
-    elmo.do(payment_information_new_virtual_channel)
+    elmo.do(payment_information_new_virtual_channel1)
 
     value2 = 1000000
     payment_options2 = elmo.get_payment_options(0, 8, value2, future_payments)
-    #assert payment_options2[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
-    #payment_information_new_virtual_channel = payment_options2[2]['payment_information']
+    assert payment_options2[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    payment_information_new_virtual_channel2 = payment_options2[2]['payment_information']
+
+    elmo.do(payment_information_new_virtual_channel1)
+    
     
 
 
