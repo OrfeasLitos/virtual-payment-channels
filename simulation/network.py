@@ -77,6 +77,7 @@ class Network_Elmo(Network):
             {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST,
             'channels_underneath' : path, 'channels_above': []}
         )
+        # TODO: maybe also struct.
         reversed_path = copy.copy(path)
         if reversed_path is not None:
             reversed_path.reverse()
@@ -94,17 +95,23 @@ class Network_Elmo(Network):
                 receiver = path[i+1]
                 # TODO: think if pair is ok here or if we want all the information of the channels to be stored.
                 # review: let's update this on an as-needed basis
+                # TODO: add our spot in path above. (in dictionary : source, sink, path_index)
+                # TODO: store set.
+                # TODO: maybe store it just on one edge as an optimization.
                 self.graph[sender][receiver]['channels_above'].append((idA, idB))
                 self.graph[receiver][sender]['channels_above'].append((idA, idB))
         self.edge_id += 1
 
     def close_channel(self, idA, idB):
+        # TODO: maybe convention idA < idB
         # this is only for adjusting the lower level channels of the channels above, e.g.
         # for A - > E via A -> C, C -> E and A - > C via A -> B, B -> C and A -> C closes,
         # then channels underneath A -> E before closing are A -> C, C -> E,  and afterwards
         # A -> B, B -> C, C -> E.
         # TODO: test this!!!
         # TODO: try to simplify this
+        # TODO: rename layer to channel
+        # TODO: rename underneath to below
         channels_underneath_reference_layer_A_to_B = self.graph[idA][idB]['channels_underneath']
         channels_underneath_reference_layer_B_to_A = self.graph[idB][idA]['channels_underneath']
         channels_above_reference_layer = self.graph[idA][idB]['channels_above']
@@ -116,8 +123,11 @@ class Network_Elmo(Network):
                 # assume that channel can occur only once in upper layer, i.e. no cycles.
                 i = channels_underneath_upper_layer_C_to_D.index(idA)
                 j = channels_underneath_upper_layer_C_to_D.index(idB)
+                # j = i+1 if ... else i - 1
+                #TODO: calculate with length of list.
                 k = channels_underneath_upper_layer_D_to_C.index(idA)
                 l = channels_underneath_upper_layer_D_to_C.index(idB)
+                # TODO: take minimum and exchange i and j if necessary
                 if i < j:
                     startpath_C_to_D = self.graph[idC][idD]['channels_underneath'][:i]
                     endpath_C_to_D = self.graph[idC][idD]['channels_underneath'][j+1:]
@@ -139,6 +149,7 @@ class Network_Elmo(Network):
                 if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
                     self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
                     self.graph[path[i+1]][path[i]]['channels_above'].remove((idA, idB))
+                # TODO: remove if after using Set.
                 if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
                     self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
                     self.graph[path[i+1]][path[i]]['channels_above'].remove((idB, idA))
@@ -146,7 +157,7 @@ class Network_Elmo(Network):
                 self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_layer
                 self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_layer
 
-        else:
+        else:  # we're closing an onchain channel
             # Question: if we have virtual channel A -> C via A -> B and B -> C (both opened onchain),
             # and we close A -> B. Should channels_underneath[A -> B] == None and channels_above[B->C] == []?
             for channel in channels_above_reference_layer:
