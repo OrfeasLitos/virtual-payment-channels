@@ -429,6 +429,8 @@ def test_close_channel_first_virtual_layer_one_layer_above():
     assert elmo.network.graph[2][3]['channels_above'] == [(0, 8)]
     assert elmo.network.graph[3][8]['channels_above'] == [(0, 8)]
     assert elmo.network.graph[8][3]['channels_above'] == [(0, 8)]
+    assert elmo.network.graph.get_edge_data(0, 3) is None
+    assert elmo.network.graph.get_edge_data(3, 0) is None
 
 def test_close_channel():
     test_close_channel_first_virtual_layer_no_layer_above()

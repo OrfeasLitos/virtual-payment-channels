@@ -152,6 +152,6 @@ class Network_Elmo(Network):
                 self.graph[idC][idD]['channels_underneath'] = None
                 self.graph[idD][idC]['channels_underneath'] = None
         # TODO: handle balances.
-        # TODO: remove the actual channel!
+        self.remove_channel(idA, idB)
 
 
