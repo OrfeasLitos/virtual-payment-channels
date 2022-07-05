@@ -112,7 +112,7 @@ class Network_Elmo(Network):
             for channel in channels_above_reference_layer:
                 idC, idD = channel
                 channels_underneath_upper_layer_C_to_D = self.graph[idC][idD]['channels_underneath']
-                channels_underneath_upper_layer_D_to_C = self.graph[idC][idD]['channels_underneath']
+                channels_underneath_upper_layer_D_to_C = self.graph[idD][idC]['channels_underneath']
                 # assume that channel can occur only once in upper layer, i.e. no cycles.
                 i = channels_underneath_upper_layer_C_to_D.index(idA)
                 j = channels_underneath_upper_layer_C_to_D.index(idB)
