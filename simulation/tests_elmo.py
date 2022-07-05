@@ -412,10 +412,19 @@ def test_close_channel_first_virtual_layer_one_layer_above():
     assert elmo.network.graph[3][0]['channels_underneath'] == [3, 2, 0]
     assert elmo.network.graph[0][8]['channels_underneath'] == [0, 3, 8]
     assert elmo.network.graph[8][0]['channels_underneath'] == [8, 3, 0]
-
+    assert elmo.network.graph[0][2]['channels_above'] == [(0, 3)]
+    assert elmo.network.graph[2][0]['channels_above'] == [(0, 3)]
+    assert elmo.network.graph[3][2]['channels_above'] == [(0, 3)]
+    assert elmo.network.graph[2][3]['channels_above'] == [(0, 3)]
+    assert elmo.network.graph[0][3]['channels_above'] == [(0, 8)]
+    assert elmo.network.graph[3][0]['channels_above'] == [(0, 8)]
+    assert elmo.network.graph[3][8]['channels_above'] == [(0, 8)]
+    assert elmo.network.graph[8][3]['channels_above'] == [(0, 8)]
+    elmo.network.close_channel(0, 3)
+    print(elmo.network.graph[8][0]['channels_underneath'])
+    assert elmo.network.graph[0][8]['channels_underneath'] == [0, 2, 3, 8]
+    #assert elmo.network.graph[8][0]['channels_underneath'] == [8, 3, 2, 0]
     
-    
-
 
 def test_close_channel():
     test_close_channel_first_virtual_layer_no_layer_above()
