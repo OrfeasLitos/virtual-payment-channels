@@ -393,7 +393,8 @@ def test_close_channel_first_virtual_layer_no_layer_above():
     assert elmo.network.graph[1][4]['channels_above'] == []
 
 def test_close_channel_first_virtual_layer_one_layer_above():
-    _, elmo, future_payments = make_example_network_elmo_and_future_payments()
+    elmo = make_example_network_elmo()
+    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 300000000.), (0, 3, 2500000000.)]
     value1 = 100000000
     payment_options1 = elmo.get_payment_options(0, 3, value1, future_payments)
     assert payment_options1[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
@@ -406,7 +407,12 @@ def test_close_channel_first_virtual_layer_one_layer_above():
     assert payment_options2[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
     payment_information_new_virtual_channel2 = payment_options2[2]['payment_information']
 
-    elmo.do(payment_information_new_virtual_channel1)
+    elmo.do(payment_information_new_virtual_channel2)
+    assert elmo.network.graph[0][3]['channels_underneath'] == [0, 2, 3]
+    assert elmo.network.graph[3][0]['channels_underneath'] == [3, 2, 0]
+    assert elmo.network.graph[0][8]['channels_underneath'] == [0, 3, 8]
+    assert elmo.network.graph[8][0]['channels_underneath'] == [8, 3, 0]
+
     
     
 
