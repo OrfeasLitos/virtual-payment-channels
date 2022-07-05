@@ -145,13 +145,15 @@ class Network_Elmo(Network):
                 # add new channels above.
                 self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_layer
                 self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_layer
-                
+
         else:
+            # Question: if we have virtual channel A -> C via A -> B and B -> C (both opened onchain),
+            # and we close A -> B. Should channels_underneath[A -> B] == None and channels_above[B->C] == []?
             for channel in channels_above_reference_layer:
                 idC, idD = channel
                 self.graph[idC][idD]['channels_underneath'] = None
                 self.graph[idD][idC]['channels_underneath'] = None
         # TODO: handle balances.
-        self.remove_channel(idA, idB)
+        self.remove_channel(idA, idB)      
 
 
