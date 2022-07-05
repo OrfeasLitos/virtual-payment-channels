@@ -184,6 +184,9 @@ def test_update_balances_new_virtual_channel_true():
     fee_intermediary = elmo.fee_intermediary
     sender_coins = 100000000
     elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
+    # review: it's unclear where the numbers come from
+    # review: better extract them from elmo
+    # review: do this in all similar spots
     assert_eq(elmo.network.graph[0][1]['balance'],6000000000 - 2*fee_intermediary)
     assert_eq(elmo.network.graph[1][0]['balance'], 7000000000 + 2*fee_intermediary)
     assert_eq(elmo.network.graph[1][4]['balance'], 4000000000 - fee_intermediary)
