@@ -84,7 +84,8 @@ class Network_Elmo(Network):
         edge_B_to_A = (
             idB, idA,
             {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
-            'channels_underneath' : reversed_path, 'channels_above': []}
+            'channels_underneath' : list(reversed(path)) if path is not None else None,
+            'channels_above': []}
         )
         return [edge_A_to_B, edge_B_to_A]
 
