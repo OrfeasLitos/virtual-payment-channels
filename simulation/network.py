@@ -126,8 +126,9 @@ class Network_Elmo(Network):
                 j = channels_below_upper_layer_C_to_D.index(idB)
                 # j = i+1 if ... else i - 1
                 #TODO: calculate with length of list.
-                k = channels_below_upper_layer_D_to_C.index(idA)
-                l = channels_below_upper_layer_D_to_C.index(idB)
+                path_length_C_to_D = len(channels_below_upper_layer_C_to_D)
+                k = path_length_C_to_D - 1 - i
+                l = path_length_C_to_D - 1 - j
                 # TODO: take minimum and exchange i and j if necessary
                 if i < j:
                     startpath_C_to_D = self.graph[idC][idD]['channels_below'][:i]
