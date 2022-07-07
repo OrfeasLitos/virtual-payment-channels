@@ -105,10 +105,6 @@ class Network_Elmo(Network):
 
     def close_channel(self, idA, idB):
         # TODO: maybe convention idA < idB
-        # this is only for adjusting the lower level channels of the channels above, e.g.
-        # for A - > E via A -> C, C -> E and A - > C via A -> B, B -> C and A -> C closes,
-        # then channels underneath A -> E before closing are A -> C, C -> E,  and afterwards
-        # A -> B, B -> C, C -> E.
         # TODO: test this!!!
         # TODO: try to simplify this
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
@@ -158,8 +154,15 @@ class Network_Elmo(Network):
         else:  # we're closing an onchain channel
             # Question: if we have virtual channel A -> C via A -> B and B -> C (both opened onchain),
             # and we close A -> B. Should channels_below[A -> B] == None and channels_above[B->C] == []?
-            for channel in channels_above_reference_channel:
-                idC, idD = channel
+            self.remove_channel(idA, idB)
+            for channel_above_reference in channels_above_reference_channel:
+                idC, idD = channel_above_reference
+                channels_below_upper = self.graph[idC][idD]['channels_below']
+                # TODO: this should work, but doesn't really capture how elmo works.
+                # Think of a better way to close channels that are also underneath the channel above and at onchain-layer.
+                for i in range(len(channels_below_upper)-1):
+                    if self.graph.get_edge_data(channels_below_upper[i], channels_below_upper[i+1]) is not None:
+                        self.close_channel(channels_below_upper[i], channels_below_upper[i+1])
                 self.graph[idC][idD]['channels_below'] = None
                 self.graph[idD][idC]['channels_below'] = None
         # TODO: handle balances.
