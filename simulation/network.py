@@ -111,20 +111,18 @@ class Network_Elmo(Network):
         # A -> B, B -> C, C -> E.
         # TODO: test this!!!
         # TODO: try to simplify this
-        # TODO: rename layer to channel
-        # TODO: rename underneath to below
-        channels_below_reference_layer_A_to_B = self.graph[idA][idB]['channels_below']
-        channels_below_reference_layer_B_to_A = self.graph[idB][idA]['channels_below']
-        channels_above_reference_layer = self.graph[idA][idB]['channels_above']
-        if channels_below_reference_layer_A_to_B is not None:
-            for channel in channels_above_reference_layer:
+        channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
+        channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
+        channels_above_reference_channel = self.graph[idA][idB]['channels_above']
+        if channels_below_reference_channel_A_to_B is not None:
+            for channel in channels_above_reference_channel:
                 idC, idD = channel
-                channels_below_upper_layer_C_to_D = self.graph[idC][idD]['channels_below']
-                channels_below_upper_layer_D_to_C = self.graph[idD][idC]['channels_below']
+                channels_below_upper_channel_C_to_D = self.graph[idC][idD]['channels_below']
+                channels_below_upper_channel_D_to_C = self.graph[idD][idC]['channels_below']
                 # assume that channel can occur only once in upper layer, i.e. no cycles.
-                i = channels_below_upper_layer_C_to_D.index(idA)
-                j = i - 1 if channels_below_upper_layer_C_to_D[i-1] == idB else i+1
-                path_length_C_to_D = len(channels_below_upper_layer_C_to_D)
+                i = channels_below_upper_channel_C_to_D.index(idA)
+                j = i - 1 if channels_below_upper_channel_C_to_D[i-1] == idB else i+1
+                path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
                 k = path_length_C_to_D - 1 - i
                 l = path_length_C_to_D - 1 - j
                 # TODO: take minimum and exchange i and j if necessary
@@ -133,17 +131,17 @@ class Network_Elmo(Network):
                     endpath_C_to_D = self.graph[idC][idD]['channels_below'][j+1:]
                     startpath_D_to_C = self.graph[idD][idC]['channels_below'][:l]
                     endpath_D_to_C = self.graph[idD][idC]['channels_below'][k+1:]
-                    self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_layer_A_to_B + endpath_C_to_D
-                    self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_layer_B_to_A + endpath_D_to_C
+                    self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_A_to_B + endpath_C_to_D
+                    self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_B_to_A + endpath_D_to_C
                 else:
                     startpath_C_to_D = self.graph[idC][idD]['channels_below'][:j]
                     endpath_C_to_D = self.graph[idC][idD]['channels_below'][i+1:]
                     startpath_D_to_C = self.graph[idD][idC]['channels_below'][:k]
                     endpath_D_to_C = self.graph[idD][idC]['channels_below'][l+1:]
-                    self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_layer_B_to_A + endpath_C_to_D
-                    self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_layer_A_to_B + endpath_D_to_C
+                    self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_B_to_A + endpath_C_to_D
+                    self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_A_to_B + endpath_D_to_C
             #adjust channels above.
-            path = channels_below_reference_layer_A_to_B
+            path = channels_below_reference_channel_A_to_B
             for i in range(len(path)-1):
                 # remove old channel above
                 if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
@@ -154,13 +152,13 @@ class Network_Elmo(Network):
                     self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
                     self.graph[path[i+1]][path[i]]['channels_above'].remove((idB, idA))
                 # add new channels above.
-                self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_layer
-                self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_layer
+                self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_channel
+                self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_channel
 
         else:  # we're closing an onchain channel
             # Question: if we have virtual channel A -> C via A -> B and B -> C (both opened onchain),
             # and we close A -> B. Should channels_below[A -> B] == None and channels_above[B->C] == []?
-            for channel in channels_above_reference_layer:
+            for channel in channels_above_reference_channel:
                 idC, idD = channel
                 self.graph[idC][idD]['channels_below'] = None
                 self.graph[idD][idC]['channels_below'] = None
