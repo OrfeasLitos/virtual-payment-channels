@@ -123,9 +123,7 @@ class Network_Elmo(Network):
                 channels_below_upper_layer_D_to_C = self.graph[idD][idC]['channels_below']
                 # assume that channel can occur only once in upper layer, i.e. no cycles.
                 i = channels_below_upper_layer_C_to_D.index(idA)
-                j = channels_below_upper_layer_C_to_D.index(idB)
-                # j = i+1 if ... else i - 1
-                #TODO: calculate with length of list.
+                j = i - 1 if channels_below_upper_layer_C_to_D[i-1] == idB else i+1
                 path_length_C_to_D = len(channels_below_upper_layer_C_to_D)
                 k = path_length_C_to_D - 1 - i
                 l = path_length_C_to_D - 1 - j
