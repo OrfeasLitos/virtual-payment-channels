@@ -103,69 +103,86 @@ class Network_Elmo(Network):
                 self.graph[receiver][sender]['channels_above'].append((idA, idB))
         self.edge_id += 1
 
-    def close_channel(self, idA, idB):
+    def cooperative_close_channel(self, idA, idB):
         # TODO: maybe convention idA < idB
         # TODO: test this!!!
         # TODO: try to simplify this
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
-        if channels_below_reference_channel_A_to_B is not None:
-            for channel in channels_above_reference_channel:
-                idC, idD = channel
-                channels_below_upper_channel_C_to_D = self.graph[idC][idD]['channels_below']
-                channels_below_upper_channel_D_to_C = self.graph[idD][idC]['channels_below']
-                # assume that channel can occur only once in upper layer, i.e. no cycles.
-                i = channels_below_upper_channel_C_to_D.index(idA)
-                j = i - 1 if channels_below_upper_channel_C_to_D[i-1] == idB else i+1
-                path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
-                k = path_length_C_to_D - 1 - i
-                l = path_length_C_to_D - 1 - j
-                # TODO: take minimum and exchange i and j if necessary
-                if i < j:
-                    startpath_C_to_D = self.graph[idC][idD]['channels_below'][:i]
-                    endpath_C_to_D = self.graph[idC][idD]['channels_below'][j+1:]
-                    startpath_D_to_C = self.graph[idD][idC]['channels_below'][:l]
-                    endpath_D_to_C = self.graph[idD][idC]['channels_below'][k+1:]
-                    self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_A_to_B + endpath_C_to_D
-                    self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_B_to_A + endpath_D_to_C
-                else:
-                    startpath_C_to_D = self.graph[idC][idD]['channels_below'][:j]
-                    endpath_C_to_D = self.graph[idC][idD]['channels_below'][i+1:]
-                    startpath_D_to_C = self.graph[idD][idC]['channels_below'][:k]
-                    endpath_D_to_C = self.graph[idD][idC]['channels_below'][l+1:]
-                    self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_B_to_A + endpath_C_to_D
-                    self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_A_to_B + endpath_D_to_C
-            #adjust channels above.
-            path = channels_below_reference_channel_A_to_B
-            for i in range(len(path)-1):
-                # remove old channel above
-                if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
-                    self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
-                    self.graph[path[i+1]][path[i]]['channels_above'].remove((idA, idB))
-                # TODO: remove if after using Set.
-                if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
-                    self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
-                    self.graph[path[i+1]][path[i]]['channels_above'].remove((idB, idA))
-                # add new channels above.
-                self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_channel
-                self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_channel
+        # if onchain channel raise ValueError
+        if channels_below_reference_channel_A_to_B is None:
+            raise ValueError
+        for channel in channels_above_reference_channel:
+            idC, idD = channel
+            channels_below_upper_channel_C_to_D = self.graph[idC][idD]['channels_below']
+            channels_below_upper_channel_D_to_C = self.graph[idD][idC]['channels_below']
+            # assume that channel can occur only once in upper layer, i.e. no cycles.
+            i = channels_below_upper_channel_C_to_D.index(idA)
+            j = i - 1 if channels_below_upper_channel_C_to_D[i-1] == idB else i+1
+            path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
+            k = path_length_C_to_D - 1 - i
+            l = path_length_C_to_D - 1 - j
+            # TODO: take minimum and exchange i and j if necessary
+            if i < j:
+                startpath_C_to_D = self.graph[idC][idD]['channels_below'][:i]
+                endpath_C_to_D = self.graph[idC][idD]['channels_below'][j+1:]
+                startpath_D_to_C = self.graph[idD][idC]['channels_below'][:l]
+                endpath_D_to_C = self.graph[idD][idC]['channels_below'][k+1:]
+                self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_A_to_B + endpath_C_to_D
+                self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_B_to_A + endpath_D_to_C
+            else:
+                startpath_C_to_D = self.graph[idC][idD]['channels_below'][:j]
+                endpath_C_to_D = self.graph[idC][idD]['channels_below'][i+1:]
+                startpath_D_to_C = self.graph[idD][idC]['channels_below'][:k]
+                endpath_D_to_C = self.graph[idD][idC]['channels_below'][l+1:]
+                self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_B_to_A + endpath_C_to_D
+                self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_A_to_B + endpath_D_to_C
+        #adjust channels above.
+        path = channels_below_reference_channel_A_to_B
+        for i in range(len(path)-1):
+            # remove old channel above
+            if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
+                self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
+                self.graph[path[i+1]][path[i]]['channels_above'].remove((idA, idB))
+            # TODO: remove if after using Set.
+            if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
+                self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
+                self.graph[path[i+1]][path[i]]['channels_above'].remove((idB, idA))
+            # add new channels above.
+            self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_channel
+            self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_channel
+        self.remove_channel(idA, idB) 
 
-        else:  # we're closing an onchain channel
-            # Question: if we have virtual channel A -> C via A -> B and B -> C (both opened onchain),
-            # and we close A -> B. Should channels_below[A -> B] == None and channels_above[B->C] == []?
-            self.remove_channel(idA, idB)
-            for channel_above_reference in channels_above_reference_channel:
-                idC, idD = channel_above_reference
-                channels_below_upper = self.graph[idC][idD]['channels_below']
-                # TODO: this should work, but doesn't really capture how elmo works.
-                # Think of a better way to close channels that are also underneath the channel above and at onchain-layer.
-                for i in range(len(channels_below_upper)-1):
-                    if self.graph.get_edge_data(channels_below_upper[i], channels_below_upper[i+1]) is not None:
-                        self.close_channel(channels_below_upper[i], channels_below_upper[i+1])
-                self.graph[idC][idD]['channels_below'] = None
-                self.graph[idD][idC]['channels_below'] = None
+
+    def force_close_channel(self, idA, idB):
+        # TODO: maybe convention idA < idB
+        # TODO: test this!!!
+        # TODO: try to simplify this
+        # TODO: handle the case that the channel is virtual
+        channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
+        channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
+        channels_above_reference_channel = self.graph[idA][idB]['channels_above']
+
+        # Question: if we have virtual channel A -> C via A -> B and B -> C (both opened onchain),
+        # and we close A -> B. Should channels_below[A -> B] == None and channels_above[B->C] == []?
+        self.remove_channel(idA, idB)
+        for channel_above_reference in channels_above_reference_channel:
+            idC, idD = channel_above_reference
+            channels_below_upper = self.graph[idC][idD]['channels_below']
+            # TODO: this should work, but doesn't really capture how elmo works.
+            # Think of a better way to close channels that are also underneath the channel above and at onchain-layer.
+            for i in range(len(channels_below_upper)-1):
+                if self.graph.get_edge_data(channels_below_upper[i], channels_below_upper[i+1]) is not None:
+                    self.force_close_channel(channels_below_upper[i], channels_below_upper[i+1])
+            self.graph[idC][idD]['channels_below'] = None
+            self.graph[idD][idC]['channels_below'] = None
         # TODO: handle balances.
-        self.remove_channel(idA, idB)      
 
+    # for simplicity use for now cooperative close for virtual channel
+    def close_channel(self, idA, idB):
+        if self.graph[idA][idB]['channels_below'] is None:
+            self.force_close_channel(idA, idB)
 
+        else:
+            self.cooperative_close_channel(idA, idB)
