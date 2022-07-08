@@ -164,8 +164,6 @@ class Network_Elmo(Network):
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
 
-        # Question: if we have virtual channel A -> C via A -> B and B -> C (both opened onchain),
-        # and we close A -> B. Should channels_below[A -> B] == None and channels_above[B->C] == []?
         self.remove_channel(idA, idB)
         for channel_above_reference in channels_above_reference_channel:
             idC, idD = channel_above_reference
