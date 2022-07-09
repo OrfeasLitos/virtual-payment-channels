@@ -160,6 +160,7 @@ class Network_Elmo(Network):
         # TODO: test this!!!
         # TODO: try to simplify this
         # TODO: handle the case that the channel is virtual
+        # TODO: adjust channels_above
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
