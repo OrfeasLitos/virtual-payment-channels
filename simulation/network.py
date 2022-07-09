@@ -173,8 +173,9 @@ class Network_Elmo(Network):
             for i in range(len(channels_below_upper)-1):
                 if self.graph.get_edge_data(channels_below_upper[i], channels_below_upper[i+1]) is not None:
                     self.force_close_channel(channels_below_upper[i], channels_below_upper[i+1])
-            self.graph[idC][idD]['channels_below'] = None
-            self.graph[idD][idC]['channels_below'] = None
+            if self.graph.get_edge_data(idC, idD) is not None:
+                self.graph[idC][idD]['channels_below'] = None
+                self.graph[idD][idC]['channels_below'] = None
         # TODO: handle balances.
 
     # for simplicity use for now cooperative close for virtual channel

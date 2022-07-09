@@ -457,6 +457,20 @@ def test_close_channel():
     test_close_channel_first_virtual_layer_one_layer_above()
     test_close_channel_onchain_layer_one_layer_above()
 
+def test_force_close():
+    elmo = Elmo(6, fee_intermediary = 1000000)
+
+    elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
+    elmo.network.add_channel(1, 6000000000., 2, 7000000000., None)
+    elmo.network.add_channel(2, 4000000000., 3, 8000000000., None)
+    elmo.network.add_channel(4, 9000000000., 5, 8000000000., None)
+    elmo.network.add_channel(1, 9000000000., 4, 2000000000., None)
+    elmo.network.add_channel(0, 10000000000., 2, 8000000000., [0,1,2])
+    elmo.network.add_channel(3, 10000000000., 4, 8000000000., [3,2,1,4])
+    elmo.network.add_channel(2, 10000000000., 4, 8000000000., [2,3,4])
+    elmo.network.add_channel(0, 9000000000., 5, 2000000000., [0,2,4,5])
+    elmo.network.force_close_channel(0, 1)
+
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
@@ -473,4 +487,5 @@ if __name__ == "__main__":
     test_undo()
     test_simulation_with_elmo()
     test_close_channel()
+    test_force_close()
     print("Success")
