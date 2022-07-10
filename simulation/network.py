@@ -1,6 +1,5 @@
 # maybe Network should extend a class "LabeledGraph"
 import math
-import copy
 import networkx as nx
 
 
@@ -78,9 +77,6 @@ class Network_Elmo(Network):
             'channels_below' : path, 'channels_above': []}
         )
         # TODO: maybe also struct.
-        reversed_path = copy.copy(path)
-        if reversed_path is not None:
-            reversed_path.reverse()
         edge_B_to_A = (
             idB, idA,
             {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
@@ -156,7 +152,6 @@ class Network_Elmo(Network):
         # TODO: test this!!!
         # TODO: try to simplify this
         # TODO: handle the case that the channel is virtual
-        # TODO: adjust channels_above
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
