@@ -110,8 +110,13 @@ class Network_Elmo(Network):
             channels_below_upper_channel_D_to_C = self.graph[idD][idC]['channels_below']
             # assume that channel can occur only once in upper layer, i.e. no cycles.
             i = channels_below_upper_channel_C_to_D.index(idA)
+            # review: Can i be 0? Does the below work then?
             j = i - 1 if channels_below_upper_channel_C_to_D[i-1] == idB else i+1
+            # review: rename `must_reverse` to `is_right_party_closing` (I hope that's what the boolean represents)
+            # review: calculate the boolean based on `channels_below_upper_channel_C_to_D[i-1] == idB` before setting j.
+            # review: Then set j based on `is_right_party_closing`.
             must_reverse = i > j
+            # review: this is a big improvement in the logic. Has it been thoroughly tested for equivalence with the old one?
             (first_index, second_index) = (j, i) if must_reverse else (i, j)
             path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
             second_index_reverse = path_length_C_to_D - 1 - first_index
