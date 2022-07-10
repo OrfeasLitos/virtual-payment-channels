@@ -99,8 +99,8 @@ class Network_Elmo(Network):
                 # TODO: add our spot in path above. (in dictionary : source, sink, path_index)
                 # TODO: store set.
                 # TODO: maybe store it just on one edge as an optimization.
-                self.graph[sender][receiver]['channels_above'].append((idA, idB))
-                self.graph[receiver][sender]['channels_above'].append((idA, idB))
+                self.graph[sender][receiver]['channels_above'].append({idA, idB})
+                self.graph[receiver][sender]['channels_above'].append({idA, idB})
         self.edge_id += 1
 
     def cooperative_close_channel(self, idA, idB):
@@ -142,13 +142,9 @@ class Network_Elmo(Network):
         path = channels_below_reference_channel_A_to_B
         for i in range(len(path)-1):
             # remove old channel above
-            if (idA, idB) in self.graph[path[i]][path[i+1]]['channels_above']:
-                self.graph[path[i]][path[i+1]]['channels_above'].remove((idA, idB))
-                self.graph[path[i+1]][path[i]]['channels_above'].remove((idA, idB))
+            self.graph[path[i]][path[i+1]]['channels_above'].remove({idA, idB})
+            self.graph[path[i+1]][path[i]]['channels_above'].remove({idA, idB})
             # TODO: remove if after using Set.
-            if (idB, idA) in self.graph[path[i]][path[i+1]]['channels_above']:
-                self.graph[path[i]][path[i+1]]['channels_above'].remove((idB, idA))
-                self.graph[path[i+1]][path[i]]['channels_above'].remove((idB, idA))
             # add new channels above.
             self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_channel
             self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_channel

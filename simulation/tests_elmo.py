@@ -382,10 +382,10 @@ def test_close_channel_first_virtual_layer_no_layer_above():
     elmo.do(payment_information_new_virtual_channel)
     assert elmo.network.graph[0][4]['channels_below'] == [0,1,4]
     assert elmo.network.graph[4][0]['channels_below'] == [4,1,0]
-    assert elmo.network.graph[0][1]['channels_above'] == [(0,4)]
-    assert elmo.network.graph[1][0]['channels_above'] == [(0,4)]
-    assert elmo.network.graph[4][1]['channels_above'] == [(0,4)]
-    assert elmo.network.graph[1][4]['channels_above'] == [(0,4)]
+    assert elmo.network.graph[0][1]['channels_above'] == [{0,4}]
+    assert elmo.network.graph[1][0]['channels_above'] == [{0,4}]
+    assert elmo.network.graph[4][1]['channels_above'] == [{0,4}]
+    assert elmo.network.graph[1][4]['channels_above'] == [{0,4}]
     assert elmo.network.graph[0][2]['channels_above'] == []
     assert elmo.network.graph[2][0]['channels_above'] == []
     elmo.network.close_channel(0, 4)
@@ -415,23 +415,23 @@ def test_close_channel_first_virtual_layer_one_layer_above():
     assert elmo.network.graph[3][0]['channels_below'] == [3, 2, 0]
     assert elmo.network.graph[0][8]['channels_below'] == [0, 3, 8]
     assert elmo.network.graph[8][0]['channels_below'] == [8, 3, 0]
-    assert elmo.network.graph[0][2]['channels_above'] == [(0, 3)]
-    assert elmo.network.graph[2][0]['channels_above'] == [(0, 3)]
-    assert elmo.network.graph[3][2]['channels_above'] == [(0, 3)]
-    assert elmo.network.graph[2][3]['channels_above'] == [(0, 3)]
-    assert elmo.network.graph[0][3]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[3][0]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[3][8]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[8][3]['channels_above'] == [(0, 8)]
+    assert elmo.network.graph[0][2]['channels_above'] == [{0, 3}]
+    assert elmo.network.graph[2][0]['channels_above'] == [{0, 3}]
+    assert elmo.network.graph[3][2]['channels_above'] == [{0, 3}]
+    assert elmo.network.graph[2][3]['channels_above'] == [{0, 3}]
+    assert elmo.network.graph[0][3]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[3][0]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[3][8]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[8][3]['channels_above'] == [{0, 8}]
     elmo.network.close_channel(0, 3)
     assert elmo.network.graph[0][8]['channels_below'] == [0, 2, 3, 8]
     assert elmo.network.graph[8][0]['channels_below'] == [8, 3, 2, 0]
-    assert elmo.network.graph[0][2]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[2][0]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[3][2]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[2][3]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[3][8]['channels_above'] == [(0, 8)]
-    assert elmo.network.graph[8][3]['channels_above'] == [(0, 8)]
+    assert elmo.network.graph[0][2]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[2][0]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[3][2]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[2][3]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[3][8]['channels_above'] == [{0, 8}]
+    assert elmo.network.graph[8][3]['channels_above'] == [{0, 8}]
     assert elmo.network.graph.get_edge_data(0, 3) is None
     assert elmo.network.graph.get_edge_data(3, 0) is None
 
@@ -477,12 +477,12 @@ def test_force_close():
     assert elmo.network.graph[2][4]['channels_below'] is None
     assert elmo.network.graph[4][5]['channels_below'] is None
     assert elmo.network.graph[5][4]['channels_below'] is None
-    #assert elmo.network.graph[0][2]['channels_above'] == (5, 0)
-    #assert elmo.network.graph[2][0]['channels_above'] == (0, 5)
-    #assert elmo.network.graph[4][2]['channels_above'] == (0, 5)
-    #assert elmo.network.graph[2][4]['channels_above'] == (0, 5)
-    #assert elmo.network.graph[4][5]['channels_above'] == (0, 5)
-    #assert elmo.network.graph[5][4]['channels_above'] == (0, 5)
+    assert elmo.network.graph[0][2]['channels_above'] == [{5, 0}]
+    assert elmo.network.graph[2][0]['channels_above'] == [{0, 5}]
+    assert elmo.network.graph[4][2]['channels_above'] == [{0, 5}]
+    assert elmo.network.graph[2][4]['channels_above'] == [{0, 5}]
+    assert elmo.network.graph[4][5]['channels_above'] == [{0, 5}]
+    assert elmo.network.graph[5][4]['channels_above'] == [{0, 5}]
 
 
 def test_simulation_with_elmo():
