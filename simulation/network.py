@@ -111,24 +111,26 @@ class Network_Elmo(Network):
             # assume that channel can occur only once in upper layer, i.e. no cycles.
             i = channels_below_upper_channel_C_to_D.index(idA)
             j = i - 1 if channels_below_upper_channel_C_to_D[i-1] == idB else i+1
+            must_reverse = i > j
+            (first_index, second_index) = (j, i) if must_reverse else (i, j)
             path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
-            k = path_length_C_to_D - 1 - i
-            l = path_length_C_to_D - 1 - j
+            second_index_reverse = path_length_C_to_D - 1 - first_index
+            first_index_reverse = path_length_C_to_D - 1 - second_index
             # TODO: take minimum and exchange i and j if necessary
-            if i < j:
-                startpath_C_to_D = self.graph[idC][idD]['channels_below'][:i]
-                endpath_C_to_D = self.graph[idC][idD]['channels_below'][j+1:]
-                startpath_D_to_C = self.graph[idD][idC]['channels_below'][:l]
-                endpath_D_to_C = self.graph[idD][idC]['channels_below'][k+1:]
-                self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_A_to_B + endpath_C_to_D
-                self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_B_to_A + endpath_D_to_C
-            else:
-                startpath_C_to_D = self.graph[idC][idD]['channels_below'][:j]
-                endpath_C_to_D = self.graph[idC][idD]['channels_below'][i+1:]
-                startpath_D_to_C = self.graph[idD][idC]['channels_below'][:k]
-                endpath_D_to_C = self.graph[idD][idC]['channels_below'][l+1:]
-                self.graph[idC][idD]['channels_below'] = startpath_C_to_D + channels_below_reference_channel_B_to_A + endpath_C_to_D
-                self.graph[idD][idC]['channels_below'] = startpath_D_to_C + channels_below_reference_channel_A_to_B + endpath_D_to_C
+            startpath_C_to_D = self.graph[idC][idD]['channels_below'][:first_index]
+            endpath_C_to_D = self.graph[idC][idD]['channels_below'][second_index + 1:]
+            startpath_D_to_C = self.graph[idD][idC]['channels_below'][:first_index_reverse]
+            endpath_D_to_C = self.graph[idD][idC]['channels_below'][second_index_reverse + 1:]
+            self.graph[idC][idD]['channels_below'] = (
+                startpath_C_to_D + 
+                (list(reversed(channels_below_reference_channel_A_to_B)) if must_reverse else channels_below_reference_channel_A_to_B) + 
+                endpath_C_to_D
+            )
+            self.graph[idD][idC]['channels_below'] = (
+                startpath_D_to_C +
+                (list(reversed(channels_below_reference_channel_B_to_A)) if must_reverse else channels_below_reference_channel_B_to_A) +
+                endpath_D_to_C
+            )
         #adjust channels above.
         path = channels_below_reference_channel_A_to_B
         for i in range(len(path)-1):
