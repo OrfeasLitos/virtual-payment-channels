@@ -90,10 +90,6 @@ class Network_Elmo(Network):
             for i in range(len(path) - 1):
                 sender = path[i]
                 receiver = path[i+1]
-                # TODO: think if pair is ok here or if we want all the information of the channels to be stored.
-                # review: let's update this on an as-needed basis
-                # TODO: add our spot in path above. (in dictionary : source, sink, path_index)
-                # TODO: store set.
                 # TODO: maybe store it just on one edge as an optimization.
                 self.graph[sender][receiver]['channels_above'].append({idA, idB})
                 self.graph[receiver][sender]['channels_above'].append({idA, idB})
@@ -101,7 +97,6 @@ class Network_Elmo(Network):
 
     def cooperative_close_channel(self, idA, idB):
         # TODO: maybe convention idA < idB
-        # TODO: test this!!!
         # TODO: try to simplify this
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
@@ -140,7 +135,6 @@ class Network_Elmo(Network):
             # remove old channel above
             self.graph[path[i]][path[i+1]]['channels_above'].remove({idA, idB})
             self.graph[path[i+1]][path[i]]['channels_above'].remove({idA, idB})
-            # TODO: remove if after using Set.
             # add new channels above.
             self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_channel
             self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_channel
