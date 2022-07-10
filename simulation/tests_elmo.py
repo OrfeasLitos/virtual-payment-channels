@@ -486,7 +486,14 @@ def test_force_close1():
 
 
 def test_force_close2():
-    pass
+    elmo = Elmo(4, fee_intermediary = 1000000)
+
+    elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
+    elmo.network.add_channel(1, 6000000000., 2, 7000000000., None)
+    elmo.network.add_channel(2, 4000000000., 3, 8000000000., None)
+    elmo.network.add_channel(1, 10000000000., 3, 8000000000., [1,2,3])
+    elmo.network.add_channel(0, 10000000000., 3, 8000000000., [0,1,3])
+    elmo.network.force_close_channel(0, 1)
 
 def test_force_close():
     test_force_close1()
