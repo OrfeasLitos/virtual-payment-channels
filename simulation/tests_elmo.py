@@ -457,7 +457,7 @@ def test_close_channel():
     test_close_channel_first_virtual_layer_one_layer_above()
     test_close_channel_onchain_layer_one_layer_above()
 
-def test_force_close():
+def test_force_close1():
     elmo = Elmo(6, fee_intermediary = 1000000)
 
     elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
@@ -483,6 +483,14 @@ def test_force_close():
     assert elmo.network.graph[2][4]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[4][5]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[5][4]['channels_above'] == [{0, 5}]
+
+
+def test_force_close2():
+    pass
+
+def test_force_close():
+    test_force_close1()
+    test_force_close2()
 
 
 def test_simulation_with_elmo():
