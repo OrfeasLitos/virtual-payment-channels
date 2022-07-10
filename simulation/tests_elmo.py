@@ -494,6 +494,11 @@ def test_force_close2():
     elmo.network.add_channel(1, 10000000000., 3, 8000000000., [1,2,3])
     elmo.network.add_channel(0, 10000000000., 3, 8000000000., [0,1,3])
     elmo.network.force_close_channel(0, 1)
+    assert set(elmo.network.graph.edges()) == set([(0, 3), (3, 0)])
+    assert elmo.network.graph[0][3]['channels_below'] is None
+    assert elmo.network.graph[0][3]['channels_above'] == []
+    assert elmo.network.graph[3][0]['channels_below'] is None
+    assert elmo.network.graph[3][0]['channels_above'] == []
 
 def test_force_close():
     test_force_close1()

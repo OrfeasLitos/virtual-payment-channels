@@ -162,17 +162,31 @@ class Network_Elmo(Network):
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
 
         self.remove_channel(idA, idB)
+
+        
+        # forceClose channels below
+        if channels_below_reference_channel_A_to_B is not None:
+            for i in range(len(channels_below_reference_channel_A_to_B) - 1):
+                self.force_close_channel(
+                    channels_below_reference_channel_A_to_B[i],
+                    channels_below_reference_channel_A_to_B[i+1]
+                )
+
+        
         for channel_above_reference in channels_above_reference_channel:
             idC, idD = channel_above_reference
+            if self.graph.get_edge_data(idC, idD) is None:
+                continue
             channels_below_upper = self.graph[idC][idD]['channels_below']
             # TODO: this should work, but doesn't really capture how elmo works.
-            # Think of a better way to close channels that are also underneath the channel above and at onchain-layer.
+            # Think of a better way to close channels that are also below the channel above and at onchain-layer.
             for i in range(len(channels_below_upper)-1):
                 if self.graph.get_edge_data(channels_below_upper[i], channels_below_upper[i+1]) is not None:
                     self.force_close_channel(channels_below_upper[i], channels_below_upper[i+1])
             if self.graph.get_edge_data(idC, idD) is not None:
                 self.graph[idC][idD]['channels_below'] = None
                 self.graph[idD][idC]['channels_below'] = None
+
         # TODO: handle balances.
 
     # for simplicity use for now cooperative close for virtual channel
