@@ -163,7 +163,6 @@ class Network_Elmo(Network):
 
         self.remove_channel(idA, idB)
 
-        
         # forceClose channels below
         if channels_below_reference_channel_A_to_B is not None:
             for i in range(len(channels_below_reference_channel_A_to_B) - 1):
@@ -171,8 +170,7 @@ class Network_Elmo(Network):
                     channels_below_reference_channel_A_to_B[i],
                     channels_below_reference_channel_A_to_B[i+1]
                 )
-
-        
+    
         for channel_above_reference in channels_above_reference_channel:
             idC, idD = channel_above_reference
             if self.graph.get_edge_data(idC, idD) is None:

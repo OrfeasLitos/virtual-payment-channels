@@ -451,7 +451,6 @@ def test_close_channel_onchain_layer_one_layer_above():
     assert elmo.network.graph[4][0]['channels_below'] is None
     #assert elmo.network.graph[1][4]['channels_above'] == []
 
-
 def test_close_channel():
     test_close_channel_first_virtual_layer_no_layer_above()
     test_close_channel_first_virtual_layer_one_layer_above()
@@ -484,7 +483,6 @@ def test_force_close1():
     assert elmo.network.graph[4][5]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[5][4]['channels_above'] == [{0, 5}]
 
-
 def test_force_close2():
     elmo = Elmo(4, fee_intermediary = 1000000)
 
@@ -503,7 +501,6 @@ def test_force_close2():
 def test_force_close():
     test_force_close1()
     test_force_close2()
-
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
