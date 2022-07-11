@@ -118,9 +118,10 @@ class Network_Elmo(Network):
             # review: rename `must_reverse` to `is_right_party_closing` (I hope that's what the boolean represents)
             # review: calculate the boolean based on `channels_below_upper_channel_C_to_D[i-1] == idB` before setting j.
             # review: Then set j based on `is_right_party_closing`.
-            must_reverse = i > j
+            is_right_party_closing = channels_below_upper_channel_C_to_D[i-1] == idB
+            j = i - 1 if is_right_party_closing else i + 1
             # review: this is a big improvement in the logic. Has it been thoroughly tested for equivalence with the old one?
-            (first_index, second_index) = (j, i) if must_reverse else (i, j)
+            (first_index, second_index) = (j, i) if is_right_party_closing else (i, j)
             path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
             second_index_reverse = path_length_C_to_D - 1 - first_index
             first_index_reverse = path_length_C_to_D - 1 - second_index
@@ -131,12 +132,12 @@ class Network_Elmo(Network):
             endpath_D_to_C = self.graph[idD][idC]['channels_below'][second_index_reverse + 1:]
             self.graph[idC][idD]['channels_below'] = (
                 startpath_C_to_D + 
-                (list(reversed(channels_below_reference_channel_A_to_B)) if must_reverse else channels_below_reference_channel_A_to_B) + 
+                (list(reversed(channels_below_reference_channel_A_to_B)) if is_right_party_closing else channels_below_reference_channel_A_to_B) + 
                 endpath_C_to_D
             )
             self.graph[idD][idC]['channels_below'] = (
                 startpath_D_to_C +
-                (list(reversed(channels_below_reference_channel_B_to_A)) if must_reverse else channels_below_reference_channel_B_to_A) +
+                (list(reversed(channels_below_reference_channel_B_to_A)) if is_right_party_closing else channels_below_reference_channel_B_to_A) +
                 endpath_D_to_C
             )
         #adjust channels above.
