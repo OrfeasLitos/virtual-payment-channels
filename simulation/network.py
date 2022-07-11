@@ -113,14 +113,13 @@ class Network_Elmo(Network):
             # review: Can i be 0? Does the below work then?
             # It should, because if i = 0 then channels_below_upper_channel_C_to_D[i-1] gives the last element,
             # which shouldn't be idB, since then C -> D would be A -> B and D -> D is above A -> B.
-            # But I'll add a test. TODO: test.
+            # tested in test_coop_close_channel_first_virtual_layer_one_layer_above_first_direction
             j = i - 1 if channels_below_upper_channel_C_to_D[i-1] == idB else i+1
             is_right_party_closing = channels_below_upper_channel_C_to_D[i-1] == idB
             j = i - 1 if is_right_party_closing else i + 1
             # review: this is a big improvement in the logic. Has it been thoroughly tested for equivalence with the old one?
             # I've checked the logic and it passed all previous tests for channel_closing,
-            # but I'll add some test to check that it works for both values of is_right_party_closing.
-            # TODO: add tests.
+            # tested in test_coop_close_channel_first_virtual_layer_one_layer_above_second_direction
             (first_index, second_index) = (j, i) if is_right_party_closing else (i, j)
             path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
             second_index_reverse = path_length_C_to_D - 1 - first_index
