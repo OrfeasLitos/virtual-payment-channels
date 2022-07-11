@@ -121,11 +121,13 @@ class Network_Elmo(Network):
             is_right_party_closing = channels_below_upper_channel_C_to_D[i-1] == idB
             j = i - 1 if is_right_party_closing else i + 1
             # review: this is a big improvement in the logic. Has it been thoroughly tested for equivalence with the old one?
+            # I've checked the logic and it passed all previous tests for channel_closing,
+            # but I'll add some test to check that it works for both values of is_right_party_closing.
+            # TODO: add tests.
             (first_index, second_index) = (j, i) if is_right_party_closing else (i, j)
             path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
             second_index_reverse = path_length_C_to_D - 1 - first_index
             first_index_reverse = path_length_C_to_D - 1 - second_index
-            # TODO: take minimum and exchange i and j if necessary
             startpath_C_to_D = self.graph[idC][idD]['channels_below'][:first_index]
             endpath_C_to_D = self.graph[idC][idD]['channels_below'][second_index + 1:]
             startpath_D_to_C = self.graph[idD][idC]['channels_below'][:first_index_reverse]
