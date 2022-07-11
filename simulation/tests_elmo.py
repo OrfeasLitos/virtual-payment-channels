@@ -371,7 +371,7 @@ def test_undo():
     test_undo_new_virtual_channel()
     test_undo_elmo_pay()
 
-def test_close_channel_first_virtual_layer_no_layer_above():
+def test_coop_close_channel_first_virtual_layer_no_layer_above():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
         make_example_values_for_do()
     )
@@ -388,14 +388,14 @@ def test_close_channel_first_virtual_layer_no_layer_above():
     assert elmo.network.graph[1][4]['channels_above'] == [{0,4}]
     assert elmo.network.graph[0][2]['channels_above'] == []
     assert elmo.network.graph[2][0]['channels_above'] == []
-    elmo.network.close_channel(0, 4)
+    elmo.network.cooperative_close_channel(0, 4)
     assert elmo.network.graph[0][1]['channels_above'] == []
     assert elmo.network.graph[0][1]['channels_below'] is None
     assert elmo.network.graph[1][0]['channels_above'] == []
     assert elmo.network.graph[4][1]['channels_above'] == []
     assert elmo.network.graph[1][4]['channels_above'] == []
 
-def test_close_channel_first_virtual_layer_one_layer_above():
+def test_coop_close_channel_first_virtual_layer_one_layer_above():
     elmo = make_example_network_elmo()
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 300000000.), (0, 3, 2500000000.)]
     value1 = 100000000
@@ -423,7 +423,7 @@ def test_close_channel_first_virtual_layer_one_layer_above():
     assert elmo.network.graph[3][0]['channels_above'] == [{0, 8}]
     assert elmo.network.graph[3][8]['channels_above'] == [{0, 8}]
     assert elmo.network.graph[8][3]['channels_above'] == [{0, 8}]
-    elmo.network.close_channel(0, 3)
+    elmo.network.cooperative_close_channel(0, 3)
     assert elmo.network.graph[0][8]['channels_below'] == [0, 2, 3, 8]
     assert elmo.network.graph[8][0]['channels_below'] == [8, 3, 2, 0]
     assert elmo.network.graph[0][2]['channels_above'] == [{0, 8}]
@@ -435,7 +435,7 @@ def test_close_channel_first_virtual_layer_one_layer_above():
     assert elmo.network.graph.get_edge_data(0, 3) is None
     assert elmo.network.graph.get_edge_data(3, 0) is None
 
-def test_close_channel_onchain_layer_one_layer_above():
+def test_force_close_channel_onchain_layer_one_layer_above():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
         make_example_values_for_do()
     )
@@ -446,15 +446,15 @@ def test_close_channel_onchain_layer_one_layer_above():
     elmo.do(payment_information_new_virtual_channel)
     assert elmo.network.graph[0][4]['channels_below'] == [0,1,4]
     assert elmo.network.graph[4][0]['channels_below'] == [4,1,0]
-    elmo.network.close_channel(0, 1)
+    elmo.network.force_close_channel(0, 1)
     assert elmo.network.graph[0][4]['channels_below'] is None
     assert elmo.network.graph[4][0]['channels_below'] is None
-    #assert elmo.network.graph[1][4]['channels_above'] == []
+    assert elmo.network.graph.get_edge_data(1, 4) is None
 
 def test_close_channel():
-    test_close_channel_first_virtual_layer_no_layer_above()
-    test_close_channel_first_virtual_layer_one_layer_above()
-    test_close_channel_onchain_layer_one_layer_above()
+    test_coop_close_channel_first_virtual_layer_no_layer_above()
+    test_coop_close_channel_first_virtual_layer_one_layer_above()
+    test_force_close_channel_onchain_layer_one_layer_above()
 
 def test_force_close1():
     elmo = Elmo(6, fee_intermediary = 1000000)
