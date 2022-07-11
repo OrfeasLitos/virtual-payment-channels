@@ -115,9 +115,6 @@ class Network_Elmo(Network):
             # which shouldn't be idB, since then C -> D would be A -> B and D -> D is above A -> B.
             # But I'll add a test. TODO: test.
             j = i - 1 if channels_below_upper_channel_C_to_D[i-1] == idB else i+1
-            # review: rename `must_reverse` to `is_right_party_closing` (I hope that's what the boolean represents)
-            # review: calculate the boolean based on `channels_below_upper_channel_C_to_D[i-1] == idB` before setting j.
-            # review: Then set j based on `is_right_party_closing`.
             is_right_party_closing = channels_below_upper_channel_C_to_D[i-1] == idB
             j = i - 1 if is_right_party_closing else i + 1
             # review: this is a big improvement in the logic. Has it been thoroughly tested for equivalence with the old one?
