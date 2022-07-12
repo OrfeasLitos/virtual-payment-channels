@@ -206,6 +206,7 @@ class Network_Elmo(Network):
 
         # TODO: handle balances.
 
+    #TODO: maybe we can optimize that.
     # for simplicity use for now cooperative close for virtual channel
     def close_channel(self, idA, idB):
         if self.graph[idA][idB]['channels_below'] is None:
