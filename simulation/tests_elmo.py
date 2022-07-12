@@ -241,7 +241,7 @@ def test_locking_and_unlocking_enough_balance():
     value = 2000000000
     sender_coins = 100000000
     lock_value = value + sender_coins
-    elmo.lock_coins(path, lock_value)
+    elmo.network.lock_coins(path, lock_value)
     assert_eq(elmo.network.graph[0][1]['balance'],6000000000 - lock_value)
     assert_eq(elmo.network.graph[1][0]['balance'], 7000000000)
     assert_eq(elmo.network.graph[1][4]['balance'], 4000000000 - lock_value)
@@ -257,7 +257,7 @@ def test_locking_and_unlocking_enough_balance():
     assert_eq(elmo.network.graph[7][4]['locked_coins'], 0)
     assert_eq(elmo.network.graph[1][2]['locked_coins'], 0)
 
-    elmo.undo_locking(path, lock_value)
+    elmo.network.undo_locking(path, lock_value)
     assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
     assert_eq(elmo.network.graph[1][0]['balance'], 7000000000)
     assert_eq(elmo.network.graph[1][4]['balance'], 4000000000)
@@ -282,7 +282,7 @@ def test_locking_not_enough_balance():
     balances_before = nx.get_edge_attributes(elmo.network.graph, "balance")
     locked_coins_before = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
     try:
-        elmo.lock_coins(path, lock_value)
+        elmo.network.lock_coins(path, lock_value)
         assert False, "should raise ValueError"
     except ValueError:
         balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")

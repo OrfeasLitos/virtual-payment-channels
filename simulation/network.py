@@ -94,6 +94,32 @@ class Network_Elmo(Network):
                 self.graph[sender][receiver]['channels_above'].append({idA, idB})
                 self.graph[receiver][sender]['channels_above'].append({idA, idB})
         self.edge_id += 1
+    
+    def lock_coins(self, path, lock_value):
+        # Question: are coins on the first channel in the path also locked?
+        # review: yes, the sender locks these coins in its base channel as well.
+        for i in range(len(path) - 1):
+            sender = path[i]
+            receiver = path[i+1]
+            if self.graph[sender][receiver]['balance'] < lock_value:
+                for j in range(i):
+                    sender = path[j]
+                    receiver = path[j+1]
+                    self.graph[sender][receiver]['balance'] += lock_value
+                    self.graph[sender][receiver]['locked_coins'] -= lock_value
+                raise ValueError
+            self.graph[sender][receiver]['balance'] -= lock_value
+            self.graph[sender][receiver]['locked_coins'] += lock_value
+
+    def undo_locking(self, path, lock_value):
+        # TODO: maybe make it similarly as for update_balances and include this with an operator
+        # and boolean variable in lock.
+        # undoes just one lock, doesn't free all locked money.
+        for i in range(len(path) - 1):
+            sender = path[i]
+            receiver = path[i+1]
+            self.graph[sender][receiver]['balance'] += lock_value
+            self.graph[sender][receiver]['locked_coins'] -= lock_value
 
     def cooperative_close_channel(self, idA, idB):
         # TODO: maybe convention idA < idB
