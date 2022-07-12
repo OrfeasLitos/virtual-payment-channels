@@ -123,7 +123,6 @@ class Network_Elmo(Network):
 
     def cooperative_close_channel(self, idA, idB):
         # TODO: maybe convention idA < idB
-        # TODO: try to simplify this
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
@@ -133,7 +132,6 @@ class Network_Elmo(Network):
         for channel in channels_above_reference_channel:
             idC, idD = channel
             channels_below_upper_channel_C_to_D = self.graph[idC][idD]['channels_below']
-            channels_below_upper_channel_D_to_C = self.graph[idD][idC]['channels_below']
             # assume that channel can occur only once in upper layer, i.e. no cycles.
             i = channels_below_upper_channel_C_to_D.index(idA)
             # review: Can i be 0? Does the below work then?
@@ -178,11 +176,8 @@ class Network_Elmo(Network):
 
     def force_close_channel(self, idA, idB):
         # TODO: maybe convention idA < idB
-        # TODO: test this!!!
-        # TODO: try to simplify this
         # TODO: handle the case that the channel is virtual
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
-        channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
 
         self.remove_channel(idA, idB)

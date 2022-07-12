@@ -361,7 +361,7 @@ class LN(Payment_Network):
         )
 
 class Elmo(Payment_Network):
-    # TODO: find reasonable value for fee_intermediary, lock_value, opening_transaction_size, elmo_delay
+    # TODO: find reasonable value for fee_intermediary, opening_transaction_size, elmo_delay
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
