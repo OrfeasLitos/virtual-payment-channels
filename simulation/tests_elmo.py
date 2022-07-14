@@ -476,8 +476,10 @@ def test_force_close1():
     elmo.network.lock_coins([2,3,4], 100000000. + 80000000.)
     elmo.network.add_channel(0, 90000000., 5, 20000000., [0,2,4,5])
     elmo.network.lock_coins([0,2,4,5], 9000000. + 2000000.)
-    unlocked_coins = elmo.network.force_close_channel(0, 1)
-    assert set(elmo.network.graph.edges()) == set([(0, 2), (2, 0), (5, 0), (0, 5), (2, 4), (4, 2),  (4, 5), (5, 4)])
+    previous_balances = nx.get_edge_attributes(elmo.network.graph, 'balance')
+    previous_locked_coins = nx.get_edge_attributes(elmo.network.graph, 'locked_coins')
+    coins_for_chain = elmo.network.force_close_channel(0, 1)
+    assert set(elmo.network.graph.edges()) == set([(0, 2), (2, 0), (5, 0), (0, 5), (2, 4), (4, 2), (4, 5), (5, 4)])
     assert elmo.network.graph[0][2]['channels_below'] is None
     assert elmo.network.graph[2][0]['channels_below'] is None
     assert elmo.network.graph[4][2]['channels_below'] is None
@@ -490,6 +492,11 @@ def test_force_close1():
     assert elmo.network.graph[2][4]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[4][5]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[5][4]['channels_above'] == [{0, 5}]
+    assert coins_for_chain[(0, 1)] == 3000000000.
+    assert coins_for_chain[(1, 0)] == 7000000000.
+    assert set(coins_for_chain) == set([(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (3, 4), (4, 3), (1, 4), (4, 1)])
+    for parties, value in coins_for_chain.items():
+        assert value == previous_balances[parties] + previous_locked_coins[parties]
 
 def test_force_close2():
     elmo = Elmo(4, fee_intermediary = 1000000)
