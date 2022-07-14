@@ -180,6 +180,10 @@ class Network_Elmo(Network):
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
 
+        unlocked_coins = {
+            (idA, idB) : self.graph[idA][idB]['locked_coins'],
+            (idB, idA) : self.graph[idB][idA]['locked_coins']
+        }
         self.remove_channel(idA, idB)
 
         # forceClose channels below
@@ -199,11 +203,20 @@ class Network_Elmo(Network):
             # Think of a better way to close channels that are also below the channel above and at onchain-layer.
             for i in range(len(channels_below_upper)-1):
                 if self.graph.get_edge_data(channels_below_upper[i], channels_below_upper[i+1]) is not None:
-                    self.force_close_channel(channels_below_upper[i], channels_below_upper[i+1])
+                    previously_unlocked_coins = self.force_close_channel(
+                        channels_below_upper[i],
+                        channels_below_upper[i+1]
+                    )
+                    for party, coins in previously_unlocked_coins.items():
+                        if party in unlocked_coins:
+                            unlocked_coins[party] += coins
+                        else:
+                            unlocked_coins[party] = coins
             if self.graph.get_edge_data(idC, idD) is not None:
                 self.graph[idC][idD]['channels_below'] = None
                 self.graph[idD][idC]['channels_below'] = None
 
+        return unlocked_coins
         # TODO: handle balances.
 
     #TODO: maybe we can optimize that.
