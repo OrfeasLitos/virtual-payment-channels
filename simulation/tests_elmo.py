@@ -468,11 +468,15 @@ def test_force_close1():
     elmo.network.add_channel(2, 4000000000., 3, 8000000000., None)
     elmo.network.add_channel(4, 9000000000., 5, 8000000000., None)
     elmo.network.add_channel(1, 9000000000., 4, 2000000000., None)
-    elmo.network.add_channel(0, 10000000000., 2, 8000000000., [0,1,2])
-    elmo.network.add_channel(3, 10000000000., 4, 8000000000., [3,2,1,4])
-    elmo.network.add_channel(2, 10000000000., 4, 8000000000., [2,3,4])
-    elmo.network.add_channel(0, 9000000000., 5, 2000000000., [0,2,4,5])
-    elmo.network.force_close_channel(0, 1)
+    elmo.network.add_channel(0, 1000000000., 2, 800000000., [0,1,2])
+    elmo.network.lock_coins([0,1,2], 1000000000. + 800000000.)
+    elmo.network.add_channel(3, 1000000000., 4, 800000000., [3,2,1,4])
+    elmo.network.lock_coins([3,2,1,4], 1000000000. + 800000000.)
+    elmo.network.add_channel(2, 100000000., 4, 80000000., [2,3,4])
+    elmo.network.lock_coins([2,3,4], 100000000. + 80000000.)
+    elmo.network.add_channel(0, 90000000., 5, 20000000., [0,2,4,5])
+    elmo.network.lock_coins([0,2,4,5], 9000000. + 2000000.)
+    unlocked_coins = elmo.network.force_close_channel(0, 1)
     assert set(elmo.network.graph.edges()) == set([(0, 2), (2, 0), (5, 0), (0, 5), (2, 4), (4, 2),  (4, 5), (5, 4)])
     assert elmo.network.graph[0][2]['channels_below'] is None
     assert elmo.network.graph[2][0]['channels_below'] is None
@@ -486,6 +490,7 @@ def test_force_close1():
     assert elmo.network.graph[2][4]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[4][5]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[5][4]['channels_above'] == [{0, 5}]
+    #assert unlocked_coins.keys == 
 
 def test_force_close2():
     elmo = Elmo(4, fee_intermediary = 1000000)
