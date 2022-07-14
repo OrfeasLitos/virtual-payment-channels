@@ -490,7 +490,6 @@ def test_force_close1():
     assert elmo.network.graph[2][4]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[4][5]['channels_above'] == [{0, 5}]
     assert elmo.network.graph[5][4]['channels_above'] == [{0, 5}]
-    #assert unlocked_coins.keys == 
 
 def test_force_close2():
     elmo = Elmo(4, fee_intermediary = 1000000)

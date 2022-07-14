@@ -180,9 +180,9 @@ class Network_Elmo(Network):
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
 
-        unlocked_coins = {
-            (idA, idB) : self.graph[idA][idB]['locked_coins'],
-            (idB, idA) : self.graph[idB][idA]['locked_coins']
+        coins_for_chain = {
+            (idA, idB) : self.graph[idA][idB]['locked_coins'] + self.graph[idA][idB]['balance'],
+            (idB, idA) : self.graph[idB][idA]['locked_coins'] + self.graph[idB][idA]['balance']
         }
         self.remove_channel(idA, idB)
 
@@ -208,15 +208,15 @@ class Network_Elmo(Network):
                         channels_below_upper[i+1]
                     )
                     for party, coins in previously_unlocked_coins.items():
-                        if party in unlocked_coins:
-                            unlocked_coins[party] += coins
+                        if party in coins_for_chain:
+                            coins_for_chain[party] += coins
                         else:
-                            unlocked_coins[party] = coins
+                            coins_for_chain[party] = coins
             if self.graph.get_edge_data(idC, idD) is not None:
                 self.graph[idC][idD]['channels_below'] = None
                 self.graph[idD][idC]['channels_below'] = None
 
-        return unlocked_coins
+        return coins_for_chain
         # TODO: handle balances.
 
     #TODO: maybe we can optimize that.
