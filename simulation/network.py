@@ -124,7 +124,9 @@ class Network_Elmo(Network):
     def cooperative_close_channel(self, idA, idB):
         # convention: A is first in channels_below_reference_channel (and B last)
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
-        unlock_amount = self.graph[idA][idB]['balance'] + self.graph[idB][idA]['balance']
+        amountA = self.graph[idA][idB]['balance']
+        amountB = self.graph[idB][idA]['balance']
+        unlock_amount = amountA + amountB
         self.undo_locking(channels_below_reference_channel_A_to_B, unlock_amount)
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
@@ -174,6 +176,8 @@ class Network_Elmo(Network):
             self.graph[path[i]][path[i+1]]['channels_above'] += channels_above_reference_channel
             self.graph[path[i+1]][path[i]]['channels_above'] += channels_above_reference_channel
         self.remove_channel(idA, idB) 
+
+        return amountA, amountB
 
 
     def force_close_channel(self, idA, idB):
