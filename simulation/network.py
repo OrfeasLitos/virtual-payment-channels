@@ -122,8 +122,10 @@ class Network_Elmo(Network):
             self.graph[sender][receiver]['locked_coins'] -= lock_value
 
     def cooperative_close_channel(self, idA, idB):
-        # TODO: maybe convention idA < idB
+        # convention: A is first in channels_below_reference_channel (and B last)
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
+        unlock_amount = self.graph[idA][idB]['balance'] + self.graph[idB][idA]['balance']
+        self.undo_locking(channels_below_reference_channel_A_to_B, unlock_amount)
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
         # if onchain channel raise ValueError
