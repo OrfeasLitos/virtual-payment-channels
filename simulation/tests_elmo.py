@@ -516,6 +516,7 @@ def test_force_close2():
 def test_force_close():
     test_force_close1()
     test_force_close2()
+    # TODO: test force_close for virtual channel.
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.

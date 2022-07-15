@@ -217,7 +217,6 @@ class Network_Elmo(Network):
                 self.graph[idD][idC]['channels_below'] = None
 
         return coins_for_chain
-        # TODO: handle balances.
 
     #TODO: maybe we can optimize that.
     # for simplicity use for now cooperative close for virtual channel
