@@ -616,8 +616,6 @@ class Elmo(Payment_Network):
                 sender = path[0]
                 receiver = path[-1]
                 amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
-                assert amount_sender == sender_coins
-                assert amount_receiver == value
                 self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
             case 'Elmo-pay':
                 sender, receiver, value = payment_information['data']
