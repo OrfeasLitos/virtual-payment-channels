@@ -34,7 +34,7 @@ def make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.0000
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return base_fee, ln_fee, lightning, future_payments
 
-def make_example_simulation_ln(seed = 0, coins_for_parties = 'max_value'):
+def make_example_simulation_ln(seed = 12345, coins_for_parties = 'max_value'):
     random.seed(seed)
     lightning = LN(10, coins_for_parties = coins_for_parties)
     knowledge = Knowledge(know_all)
@@ -365,11 +365,11 @@ def test_update_balances():
     test_update_balances_reverse()
 
 def test_simulation_with_ln_different_coins(coins_for_parties):
-    simulation1 = make_example_simulation_ln(seed = 0, coins_for_parties = coins_for_parties)
+    simulation1 = make_example_simulation_ln(seed = 12345, coins_for_parties = coins_for_parties)
     results1 = simulation1.run()
     lightning1 = simulation1.payment_method
     plainbitcoin1 = lightning1.plain_bitcoin
-    simulation2 = make_example_simulation_ln(seed = 0, coins_for_parties = coins_for_parties)
+    simulation2 = make_example_simulation_ln(seed = 12345, coins_for_parties = coins_for_parties)
     lightning2 = simulation2.payment_method
     plainbitcoin2 = lightning2.plain_bitcoin
     results2 = simulation2.run()
@@ -386,7 +386,7 @@ def test_simulation_with_ln_different_coins(coins_for_parties):
                     lightning1.network.graph[sender][receiver]['balance'],
                     lightning2.network.graph[sender][receiver]['balance']
                 )
-    simulation3 = make_example_simulation_ln(seed = 1, coins_for_parties = coins_for_parties)
+    simulation3 = make_example_simulation_ln(seed = 123, coins_for_parties = coins_for_parties)
     assert simulation1 != simulation3
 
 def test_simulation_with_ln():

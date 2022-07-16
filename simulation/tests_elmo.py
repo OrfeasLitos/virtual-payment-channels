@@ -33,7 +33,7 @@ def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return fee_intermediary, elmo, future_payments
 
-def make_example_simulation_elmo(seed = 0, coins_for_parties = 'max_value'):
+def make_example_simulation_elmo(seed = 12345, coins_for_parties = 'max_value'):
     random.seed(seed)
     elmo = Elmo(10, coins_for_parties=coins_for_parties)
     knowledge = Knowledge(know_all)
