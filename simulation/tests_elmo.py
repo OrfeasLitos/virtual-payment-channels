@@ -519,7 +519,11 @@ def test_force_close():
     # TODO: test force_close for virtual channel.
 
 def test_simulation_with_elmo1():
-    elmo = Elmo(4, coins_for_parties='max_value', fee_intermediary = 1000000)
+    elmo = Elmo(
+        nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
+        fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
+        elmo_new_virtual_channel_delay = 1
+    )
     knowledge = Knowledge(know_all)
     payments = [(0, 1, 100000000), (0, 1, 10000000)]
     utility_function = example_utility_function_for_simulation
