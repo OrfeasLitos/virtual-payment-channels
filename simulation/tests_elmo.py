@@ -519,7 +519,7 @@ def test_force_close():
     test_force_close2()
     # TODO: test force_close for virtual channel.
 
-def test_simulation_with_elmo1():
+def test_simulation_with_elmo_ignore_centrality():
     elmo = Elmo(
         nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
         fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
@@ -540,12 +540,34 @@ def test_simulation_with_elmo1():
     assert payment1_info['kind'] == 'Elmo-pay'
     assert len(results) == 2
 
+def test_simulation_with_elmo_ignore_centrality_and_distance():
+    elmo = Elmo(
+        nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
+        fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
+        elmo_new_virtual_channel_delay = 1
+    )
+    knowledge = Knowledge(know_all)
+    payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
+    utility_function = make_example_utility_function(10000, 5000, 0, 0)
+    utility = Utility(utility_function)
+    simulation = Simulation(payments, elmo, knowledge, utility)
+    results = simulation.run()
+    done_payment0, payment0_info = results[0]
+    # TODO: think about dummy_lock_value in paymentmethod.
+    assert done_payment0 == True
+    assert payment0_info['kind'] == 'onchain'
+    done_payment1, payment1_info = results[1]
+    assert done_payment1 == True
+    assert payment1_info['kind'] == 'onchain'
+    assert len(results) == 2
+
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
     simulation = make_example_simulation_elmo()
     results = simulation.run()
     print(results)
-    test_simulation_with_elmo1()
+    test_simulation_with_elmo_ignore_centrality()
+    test_simulation_with_elmo_ignore_centrality_and_distance()
 
 if __name__ == "__main__":
     test_get_payment_options_elmo()
