@@ -535,6 +535,10 @@ def test_simulation_with_elmo1():
     # TODO: think about dummy_lock_value in paymentmethod.
     assert done_payment0 == True
     assert payment0_info['kind'] == 'Elmo-open-channel'
+    done_payment1, payment1_info = results[1]
+    assert done_payment1 == True
+    assert payment1_info['kind'] == 'Elmo-pay'
+    assert len(results) == 2
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
