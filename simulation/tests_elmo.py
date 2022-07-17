@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import math
 import copy
+import collections
 from numpy.testing import assert_almost_equal as assert_eq
 import networkx as nx
 import unittest
@@ -525,11 +526,15 @@ def test_simulation_with_elmo1():
         elmo_new_virtual_channel_delay = 1
     )
     knowledge = Knowledge(know_all)
-    payments = [(0, 1, 100000000), (0, 1, 10000000)]
+    payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
     utility_function = make_example_utility_function(10000, 5000, 10000, 0)
     utility = Utility(utility_function)
     simulation = Simulation(payments, elmo, knowledge, utility)
-    # simulation.run()
+    results = simulation.run()
+    done_payment0, payment0_info = results[0]
+    # TODO: think about dummy_lock_value in paymentmethod.
+    assert done_payment0 == True
+    assert payment0_info['kind'] == 'Elmo-open-channel'
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
