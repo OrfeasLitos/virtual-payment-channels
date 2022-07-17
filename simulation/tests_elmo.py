@@ -526,7 +526,7 @@ def test_simulation_with_elmo1():
     )
     knowledge = Knowledge(know_all)
     payments = [(0, 1, 100000000), (0, 1, 10000000)]
-    utility_function = example_utility_function_for_simulation
+    utility_function = make_example_utility_function(10000, 5000, 10000, 0)
     utility = Utility(utility_function)
     simulation = Simulation(payments, elmo, knowledge, utility)
     # simulation.run()
