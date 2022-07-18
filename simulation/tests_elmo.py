@@ -517,7 +517,6 @@ def test_force_close2():
 def test_force_close():
     test_force_close1()
     test_force_close2()
-    # TODO: test force_close for virtual channel.
 
 def test_simulation_with_elmo_ignore_centrality():
     elmo = Elmo(
@@ -532,7 +531,6 @@ def test_simulation_with_elmo_ignore_centrality():
     simulation = Simulation(payments, elmo, knowledge, utility)
     results = simulation.run()
     done_payment0, payment0_info = results[0]
-    # TODO: think about dummy_lock_value in paymentmethod.
     assert done_payment0 == True
     assert payment0_info['kind'] == 'Elmo-open-channel'
     done_payment1, payment1_info = results[1]
@@ -553,7 +551,6 @@ def test_simulation_with_elmo_ignore_centrality_and_distance():
     simulation = Simulation(payments, elmo, knowledge, utility)
     results = simulation.run()
     done_payment0, payment0_info = results[0]
-    # TODO: think about dummy_lock_value in paymentmethod.
     assert done_payment0 == True
     assert payment0_info['kind'] == 'onchain'
     done_payment1, payment1_info = results[1]
@@ -590,7 +587,6 @@ def test_simulation_with_previous_channels_elmo_ignore_centrality():
     assert elmo.network.graph[1][0]['locked_coins'] == 0
 
 def test_simulation_with_elmo():
-    # TODO: test with differnt coins for parties and make real tests.
     simulation = make_example_simulation_elmo()
     results = simulation.run()
     print(results)

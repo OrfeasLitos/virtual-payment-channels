@@ -478,7 +478,6 @@ class Elmo(Payment_Network):
             return None
         hops, path = cost_and_path
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
-        # TODO: find better name for channel_balances
         # TODO: think of reasonable factor.
         # the factor is introduced so that lower channel doesn't end up with 0 balance. Do we want this?
         availability_factor = 4
@@ -536,7 +535,7 @@ class Elmo(Payment_Network):
         options = [onchain_option, new_channel_option, new_virtual_channel_option, elmo_pay_option]
         return [option for option in options if option is not None]
 
-    # TODO: think if update balances, locking, etc should be in network.
+    # TODO: think if update balances should be in network.
     # adjusted from LN
     def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
         # the pay argument tells whether this corresponds to making a payment

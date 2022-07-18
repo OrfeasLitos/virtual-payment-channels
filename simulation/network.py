@@ -76,7 +76,6 @@ class Network_Elmo(Network):
             {'balance': balA, 'locked_coins' : 0, 'cost' : UNIT_COST,
             'channels_below' : path, 'channels_above': []}
         )
-        # TODO: maybe also struct.
         edge_B_to_A = (
             idB, idA,
             {'balance': balB, 'locked_coins' : 0, 'cost' : UNIT_COST,
@@ -181,8 +180,6 @@ class Network_Elmo(Network):
 
 
     def force_close_channel(self, idA, idB):
-        # TODO: maybe convention idA < idB
-        # TODO: handle the case that the channel is virtual
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
 
@@ -205,8 +202,6 @@ class Network_Elmo(Network):
             if self.graph.get_edge_data(idC, idD) is None:
                 continue
             channels_below_upper = self.graph[idC][idD]['channels_below']
-            # TODO: this should work, but doesn't really capture how elmo works.
-            # Think of a better way to close channels that are also below the channel above and at onchain-layer.
             for i in range(len(channels_below_upper)-1):
                 if self.graph.get_edge_data(channels_below_upper[i], channels_below_upper[i+1]) is not None:
                     previously_unlocked_coins = self.force_close_channel(
