@@ -28,9 +28,6 @@ def make_example_utility_function(factor_fee, factor_delay, factor_distance, fac
             )
     return utility_function
 
-def know_all(party, payments):
-    return payments
-
 example_utility_function_for_simulation = make_example_utility_function(10000, 5000, 10000, 1000)
 
 def test_cheapest_path():

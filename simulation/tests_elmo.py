@@ -14,7 +14,7 @@ from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counter
 from utility import Utility
 from knowledge import Knowledge
 from network import Network
-from tests import know_all, make_example_utility_function , example_utility_function_for_simulation
+from tests import make_example_utility_function , example_utility_function_for_simulation
 
 def make_example_network_elmo(fee_intermediary = 1000000):
     elmo = Elmo(10, fee_intermediary = fee_intermediary)
@@ -37,7 +37,7 @@ def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
 def make_example_simulation_elmo(seed = 12345, coins_for_parties = 'max_value'):
     random.seed(seed)
     elmo = Elmo(10, coins_for_parties=coins_for_parties)
-    knowledge = Knowledge(know_all)
+    knowledge = Knowledge('know-all')
     payments = random_payments(100, 10, 2000000000)
     utility_function = example_utility_function_for_simulation
     utility = Utility(utility_function)
@@ -525,7 +525,7 @@ def test_simulation_with_elmo_ignore_centrality():
         fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
         elmo_new_virtual_channel_delay = 1
     )
-    knowledge = Knowledge(know_all)
+    knowledge = Knowledge('know-all')
     payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
     utility_function = make_example_utility_function(10000, 5000, 10000, 0)
     utility = Utility(utility_function)
@@ -546,7 +546,7 @@ def test_simulation_with_elmo_ignore_centrality_and_distance():
         fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
         elmo_new_virtual_channel_delay = 1
     )
-    knowledge = Knowledge(know_all)
+    knowledge = Knowledge('know-all')
     payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
     utility_function = make_example_utility_function(10000, 5000, 0, 0)
     utility = Utility(utility_function)
@@ -569,7 +569,7 @@ def test_simulation_with_previous_channels_elmo_ignore_centrality():
     elmo.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
     elmo.network.add_channel(1, 1000000000000., 3, 800000000000., [1,2,3])
     elmo.network.add_channel(0, 100000000000., 3, 80000000000., [0,1,3])
-    knowledge = Knowledge(know_all)
+    knowledge = Knowledge('know-all')
     payments = collections.deque([(0, 2, 1000000000), (0, 1, 20000000000)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
     utility = Utility(utility_function)

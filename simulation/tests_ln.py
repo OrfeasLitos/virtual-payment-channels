@@ -12,7 +12,7 @@ from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counter
 from utility import Utility
 from knowledge import Knowledge
 from network import Network
-from tests import know_all, make_example_utility_function, example_utility_function_for_simulation
+from tests import make_example_utility_function, example_utility_function_for_simulation
 
 
 def make_example_network_ln(base_fee = 1000, ln_fee = 0.00002):
@@ -37,7 +37,7 @@ def make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.0000
 def make_example_simulation_ln(seed = 12345, coins_for_parties = 'max_value'):
     random.seed(seed)
     lightning = LN(10, coins_for_parties = coins_for_parties)
-    knowledge = Knowledge(know_all)
+    knowledge = Knowledge('know-all')
     payments = random_payments(100, 10, 2000000000)
     utility_function = example_utility_function_for_simulation
     utility = Utility(utility_function)
