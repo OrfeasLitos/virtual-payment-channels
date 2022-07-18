@@ -581,7 +581,13 @@ def test_simulation_with_previous_channels_elmo_ignore_centrality():
     assert payment0_info['kind'] == 'Elmo-open-virtual-channel'
     assert done_payment1 == True
     assert payment1_info['kind'] == 'Elmo-pay'
-    
+    assert len(results) == 2
+    assert set(elmo.network.graph.edges()) == set(
+        [(0, 1), (1, 0), (0, 2), (2, 0), (0, 3), (3, 0), (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)]
+    )
+    assert elmo.network.graph[0][1]['locked_coins'] == 1000000000
+    assert elmo.network.graph[1][2]['locked_coins'] == 1000000000
+    assert elmo.network.graph[1][0]['locked_coins'] == 0
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
