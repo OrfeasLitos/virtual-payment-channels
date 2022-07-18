@@ -575,6 +575,9 @@ def test_simulation_with_previous_channels_elmo_ignore_centrality():
     utility = Utility(utility_function)
     simulation = Simulation(payments, elmo, knowledge, utility)
     results = simulation.run()
+    done_payment0, payment0_info = results[0]
+    assert done_payment0 == True
+    assert payment0_info['kind'] == 'Elmo-open-virtual-channel'
 
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
