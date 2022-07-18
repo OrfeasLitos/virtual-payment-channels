@@ -505,8 +505,8 @@ def test_force_close2():
     elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
     elmo.network.add_channel(1, 6000000000., 2, 7000000000., None)
     elmo.network.add_channel(2, 4000000000., 3, 8000000000., None)
-    elmo.network.add_channel(1, 10000000000., 3, 8000000000., [1,2,3])
-    elmo.network.add_channel(0, 10000000000., 3, 8000000000., [0,1,3])
+    elmo.network.add_channel(1, 1000000000., 3, 800000000., [1,2,3])
+    elmo.network.add_channel(0, 100000000., 3, 80000000., [0,1,3])
     elmo.network.force_close_channel(0, 1)
     assert set(elmo.network.graph.edges()) == set([(0, 3), (3, 0)])
     assert elmo.network.graph[0][3]['channels_below'] is None
@@ -561,6 +561,21 @@ def test_simulation_with_elmo_ignore_centrality_and_distance():
     assert payment1_info['kind'] == 'onchain'
     assert len(results) == 2
 
+def test_simulation_with_previous_channels_elmo_ignore_centrality():
+    elmo = Elmo(4, fee_intermediary = 1000000)
+
+    elmo.network.add_channel(0, 3000000000000., 1, 7000000000000., None)
+    elmo.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
+    elmo.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
+    elmo.network.add_channel(1, 1000000000000., 3, 800000000000., [1,2,3])
+    elmo.network.add_channel(0, 100000000000., 3, 80000000000., [0,1,3])
+    knowledge = Knowledge(know_all)
+    payments = collections.deque([(0, 2, 1000000000), (0, 1, 20000000000)])
+    utility_function = make_example_utility_function(10000, 5000, 1, 0)
+    utility = Utility(utility_function)
+    simulation = Simulation(payments, elmo, knowledge, utility)
+    results = simulation.run()
+
 def test_simulation_with_elmo():
     # TODO: test with differnt coins for parties and make real tests.
     simulation = make_example_simulation_elmo()
@@ -568,6 +583,7 @@ def test_simulation_with_elmo():
     print(results)
     test_simulation_with_elmo_ignore_centrality()
     test_simulation_with_elmo_ignore_centrality_and_distance()
+    test_simulation_with_previous_channels_elmo_ignore_centrality()
 
 if __name__ == "__main__":
     test_get_payment_options_elmo()
