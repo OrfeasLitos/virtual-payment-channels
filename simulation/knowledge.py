@@ -1,6 +1,7 @@
 import collections
 import itertools
 
+# TODO: remove function from name.
 def know_all_function(party, payments):
     return payments
 

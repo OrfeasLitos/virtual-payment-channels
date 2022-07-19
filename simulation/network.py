@@ -208,6 +208,7 @@ class Network_Elmo(Network):
                         channels_below_upper[i],
                         channels_below_upper[i+1]
                     )
+                    # TODO: partys (plural)
                     for party, coins in previously_unlocked_coins.items():
                         if party in coins_for_chain:
                             coins_for_chain[party] += coins
