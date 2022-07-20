@@ -8,7 +8,8 @@ import networkx as nx
 import unittest
 
 from simulation import Simulation, random_payments
-from paymentmethod import PlainBitcoin, LN, Elmo, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_LN
+from paymentmethod import PlainBitcoin, Elmo, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_LN
+from ln import LN
 from utility import Utility
 from knowledge import Knowledge
 from network import Network
