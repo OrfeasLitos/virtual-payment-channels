@@ -121,13 +121,11 @@ class Elmo(Payment_Network):
             return None
         hops, path = cost_and_path
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
-        # TODO: think of reasonable factor.
-        # the factor is introduced so that lower channel doesn't end up with 0 balance. Do we want this?
+        # the factor is introduced so that lower channel doesn't end up with 0 balance.
         availability_factor = 4
         base_channels_max_lock_values = [
             self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
         ]
-        # review: I'm not sure what is this append doing
         base_channels_max_lock_values
         max_common_lock_value = min(
             base_channels_max_lock_values
