@@ -228,3 +228,15 @@ class Network_Elmo(Network):
 
         else:
             self.cooperative_close_channel(idA, idB)
+
+class Network_LVPC(Network):
+    def __init__(self, nr_vertices):
+        super().__init__(nr_vertices)
+    
+    def find_cheapest_path(self, sender, receiver, amount, fee_intermediary):
+        # TODO: think how to optimize that.
+        cheapest_path = super.find_cheapest_path(sender, receiver, amount, fee_intermediary)
+        # 3 is for [sender, intermediary, receiver], if longer no path possible
+        if cheapest_path is not None and len(cheapest_path) > 3:
+            return None
+        return cheapest_path

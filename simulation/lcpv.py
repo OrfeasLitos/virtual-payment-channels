@@ -1,5 +1,5 @@
 from paymentmethod import Payment_Network
-from network import Network
+from network import Network_LVPC
 
 class LVPC(Payment_Network):
     def __init__(self, nr_players, max_coins=2000000000000000, bitcoin_fee=1000000, bitcoin_delay=3600,
@@ -10,4 +10,4 @@ class LVPC(Payment_Network):
         self.lvpc_delay = lvpc_delay
         self.opening_transaction_size = opening_transaction_size
         # TODO: check what kind of network we need for LVPC
-        self.network = Network(nr_players)
+        self.network = Network_LVPC(nr_players)
