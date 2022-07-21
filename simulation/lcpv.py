@@ -120,3 +120,46 @@ class LVPC(Payment_Network):
         lvpc_pay_option = self.get_lvpc_pay_option(sender, receiver, value, future_payments)
         options = [onchain_option, new_channel_option, new_virtual_channel_option, lvpc_pay_option]
         return [option for option in options if option is not None]
+
+    # copied from Elmo
+    def pay(self, sender, receiver, value):
+        if self.network.graph.get_edge_data(sender, receiver) is None:
+            raise ValueError
+        elif self.network.graph[sender][receiver]['balance'] < value:
+            raise ValueError
+        self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - value
+        self.network.graph[receiver][sender]['balance'] = self.network.graph[receiver][sender]['balance'] + value
+
+    # copied from Elmo
+    # TODO: adjust to account for differences in handling balances in Elmo and LVPC
+    def do(self, payment_information):
+        match payment_information['kind']:
+            case 'onchain':
+                self.plain_bitcoin.pay(payment_information['data'])
+            case 'LVPC-open-channel':
+                # adjusted from LN-open
+                sender, receiver, value, sender_coins = payment_information['data']
+                self.network.add_channel(sender, sender_coins, receiver, value, None)
+                # next update the coins of sender
+                amount_sender = - (
+                    sender_coins + value +
+                    self.plain_bitcoin.get_fee(self.opening_transaction_size)
+                )
+                self.plain_bitcoin.update_coins(sender, amount_sender)
+            case 'LVPC-open-virtual-channel':
+                path, value, sender_coins = payment_information['data']
+                sender = path[0]
+                receiver = path[-1]
+                # Question: are coins for new virtual channel taken from onchain-coins or from coins of some existing channel?
+                if self.plain_bitcoin.coins[sender] < sender_coins + value:
+                    raise ValueError
+                # important that next line is at that position so that Error gets raised in case update is not possible
+                # before anything else is done.
+                self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
+                self.network.lock_coins(path, sender_coins + value)
+                self.network.add_channel(sender, sender_coins, receiver, value, path)
+            case 'LVPC-pay':
+                sender, receiver, value = payment_information['data']
+                self.pay(sender, receiver, value)
+            case _:
+                raise ValueError
