@@ -93,3 +93,30 @@ class LVPC(Payment_Network):
             'distance': new_virtual_channel_distance,
             'payment_information': payment_information
         }
+
+    # copied from elmo
+    def get_lvpc_pay_option(self, sender, receiver, value, future_payments):
+        payment_information = {'kind': 'LVPC-pay', 'data': (sender, receiver, value)}
+        try:
+            self.do(payment_information)
+        except ValueError:
+            return None
+        centrality_lvpc_pay = self.network.get_harmonic_centrality()
+        distance_lvpc_pay = self.get_distances(sender, future_payments)
+        self.undo(payment_information)
+        return {
+            'delay': self.lvpc_pay_delay,
+            'fee': 0,
+            'centrality': centrality_lvpc_pay,
+            'distance': distance_lvpc_pay,
+            'payment_information': payment_information
+        }
+
+    # copied from Elmo
+    def get_payment_options(self, sender, receiver, value, future_payments):
+        onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
+        new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
+        new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
+        lvpc_pay_option = self.get_lvpc_pay_option(sender, receiver, value, future_payments)
+        options = [onchain_option, new_channel_option, new_virtual_channel_option, lvpc_pay_option]
+        return [option for option in options if option is not None]
