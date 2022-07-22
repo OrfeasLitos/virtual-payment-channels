@@ -5,8 +5,8 @@ from network import Network_LVPC
 
 class LVPC(Payment_Network):
     def __init__(self, nr_players, max_coins=2000000000000000, bitcoin_fee=1000000, bitcoin_delay=3600,
-        coins_for_parties="max_value", lvpc_fee_intermediary = None, opening_transaction_size = 200,
-        lvpc_new_virtual_channel_delay = None, lvpc_pay_delay = None
+        coins_for_parties="max_value", lvpc_fee_intermediary = 10000, opening_transaction_size = 200,
+        lvpc_new_virtual_channel_delay = 1, lvpc_pay_delay = 0.05
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         # TODO: find value for fee, delay.
@@ -49,13 +49,13 @@ class LVPC(Payment_Network):
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
-                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.fee_intermediary)
+                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.lvpc_fee_intermediary)
                 ))
             if future_receiver != source:
                 path_data.append((
                     future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
-                    self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.fee_intermediary)
+                    self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.lvpc_fee_intermediary)
                 ))
 
         dummy_lock_value = 11 * 500000000
@@ -63,7 +63,7 @@ class LVPC(Payment_Network):
             path_data.append((
                 party,
                 weight_other,
-                self.network.find_cheapest_path(source, party, dummy_lock_value, self.fee_intermediary)
+                self.network.find_cheapest_path(source, party, dummy_lock_value, self.lvpc_fee_intermediary)
             ))
         
         for counterparty, weight, cost_and_path in path_data:
@@ -183,21 +183,21 @@ class LVPC(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
-        cost_sender = num_intermediaries * self.fee_intermediary
+        cost_sender = num_intermediaries * self.lvpc_fee_intermediary
         if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
             raise ValueError
         # update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
-            received = (num_intermediaries - (i-1)) * self.fee_intermediary
-            transfered = received - self.fee_intermediary
+            received = (num_intermediaries - (i-1)) * self.lvpc_fee_intermediary
+            transfered = received - self.lvpc_fee_intermediary
             new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
             new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
             # we test just for new_giver_balance < 0 as in case of new virtual channel only giver_balance gets smaller
             # In case of undoing it, there was a payment done before, so there shouldn't occur numbers < 0.
             if new_giver_balance < 0:
                 for j in range(1, i):
-                    received = (num_intermediaries - (j-1)) * self.fee_intermediary
-                    transfered = received - self.fee_intermediary
+                    received = (num_intermediaries - (j-1)) * self.lvpc_fee_intermediary
+                    transfered = received - self.lvpc_fee_intermediary
                     new_taker_balance = op_give(self.network.graph[path[j]][path[j-1]]['balance'], received)
                     new_giver_balance = op_take(self.network.graph[path[j]][path[j+1]]['balance'], transfered)
                 raise ValueError
