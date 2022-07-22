@@ -1,3 +1,4 @@
+import operator
 from paymentmethod import Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_LVPC
 from network import Network_LVPC
 
@@ -122,6 +123,37 @@ class LVPC(Payment_Network):
         return [option for option in options if option is not None]
 
     # copied from Elmo
+    def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
+        # the pay argument tells whether this corresponds to making a payment
+        # or undoing it.
+        # all the "speaking names" like op_take, received, etc are in the case of a payment
+        # in case of undoing they do the opposite.
+        op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
+        num_intermediaries = len(path) - 2
+        sender = path[0]
+        cost_sender = num_intermediaries * self.fee_intermediary
+        if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
+            raise ValueError
+        # update the balances of the intermediaries.
+        for i in range(1, num_intermediaries + 1):
+            received = (num_intermediaries - (i-1)) * self.fee_intermediary
+            transfered = received - self.fee_intermediary
+            new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
+            new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
+            # we test just for new_giver_balance < 0 as in case of new virtual channel only giver_balance gets smaller
+            # In case of undoing it, there was a payment done before, so there shouldn't occur numbers < 0.
+            if new_giver_balance < 0:
+                for j in range(1, i):
+                    received = (num_intermediaries - (j-1)) * self.fee_intermediary
+                    transfered = received - self.fee_intermediary
+                    new_taker_balance = op_give(self.network.graph[path[j]][path[j-1]]['balance'], received)
+                    new_giver_balance = op_take(self.network.graph[path[j]][path[j+1]]['balance'], transfered)
+                raise ValueError
+            self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
+            self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
+        self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
+
+    # copied from Elmo
     def pay(self, sender, receiver, value):
         if self.network.graph.get_edge_data(sender, receiver) is None:
             raise ValueError
@@ -161,5 +193,23 @@ class LVPC(Payment_Network):
             case 'LVPC-pay':
                 sender, receiver, value = payment_information['data']
                 self.pay(sender, receiver, value)
+            case _:
+                raise ValueError
+
+    # copied from Elmo
+    def undo(self, payment_information):
+        match payment_information['kind']:
+            case 'LVPC-open-virtual-channel':
+                path, value, sender_coins = payment_information['data']
+                sender = path[0]
+                receiver = path[-1]
+                amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
+                self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
+            case 'LVPC-pay':
+                sender, receiver, value = payment_information['data']
+                if self.network.graph.get_edge_data(sender, receiver) is None:
+                    raise ValueError
+                self.network.graph[sender][receiver]['balance'] += value
+                self.network.graph[receiver][sender]['balance'] -= value
             case _:
                 raise ValueError
