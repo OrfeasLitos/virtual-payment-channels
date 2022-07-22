@@ -23,6 +23,57 @@ class LVPC(Payment_Network):
     def get_new_virtual_channel_fee(self):
         return self.lvpc_fee_intermediary
 
+    # copied from Elmo
+    def get_distances(self, source, future_payments):
+        """
+        Returns weighted distances to the future parties and to parties not occuring in future payments.
+        Muiltiple payments to same party give multiple distances.
+        """
+        distances = []
+        # weight if we are endpoint
+        weight_endpoint = 100
+        # weight if we are possible intermediary
+        weight_intermediary = 10
+        # weight for other parties
+        weight_other = 1
+        encountered_parties = set({source})
+        path_data = []
+        for future_sender, future_receiver, value in future_payments:
+            encountered_parties.add(future_sender)
+            encountered_parties.add(future_receiver)
+            # TODO: think of a good lock_value or balance the sender wants to put on a new channel
+            dummy_lock_value = 10 * 500000000 + value
+            if future_sender != source:
+                # TODO: think about discarding first part of the tuple.
+                path_data.append((
+                    future_sender,
+                    weight_endpoint if future_receiver == source else weight_intermediary,
+                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.fee_intermediary)
+                ))
+            if future_receiver != source:
+                path_data.append((
+                    future_receiver,
+                    weight_endpoint if future_sender == source else weight_intermediary,
+                    self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.fee_intermediary)
+                ))
+
+        dummy_lock_value = 11 * 500000000
+        for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
+            path_data.append((
+                party,
+                weight_other,
+                self.network.find_cheapest_path(source, party, dummy_lock_value, self.fee_intermediary)
+            ))
+        
+        for counterparty, weight, cost_and_path in path_data:
+            if cost_and_path is None:
+                distances.append((weight, math.inf))
+            else:
+                _, cheapest_path = cost_and_path
+                distances.append((weight, len(cheapest_path)-1))
+
+        return distances
+
     # almost equal to the method for Elmo
     def get_new_channel_option(self, sender, receiver, value, future_payments):
         # in case we have already a channel
@@ -61,7 +112,7 @@ class LVPC(Payment_Network):
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         # this is a simplification. TODO: think if this is what we want.
         anticipated_lock_value = sum_future_payments + value
-        cost_and_path = self.network.find_cheapest_path(sender, receiver, anticipated_lock_value, self.lvpc_fee_intermediary)
+        cost_and_path = self.network.find_cheapest_path_for_new_virtual(sender, receiver, anticipated_lock_value, self.lvpc_fee_intermediary)
         if cost_and_path is None:
             return None
         _, path = cost_and_path
