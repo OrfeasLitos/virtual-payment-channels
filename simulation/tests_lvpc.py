@@ -5,6 +5,24 @@ from simulation import Simulation, random_payments
 from utility import Utility
 from tests import example_utility_function_for_simulation
 
+def make_example_network_lvpc(fee_intermediary = 1000000):
+    lvpc = LVPC(10, fee_intermediary = fee_intermediary)
+
+    lvpc.network.add_channel(0, 3000000000., 2, 7000000000., None)
+    lvpc.network.add_channel(0, 6000000000., 1, 7000000000., None)
+    lvpc.network.add_channel(1, 4000000000., 4, 8000000000., None)
+    lvpc.network.add_channel(3, 9000000000., 4, 8000000000., None)
+    lvpc.network.add_channel(2, 9000000000., 3, 2000000000., None)
+    lvpc.network.add_channel(1, 10000000000., 2, 8000000000., None)
+    lvpc.network.add_channel(4, 10000000000., 7, 8000000000., None)
+    lvpc.network.add_channel(3, 10000000000., 8, 8000000000., None)
+    return lvpc
+
+def make_example_network_lvpc_and_future_payments(fee_intermediary = 1000000):
+    lvpc = make_example_network_lvpc(fee_intermediary)
+    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
+    return fee_intermediary, lvpc, future_payments
+
 def make_example_simulation_lvpc(seed = 12345, coins_for_parties = 'max_value'):
     random.seed(seed)
     lvpc = LVPC(10, coins_for_parties=coins_for_parties)
