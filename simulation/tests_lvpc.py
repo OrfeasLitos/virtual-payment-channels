@@ -42,16 +42,25 @@ def test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible():
     assert payment_options[1]['payment_information']['kind'] == 'LVPC-open-channel'
     assert payment_options[2]['payment_information']['kind'] == 'LVPC-open-virtual-channel'
 
-def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible():
+def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible1():
     fee_intermediary, lvpc, future_payments = make_example_network_lvpc_and_future_payments()
     payment_options = lvpc.get_payment_options(0, 7, 100000000., future_payments)
     assert len(payment_options) == 2
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == 'LVPC-open-channel'
 
+def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2():
+    # virtual channel not possible because too much future payments, would need too much balance
+    fee_intermediary, lvpc, future_payments = make_example_network_lvpc_and_future_payments()
+    payment_options = lvpc.get_payment_options(0, 7, 10000000000., future_payments)
+    assert len(payment_options) == 2
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    assert payment_options[1]['payment_information']['kind'] == 'LVPC-open-channel'
+
 def test_get_payment_options():
     test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible()
-    test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible()
+    test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible1()
+    test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2()
 
 def test_simulation_with_lvpc():
     simulation = make_example_simulation_lvpc()
