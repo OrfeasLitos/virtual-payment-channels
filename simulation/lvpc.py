@@ -1,7 +1,4 @@
-import operator
-import math
-from paymentmethod import Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_LVPC
-from network import Network_LVPC
+from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from custom_elmo_lvpc_donner import Custom_Elmo_LVPC_Donner
 
 class LVPC(Custom_Elmo_LVPC_Donner):
@@ -38,7 +35,7 @@ class LVPC(Custom_Elmo_LVPC_Donner):
         max_common_lock_value = min(
             base_channels_max_lock_values
         )
-        desired_virtual_coins = MULTIPLIER_CHANNEL_BALANCE_LVPC * sum_future_payments
+        desired_virtual_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
         sender_coins = min(max_common_lock_value, desired_virtual_coins)
         if sender_coins < 0:
             return None

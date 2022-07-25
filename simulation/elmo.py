@@ -1,7 +1,3 @@
-import math
-import operator
-from paymentmethod import PlainBitcoin, Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_ELMO
-from network import Network_Elmo
 from custom_elmo_lvpc_donner import Custom_Elmo_LVPC_Donner
 
 class Elmo(Custom_Elmo_LVPC_Donner):
