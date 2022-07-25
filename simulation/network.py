@@ -248,6 +248,7 @@ class Network_Donner(Network_Elmo):
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
 
+    # TODO: check if we really need the function argument. Depends on how we want to handle distances
     def get_weight_function(self, amount, function = "standard"):
         """
         This function returns the weight function we use in the following.
