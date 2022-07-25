@@ -419,6 +419,7 @@ def test_coop_close_channel_first_virtual_layer_one_layer_above(forward = True):
     value2 = 1000000
     payment_options2 = elmo.get_payment_options(0, 8, value2, future_payments)
     assert payment_options2[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    assert payment_options2[2]['payment_information']['data'][0] == [0, 3, 8]
     payment_information_new_virtual_channel2 = payment_options2[2]['payment_information']
 
     elmo.do(payment_information_new_virtual_channel2)

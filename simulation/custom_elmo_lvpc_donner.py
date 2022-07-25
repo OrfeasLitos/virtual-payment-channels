@@ -13,6 +13,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         new_virtual_channel_delay = 1
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        self.method_name = method_name
         match method_name:
             case "Elmo":
                 self.network = Network_Elmo(nr_players)
@@ -134,7 +135,10 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         # this is a simplification. TODO: think if this is what we want.
         anticipated_lock_value = sum_future_payments + value
-        cost_and_path = self.network.find_cheapest_path(sender, receiver, anticipated_lock_value, self.fee_intermediary)
+        cost_and_path = self.network.find_cheapest_path(
+            sender, receiver, anticipated_lock_value, self.fee_intermediary,
+            function="new_virtual_donner" if self.method_name=="Donner" else "standard"
+            )
         if cost_and_path is None:
             return None
         hops, path = cost_and_path

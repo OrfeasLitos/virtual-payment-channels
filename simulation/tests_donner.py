@@ -26,8 +26,12 @@ def test_get_payment_options_donner():
 
     value2 = 1000000
     payment_options2 = donner.get_payment_options(0, 8, value2, future_payments)
+    assert len(payment_options2) == 3
     assert payment_options2[2]['payment_information']['kind'] == 'Donner-open-virtual-channel'
+    assert payment_options2[2]['payment_information']['data'][0] == [0, 2, 3, 8]
     payment_information_new_virtual_channel2 = payment_options2[2]['payment_information']
+    donner.do(payment_information_new_virtual_channel2)
+
 
 if __name__ == "__main__":
     test_get_payment_options_donner()
