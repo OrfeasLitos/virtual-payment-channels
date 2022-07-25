@@ -4,7 +4,7 @@ from paymentmethod import PlainBitcoin, Payment_Network, sum_future_payments_to_
 from network import Network_Elmo, Network_LVPC, Network_Donner
 
 class Custom_Elmo_LVPC_Donner(Payment_Network):
-    # TODO: find reasonable value for fee_intermediary, opening_transaction_size, elmo_delay
+    # TODO: find reasonable value for fee_intermediary, opening_transaction_size, delay
     def __init__(
         self, method_name, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
@@ -103,7 +103,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
-        new_channel_time = self.plain_bitcoin.get_delay() + self.elmo_pay_delay
+        new_channel_time = self.plain_bitcoin.get_delay() + self.pay_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         sender_coins = min(
@@ -122,7 +122,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             'centrality': new_channel_centrality,
             'distance': new_channel_distance,
             'payment_information': {
-                'kind': 'Elmo-open-channel',
+                'kind': self.open_channel_string,
                 'data': (sender, receiver, value, sender_coins)
             }
         }
@@ -152,7 +152,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sender_coins = min(max_common_lock_value, desired_virtual_coins)
         if sender_coins < 0:
             return None
-        payment_information = {'kind': 'Elmo-open-virtual-channel', 'data': (path, value, sender_coins)}
+        payment_information = {'kind': self.open_virtual_channel_string, 'data': (path, value, sender_coins)}
         try:
             self.do(payment_information)
         except ValueError:
@@ -169,20 +169,20 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             'payment_information': payment_information
         }
 
-    def get_elmo_pay_option(self, sender, receiver, value, future_payments):
-        payment_information = {'kind': 'Elmo-pay', 'data': (sender, receiver, value)}
+    def get_pay_option(self, sender, receiver, value, future_payments):
+        payment_information = {'kind': self.pay_string, 'data': (sender, receiver, value)}
         try:
             self.do(payment_information)
         except ValueError:
             return None
-        centrality_elmo_pay = self.network.get_harmonic_centrality()
-        distance_elmo_pay = self.get_distances(sender, future_payments)
+        centrality_pay = self.network.get_harmonic_centrality()
+        distance_pay = self.get_distances(sender, future_payments)
         self.undo(payment_information)
         return {
-            'delay': self.elmo_pay_delay,
+            'delay': self.pay_delay,
             'fee': 0,
-            'centrality': centrality_elmo_pay,
-            'distance': distance_elmo_pay,
+            'centrality': centrality_pay,
+            'distance': distance_pay,
             'payment_information': payment_information
         }
 
@@ -190,8 +190,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
         new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
-        elmo_pay_option = self.get_elmo_pay_option(sender, receiver, value, future_payments)
-        options = [onchain_option, new_channel_option, new_virtual_channel_option, elmo_pay_option]
+        pay_option = self.get_pay_option(sender, receiver, value, future_payments)
+        options = [onchain_option, new_channel_option, new_virtual_channel_option, pay_option]
         return [option for option in options if option is not None]
 
     # TODO: think if update balances should be in network.
@@ -239,7 +239,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         match payment_information['kind']:
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
-            case 'Elmo-open-channel':
+            case self.open_channel_string:
                 # adjusted from LN-open
                 sender, receiver, value, sender_coins = payment_information['data']
                 self.network.add_channel(sender, sender_coins, receiver, value, None)
@@ -249,7 +249,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     self.plain_bitcoin.get_fee(self.opening_transaction_size)
                 )
                 self.plain_bitcoin.update_coins(sender, amount_sender)
-            case 'Elmo-open-virtual-channel':
+            case self.open_virtual_channel_string:
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
                 receiver = path[-1]
@@ -261,7 +261,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
                 self.network.lock_coins(path, sender_coins + value)
                 self.network.add_channel(sender, sender_coins, receiver, value, path)
-            case 'Elmo-pay':
+            case self.pay_string:
                 sender, receiver, value = payment_information['data']
                 self.pay(sender, receiver, value)
             case _:
@@ -269,13 +269,13 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
 
     def undo(self, payment_information):
         match payment_information['kind']:
-            case 'Elmo-open-virtual-channel':
+            case self.open_virtual_channel_string:
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
                 receiver = path[-1]
                 amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
                 self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
-            case 'Elmo-pay':
+            case self.pay_string:
                 sender, receiver, value = payment_information['data']
                 if self.network.graph.get_edge_data(sender, receiver) is None:
                     raise ValueError
