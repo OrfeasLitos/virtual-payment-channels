@@ -15,35 +15,6 @@ class LVPC(Custom_Elmo_LVPC_Donner):
             lvpc_new_virtual_channel_delay
         )
 
-    # almost equal to the method for Elmo
-    def get_new_channel_option(self, sender, receiver, value, future_payments):
-        # in case we have already a channel
-        if self.network.graph.get_edge_data(sender, receiver) is not None:
-            return None
-        new_channel_time = self.plain_bitcoin.get_delay() + self.pay_delay
-        new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
-        sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
-        sender_coins = min(
-            self.plain_bitcoin.coins[sender] - value - new_channel_fee,
-            MULTIPLIER_CHANNEL_BALANCE_LVPC * sum_future_payments
-        )
-        if sender_coins < 0:
-            return None
-        self.network.add_channel(sender, sender_coins, receiver, value, None)
-        new_channel_centrality = self.network.get_harmonic_centrality()
-        new_channel_distance = self.get_distances(sender, future_payments)
-        self.network.close_channel(sender, receiver)
-        return {
-            'delay': new_channel_time,
-            'fee': new_channel_fee,
-            'centrality': new_channel_centrality,
-            'distance': new_channel_distance,
-            'payment_information': {
-                'kind': 'LVPC-open-channel',
-                'data': (sender, receiver, value, sender_coins)
-            }
-        }
-
     # adjusted from Elmo
     # TODO: how are the balances handled?
     def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
@@ -58,6 +29,7 @@ class LVPC(Custom_Elmo_LVPC_Donner):
             return None
         hops, path = cost_and_path
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
+        # the factor is introduced so that lower channel doesn't end up with 0 balance.
         availability_factor = 4
         base_channels_max_lock_values = [
             self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor - value - new_virtual_channel_fee for i in range(len(path)-1)

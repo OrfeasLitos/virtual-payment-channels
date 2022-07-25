@@ -115,7 +115,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         self.network.add_channel(sender, sender_coins, receiver, value, None)
         new_channel_centrality = self.network.get_harmonic_centrality()
         new_channel_distance = self.get_distances(sender, future_payments)
-        self.network.force_close_channel(sender, receiver)
+        self.network.close_channel(sender, receiver)
         return {
             'delay': new_channel_time,
             'fee': new_channel_fee,
