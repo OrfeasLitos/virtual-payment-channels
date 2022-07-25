@@ -32,7 +32,7 @@ class Network:
         edges = [(idA, idB) ,(idB, idA)]
         self.graph.remove_edges_from(edges)
 
-    def get_weight_function(self, amount):
+    def get_weight_function(self, amount, function = "standard"):
         """
         This function returns the weight function we use in the following.
         The balance acts as a threshold.
@@ -45,9 +45,9 @@ class Network:
             return math.inf
         return weight_function
 
-    def find_cheapest_path(self, sender, receiver, amount, fee_intermediary):
+    def find_cheapest_path(self, sender, receiver, amount, fee_intermediary, function = "standard"):
         try:
-            weight_function = self.get_weight_function(amount)
+            weight_function = self.get_weight_function(amount, function)
             cheapest_path = nx.shortest_path(self.graph, sender, receiver, weight_function)
             # this is a check that the cheapest path really can be used for a transaction
             # (cheapest path could still have distance math.inf)
@@ -243,3 +243,29 @@ class Network_LVPC(Network_Elmo):
         if len(path) > 3:
             return None
         return cheapest_path
+
+class Network_Donner(Network_Elmo):
+    def __init__(self, nr_vertices):
+        super().__init__(nr_vertices)
+
+    def get_weight_function(self, amount, function = "standard"):
+        """
+        This function returns the weight function we use in the following.
+        The balance acts as a threshold.
+        If the amount is bigger than the balance the weight is math.inf, otherwise it is 1.
+        """
+        match function:
+            case "new_virtual_donner":
+                def weight_function(sender, receiver, edge_attributes):
+                    if edge_attributes['balance'] < amount or edge_attributes['channels_below'] is not None:
+                        return math.inf
+                    return 1
+            case "standard":
+                def weight_function(sender, receiver, edge_attributes):
+                    if edge_attributes['balance'] < amount:
+                        return math.inf
+                    return 1
+            case _:
+                return None
+            
+        return weight_function
