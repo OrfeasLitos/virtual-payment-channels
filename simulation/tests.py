@@ -72,6 +72,25 @@ def make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.0000
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return base_fee, ln_fee, lightning, future_payments
 
+def make_example_simulation_for_all(method_name, seed = 12345, coins_for_parties = 'max_value'):
+    random.seed(seed)
+    match method_name:
+        case "LN":
+            method = LN(10, coins_for_parties = coins_for_parties)
+        case "Elmo":
+            method = Elmo(10, coins_for_parties = coins_for_parties)
+        case "LVPC":
+            method = LVPC(10, coins_for_parties = coins_for_parties)
+        case "Donner":
+            method = Donner(10, coins_for_parties = coins_for_parties)
+        case _:
+            raise ValueError
+    knowledge = Knowledge('know-all')
+    payments = random_payments(100, 10, 2000000000)
+    utility_function = example_utility_function_for_simulation
+    utility = Utility(utility_function)
+    return Simulation(payments, method, knowledge, utility)
+
 def make_example_simulation_ln(seed = 12345, coins_for_parties = 'max_value'):
     random.seed(seed)
     lightning = LN(10, coins_for_parties = coins_for_parties)
