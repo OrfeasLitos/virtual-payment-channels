@@ -453,16 +453,7 @@ def make_example_network_elmo_lvpc_donner(method_name, fee_intermediary = 100000
     return method
 
 def make_example_network_elmo(fee_intermediary = 1000000):
-    elmo = Elmo(10, fee_intermediary = fee_intermediary)
-
-    elmo.network.add_channel(0, 3000000000., 2, 7000000000., None)
-    elmo.network.add_channel(0, 6000000000., 1, 7000000000., None)
-    elmo.network.add_channel(1, 4000000000., 4, 8000000000., None)
-    elmo.network.add_channel(3, 9000000000., 4, 8000000000., None)
-    elmo.network.add_channel(2, 9000000000., 3, 2000000000., None)
-    elmo.network.add_channel(1, 10000000000., 2, 8000000000., None)
-    elmo.network.add_channel(4, 10000000000., 7, 8000000000., None)
-    elmo.network.add_channel(3, 10000000000., 8, 8000000000., None)
+    elmo = make_example_network_elmo_lvpc_donner("Elmo", fee_intermediary)
     return elmo
 
 def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
@@ -1042,16 +1033,7 @@ def test_simulation_with_elmo():
 
 
 def make_example_network_lvpc(lvpc_fee_intermediary = 1000000):
-    lvpc = LVPC(10, lvpc_fee_intermediary = lvpc_fee_intermediary)
-
-    lvpc.network.add_channel(0, 3000000000., 2, 7000000000., None)
-    lvpc.network.add_channel(0, 6000000000., 1, 7000000000., None)
-    lvpc.network.add_channel(1, 4000000000., 4, 8000000000., None)
-    lvpc.network.add_channel(3, 9000000000., 4, 8000000000., None)
-    lvpc.network.add_channel(2, 9000000000., 3, 2000000000., None)
-    lvpc.network.add_channel(1, 10000000000., 2, 8000000000., None)
-    lvpc.network.add_channel(4, 10000000000., 7, 8000000000., None)
-    lvpc.network.add_channel(3, 10000000000., 8, 8000000000., None)
+    lvpc = make_example_network_elmo_lvpc_donner("LVPC", lvpc_fee_intermediary)
     return lvpc
 
 # copied from elmo
@@ -1105,16 +1087,7 @@ def test_simulation_with_lvpc():
 
 
 def make_example_network_donner(fee_intermediary = 1000000):
-    donner = Donner(10, fee_intermediary = fee_intermediary)
-
-    donner.network.add_channel(0, 3000000000., 2, 7000000000., None)
-    donner.network.add_channel(0, 6000000000., 1, 7000000000., None)
-    donner.network.add_channel(1, 4000000000., 4, 8000000000., None)
-    donner.network.add_channel(3, 9000000000., 4, 8000000000., None)
-    donner.network.add_channel(2, 9000000000., 3, 2000000000., None)
-    donner.network.add_channel(1, 10000000000., 2, 8000000000., None)
-    donner.network.add_channel(4, 10000000000., 7, 8000000000., None)
-    donner.network.add_channel(3, 10000000000., 8, 8000000000., None)
+    donner = make_example_network_elmo_lvpc_donner("Donner", fee_intermediary)
     return donner
 
 # copied from elmo
