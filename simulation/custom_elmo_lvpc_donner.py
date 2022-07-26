@@ -135,9 +135,14 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         # this is a simplification. TODO: think if this is what we want.
         anticipated_lock_value = sum_future_payments + value
-        cost_and_path = self.network.find_cheapest_path(
-            sender, receiver, anticipated_lock_value, self.fee_intermediary,
-            function="new_virtual_donner" if self.method_name=="Donner" else "standard"
+        if self.method_name != "LVPC":
+            cost_and_path = self.network.find_cheapest_path(
+                sender, receiver, anticipated_lock_value, self.fee_intermediary,
+                function="new_virtual_donner" if self.method_name=="Donner" else "standard"
+                )
+        else:
+            cost_and_path = self.network.find_cheapest_path_for_new_virtual(
+                sender, receiver, anticipated_lock_value, self.fee_intermediary
             )
         if cost_and_path is None:
             return None
