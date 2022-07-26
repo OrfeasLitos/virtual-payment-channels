@@ -1019,9 +1019,6 @@ def test_simulation_with_elmo():
     test_simulation_with_previous_channels_elmo_ignore_centrality()
 
 
-
-
-
 if __name__ == "__main__":
     test_cheapest_path()
     test_LN()
