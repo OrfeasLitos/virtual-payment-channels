@@ -14,23 +14,16 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.method_name = method_name
-        # review: the three last assignments of each case can be done more succinctly: `self.open_channel_string = method_name + "-open-channel"`
+        self.open_channel_string = method_name + "-open-channel"
+        self.open_virtual_channel_string = method_name + "-open-virtual-channel"
+        self.pay_string = method_name + "-pay"
         match method_name:
             case "Elmo":
                 self.network = Network_Elmo(nr_players)
-                self.open_channel_string = "Elmo-open-channel"
-                self.open_virtual_channel_string = "Elmo-open-virtual-channel"
-                self.pay_string = "Elmo-pay"
             case "LVPC":
                 self.network = Network_LVPC(nr_players)
-                self.open_channel_string = "LVPC-open-channel"
-                self.open_virtual_channel_string = "LVPC-open-virtual-channel"
-                self.pay_string = "LVPC-pay"
             case "Donner":
                 self.network = Network_Donner(nr_players)
-                self.open_channel_string = "Donner-open-channel"
-                self.open_virtual_channel_string = "Donner-open-virtual-channel"
-                self.pay_string = "Donner-pay"
             case _:
                 raise ValueError
 
