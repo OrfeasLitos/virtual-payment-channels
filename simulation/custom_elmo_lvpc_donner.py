@@ -153,7 +153,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         base_channels_max_lock_values = [
             self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
         ]
-        base_channels_max_lock_values
         max_common_lock_value = min(
             base_channels_max_lock_values
         )
