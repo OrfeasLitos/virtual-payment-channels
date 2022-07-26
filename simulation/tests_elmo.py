@@ -52,7 +52,7 @@ def test_get_payment_options_elmo_channel_exists():
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
 
 # adjusted from tests_ln
-def make_example_values_for_do():
+def make_example_values_for_do_elmo():
     fee_intermediary, elmo, future_payments = (
         make_example_network_elmo_and_future_payments(fee_intermediary = 1000000)
     )
@@ -93,9 +93,9 @@ def test_get_payment_options_elmo():
     test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible2()
 
 # adjusted from tests_ln
-def test_do_onchain():
+def test_do_onchain_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 7, value, future_payments)
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
@@ -105,9 +105,9 @@ def test_do_onchain():
     assert elmo.plain_bitcoin.coins[0] == MAX_COINS - value - elmo.plain_bitcoin.get_fee() 
     assert elmo.plain_bitcoin.coins[7] == MAX_COINS + value
 
-def test_do_new_channel():
+def test_do_new_channel_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 8, value, future_payments)
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-open-channel'
@@ -125,9 +125,9 @@ def test_do_new_channel():
     assert elmo.network.graph[0][8]['balance'] == sender_coins
     assert elmo.network.graph[8][0]['balance'] == receiver_coins
 
-def test_do_new_virtual_channel():
+def test_do_new_virtual_channel_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 4, value, future_payments)
     assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
@@ -164,7 +164,7 @@ def test_do_new_virtual_channel():
 
 def test_do_elmo_pay():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 2, value, future_payments)
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
@@ -182,12 +182,12 @@ def test_do_elmo_pay():
 
 def test_do():
     # TODO: test exceptions
-    test_do_onchain()
-    test_do_new_channel()
-    test_do_new_virtual_channel()
+    test_do_onchain_elmo()
+    test_do_new_channel_elmo()
+    test_do_new_virtual_channel_elmo()
     test_do_elmo_pay()
 
-def test_update_balances_new_virtual_channel_true():
+def test_update_balances_new_virtual_channel_true_elmo():
     # Here locking isn't done yet.
     elmo = make_example_network_elmo()
     path = [0, 1, 4, 7]
@@ -206,7 +206,7 @@ def test_update_balances_new_virtual_channel_true():
     assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
     assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
 
-def test_update_balances_new_virtual_channel_reverse():
+def test_update_balances_new_virtual_channel_reverse_elmo():
     elmo = make_example_network_elmo()
     channels_before = [channel for channel in elmo.network.graph.edges.data("balance")]
     path = [0, 1, 4, 7]
@@ -226,7 +226,7 @@ def test_update_balances_new_virtual_channel_reverse():
     assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
     assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
 
-def test_update_balances_new_virtual_channel_not_enough_money():
+def test_update_balances_new_virtual_channel_not_enough_money_elmo():
     elmo = make_example_network_elmo()
     elmo.fee_intermediary = 9999999999999999
     path = [0, 1, 4, 7]
@@ -241,12 +241,12 @@ def test_update_balances_new_virtual_channel_not_enough_money():
         for key in balances.keys():
             assert_eq(balances[key], balances_after_failure[key])
 
-def test_update_balances_new_virtual_channel():
-    test_update_balances_new_virtual_channel_true()
-    test_update_balances_new_virtual_channel_reverse()
-    test_update_balances_new_virtual_channel_not_enough_money()
+def test_update_balances_new_virtual_channel_elmo():
+    test_update_balances_new_virtual_channel_true_elmo()
+    test_update_balances_new_virtual_channel_reverse_elmo()
+    test_update_balances_new_virtual_channel_not_enough_money_elmo()
 
-def test_locking_and_unlocking_enough_balance():
+def test_locking_and_unlocking_enough_balance_elmo():
     elmo = make_example_network_elmo()
     path = [0, 1, 4, 7]
     value = 2000000000
@@ -284,7 +284,7 @@ def test_locking_and_unlocking_enough_balance():
     assert_eq(elmo.network.graph[7][4]['locked_coins'], 0)
     assert_eq(elmo.network.graph[1][2]['locked_coins'], 0)
 
-def test_locking_not_enough_balance():
+def test_locking_not_enough_balance_elmo():
     elmo = make_example_network_elmo()
     path = [0, 1, 4, 7]
     value = 2000000000000
@@ -303,11 +303,11 @@ def test_locking_not_enough_balance():
         for key in locked_coins_before.keys():
             assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
 
-def test_lock_and_unlock():
-    test_locking_and_unlocking_enough_balance()
-    test_locking_not_enough_balance()
+def test_lock_and_unlock_elmo():
+    test_locking_and_unlocking_enough_balance_elmo()
+    test_locking_not_enough_balance_elmo()
 
-def test_pay_enough_balance():
+def test_pay_enough_balance_elmo():
     elmo = make_example_network_elmo()
     sender = 0
     receiver = 2
@@ -318,7 +318,7 @@ def test_pay_enough_balance():
     assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
     assert_eq(elmo.network.graph[sender][receiver]['locked_coins'], 0)
 
-def test_pay_not_enough_balance():
+def test_pay_not_enough_balance_elmo():
     elmo = make_example_network_elmo()
     sender = 0
     receiver = 2
@@ -332,13 +332,13 @@ def test_pay_not_enough_balance():
         assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
         assert_eq(elmo.network.graph[sender][receiver]['locked_coins'], 0)
 
-def test_pay():
-    test_pay_enough_balance()
-    test_pay_not_enough_balance()
+def test_pay_elmo():
+    test_pay_enough_balance_elmo()
+    test_pay_not_enough_balance_elmo()
 
-def test_undo_new_virtual_channel():
+def test_undo_new_virtual_channel_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 4, value, future_payments)
     sender_coins = elmo.plain_bitcoin.coins[0]
@@ -362,7 +362,7 @@ def test_undo_new_virtual_channel():
 def test_undo_elmo_pay():
     #TODO: tests are very similar. Check how to unify them.
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 2, value, future_payments)
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
@@ -378,13 +378,13 @@ def test_undo_elmo_pay():
     for key in locked_coins_before.keys():
         assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
 
-def test_undo():
-    test_undo_new_virtual_channel()
+def test_undo_elmo():
+    test_undo_new_virtual_channel_elmo()
     test_undo_elmo_pay()
 
-def test_coop_close_channel_first_virtual_layer_no_layer_above():
+def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 4, value, future_payments)
     assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
@@ -406,7 +406,7 @@ def test_coop_close_channel_first_virtual_layer_no_layer_above():
     assert elmo.network.graph[4][1]['channels_above'] == []
     assert elmo.network.graph[1][4]['channels_above'] == []
 
-def test_coop_close_channel_first_virtual_layer_one_layer_above(forward = True):
+def test_coop_close_channel_first_virtual_layer_one_layer_above_elmo(forward = True):
     elmo = make_example_network_elmo()
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 300000000.), (0, 3, 2500000000.)]
     value1 = 100000000
@@ -450,9 +450,9 @@ def test_coop_close_channel_first_virtual_layer_one_layer_above(forward = True):
     assert elmo.network.graph.get_edge_data(0, 3) is None
     assert elmo.network.graph.get_edge_data(3, 0) is None
 
-def test_force_close_channel_onchain_layer_one_layer_above():
+def test_force_close_channel_onchain_layer_one_layer_above_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_elmo()
     )
     payment_options = elmo.get_payment_options(0, 4, value, future_payments)
     assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
@@ -467,12 +467,12 @@ def test_force_close_channel_onchain_layer_one_layer_above():
     assert elmo.network.graph.get_edge_data(1, 4) is None
 
 def test_close_channel():
-    test_coop_close_channel_first_virtual_layer_no_layer_above()
-    test_coop_close_channel_first_virtual_layer_one_layer_above(forward = True)
-    test_coop_close_channel_first_virtual_layer_one_layer_above(forward = False)
-    test_force_close_channel_onchain_layer_one_layer_above()
+    test_coop_close_channel_first_virtual_layer_no_layer_above_elmo()
+    test_coop_close_channel_first_virtual_layer_one_layer_above_elmo(forward = True)
+    test_coop_close_channel_first_virtual_layer_one_layer_above_elmo(forward = False)
+    test_force_close_channel_onchain_layer_one_layer_above_elmo()
 
-def test_force_close1():
+def test_force_close1_elmo():
     elmo = Elmo(6, fee_intermediary = 1000000)
 
     elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
@@ -510,7 +510,7 @@ def test_force_close1():
     for parties, value in coins_for_chain.items():
         assert value == previous_balances[parties] + previous_locked_coins[parties]
 
-def test_force_close2():
+def test_force_close2_elmo():
     elmo = Elmo(4, fee_intermediary = 1000000)
 
     elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
@@ -526,8 +526,8 @@ def test_force_close2():
     assert elmo.network.graph[3][0]['channels_above'] == []
 
 def test_force_close():
-    test_force_close1()
-    test_force_close2()
+    test_force_close1_elmo()
+    test_force_close2_elmo()
 
 def test_simulation_with_elmo_ignore_centrality():
     elmo = Elmo(
@@ -608,10 +608,10 @@ def test_simulation_with_elmo():
 if __name__ == "__main__":
     test_get_payment_options_elmo()
     test_do()
-    test_update_balances_new_virtual_channel()
-    test_lock_and_unlock()
-    test_pay()
-    test_undo()
+    test_update_balances_new_virtual_channel_elmo()
+    test_lock_and_unlock_elmo()
+    test_pay_elmo()
+    test_undo_elmo()
     test_simulation_with_elmo()
     test_close_channel()
     test_force_close()
