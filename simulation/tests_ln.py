@@ -1,6 +1,5 @@
 
 import random
-import sys
 import numpy as np
 import math
 from numpy.testing import assert_almost_equal as assert_eq
@@ -44,7 +43,7 @@ def make_example_simulation_ln(seed = 12345, coins_for_parties = 'max_value'):
     utility = Utility(utility_function)
     return Simulation(payments, lightning, knowledge, utility)
 
-def test_get_payment_fee():
+def test_get_payment_fee_ln():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
         sender, receiver, value = payment
         return (base_fee +  value * ln_fee) * (len(path) - 1)
@@ -143,7 +142,7 @@ def test_get_payment_options_ln_enough_money():
 def test_get_payment_options_ln():
     test_get_payment_options_ln_enough_money()
 
-def test_choose_payment_method_offchain_best():
+def test_choose_payment_method_offchain_best_ln():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1, ln_fee = 0.00002)
     )
@@ -155,7 +154,7 @@ def test_choose_payment_method_offchain_best():
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-pay'
 
-def test_choose_payment_method_new_channel_best():
+def test_choose_payment_method_new_channel_best_ln():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 200)
     )
@@ -169,7 +168,7 @@ def test_choose_payment_method_new_channel_best():
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-open'
 
-def test_choose_payment_method_onchain_best():
+def test_choose_payment_method_onchain_best_ln():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 200)
     )
@@ -181,10 +180,10 @@ def test_choose_payment_method_onchain_best():
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'onchain'
 
-def test_choose_payment_method():
-    test_choose_payment_method_offchain_best()
-    test_choose_payment_method_new_channel_best()
-    test_choose_payment_method_onchain_best()
+def test_choose_payment_method_ln():
+    test_choose_payment_method_offchain_best_ln()
+    test_choose_payment_method_new_channel_best_ln()
+    test_choose_payment_method_onchain_best_ln()
 
 def test_LN():
     nr_players = 10
@@ -194,7 +193,7 @@ def test_LN():
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     assert result == 3.6
 
-def make_example_values_for_do():
+def make_example_values_for_do_ln():
     base_fee, ln_fee, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
@@ -206,7 +205,7 @@ def make_example_values_for_do():
 
 def test_do_ln_onchain():
     base_fee, ln_fee, lightning, future_payments, value, payment_options, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_ln()
     )
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     payment_information_onchain = payment_options[0]['payment_information']
@@ -228,7 +227,7 @@ def test_do_ln_onchain_exception():
 
 def test_do_ln_offchain():
     base_fee, ln_fee, lightning, future_payments, value, payment_options, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_ln()
     )
     fee_intermediary = base_fee + value*ln_fee
     for payment_option in payment_options:
@@ -265,7 +264,7 @@ def test_do_ln_offchain_exception():
 
 def test_do_ln_new_channel():
     _, _, lightning, future_payments, value, payment_options, MAX_COINS = (
-        make_example_values_for_do()
+        make_example_values_for_do_ln()
     )
     assert payment_options[1]['payment_information']['kind'] == 'ln-open'
     payment_information_new_channel = payment_options[1]['payment_information']
@@ -302,7 +301,7 @@ def test_do_ln():
     test_do_ln_new_channel()
     test_do_ln_new_channel_exception()
 
-def test_update_balances_pay_enough_money():
+def test_update_balances_pay_enough_money_ln():
     lightning = make_example_network_ln(base_fee = 1000, ln_fee = 0.00002)
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
@@ -323,7 +322,7 @@ def test_update_balances_pay_enough_money():
     assert_eq(lightning.network.graph[7][4]['balance'], 8000000000 + value)
     assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
 
-def test_update_balances_pay_not_enough_money():
+def test_update_balances_pay_not_enough_money_ln():
     lightning = make_example_network_ln(base_fee=1000, ln_fee = 0.00002)
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
@@ -339,7 +338,7 @@ def test_update_balances_pay_not_enough_money():
             assert_eq(balances[key], balances_after_failure[key])
         
 
-def test_update_balances_reverse():
+def test_update_balances_reverse_ln():
     lightning = make_example_network_ln(base_fee = 1000, ln_fee = 0.00002)
     channels_before = [channel for channel in lightning.network.graph.edges.data("balance")]
     base_fee = lightning.base_fee
@@ -360,10 +359,10 @@ def test_update_balances_reverse():
     assert_eq(lightning.network.graph[7][4]['balance'], 8000000000)
     assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
 
-def test_update_balances():
-    test_update_balances_pay_enough_money()
-    test_update_balances_pay_not_enough_money()
-    test_update_balances_reverse()
+def test_update_balances_ln():
+    test_update_balances_pay_enough_money_ln()
+    test_update_balances_pay_not_enough_money_ln()
+    test_update_balances_reverse_ln()
 
 def test_simulation_with_ln_different_coins(coins_for_parties):
     simulation1 = make_example_simulation_ln(seed = 12345, coins_for_parties = coins_for_parties)
@@ -397,11 +396,11 @@ def test_simulation_with_ln():
 
 if __name__ == "__main__":
     test_LN()
-    test_get_payment_fee()
-    test_update_balances()
+    test_get_payment_fee_ln()
+    test_update_balances_ln()
     test_get_payment_options_ln()
     test_do_ln()
-    test_choose_payment_method()
+    test_choose_payment_method_ln()
     test_simulation_with_ln()
     print("Success")
 
