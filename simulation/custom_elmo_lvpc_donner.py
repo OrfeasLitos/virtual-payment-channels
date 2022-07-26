@@ -14,6 +14,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.method_name = method_name
+        # review: the three last assignments of each case can be done more succinctly: `self.open_channel_string = method_name + "-open-channel"`
         match method_name:
             case "Elmo":
                 self.network = Network_Elmo(nr_players)
@@ -32,7 +33,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 self.pay_string = "Donner-pay"
             case _:
                 raise ValueError
-        
+
         self.fee_intermediary = fee_intermediary
         self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)
@@ -83,7 +84,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 weight_other,
                 self.network.find_cheapest_path(source, party, dummy_lock_value, self.fee_intermediary)
             ))
-        
+
         for counterparty, weight, cost_and_path in path_data:
             if cost_and_path is None:
                 distances.append((weight, math.inf))
