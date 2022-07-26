@@ -1,4 +1,9 @@
+import random
 from donner import Donner
+from knowledge import Knowledge
+from simulation import Simulation, random_payments
+from tests import example_utility_function_for_simulation
+from utility import Utility
 
 def make_example_network_donner(fee_intermediary = 1000000):
     donner = Donner(10, fee_intermediary = fee_intermediary)
@@ -12,6 +17,16 @@ def make_example_network_donner(fee_intermediary = 1000000):
     donner.network.add_channel(4, 10000000000., 7, 8000000000., None)
     donner.network.add_channel(3, 10000000000., 8, 8000000000., None)
     return donner
+
+# copied from elmo
+def make_example_simulation_donner(seed = 12345, coins_for_parties = 'max_value'):
+    random.seed(seed)
+    donner = Donner(10, coins_for_parties=coins_for_parties)
+    knowledge = Knowledge('know-all')
+    payments = random_payments(100, 10, 2000000000)
+    utility_function = example_utility_function_for_simulation
+    utility = Utility(utility_function)
+    return Simulation(payments, donner, knowledge, utility)
 
 
 def test_get_payment_options_donner():
@@ -32,7 +47,13 @@ def test_get_payment_options_donner():
     payment_information_new_virtual_channel2 = payment_options2[2]['payment_information']
     donner.do(payment_information_new_virtual_channel2)
 
+def test_simulation_with_donner():
+    simulation = make_example_simulation_donner()
+    results = simulation.run()
+    print(results)
+
 
 if __name__ == "__main__":
     test_get_payment_options_donner()
+    test_simulation_with_donner()
     print("Success")
