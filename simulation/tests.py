@@ -431,6 +431,26 @@ def test_simulation_with_ln():
     for coins_for_parties in ['max_value', 'small_value', 'random']:
         test_simulation_with_ln_different_coins(coins_for_parties)
 
+def make_example_network_elmo_lvpc_donner(method_name, fee_intermediary = 1000000):
+    match method_name:
+        case "Elmo":
+            method = Elmo(10, fee_intermediary = fee_intermediary)
+        case "LVPC":
+            method = LVPC(10, lvpc_fee_intermediary = fee_intermediary)
+        case "Donner": 
+            method = Donner(10, fee_intermediary = fee_intermediary)
+        case _:
+            raise ValueError
+
+    method.network.add_channel(0, 3000000000., 2, 7000000000., None)
+    method.network.add_channel(0, 6000000000., 1, 7000000000., None)
+    method.network.add_channel(1, 4000000000., 4, 8000000000., None)
+    method.network.add_channel(3, 9000000000., 4, 8000000000., None)
+    method.network.add_channel(2, 9000000000., 3, 2000000000., None)
+    method.network.add_channel(1, 10000000000., 2, 8000000000., None)
+    method.network.add_channel(4, 10000000000., 7, 8000000000., None)
+    method.network.add_channel(3, 10000000000., 8, 8000000000., None)
+    return method
 
 def make_example_network_elmo(fee_intermediary = 1000000):
     elmo = Elmo(10, fee_intermediary = fee_intermediary)
@@ -1084,8 +1104,6 @@ def test_simulation_with_lvpc():
     print(results)
 
 
-
-
 def make_example_network_donner(fee_intermediary = 1000000):
     donner = Donner(10, fee_intermediary = fee_intermediary)
 
@@ -1108,7 +1126,6 @@ def make_example_simulation_donner(seed = 12345, coins_for_parties = 'max_value'
     utility_function = example_utility_function_for_simulation
     utility = Utility(utility_function)
     return Simulation(payments, donner, knowledge, utility)
-
 
 def test_get_payment_options_donner():
     donner = make_example_network_donner()
