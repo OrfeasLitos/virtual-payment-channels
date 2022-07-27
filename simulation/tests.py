@@ -103,7 +103,7 @@ def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
     payment_options = method.get_payment_options(0, 2, 1000000000., future_payments)
     assert len(payment_options) == 2
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
-    assert payment_options[1]['payment_information']['kind'] == method_name + 'pay'
+    assert payment_options[1]['payment_information']['kind'] == method_name + '-pay'
 
 
 def make_example_network_lvpc(lvpc_fee_intermediary = 1000000):

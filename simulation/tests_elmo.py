@@ -8,7 +8,8 @@ from utility import Utility
 from simulation import Simulation
 from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_ELMO
 from tests import (make_example_network_elmo_lvpc_donner, make_example_network_elmo_lvpc_donner_and_future_payments,
-    make_example_simulation_for_all, make_example_utility_function
+    make_example_simulation_for_all, make_example_utility_function,
+    test_get_payment_options_elmo_lvpc_donner_channel_exists
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -21,13 +22,8 @@ def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
 def make_example_simulation_elmo(seed = 12345, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("Elmo", seed, coins_for_parties)
 
-
 def test_get_payment_options_elmo_channel_exists():
-    fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
-    payment_options = elmo.get_payment_options(0, 2, 1000000000., future_payments)
-    assert len(payment_options) == 2
-    assert payment_options[0]['payment_information']['kind'] == 'onchain'
-    assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
+    test_get_payment_options_elmo_lvpc_donner_channel_exists("Elmo")
 
 # adjusted from tests_ln
 def make_example_values_for_do_elmo():
