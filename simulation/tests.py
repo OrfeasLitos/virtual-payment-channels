@@ -108,6 +108,13 @@ def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
 def make_example_simulation_elmo(seed = 12345, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("Elmo", seed, coins_for_parties)
 
+def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
+    fee_intermediary, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
+    payment_options = method.get_payment_options(0, 2, 1000000000., future_payments)
+    assert len(payment_options) == 2
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    assert payment_options[1]['payment_information']['kind'] == method_name + 'pay'
+
 def test_get_payment_options_elmo_channel_exists():
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
     payment_options = elmo.get_payment_options(0, 2, 1000000000., future_payments)
