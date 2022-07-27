@@ -92,13 +92,7 @@ def make_example_simulation_for_all(method_name, seed = 12345, coins_for_parties
     return Simulation(payments, method, knowledge, utility)
 
 def make_example_simulation_ln(seed = 12345, coins_for_parties = 'max_value'):
-    random.seed(seed)
-    lightning = LN(10, coins_for_parties = coins_for_parties)
-    knowledge = Knowledge('know-all')
-    payments = random_payments(100, 10, 2000000000)
-    utility_function = example_utility_function_for_simulation
-    utility = Utility(utility_function)
-    return Simulation(payments, lightning, knowledge, utility)
+    return make_example_simulation_for_all("LN", seed, coins_for_parties)
 
 def test_get_payment_fee_ln():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
@@ -481,13 +475,7 @@ def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
     return fee_intermediary, elmo, future_payments
 
 def make_example_simulation_elmo(seed = 12345, coins_for_parties = 'max_value'):
-    random.seed(seed)
-    elmo = Elmo(10, coins_for_parties=coins_for_parties)
-    knowledge = Knowledge('know-all')
-    payments = random_payments(100, 10, 2000000000)
-    utility_function = example_utility_function_for_simulation
-    utility = Utility(utility_function)
-    return Simulation(payments, elmo, knowledge, utility)
+    return make_example_simulation_for_all("Elmo", seed, coins_for_parties)
 
 def test_get_payment_options_elmo_channel_exists():
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
@@ -1063,13 +1051,7 @@ def make_example_network_lvpc_and_future_payments(fee_intermediary = 1000000):
 
 # copied from elmo
 def make_example_simulation_lvpc(seed = 12345, coins_for_parties = 'max_value'):
-    random.seed(seed)
-    lvpc = LVPC(10, coins_for_parties=coins_for_parties)
-    knowledge = Knowledge('know-all')
-    payments = random_payments(100, 10, 2000000000)
-    utility_function = example_utility_function_for_simulation
-    utility = Utility(utility_function)
-    return Simulation(payments, lvpc, knowledge, utility)
+    return make_example_simulation_for_all("LVPC", seed, coins_for_parties)
 
 def test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible():
     fee_intermediary, lvpc, future_payments = make_example_network_lvpc_and_future_payments()
@@ -1111,13 +1093,7 @@ def make_example_network_donner(fee_intermediary = 1000000):
 
 # copied from elmo
 def make_example_simulation_donner(seed = 12345, coins_for_parties = 'max_value'):
-    random.seed(seed)
-    donner = Donner(10, coins_for_parties=coins_for_parties)
-    knowledge = Knowledge('know-all')
-    payments = random_payments(100, 10, 2000000000)
-    utility_function = example_utility_function_for_simulation
-    utility = Utility(utility_function)
-    return Simulation(payments, donner, knowledge, utility)
+    return make_example_simulation_for_all("Donner", seed, coins_for_parties)
 
 def test_get_payment_options_donner():
     donner = make_example_network_donner()
