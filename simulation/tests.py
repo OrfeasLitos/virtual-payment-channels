@@ -475,9 +475,7 @@ def make_example_network_elmo_lvpc_donner_and_future_payments(method_name, fee_i
     return fee_intermediary, method, future_payments
 
 def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
-    elmo = make_example_network_elmo(fee_intermediary)
-    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
-    return fee_intermediary, elmo, future_payments
+    return make_example_network_elmo_lvpc_donner_and_future_payments("Elmo", fee_intermediary)
 
 def make_example_simulation_elmo(seed = 12345, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("Elmo", seed, coins_for_parties)
@@ -1048,11 +1046,8 @@ def make_example_network_lvpc(lvpc_fee_intermediary = 1000000):
     lvpc = make_example_network_elmo_lvpc_donner("LVPC", lvpc_fee_intermediary)
     return lvpc
 
-# copied from elmo
 def make_example_network_lvpc_and_future_payments(fee_intermediary = 1000000):
-    lvpc = make_example_network_lvpc(fee_intermediary)
-    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
-    return fee_intermediary, lvpc, future_payments
+    return make_example_network_elmo_lvpc_donner_and_future_payments("LVPC", fee_intermediary)
 
 def make_example_simulation_lvpc(seed = 12345, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("LVPC", seed, coins_for_parties)
