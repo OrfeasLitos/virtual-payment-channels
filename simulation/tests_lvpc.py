@@ -1,6 +1,8 @@
 
 
-from tests import make_example_network_elmo_lvpc_donner, make_example_network_elmo_lvpc_donner_and_future_payments, make_example_simulation_for_all
+from tests import (make_example_network_elmo_lvpc_donner, make_example_network_elmo_lvpc_donner_and_future_payments, make_example_simulation_for_all,
+    test_get_payment_options_elmo_lvpc_donner_channel_exists
+)
 
 
 def make_example_network_lvpc(lvpc_fee_intermediary = 1000000):
@@ -12,6 +14,9 @@ def make_example_network_lvpc_and_future_payments(fee_intermediary = 1000000):
 
 def make_example_simulation_lvpc(seed = 12345, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("LVPC", seed, coins_for_parties)
+
+def test_get_payment_options_lvpc_channel_exists():
+    test_get_payment_options_elmo_lvpc_donner_channel_exists("LVPC")
 
 def test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible():
     fee_intermediary, lvpc, future_payments = make_example_network_lvpc_and_future_payments()
@@ -37,6 +42,7 @@ def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2
     assert payment_options[1]['payment_information']['kind'] == 'LVPC-open-channel'
 
 def test_get_payment_options_lvpc():
+    test_get_payment_options_lvpc_channel_exists()
     test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible()
     test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible1()
     test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2()

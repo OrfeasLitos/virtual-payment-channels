@@ -1,5 +1,5 @@
 
-from tests import make_example_network_elmo_lvpc_donner, make_example_simulation_for_all
+from tests import make_example_network_elmo_lvpc_donner, make_example_simulation_for_all, test_get_payment_options_elmo_lvpc_donner_channel_exists
 
 
 def make_example_network_donner(fee_intermediary = 1000000):
@@ -8,6 +8,9 @@ def make_example_network_donner(fee_intermediary = 1000000):
 
 def make_example_simulation_donner(seed = 12345, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("Donner", seed, coins_for_parties)
+
+def test_get_payment_options_donner_channel_exists():
+    test_get_payment_options_elmo_lvpc_donner_channel_exists("Donner")
 
 def test_get_payment_options_donner():
     donner = make_example_network_donner()
@@ -33,6 +36,7 @@ def test_simulation_with_donner():
     print(results)
 
 if __name__ == "__main__":
+    test_get_payment_options_donner_channel_exists()
     test_get_payment_options_donner()
     test_simulation_with_donner()
     print("Success")
