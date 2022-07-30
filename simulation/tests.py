@@ -105,6 +105,14 @@ def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == method_name + '-pay'
 
+def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible(method_name):
+    # virtual channel not possible because of too high value and future payments, would need too much balance
+    fee_intermediary, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
+    payment_options = method.get_payment_options(0, 7, 10000000000., future_payments)
+    assert len(payment_options) == 2
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
+
 
 
 if __name__ == "__main__":
