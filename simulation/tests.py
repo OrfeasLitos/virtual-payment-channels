@@ -113,6 +113,16 @@ def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_chann
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
 
+def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1(method_name):
+    # shortest path should have length 3 and all channels are onchain, so it should give the same results for
+    # Elmo, LVPC and Donner
+    fee_intermediary, elmo, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
+    payment_options = elmo.get_payment_options(0, 4, 100000000., future_payments)
+    assert len(payment_options) == 3
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
+    assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+
 
 
 if __name__ == "__main__":
