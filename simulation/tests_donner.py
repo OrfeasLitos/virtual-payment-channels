@@ -1,5 +1,8 @@
 
-from tests import make_example_network_elmo_lvpc_donner, make_example_simulation_for_all, test_get_payment_options_elmo_lvpc_donner_channel_exists
+from tests import (make_example_network_elmo_lvpc_donner, make_example_simulation_for_all,
+test_get_payment_options_elmo_lvpc_donner_channel_exists, test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible
+)
+
 
 
 def make_example_network_donner(fee_intermediary = 1000000):
@@ -12,7 +15,14 @@ def make_example_simulation_donner(seed = 12345, coins_for_parties = 'max_value'
 def test_get_payment_options_donner_channel_exists():
     test_get_payment_options_elmo_lvpc_donner_channel_exists("Donner")
 
+def test_get_payment_options_donner_no_channel_exists_no_virtual_channel_possible():
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("Donner")
+
 def test_get_payment_options_donner():
+    test_get_payment_options_donner_channel_exists()
+    test_get_payment_options_donner_no_channel_exists_no_virtual_channel_possible()
+
+def test_get_payment_options_and_weight_function_donner():
     donner = make_example_network_donner()
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 300000000.), (0, 3, 2500000000.)]
     value1 = 100000000
@@ -36,7 +46,7 @@ def test_simulation_with_donner():
     print(results)
 
 if __name__ == "__main__":
-    test_get_payment_options_donner_channel_exists()
     test_get_payment_options_donner()
+    test_get_payment_options_and_weight_function_donner()
     test_simulation_with_donner()
     print("Success")
