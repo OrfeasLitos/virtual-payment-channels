@@ -1,6 +1,7 @@
 
 from tests import (make_example_network_elmo_lvpc_donner, make_example_simulation_for_all,
-test_get_payment_options_elmo_lvpc_donner_channel_exists, test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible
+    test_get_payment_options_elmo_lvpc_donner_channel_exists, test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1
 )
 
 
@@ -18,9 +19,13 @@ def test_get_payment_options_donner_channel_exists():
 def test_get_payment_options_donner_no_channel_exists_no_virtual_channel_possible():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("Donner")
 
+def test_get_payment_options_donner_no_channel_exists_virtual_channel_possible1():
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("Donner")
+
 def test_get_payment_options_donner():
     test_get_payment_options_donner_channel_exists()
     test_get_payment_options_donner_no_channel_exists_no_virtual_channel_possible()
+    test_get_payment_options_donner_no_channel_exists_virtual_channel_possible1()
 
 def test_get_payment_options_and_weight_function_donner():
     donner = make_example_network_donner()

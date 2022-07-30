@@ -9,7 +9,8 @@ from simulation import Simulation
 from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_ELMO
 from tests import (make_example_network_elmo_lvpc_donner, make_example_network_elmo_lvpc_donner_and_future_payments,
     make_example_simulation_for_all, make_example_utility_function,
-    test_get_payment_options_elmo_lvpc_donner_channel_exists, test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible
+    test_get_payment_options_elmo_lvpc_donner_channel_exists, test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -40,12 +41,7 @@ def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible(
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("Elmo")
 
 def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible1():
-    fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
-    payment_options = elmo.get_payment_options(0, 4, 100000000., future_payments)
-    assert len(payment_options) == 3
-    assert payment_options[0]['payment_information']['kind'] == 'onchain'
-    assert payment_options[1]['payment_information']['kind'] == 'Elmo-open-channel'
-    assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("Elmo")
 
 def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible2():
     fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
