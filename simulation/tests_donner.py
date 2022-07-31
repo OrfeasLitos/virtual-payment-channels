@@ -1,6 +1,8 @@
 
 from tests import (make_example_network_elmo_lvpc_donner, make_example_simulation_for_all,
-    test_get_payment_options_elmo_lvpc_donner_channel_exists, test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
+    make_example_network_elmo_lvpc_donner_and_future_payments,
+    test_get_payment_options_elmo_lvpc_donner_channel_exists,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1
 )
 
@@ -9,6 +11,9 @@ from tests import (make_example_network_elmo_lvpc_donner, make_example_simulatio
 def make_example_network_donner(fee_intermediary = 1000000):
     donner = make_example_network_elmo_lvpc_donner("Donner", fee_intermediary)
     return donner
+
+def make_example_network_donner_and_future_payments(fee_intermediary = 1000000):
+    return make_example_network_elmo_lvpc_donner_and_future_payments("Donner", fee_intermediary)
 
 def make_example_simulation_donner(seed = 12345, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("Donner", seed, coins_for_parties)
@@ -22,10 +27,20 @@ def test_get_payment_options_donner_no_channel_exists_no_virtual_channel_possibl
 def test_get_payment_options_donner_no_channel_exists_virtual_channel_possible1():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("Donner")
 
+# same as in Elmo
+def test_get_payment_options_donner_no_channel_exists_virtual_channel_possible2():
+    fee_intermediary, donner, future_payments = make_example_network_donner_and_future_payments()
+    payment_options = donner.get_payment_options(0, 7, 100000000., future_payments)
+    assert len(payment_options) == 3
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    assert payment_options[1]['payment_information']['kind'] == 'Donner-open-channel'
+    assert payment_options[2]['payment_information']['kind'] == 'Donner-open-virtual-channel'
+
 def test_get_payment_options_donner():
     test_get_payment_options_donner_channel_exists()
     test_get_payment_options_donner_no_channel_exists_no_virtual_channel_possible()
     test_get_payment_options_donner_no_channel_exists_virtual_channel_possible1()
+    test_get_payment_options_donner_no_channel_exists_virtual_channel_possible2()
 
 def test_get_payment_options_and_weight_function_donner():
     donner = make_example_network_donner()
