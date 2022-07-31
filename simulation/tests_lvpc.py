@@ -7,7 +7,8 @@ from tests import (
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
-    test_do_elmo_lvpc_donner
+    test_do_elmo_lvpc_donner,
+    test_update_balances_new_virtual_channel_elmo_lvpc_donner
 )
 
 
@@ -46,6 +47,9 @@ def test_get_payment_options_lvpc():
 def test_do_lvpc():
     test_do_elmo_lvpc_donner("LVPC")
 
+def test_update_balances_new_virtual_channel_lvpc():
+    test_update_balances_new_virtual_channel_elmo_lvpc_donner("LVPC")
+
 def test_simulation_with_lvpc():
     simulation = make_example_simulation_lvpc()
     results = simulation.run()
@@ -55,4 +59,5 @@ if __name__ == "__main__":
     test_get_payment_options_lvpc()
     test_simulation_with_lvpc()
     test_do_lvpc()
+    test_update_balances_new_virtual_channel_lvpc()
     print("Success")
