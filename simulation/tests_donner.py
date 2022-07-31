@@ -3,7 +3,8 @@ from tests import (make_example_network_elmo_lvpc_donner, make_example_simulatio
     make_example_network_elmo_lvpc_donner_and_future_payments,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
+    test_do_onchain_elmo_lvpc_donner
 )
 
 
@@ -60,6 +61,12 @@ def test_get_payment_options_and_weight_function_donner():
     payment_information_new_virtual_channel2 = payment_options2[2]['payment_information']
     donner.do(payment_information_new_virtual_channel2)
 
+def test_do_onchain_donner():
+    test_do_onchain_elmo_lvpc_donner("Donner")
+
+def test_do_donner():
+    test_do_onchain_donner()
+
 def test_simulation_with_donner():
     simulation = make_example_simulation_donner()
     results = simulation.run()
@@ -68,5 +75,6 @@ def test_simulation_with_donner():
 if __name__ == "__main__":
     test_get_payment_options_donner()
     test_get_payment_options_and_weight_function_donner()
+    test_do_donner()
     test_simulation_with_donner()
     print("Success")

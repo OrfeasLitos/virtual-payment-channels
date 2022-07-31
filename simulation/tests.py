@@ -98,6 +98,17 @@ def make_example_network_elmo_lvpc_donner_and_future_payments(method_name, fee_i
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return fee_intermediary, method, future_payments
 
+# adjusted from tests_ln
+def make_example_values_for_do_elmo_lvpc_donner(method_name):
+    fee_intermediary, method, future_payments = (
+        make_example_network_elmo_lvpc_donner_and_future_payments(method_name, fee_intermediary = 1000000)
+    )
+    value = 100000000.
+    payment_options = method.get_payment_options(0, 7, value, future_payments)
+    # review: ALL_CAPS case is customarily reserved for user-adjustable global constants
+    MAX_COINS = method.plain_bitcoin.max_coins
+    return fee_intermediary, method, future_payments, value, MAX_COINS
+
 def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
     fee_intermediary, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
     payment_options = method.get_payment_options(0, 2, 1000000000., future_payments)
@@ -122,6 +133,19 @@ def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+
+# adjusted from tests_ln
+def test_do_onchain_elmo_lvpc_donner(method_name):
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    payment_options = method.get_payment_options(0, 7, value, future_payments)
+    assert payment_options[0]['payment_information']['kind'] == 'onchain'
+    payment_information_onchain = payment_options[0]['payment_information']
+    method.do(payment_information_onchain)
+    # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
+    assert method.plain_bitcoin.coins[0] == MAX_COINS - value - method.plain_bitcoin.get_fee() 
+    assert method.plain_bitcoin.coins[7] == MAX_COINS + value
 
 
 
