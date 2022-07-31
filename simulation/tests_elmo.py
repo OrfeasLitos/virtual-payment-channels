@@ -14,7 +14,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
     test_do_elmo_lvpc_donner,
-    test_update_balances_new_virtual_channel_elmo_lvpc_donner
+    test_update_balances_new_virtual_channel_elmo_lvpc_donner,
+    test_lock_and_unlock_elmo_lvpc_donner
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -67,66 +68,8 @@ def test_do_elmo():
 def test_update_balances_new_virtual_channel_elmo():
     test_update_balances_new_virtual_channel_elmo_lvpc_donner("Elmo")
 
-def test_locking_and_unlocking_enough_balance_elmo():
-    elmo = make_example_network_elmo()
-    path = [0, 1, 4, 7]
-    value = 2000000000
-    sender_coins = 100000000
-    lock_value = value + sender_coins
-    elmo.network.lock_coins(path, lock_value)
-    assert_eq(elmo.network.graph[0][1]['balance'],6000000000 - lock_value)
-    assert_eq(elmo.network.graph[1][0]['balance'], 7000000000)
-    assert_eq(elmo.network.graph[1][4]['balance'], 4000000000 - lock_value)
-    assert_eq(elmo.network.graph[4][1]['balance'], 8000000000)
-    assert_eq(elmo.network.graph[4][7]['balance'], 10000000000 - lock_value)
-    assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
-    assert_eq(elmo.network.graph[0][1]['locked_coins'], lock_value)
-    assert_eq(elmo.network.graph[1][0]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[1][4]['locked_coins'], lock_value)
-    assert_eq(elmo.network.graph[4][1]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[4][7]['locked_coins'], lock_value)
-    assert_eq(elmo.network.graph[7][4]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[1][2]['locked_coins'], 0)
-
-    elmo.network.undo_locking(path, lock_value)
-    assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
-    assert_eq(elmo.network.graph[1][0]['balance'], 7000000000)
-    assert_eq(elmo.network.graph[1][4]['balance'], 4000000000)
-    assert_eq(elmo.network.graph[4][1]['balance'], 8000000000)
-    assert_eq(elmo.network.graph[4][7]['balance'], 10000000000)
-    assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
-    assert_eq(elmo.network.graph[0][1]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[1][0]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[1][4]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[4][1]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[4][7]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[7][4]['locked_coins'], 0)
-    assert_eq(elmo.network.graph[1][2]['locked_coins'], 0)
-
-def test_locking_not_enough_balance_elmo():
-    elmo = make_example_network_elmo()
-    path = [0, 1, 4, 7]
-    value = 2000000000000
-    sender_coins = 100000000
-    lock_value = value + sender_coins
-    balances_before = nx.get_edge_attributes(elmo.network.graph, "balance")
-    locked_coins_before = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
-    try:
-        elmo.network.lock_coins(path, lock_value)
-        assert False, "should raise ValueError"
-    except ValueError:
-        balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")
-        locked_coins_after_failure = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
-        for key in balances_before.keys():
-            assert_eq(balances_before[key], balances_after_failure[key])
-        for key in locked_coins_before.keys():
-            assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
-
 def test_lock_and_unlock_elmo():
-    test_locking_and_unlocking_enough_balance_elmo()
-    test_locking_not_enough_balance_elmo()
+    test_lock_and_unlock_elmo_lvpc_donner("Elmo")
 
 def test_pay_enough_balance_elmo():
     elmo = make_example_network_elmo()
