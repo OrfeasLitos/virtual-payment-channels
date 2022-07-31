@@ -205,6 +205,31 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     assert method.network.graph[1][2]['balance'] == previous_balance12
     assert method.network.graph.get_edge_data(5, 0) is None
 
+def test_do_elmo_lvpc_donner_pay(method_name):
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    payment_options = method.get_payment_options(0, 2, value, future_payments)
+    assert payment_options[1]['payment_information']['kind'] == method_name + '-pay'
+    payment_information_pay = payment_options[1]['payment_information']
+
+    previous_balance02 = method.network.graph[0][2]['balance']
+    previous_balance20 = method.network.graph[2][0]['balance']
+    previous_balance01 = method.network.graph[0][1]['balance']
+
+    method.do(payment_information_pay)
+    assert method.network.graph[0][2]['balance'] == previous_balance02 - value
+    assert method.network.graph[2][0]['balance'] == previous_balance20 + value
+    assert method.network.graph[0][2]['locked_coins'] == 0
+    assert method.network.graph[0][1]['balance'] == previous_balance01
+
+def test_do_elmo_lvpc_donner(method_name):
+    # TODO: test exceptions
+    test_do_onchain_elmo_lvpc_donner(method_name)
+    test_do_new_channel_elmo_lvpc_donner(method_name)
+    test_do_new_virtual_channel_elmo_lvpc_donner(method_name)
+    test_do_elmo_lvpc_donner_pay(method_name)
+
 
 if __name__ == "__main__":
     test_cheapest_path()
