@@ -13,7 +13,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
-    test_do_elmo_lvpc_donner
+    test_do_elmo_lvpc_donner,
+    test_update_balances_new_virtual_channel_elmo_lvpc_donner
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -63,64 +64,8 @@ def test_get_payment_options_elmo():
 def test_do_elmo():
     test_do_elmo_lvpc_donner("Elmo")
 
-def test_update_balances_new_virtual_channel_true_elmo():
-    # Here locking isn't done yet.
-    elmo = make_example_network_elmo()
-    path = [0, 1, 4, 7]
-    value = 2000000000
-    fee_intermediary = elmo.fee_intermediary
-    sender_coins = 100000000
-    elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
-    # review: it's unclear where the numbers come from
-    # review: better extract them from elmo
-    # review: do this in all similar spots
-    assert_eq(elmo.network.graph[0][1]['balance'],6000000000 - 2*fee_intermediary)
-    assert_eq(elmo.network.graph[1][0]['balance'], 7000000000 + 2*fee_intermediary)
-    assert_eq(elmo.network.graph[1][4]['balance'], 4000000000 - fee_intermediary)
-    assert_eq(elmo.network.graph[4][1]['balance'], 8000000000 + fee_intermediary)
-    assert_eq(elmo.network.graph[4][7]['balance'], 10000000000)
-    assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
-
-def test_update_balances_new_virtual_channel_reverse_elmo():
-    elmo = make_example_network_elmo()
-    channels_before = [channel for channel in elmo.network.graph.edges.data("balance")]
-    path = [0, 1, 4, 7]
-    value = 2000000000
-    sender_coins = 100000000
-    elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
-    # balances are updated, now we want to revert it
-    elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = False)
-    channels_after = [channel for channel in elmo.network.graph.edges.data("balance")]
-    for i in range(len(channels_before)):
-        assert_eq(channels_before[i][2], channels_after[i][2])
-    assert_eq(elmo.network.graph[0][1]['balance'],6000000000)
-    assert_eq(elmo.network.graph[1][0]['balance'], 7000000000)
-    assert_eq(elmo.network.graph[1][4]['balance'], 4000000000)
-    assert_eq(elmo.network.graph[4][1]['balance'], 8000000000)
-    assert_eq(elmo.network.graph[4][7]['balance'], 10000000000)
-    assert_eq(elmo.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(elmo.network.graph[1][2]['balance'], 10000000000)
-
-def test_update_balances_new_virtual_channel_not_enough_money_elmo():
-    elmo = make_example_network_elmo()
-    elmo.fee_intermediary = 9999999999999999
-    path = [0, 1, 4, 7]
-    value = 2000000000000
-    balances = nx.get_edge_attributes(elmo.network.graph, "balance")
-    sender_coins = 100000000
-    try:
-        elmo.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
-        assert False, 'update_balances() should raise a ValueError'
-    except ValueError:
-        balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")
-        for key in balances.keys():
-            assert_eq(balances[key], balances_after_failure[key])
-
 def test_update_balances_new_virtual_channel_elmo():
-    test_update_balances_new_virtual_channel_true_elmo()
-    test_update_balances_new_virtual_channel_reverse_elmo()
-    test_update_balances_new_virtual_channel_not_enough_money_elmo()
+    test_update_balances_new_virtual_channel_elmo_lvpc_donner("Elmo")
 
 def test_locking_and_unlocking_enough_balance_elmo():
     elmo = make_example_network_elmo()

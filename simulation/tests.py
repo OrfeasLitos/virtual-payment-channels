@@ -271,7 +271,7 @@ def test_update_balances_new_virtual_channel_reverse_elmo_lvpc_donner(method_nam
     assert_eq(method.network.graph[1][2]['balance'], 10000000000)
 
 def test_update_balances_new_virtual_channel_not_enough_money_elmo_lvpc_donner(method_name):
-    method = make_example_network_elmo_lvpc_donner()
+    method = make_example_network_elmo_lvpc_donner(method_name)
     method.fee_intermediary = 9999999999999999
     path = [0, 1, 4, 7]
     value = 2000000000000
