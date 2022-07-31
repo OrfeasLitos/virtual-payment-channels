@@ -13,7 +13,7 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
-    test_do_onchain_elmo_lvpc_donner
+    test_do_elmo_lvpc_donner
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -60,91 +60,8 @@ def test_get_payment_options_elmo():
     test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible1()
     test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible2()
 
-# adjusted from tests_ln
-def test_do_onchain_elmo():
-    test_do_onchain_elmo_lvpc_donner("Elmo")
-
-def test_do_new_channel_elmo():
-    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do_elmo()
-    )
-    payment_options = elmo.get_payment_options(0, 8, value, future_payments)
-    assert payment_options[1]['payment_information']['kind'] == 'Elmo-open-channel'
-    payment_information_new_channel = payment_options[1]['payment_information']
-
-    elmo.do(payment_information_new_channel)
-    # check first the coins of the parties
-    sum_future_payments = sum_future_payments_to_counterparty(0, 8, future_payments)
-    sender_coins = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
-    receiver_coins = value
-    tx_size = elmo.opening_transaction_size
-    assert elmo.plain_bitcoin.coins[0] == MAX_COINS - elmo.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
-    assert elmo.plain_bitcoin.coins[8] == MAX_COINS
-    # test the balances on ln (-2 for base fee and payment, +1 for payment).
-    assert elmo.network.graph[0][8]['balance'] == sender_coins
-    assert elmo.network.graph[8][0]['balance'] == receiver_coins
-
-def test_do_new_virtual_channel_elmo():
-    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do_elmo()
-    )
-    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
-    assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
-    payment_information_new_virtual_channel = payment_options[2]['payment_information']
-
-    previous_balance01 = elmo.network.graph[0][1]['balance']
-    previous_balance10 = elmo.network.graph[1][0]['balance']
-    previous_balance14 = elmo.network.graph[1][4]['balance']
-    previous_balance41 = elmo.network.graph[4][1]['balance']
-    previous_balance12 = elmo.network.graph[1][2]['balance']
-
-    elmo.do(payment_information_new_virtual_channel)
-    # check first the coins of the parties
-    sum_future_payments = sum_future_payments_to_counterparty(0, 4, future_payments)
-    wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE_ELMO * sum_future_payments
-    new_virtual_channel_fee = elmo.get_new_virtual_channel_fee([0,1,4])
-    sender_coins = min(
-        elmo.network.graph[0][1]['balance'] - value - new_virtual_channel_fee,
-        elmo.network.graph[1][4]['balance'] - value - new_virtual_channel_fee,
-        wanted_sender_coins
-    )
-    locked_coins = sender_coins + value
-    # review: consider testing all channels in two for loops: one for the on-path channels, of which the balances & locked coins have changed, and one for all untouched coins
-    assert elmo.network.graph[1][4]['locked_coins'] == locked_coins
-    assert elmo.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - value - sender_coins
-    assert elmo.network.graph[1][0]['locked_coins'] == 0
-    assert elmo.network.graph[1][0]['balance'] == previous_balance10 + new_virtual_channel_fee
-    assert elmo.network.graph[1][4]['balance'] == previous_balance14 - locked_coins
-    assert elmo.network.graph[4][1]['balance'] == previous_balance41
-    assert elmo.network.graph[4][1]['locked_coins'] == 0
-    assert elmo.network.graph[1][2]['locked_coins'] == 0
-    assert elmo.network.graph[1][2]['balance'] == previous_balance12
-    assert elmo.network.graph.get_edge_data(5, 0) is None
-
-def test_do_elmo_pay():
-    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do_elmo()
-    )
-    payment_options = elmo.get_payment_options(0, 2, value, future_payments)
-    assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
-    payment_information_pay = payment_options[1]['payment_information']
-
-    previous_balance02 = elmo.network.graph[0][2]['balance']
-    previous_balance20 = elmo.network.graph[2][0]['balance']
-    previous_balance01 = elmo.network.graph[0][1]['balance']
-
-    elmo.do(payment_information_pay)
-    assert elmo.network.graph[0][2]['balance'] == previous_balance02 - value
-    assert elmo.network.graph[2][0]['balance'] == previous_balance20 + value
-    assert elmo.network.graph[0][2]['locked_coins'] == 0
-    assert elmo.network.graph[0][1]['balance'] == previous_balance01
-
 def test_do_elmo():
-    # TODO: test exceptions
-    test_do_onchain_elmo()
-    test_do_new_channel_elmo()
-    test_do_new_virtual_channel_elmo()
-    test_do_elmo_pay()
+    test_do_elmo_lvpc_donner("Elmo")
 
 def test_update_balances_new_virtual_channel_true_elmo():
     # Here locking isn't done yet.
