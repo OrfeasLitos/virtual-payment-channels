@@ -1,8 +1,13 @@
 
 
-from tests import (make_example_network_elmo_lvpc_donner, make_example_network_elmo_lvpc_donner_and_future_payments, make_example_simulation_for_all,
-    test_get_payment_options_elmo_lvpc_donner_channel_exists, test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1
+from tests import (
+    make_example_network_elmo_lvpc_donner,
+    make_example_network_elmo_lvpc_donner_and_future_payments,
+    make_example_simulation_for_all,
+    test_get_payment_options_elmo_lvpc_donner_channel_exists,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
+    test_do_onchain_elmo_lvpc_donner
 )
 
 
@@ -38,6 +43,12 @@ def test_get_payment_options_lvpc():
     test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible1()
     test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2()
 
+def test_do_onchain_lvpc():
+    test_do_onchain_elmo_lvpc_donner("LVPC")
+
+def test_do_lvpc():
+    test_do_onchain_lvpc()
+
 def test_simulation_with_lvpc():
     simulation = make_example_simulation_lvpc()
     results = simulation.run()
@@ -46,4 +57,5 @@ def test_simulation_with_lvpc():
 if __name__ == "__main__":
     test_get_payment_options_lvpc()
     test_simulation_with_lvpc()
+    test_do_lvpc()
     print("Success")
