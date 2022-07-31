@@ -7,7 +7,7 @@ import networkx as nx
 import collections
 
 from simulation import Simulation, random_payments
-from paymentmethod import PlainBitcoin, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_LN, MULTIPLIER_CHANNEL_BALANCE_ELMO
+from paymentmethod import PlainBitcoin, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from ln import LN
 from elmo import Elmo
 from lvpc import LVPC
@@ -127,8 +127,8 @@ def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_chann
 def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1(method_name):
     # shortest path should have length 3 and all channels are onchain, so it should give the same results for
     # Elmo, LVPC and Donner
-    fee_intermediary, elmo, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
-    payment_options = elmo.get_payment_options(0, 4, 100000000., future_payments)
+    fee_intermediary, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
+    payment_options = method.get_payment_options(0, 4, 100000000., future_payments)
     assert len(payment_options) == 3
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
@@ -147,6 +147,63 @@ def test_do_onchain_elmo_lvpc_donner(method_name):
     assert method.plain_bitcoin.coins[0] == MAX_COINS - value - method.plain_bitcoin.get_fee() 
     assert method.plain_bitcoin.coins[7] == MAX_COINS + value
 
+def test_do_new_channel_elmo_lvpc_donner(method_name):
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    payment_options = method.get_payment_options(0, 8, value, future_payments)
+    assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
+    payment_information_new_channel = payment_options[1]['payment_information']
+
+    method.do(payment_information_new_channel)
+    # check first the coins of the parties
+    sum_future_payments = sum_future_payments_to_counterparty(0, 8, future_payments)
+    sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
+    receiver_coins = value
+    tx_size = method.opening_transaction_size
+    assert method.plain_bitcoin.coins[0] == MAX_COINS - method.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
+    assert method.plain_bitcoin.coins[8] == MAX_COINS
+    # test the balances on ln (-2 for base fee and payment, +1 for payment).
+    assert method.network.graph[0][8]['balance'] == sender_coins
+    assert method.network.graph[8][0]['balance'] == receiver_coins
+
+def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
+    # the new_virtual_channel_option is the same for elmo, lvpc and donner as it is a channel on two existing onchain channels.
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+
+    previous_balance01 = method.network.graph[0][1]['balance']
+    previous_balance10 = method.network.graph[1][0]['balance']
+    previous_balance14 = method.network.graph[1][4]['balance']
+    previous_balance41 = method.network.graph[4][1]['balance']
+    previous_balance12 = method.network.graph[1][2]['balance']
+
+    method.do(payment_information_new_virtual_channel)
+    # check first the coins of the parties
+    sum_future_payments = sum_future_payments_to_counterparty(0, 4, future_payments)
+    wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
+    new_virtual_channel_fee = method.get_new_virtual_channel_fee([0,1,4])
+    sender_coins = min(
+        method.network.graph[0][1]['balance'] - value - new_virtual_channel_fee,
+        method.network.graph[1][4]['balance'] - value - new_virtual_channel_fee,
+        wanted_sender_coins
+    )
+    locked_coins = sender_coins + value
+    # review: consider testing all channels in two for loops: one for the on-path channels, of which the balances & locked coins have changed, and one for all untouched coins
+    assert method.network.graph[1][4]['locked_coins'] == locked_coins
+    assert method.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - value - sender_coins
+    assert method.network.graph[1][0]['locked_coins'] == 0
+    assert method.network.graph[1][0]['balance'] == previous_balance10 + new_virtual_channel_fee
+    assert method.network.graph[1][4]['balance'] == previous_balance14 - locked_coins
+    assert method.network.graph[4][1]['balance'] == previous_balance41
+    assert method.network.graph[4][1]['locked_coins'] == 0
+    assert method.network.graph[1][2]['locked_coins'] == 0
+    assert method.network.graph[1][2]['balance'] == previous_balance12
+    assert method.network.graph.get_edge_data(5, 0) is None
 
 
 if __name__ == "__main__":
