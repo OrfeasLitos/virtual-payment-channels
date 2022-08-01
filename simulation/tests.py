@@ -523,7 +523,7 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_
         case "Donner":
             method = Donner(
                 nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-                donner_fee_intermediary = 1000000, opening_transaction_size = 200, donner_pay_delay = 0.05,
+                fee_intermediary = 1000000, opening_transaction_size = 200, donner_pay_delay = 0.05,
                 donner_new_virtual_channel_delay = 1
             )
     knowledge = Knowledge('know-all')

@@ -13,7 +13,8 @@ from tests import (
     test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner,
     test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner,
     test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner,
-    test_simulation_with_elmo_lvpc_donner_ignore_centrality
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality,
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance
 )
 
 
@@ -94,8 +95,12 @@ def test_close_channel_lvpc():
 def test_simulation_with_lvpc_ignore_centrality():
     test_simulation_with_elmo_lvpc_donner_ignore_centrality("LVPC")
 
+def test_simulation_with_lvpc_ignore_centrality_and_distance():
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance("LVPC")
+
 def test_simulation_with_lvpc():
     test_simulation_with_lvpc_ignore_centrality()
+    test_simulation_with_lvpc_ignore_centrality_and_distance()
     simulation = make_example_simulation_lvpc()
     results = simulation.run()
     print(results)
