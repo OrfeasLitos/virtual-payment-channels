@@ -19,7 +19,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner,
     test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner,
     test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner,
-    test_simulation_with_elmo_lvpc_donner_ignore_centrality
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality,
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -198,24 +199,7 @@ def test_simulation_with_elmo_ignore_centrality():
     test_simulation_with_elmo_lvpc_donner_ignore_centrality("Elmo")
 
 def test_simulation_with_elmo_ignore_centrality_and_distance():
-    elmo = Elmo(
-        nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-        fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
-        elmo_new_virtual_channel_delay = 1
-    )
-    knowledge = Knowledge('know-all')
-    payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
-    utility_function = make_example_utility_function(10000, 5000, 0, 0)
-    utility = Utility(utility_function)
-    simulation = Simulation(payments, elmo, knowledge, utility)
-    results = simulation.run()
-    done_payment0, payment0_info = results[0]
-    assert done_payment0 == True
-    assert payment0_info['kind'] == 'onchain'
-    done_payment1, payment1_info = results[1]
-    assert done_payment1 == True
-    assert payment1_info['kind'] == 'onchain'
-    assert len(results) == 2
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance("Elmo")
 
 def test_simulation_with_previous_channels_elmo_ignore_centrality():
     elmo = Elmo(4, fee_intermediary = 1000000)
