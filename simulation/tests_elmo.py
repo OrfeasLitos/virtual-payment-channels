@@ -195,24 +195,7 @@ def test_force_close_elmo():
     test_force_close2_elmo()
 
 def test_simulation_with_elmo_ignore_centrality():
-    elmo = Elmo(
-        nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-        fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
-        elmo_new_virtual_channel_delay = 1
-    )
-    knowledge = Knowledge('know-all')
-    payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
-    utility_function = make_example_utility_function(10000, 5000, 10000, 0)
-    utility = Utility(utility_function)
-    simulation = Simulation(payments, elmo, knowledge, utility)
-    results = simulation.run()
-    done_payment0, payment0_info = results[0]
-    assert done_payment0 == True
-    assert payment0_info['kind'] == 'Elmo-open-channel'
-    done_payment1, payment1_info = results[1]
-    assert done_payment1 == True
-    assert payment1_info['kind'] == 'Elmo-pay'
-    assert len(results) == 2
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality("Elmo")
 
 def test_simulation_with_elmo_ignore_centrality_and_distance():
     elmo = Elmo(
