@@ -500,10 +500,10 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality(method_name):
     results = simulation.run()
     done_payment0, payment0_info = results[0]
     assert done_payment0 == True
-    assert payment0_info['kind'] == 'Elmo-open-channel'
+    assert payment0_info['kind'] == method_name + '-open-channel'
     done_payment1, payment1_info = results[1]
     assert done_payment1 == True
-    assert payment1_info['kind'] == 'Elmo-pay'
+    assert payment1_info['kind'] == method_name + '-pay'
     assert len(results) == 2
 
 
