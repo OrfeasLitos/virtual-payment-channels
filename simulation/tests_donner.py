@@ -7,7 +7,8 @@ from tests import (make_example_network_elmo_lvpc_donner, make_example_simulatio
     test_do_elmo_lvpc_donner,
     test_update_balances_new_virtual_channel_elmo_lvpc_donner,
     test_lock_and_unlock_elmo_lvpc_donner,
-    test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner
+    test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner,
+    test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner
 )
 
 
@@ -79,6 +80,12 @@ def test_pay_donner():
 def test_undo_donner():
     test_undo_elmo_lvpc_donner("Donner")
 
+def test_coop_close_channel_first_virtual_layer_no_layer_above_donner():
+    test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner("Donner")
+
+def test_close_channel_donner():
+    test_coop_close_channel_first_virtual_layer_no_layer_above_donner()
+
 def test_simulation_with_donner():
     simulation = make_example_simulation_donner()
     results = simulation.run()
@@ -92,5 +99,6 @@ if __name__ == "__main__":
     test_lock_and_unlock_donner()
     test_pay_donner()
     test_undo_donner()
+    test_close_channel_donner()
     test_simulation_with_donner()
     print("Success")

@@ -16,7 +16,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_do_elmo_lvpc_donner,
     test_update_balances_new_virtual_channel_elmo_lvpc_donner,
     test_lock_and_unlock_elmo_lvpc_donner,
-    test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner
+    test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner,
+    test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -79,28 +80,7 @@ def test_undo_elmo():
     test_undo_elmo_lvpc_donner("Elmo")
 
 def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo():
-    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do_elmo()
-    )
-    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
-    assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
-    payment_information_new_virtual_channel = payment_options[2]['payment_information']
-
-    elmo.do(payment_information_new_virtual_channel)
-    assert elmo.network.graph[0][4]['channels_below'] == [0,1,4]
-    assert elmo.network.graph[4][0]['channels_below'] == [4,1,0]
-    assert elmo.network.graph[0][1]['channels_above'] == [{0,4}]
-    assert elmo.network.graph[1][0]['channels_above'] == [{0,4}]
-    assert elmo.network.graph[4][1]['channels_above'] == [{0,4}]
-    assert elmo.network.graph[1][4]['channels_above'] == [{0,4}]
-    assert elmo.network.graph[0][2]['channels_above'] == []
-    assert elmo.network.graph[2][0]['channels_above'] == []
-    elmo.network.cooperative_close_channel(0, 4)
-    assert elmo.network.graph[0][1]['channels_above'] == []
-    assert elmo.network.graph[0][1]['channels_below'] is None
-    assert elmo.network.graph[1][0]['channels_above'] == []
-    assert elmo.network.graph[4][1]['channels_above'] == []
-    assert elmo.network.graph[1][4]['channels_above'] == []
+    test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner("Elmo")
 
 def test_coop_close_channel_first_virtual_layer_one_layer_above_elmo(forward = True):
     elmo = make_example_network_elmo()
