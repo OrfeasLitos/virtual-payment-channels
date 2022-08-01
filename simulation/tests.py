@@ -380,6 +380,52 @@ def test_pay_elmo_lvpc_donner(method_name):
     test_pay_enough_balance_elmo_lvpc_donner(method_name)
     test_pay_not_enough_balance_elmo_lvpc_donner(method_name)
 
+def test_undo_new_virtual_channel_elmo_lvpc_donner(method_name):
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    # virtual channel has length 2 and both underlying channel are onchain -> equal for all 3 methods
+    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    sender_coins = method.plain_bitcoin.coins[0]
+    receiver_coins = method.plain_bitcoin.coins[4]
+    assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
+    locked_coins_before = nx.get_edge_attributes(method.network.graph, "locked_coins")
+
+    method.do(payment_information_new_virtual_channel)
+    method.undo(payment_information_new_virtual_channel)
+    balances_after_failure = nx.get_edge_attributes(method.network.graph, "balance")
+    locked_coins_after_failure = nx.get_edge_attributes(method.network.graph, "locked_coins")
+    for key in balances_before.keys():
+        assert_eq(balances_before[key], balances_after_failure[key])
+    for key in locked_coins_before.keys():
+        assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
+    assert sender_coins == method.plain_bitcoin.coins[0]
+    assert receiver_coins == method.plain_bitcoin.coins[4]
+
+def test_undo_elmo_lvpc_donner_pay(method_name):
+    #TODO: tests are very similar. Check how to unify them.
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    payment_options = method.get_payment_options(0, 2, value, future_payments)
+    assert payment_options[1]['payment_information']['kind'] == method_name + '-pay'
+    payment_information_pay = payment_options[1]['payment_information']
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
+    locked_coins_before = nx.get_edge_attributes(method.network.graph, "locked_coins")
+    method.do(payment_information_pay)
+    method.undo(payment_information_pay)
+    balances_after_failure = nx.get_edge_attributes(method.network.graph, "balance")
+    locked_coins_after_failure = nx.get_edge_attributes(method.network.graph, "locked_coins")
+    for key in balances_before.keys():
+        assert_eq(balances_before[key], balances_after_failure[key])
+    for key in locked_coins_before.keys():
+        assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
+
+def test_undo_elmo_lvpc_donner(method_name):
+    test_undo_new_virtual_channel_elmo_lvpc_donner(method_name)
+    test_undo_elmo_lvpc_donner_pay(method_name)
 
 if __name__ == "__main__":
     test_cheapest_path()
