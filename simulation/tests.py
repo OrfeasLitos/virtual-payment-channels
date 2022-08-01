@@ -427,6 +427,31 @@ def test_undo_elmo_lvpc_donner(method_name):
     test_undo_new_virtual_channel_elmo_lvpc_donner(method_name)
     test_undo_elmo_lvpc_donner_pay(method_name)
 
+def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner(method_name):
+    # virtual channel is possible for elmo, lvpc and donner
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+
+    method.do(payment_information_new_virtual_channel)
+    assert method.network.graph[0][4]['channels_below'] == [0,1,4]
+    assert method.network.graph[4][0]['channels_below'] == [4,1,0]
+    assert method.network.graph[0][1]['channels_above'] == [{0,4}]
+    assert method.network.graph[1][0]['channels_above'] == [{0,4}]
+    assert method.network.graph[4][1]['channels_above'] == [{0,4}]
+    assert method.network.graph[1][4]['channels_above'] == [{0,4}]
+    assert method.network.graph[0][2]['channels_above'] == []
+    assert method.network.graph[2][0]['channels_above'] == []
+    method.network.cooperative_close_channel(0, 4)
+    assert method.network.graph[0][1]['channels_above'] == []
+    assert method.network.graph[0][1]['channels_below'] is None
+    assert method.network.graph[1][0]['channels_above'] == []
+    assert method.network.graph[4][1]['channels_above'] == []
+    assert method.network.graph[1][4]['channels_above'] == []
+
 if __name__ == "__main__":
     test_cheapest_path()
     print("Success")
