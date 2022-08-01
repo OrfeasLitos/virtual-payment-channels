@@ -1,4 +1,5 @@
 
+from donner import Donner
 from tests import (make_example_network_elmo_lvpc_donner, make_example_simulation_for_all,
     make_example_network_elmo_lvpc_donner_and_future_payments,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,

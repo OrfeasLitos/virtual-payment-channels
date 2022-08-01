@@ -1,5 +1,5 @@
 
-
+from lvpc import LVPC
 from tests import (
     make_example_network_elmo_lvpc_donner,
     make_example_network_elmo_lvpc_donner_and_future_payments,
@@ -69,9 +69,26 @@ def test_coop_close_channel_first_virtual_layer_no_layer_above_lvpc():
 def test_force_close_channel_onchain_layer_one_layer_above_lvpc():
     test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner("LVPC")
 
+# adjusted from Elmo
+def test_force_close2_lvpc():
+    lvpc = LVPC(4, lvpc_fee_intermediary = 1000000)
+
+    lvpc.network.add_channel(0, 3000000000., 1, 7000000000., None)
+    lvpc.network.add_channel(1, 6000000000., 2, 7000000000., None)
+    lvpc.network.add_channel(2, 4000000000., 3, 8000000000., None)
+    lvpc.network.add_channel(1, 1000000000., 3, 800000000., [1,2,3])
+    lvpc.network.add_channel(0, 100000000., 3, 80000000., [0,1,3])
+    lvpc.network.force_close_channel(0, 1)
+    assert set(lvpc.network.graph.edges()) == set([(0, 3), (3, 0)])
+    assert lvpc.network.graph[0][3]['channels_below'] is None
+    assert lvpc.network.graph[0][3]['channels_above'] == []
+    assert lvpc.network.graph[3][0]['channels_below'] is None
+    assert lvpc.network.graph[3][0]['channels_above'] == []
+
 def test_close_channel_lvpc():
     test_coop_close_channel_first_virtual_layer_no_layer_above_lvpc()
     test_force_close_channel_onchain_layer_one_layer_above_lvpc()
+    test_force_close2_lvpc()
 
 def test_simulation_with_lvpc():
     simulation = make_example_simulation_lvpc()
