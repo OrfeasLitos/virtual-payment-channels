@@ -18,7 +18,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_lock_and_unlock_elmo_lvpc_donner,
     test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner,
     test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner,
-    test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner
+    test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner,
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
