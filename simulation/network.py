@@ -230,6 +230,10 @@ class Network_Elmo(Network):
             self.cooperative_close_channel(idA, idB)
 
 class Network_LVPC(Network_Elmo):
+    # TODO: check channel closing in LVPC.
+    # in our setting we shouldn't have a problem since we always only close the topmost channel,
+    # but how would it be handled if we close a channel below?
+    # in elmo that's no problem because we can have more channels below, but in LVPC that's not possible.
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
     

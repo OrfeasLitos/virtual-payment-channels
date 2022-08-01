@@ -83,3 +83,4 @@ if __name__ == "__main__":
     test_pay_lvpc()
     test_close_channel_lvpc()
     print("Success")
+    
