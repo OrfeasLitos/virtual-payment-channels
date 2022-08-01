@@ -16,7 +16,7 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_do_elmo_lvpc_donner,
     test_update_balances_new_virtual_channel_elmo_lvpc_donner,
     test_lock_and_unlock_elmo_lvpc_donner,
-    test_pay_elmo_lvpc_donner
+    test_pay_elmo_lvpc_donner, test_undo_elmo_lvpc_donner
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -75,51 +75,8 @@ def test_lock_and_unlock_elmo():
 def test_pay_elmo():
     test_pay_elmo_lvpc_donner("Elmo")
 
-def test_undo_new_virtual_channel_elmo():
-    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do_elmo()
-    )
-    payment_options = elmo.get_payment_options(0, 4, value, future_payments)
-    sender_coins = elmo.plain_bitcoin.coins[0]
-    receiver_coins = elmo.plain_bitcoin.coins[4]
-    assert payment_options[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
-    payment_information_new_virtual_channel = payment_options[2]['payment_information']
-    balances_before = nx.get_edge_attributes(elmo.network.graph, "balance")
-    locked_coins_before = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
-
-    elmo.do(payment_information_new_virtual_channel)
-    elmo.undo(payment_information_new_virtual_channel)
-    balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")
-    locked_coins_after_failure = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
-    for key in balances_before.keys():
-        assert_eq(balances_before[key], balances_after_failure[key])
-    for key in locked_coins_before.keys():
-        assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
-    assert sender_coins == elmo.plain_bitcoin.coins[0]
-    assert receiver_coins == elmo.plain_bitcoin.coins[4]
-
-def test_undo_elmo_pay():
-    #TODO: tests are very similar. Check how to unify them.
-    fee_intermediary, elmo, future_payments, value, MAX_COINS = (
-        make_example_values_for_do_elmo()
-    )
-    payment_options = elmo.get_payment_options(0, 2, value, future_payments)
-    assert payment_options[1]['payment_information']['kind'] == 'Elmo-pay'
-    payment_information_pay = payment_options[1]['payment_information']
-    balances_before = nx.get_edge_attributes(elmo.network.graph, "balance")
-    locked_coins_before = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
-    elmo.do(payment_information_pay)
-    elmo.undo(payment_information_pay)
-    balances_after_failure = nx.get_edge_attributes(elmo.network.graph, "balance")
-    locked_coins_after_failure = nx.get_edge_attributes(elmo.network.graph, "locked_coins")
-    for key in balances_before.keys():
-        assert_eq(balances_before[key], balances_after_failure[key])
-    for key in locked_coins_before.keys():
-        assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
-
 def test_undo_elmo():
-    test_undo_new_virtual_channel_elmo()
-    test_undo_elmo_pay()
+    test_undo_elmo_lvpc_donner("Elmo")
 
 def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
