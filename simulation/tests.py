@@ -452,6 +452,22 @@ def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner(
     assert method.network.graph[4][1]['channels_above'] == []
     assert method.network.graph[1][4]['channels_above'] == []
 
+def test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner(method_name):
+    fee_intermediary, method, future_payments, value, MAX_COINS = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+
+    method.do(payment_information_new_virtual_channel)
+    assert method.network.graph[0][4]['channels_below'] == [0,1,4]
+    assert method.network.graph[4][0]['channels_below'] == [4,1,0]
+    method.network.force_close_channel(0, 1)
+    assert method.network.graph[0][4]['channels_below'] is None
+    assert method.network.graph[4][0]['channels_below'] is None
+    assert method.network.graph.get_edge_data(1, 4) is None
+
 if __name__ == "__main__":
     test_cheapest_path()
     print("Success")
