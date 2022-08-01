@@ -15,7 +15,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
     test_do_elmo_lvpc_donner,
     test_update_balances_new_virtual_channel_elmo_lvpc_donner,
-    test_lock_and_unlock_elmo_lvpc_donner
+    test_lock_and_unlock_elmo_lvpc_donner,
+    test_pay_elmo_lvpc_donner
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -71,34 +72,8 @@ def test_update_balances_new_virtual_channel_elmo():
 def test_lock_and_unlock_elmo():
     test_lock_and_unlock_elmo_lvpc_donner("Elmo")
 
-def test_pay_enough_balance_elmo():
-    elmo = make_example_network_elmo()
-    sender = 0
-    receiver = 2
-    value = 20000000
-    elmo.pay(sender, receiver, value)
-    assert_eq(elmo.network.graph[sender][receiver]['balance'], 3000000000 - value)
-    assert_eq(elmo.network.graph[receiver][sender]['balance'], 7000000000 + value)
-    assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
-    assert_eq(elmo.network.graph[sender][receiver]['locked_coins'], 0)
-
-def test_pay_not_enough_balance_elmo():
-    elmo = make_example_network_elmo()
-    sender = 0
-    receiver = 2
-    value = 20000000000000
-    try:
-        elmo.pay(sender, receiver, value)
-        assert False, "should raise ValueError"
-    except ValueError:
-        assert_eq(elmo.network.graph[sender][receiver]['balance'], 3000000000)
-        assert_eq(elmo.network.graph[receiver][sender]['balance'], 7000000000)
-        assert_eq(elmo.network.graph[0][1]['balance'], 6000000000)
-        assert_eq(elmo.network.graph[sender][receiver]['locked_coins'], 0)
-
 def test_pay_elmo():
-    test_pay_enough_balance_elmo()
-    test_pay_not_enough_balance_elmo()
+    test_pay_elmo_lvpc_donner("Elmo")
 
 def test_undo_new_virtual_channel_elmo():
     fee_intermediary, elmo, future_payments, value, MAX_COINS = (
