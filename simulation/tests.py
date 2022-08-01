@@ -506,6 +506,39 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality(method_name):
     assert payment1_info['kind'] == method_name + '-pay'
     assert len(results) == 2
 
+def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_name):
+    match method_name:
+        case "Elmo":
+            method = Elmo(
+                nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
+                fee_intermediary = 1000000, opening_transaction_size = 200, elmo_pay_delay = 0.05,
+                elmo_new_virtual_channel_delay = 1
+            )
+        case "LVPC":
+            method = LVPC(
+                nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
+                lvpc_fee_intermediary = 1000000, opening_transaction_size = 200, lvpc_pay_delay = 0.05,
+                lvpc_new_virtual_channel_delay = 1
+            )
+        case "Donner":
+            method = Donner(
+                nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
+                donner_fee_intermediary = 1000000, opening_transaction_size = 200, donner_pay_delay = 0.05,
+                donner_new_virtual_channel_delay = 1
+            )
+    knowledge = Knowledge('know-all')
+    payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
+    utility_function = make_example_utility_function(10000, 5000, 0, 0)
+    utility = Utility(utility_function)
+    simulation = Simulation(payments, method, knowledge, utility)
+    results = simulation.run()
+    done_payment0, payment0_info = results[0]
+    assert done_payment0 == True
+    assert payment0_info['kind'] == 'onchain'
+    done_payment1, payment1_info = results[1]
+    assert done_payment1 == True
+    assert payment1_info['kind'] == 'onchain'
+    assert len(results) == 2
 
 
 if __name__ == "__main__":
