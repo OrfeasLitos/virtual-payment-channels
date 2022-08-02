@@ -206,7 +206,7 @@ def test_simulation_with_previous_channels_elmo_ignore_centrality():
     test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality("Elmo")
 
 def test_simulation_with_elmo():
-    simulation = make_example_simulation_elmo()
+    simulation = make_example_simulation_elmo(nr_players=20)
     results = simulation.run()
     print(results)
     test_simulation_with_elmo_ignore_centrality()

@@ -108,7 +108,7 @@ def test_simulation_with_donner():
     test_simulation_with_donner_ignore_centrality()
     test_simulation_with_donner_ignore_centrality_and_distance()
     test_simulation_with_previous_channels_donner_ignore_centrality()
-    simulation = make_example_simulation_donner()
+    simulation = make_example_simulation_donner(nr_players = 20)
     results = simulation.run()
     print(results)
 
