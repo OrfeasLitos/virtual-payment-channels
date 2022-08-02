@@ -65,9 +65,8 @@ class Network:
 
 # review: why do we need a separate Network class for Elmo?
 class Custom_Network_Elmo_LVPC_Donner(Network):
-    def __init__(self, method_name, nr_vertices):
+    def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
-        self.method_name = method_name
 
     def get_new_edges(self, idA, balA, idB, balB, path):
         # convention: path goes from A to B (makes it easier to think about it in close channel)
@@ -232,9 +231,9 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
 
 class Network_Elmo(Custom_Network_Elmo_LVPC_Donner):
     def __init__(self, nr_vertices):
-        super().__init__("Elmo", nr_vertices)
+        super().__init__(nr_vertices)
 
-class Network_LVPC(Network_Elmo):
+class Network_LVPC(Custom_Network_Elmo_LVPC_Donner):
     # TODO: check channel closing in LVPC.
     # in our setting we shouldn't have a problem since we always only close the topmost channel,
     # but how would it be handled if we close a channel below?
@@ -253,7 +252,7 @@ class Network_LVPC(Network_Elmo):
             return None
         return cheapest_path
 
-class Network_Donner(Network_Elmo):
+class Network_Donner(Custom_Network_Elmo_LVPC_Donner):
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
 
