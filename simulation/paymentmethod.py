@@ -2,7 +2,6 @@ import random
 import math
 import numpy as np
 import operator
-# review: discuss the new class model
 from abc import ABC, abstractmethod, abstractproperty
 from network import Network, Network_Elmo
 

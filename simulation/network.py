@@ -63,7 +63,6 @@ class Network:
     def get_harmonic_centrality(self):
         return nx.harmonic_centrality(self.graph)
 
-# review: why do we need a separate Network class for Elmo?
 class Custom_Network_Elmo_LVPC_Donner(Network):
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
@@ -95,8 +94,6 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
         self.edge_id += 1
     
     def lock_coins(self, path, lock_value):
-        # Question: are coins on the first channel in the path also locked?
-        # review: yes, the sender locks these coins in its base channel as well.
         for i in range(len(path) - 1):
             sender = path[i]
             receiver = path[i+1]
@@ -145,7 +142,6 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
             is_right_party_closing = channels_below_upper_channel_C_to_D[i-1] == idB
             j = i - 1 if is_right_party_closing else i + 1
             # review: this is a big improvement in the logic. Has it been thoroughly tested for equivalence with the old one?
-            # I've checked the logic and it passed all previous tests for channel_closing,
             # tested in test_coop_close_channel_first_virtual_layer_one_layer_above
             (first_index, second_index) = (j, i) if is_right_party_closing else (i, j)
             path_length_C_to_D = len(channels_below_upper_channel_C_to_D)
