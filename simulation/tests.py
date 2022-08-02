@@ -550,6 +550,8 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
             method = LVPC(4, lvpc_fee_intermediary = 1000000)
         case "Donner":
             method = Donner(4, fee_intermediary = 1000000)
+        case _:
+            raise ValueError
     
     method.network.add_channel(0, 3000000000000., 1, 7000000000000., None)
     method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
