@@ -540,6 +540,42 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_
     assert payment1_info['kind'] == 'onchain'
     assert len(results) == 2
 
+def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(method_name):
+    # the open-virtual-channel option is the same for elmo, lvpc, donner
+    # TODO: make tests for simulation where it is different
+    match method_name:
+        case "Elmo":
+            method = Elmo(4, fee_intermediary = 1000000)
+        case "LVPC":
+            method = LVPC(4, lvpc_fee_intermediary = 1000000)
+        case "Donner":
+            method = Donner(4, fee_intermediary = 1000000)
+    
+    method.network.add_channel(0, 3000000000000., 1, 7000000000000., None)
+    method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
+    method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
+    method.network.add_channel(1, 1000000000000., 3, 800000000000., [1,2,3])
+    method.network.add_channel(0, 100000000000., 3, 80000000000., [0,1,3])
+    knowledge = Knowledge('know-all')
+    payments = collections.deque([(0, 2, 1000000000), (0, 1, 20000000000)])
+    utility_function = make_example_utility_function(10000, 5000, 1, 0)
+    utility = Utility(utility_function)
+    simulation = Simulation(payments, method, knowledge, utility)
+    results = simulation.run()
+    done_payment0, payment0_info = results[0]
+    done_payment1, payment1_info = results[1]
+    assert done_payment0 == True
+    assert payment0_info['kind'] == method_name + '-open-virtual-channel'
+    assert done_payment1 == True
+    assert payment1_info['kind'] == method_name + '-pay'
+    assert len(results) == 2
+    assert set(method.network.graph.edges()) == set(
+        [(0, 1), (1, 0), (0, 2), (2, 0), (0, 3), (3, 0), (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)]
+    )
+    assert method.network.graph[0][1]['locked_coins'] == 1000000000
+    assert method.network.graph[1][2]['locked_coins'] == 1000000000
+    assert method.network.graph[1][0]['locked_coins'] == 0
+
 
 if __name__ == "__main__":
     test_cheapest_path()
