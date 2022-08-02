@@ -25,8 +25,8 @@ def make_example_network_donner(fee_intermediary = 1000000):
 def make_example_network_donner_and_future_payments(fee_intermediary = 1000000):
     return make_example_network_elmo_lvpc_donner_and_future_payments("Donner", fee_intermediary)
 
-def make_example_simulation_donner(seed = 12345, coins_for_parties = 'max_value'):
-    return make_example_simulation_for_all("Donner", seed, coins_for_parties)
+def make_example_simulation_donner(seed = 12345, nr_players = 10, coins_for_parties = 'max_value'):
+    return make_example_simulation_for_all("Donner", seed, nr_players, coins_for_parties)
 
 def test_get_payment_options_donner_channel_exists():
     test_get_payment_options_elmo_lvpc_donner_channel_exists("Donner")

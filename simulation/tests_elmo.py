@@ -31,8 +31,8 @@ def make_example_network_elmo(fee_intermediary = 1000000):
 def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
     return make_example_network_elmo_lvpc_donner_and_future_payments("Elmo", fee_intermediary)
 
-def make_example_simulation_elmo(seed = 12345, coins_for_parties = 'max_value'):
-    return make_example_simulation_for_all("Elmo", seed, coins_for_parties)
+def make_example_simulation_elmo(seed = 12345, nr_players = 10, coins_for_parties = 'max_value'):
+    return make_example_simulation_for_all("Elmo", seed, nr_players, coins_for_parties)
 
 def test_get_payment_options_elmo_channel_exists():
     test_get_payment_options_elmo_lvpc_donner_channel_exists("Elmo")

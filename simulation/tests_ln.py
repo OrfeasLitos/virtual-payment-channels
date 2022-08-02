@@ -26,8 +26,8 @@ def make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.0000
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return base_fee, ln_fee, lightning, future_payments
 
-def make_example_simulation_ln(seed = 12345, coins_for_parties = 'max_value'):
-    return make_example_simulation_for_all("LN", seed, coins_for_parties)
+def make_example_simulation_ln(seed = 12345, nr_players = 10, coins_for_parties = 'max_value'):
+    return make_example_simulation_for_all("LN", seed, nr_players, coins_for_parties)
 
 def test_get_payment_fee_ln():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):

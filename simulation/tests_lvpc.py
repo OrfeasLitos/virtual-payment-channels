@@ -26,8 +26,8 @@ def make_example_network_lvpc(lvpc_fee_intermediary = 1000000):
 def make_example_network_lvpc_and_future_payments(fee_intermediary = 1000000):
     return make_example_network_elmo_lvpc_donner_and_future_payments("LVPC", fee_intermediary)
 
-def make_example_simulation_lvpc(seed = 12345, coins_for_parties = 'max_value'):
-    return make_example_simulation_for_all("LVPC", seed, coins_for_parties)
+def make_example_simulation_lvpc(seed = 12345, nr_players = 10, coins_for_parties = 'max_value'):
+    return make_example_simulation_for_all("LVPC", seed, nr_players, coins_for_parties)
 
 def test_get_payment_options_lvpc_channel_exists():
     test_get_payment_options_elmo_lvpc_donner_channel_exists("LVPC")
