@@ -64,9 +64,10 @@ class Network:
         return nx.harmonic_centrality(self.graph)
 
 # review: why do we need a separate Network class for Elmo?
-class Network_Elmo(Network):
-    def __init__(self, nr_vertices):
+class Custom_Network_Elmo_LVPC_Donner(Network):
+    def __init__(self, method_name, nr_vertices):
         super().__init__(nr_vertices)
+        self.method_name = method_name
 
     def get_new_edges(self, idA, balA, idB, balB, path):
         # convention: path goes from A to B (makes it easier to think about it in close channel)
@@ -228,6 +229,10 @@ class Network_Elmo(Network):
 
         else:
             self.cooperative_close_channel(idA, idB)
+
+class Network_Elmo(Custom_Network_Elmo_LVPC_Donner):
+    def __init__(self, nr_vertices):
+        super().__init__("Elmo", nr_vertices)
 
 class Network_LVPC(Network_Elmo):
     # TODO: check channel closing in LVPC.
