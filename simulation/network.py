@@ -208,12 +208,11 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
                         channels_below_upper[i],
                         channels_below_upper[i+1]
                     )
-                    # TODO: partys (plural)
-                    for party, coins in previously_unlocked_coins.items():
-                        if party in coins_for_chain:
-                            coins_for_chain[party] += coins
+                    for pair_of_parties, coins in previously_unlocked_coins.items():
+                        if pair_of_parties in coins_for_chain:
+                            coins_for_chain[pair_of_parties] += coins
                         else:
-                            coins_for_chain[party] = coins
+                            coins_for_chain[pair_of_parties] = coins
             if self.graph.get_edge_data(idC, idD) is not None:
                 self.graph[idC][idD]['channels_below'] = None
                 self.graph[idD][idC]['channels_below'] = None
