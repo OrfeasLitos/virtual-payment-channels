@@ -3,7 +3,7 @@ from custom_elmo_lvpc_donner import Custom_Elmo_LVPC_Donner
 
 class LVPC(Custom_Elmo_LVPC_Donner):
     def __init__(self, nr_players, max_coins=2000000000000000, bitcoin_fee=1000000, bitcoin_delay=3600,
-        coins_for_parties="max_value", lvpc_fee_intermediary = 10000, opening_transaction_size = 200,
+        coins_for_parties="max_value", lvpc_fee_intermediary = 20000, opening_transaction_size = 200,
         lvpc_new_virtual_channel_delay = 1, lvpc_pay_delay = 0.05
     ):
         super().__init__(
