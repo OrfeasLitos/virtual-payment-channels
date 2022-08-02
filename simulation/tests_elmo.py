@@ -20,7 +20,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner,
     test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner,
     test_simulation_with_elmo_lvpc_donner_ignore_centrality,
-    test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance
+    test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance,
+    test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality
 )
 
 def make_example_network_elmo(fee_intermediary = 1000000):
@@ -202,32 +203,7 @@ def test_simulation_with_elmo_ignore_centrality_and_distance():
     test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance("Elmo")
 
 def test_simulation_with_previous_channels_elmo_ignore_centrality():
-    elmo = Elmo(4, fee_intermediary = 1000000)
-
-    elmo.network.add_channel(0, 3000000000000., 1, 7000000000000., None)
-    elmo.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
-    elmo.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
-    elmo.network.add_channel(1, 1000000000000., 3, 800000000000., [1,2,3])
-    elmo.network.add_channel(0, 100000000000., 3, 80000000000., [0,1,3])
-    knowledge = Knowledge('know-all')
-    payments = collections.deque([(0, 2, 1000000000), (0, 1, 20000000000)])
-    utility_function = make_example_utility_function(10000, 5000, 1, 0)
-    utility = Utility(utility_function)
-    simulation = Simulation(payments, elmo, knowledge, utility)
-    results = simulation.run()
-    done_payment0, payment0_info = results[0]
-    done_payment1, payment1_info = results[1]
-    assert done_payment0 == True
-    assert payment0_info['kind'] == 'Elmo-open-virtual-channel'
-    assert done_payment1 == True
-    assert payment1_info['kind'] == 'Elmo-pay'
-    assert len(results) == 2
-    assert set(elmo.network.graph.edges()) == set(
-        [(0, 1), (1, 0), (0, 2), (2, 0), (0, 3), (3, 0), (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)]
-    )
-    assert elmo.network.graph[0][1]['locked_coins'] == 1000000000
-    assert elmo.network.graph[1][2]['locked_coins'] == 1000000000
-    assert elmo.network.graph[1][0]['locked_coins'] == 0
+    test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality("Elmo")
 
 def test_simulation_with_elmo():
     simulation = make_example_simulation_elmo()
