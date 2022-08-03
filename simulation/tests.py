@@ -192,6 +192,7 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
         method.network.graph[1][4]['balance'] - value - new_virtual_channel_fee,
         wanted_sender_coins
     )
+
     locked_coins = sender_coins + value
     # review: consider testing all channels in two for loops: one for the on-path channels, of which the balances & locked coins have changed, and one for all untouched coins
     assert method.network.graph[1][4]['locked_coins'] == locked_coins
