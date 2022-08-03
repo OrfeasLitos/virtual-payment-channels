@@ -266,9 +266,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
                 receiver = path[-1]
-                # Question: are coins for new virtual channel taken from onchain-coins or from coins of some existing channel?
-                if self.plain_bitcoin.coins[sender] < sender_coins + value:
-                    raise ValueError
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
                 self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
