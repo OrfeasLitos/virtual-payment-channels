@@ -56,7 +56,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
             # TODO: think of a good lock_value or balance the sender wants to put on a new channel
-            dummy_lock_value = 10 * 500000000 + value
+            # maybe some factor times MULTIPLIER_CHANNEL_BALANCE
+            dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * 500000000 + value
             if future_sender != source:
                 # TODO: think about discarding first part of the tuple.
                 path_data.append((
@@ -71,7 +72,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.base_fee)
                 ))
 
-        dummy_lock_value = 11 * 500000000
+        dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * 500000000
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
                 party,
