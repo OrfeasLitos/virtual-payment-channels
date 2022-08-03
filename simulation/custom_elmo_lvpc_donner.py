@@ -4,11 +4,11 @@ from paymentmethod import PlainBitcoin, Payment_Network, sum_future_payments_to_
 from network import Network_Elmo, Network_LVPC, Network_Donner
 
 class Custom_Elmo_LVPC_Donner(Payment_Network):
-    # TODO: find reasonable value for fee_intermediary, opening_transaction_size, delay
+    # TODO: find reasonable value for base_fee, opening_transaction_size, delay
     def __init__(
         self, method_name, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
-        coins_for_parties = "max_value", fee_intermediary = 10000,
+        coins_for_parties = "max_value", base_fee = 10000,
         fee_rate = 0.0004, opening_transaction_size = 200,
         pay_delay = 0.05, new_virtual_channel_delay = 1
     ):
@@ -27,7 +27,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             case _:
                 raise ValueError
 
-        self.fee_intermediary = fee_intermediary
+        self.base_fee = base_fee
         self.fee_rate = fee_rate
         self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)
@@ -62,13 +62,13 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
-                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.fee_intermediary)
+                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.base_fee)
                 ))
             if future_receiver != source:
                 path_data.append((
                     future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
-                    self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.fee_intermediary)
+                    self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.base_fee)
                 ))
 
         dummy_lock_value = 11 * 500000000
@@ -76,7 +76,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             path_data.append((
                 party,
                 weight_other,
-                self.network.find_cheapest_path(source, party, dummy_lock_value, self.fee_intermediary)
+                self.network.find_cheapest_path(source, party, dummy_lock_value, self.base_fee)
             ))
 
         for counterparty, weight, cost_and_path in path_data:
@@ -92,7 +92,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         return self.new_virtual_channel_delay * hops
 
     def get_new_virtual_channel_fee(self, path):
-        return self.fee_intermediary * (len(path) - 2)
+        return self.base_fee * (len(path) - 2)
 
     # adjusted from LN
     def get_new_channel_option(self, sender, receiver, value, future_payments):
@@ -133,16 +133,16 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         match self.method_name:
             case "Elmo":
                 cost_and_path = self.network.find_cheapest_path(
-                    sender, receiver, anticipated_lock_value, self.fee_intermediary
+                    sender, receiver, anticipated_lock_value, self.base_fee
                 )
             case "Donner":
                 cost_and_path = self.network.find_cheapest_path(
-                    sender, receiver, anticipated_lock_value, self.fee_intermediary,
+                    sender, receiver, anticipated_lock_value, self.base_fee,
                     function="new_virtual_donner"
                 )
             case "LVPC":
                 cost_and_path = self.network.find_cheapest_path_for_new_virtual(
-                    sender, receiver, anticipated_lock_value, self.fee_intermediary
+                    sender, receiver, anticipated_lock_value, self.base_fee
                 )
             
         if cost_and_path is None:
@@ -213,21 +213,21 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
-        cost_sender = num_intermediaries * self.fee_intermediary
+        cost_sender = num_intermediaries * self.base_fee
         if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
             raise ValueError
         # update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
-            received = (num_intermediaries - (i-1)) * self.fee_intermediary
-            transfered = received - self.fee_intermediary
+            received = (num_intermediaries - (i-1)) * self.base_fee
+            transfered = received - self.base_fee
             new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
             new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
             # we test just for new_giver_balance < 0 as in case of new virtual channel only giver_balance gets smaller
             # In case of undoing it, there was a payment done before, so there shouldn't occur numbers < 0.
             if new_giver_balance < 0:
                 for j in range(1, i):
-                    received = (num_intermediaries - (j-1)) * self.fee_intermediary
-                    transfered = received - self.fee_intermediary
+                    received = (num_intermediaries - (j-1)) * self.base_fee
+                    transfered = received - self.base_fee
                     new_taker_balance = op_give(self.network.graph[path[j]][path[j-1]]['balance'], received)
                     new_giver_balance = op_take(self.network.graph[path[j]][path[j+1]]['balance'], transfered)
                 raise ValueError

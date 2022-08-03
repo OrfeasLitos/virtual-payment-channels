@@ -24,12 +24,12 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality
 )
 
-def make_example_network_elmo(fee_intermediary = 1000000):
-    elmo = make_example_network_elmo_lvpc_donner("Elmo", fee_intermediary)
+def make_example_network_elmo(base_fee = 1000000):
+    elmo = make_example_network_elmo_lvpc_donner("Elmo", base_fee)
     return elmo
 
-def make_example_network_elmo_and_future_payments(fee_intermediary = 1000000):
-    return make_example_network_elmo_lvpc_donner_and_future_payments("Elmo", fee_intermediary)
+def make_example_network_elmo_and_future_payments(base_fee = 1000000):
+    return make_example_network_elmo_lvpc_donner_and_future_payments("Elmo", base_fee)
 
 def make_example_simulation_elmo(seed = 12345, nr_players = 10, coins_for_parties = 'max_value'):
     return make_example_simulation_for_all("Elmo", seed, nr_players, coins_for_parties)
@@ -39,14 +39,14 @@ def test_get_payment_options_elmo_channel_exists():
 
 # adjusted from tests_ln
 def make_example_values_for_do_elmo():
-    fee_intermediary, elmo, future_payments = (
-        make_example_network_elmo_and_future_payments(fee_intermediary = 1000000)
+    base_fee, elmo, future_payments = (
+        make_example_network_elmo_and_future_payments(base_fee = 1000000)
     )
     value = 100000000.
     payment_options = elmo.get_payment_options(0, 7, value, future_payments)
     # review: ALL_CAPS case is customarily reserved for user-adjustable global constants
     MAX_COINS = elmo.plain_bitcoin.max_coins
-    return fee_intermediary, elmo, future_payments, value, MAX_COINS
+    return base_fee, elmo, future_payments, value, MAX_COINS
 
 def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("Elmo")
@@ -55,7 +55,7 @@ def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible1():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("Elmo")
 
 def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible2():
-    fee_intermediary, elmo, future_payments = make_example_network_elmo_and_future_payments()
+    base_fee, elmo, future_payments = make_example_network_elmo_and_future_payments()
     payment_options = elmo.get_payment_options(0, 7, 100000000., future_payments)
     assert len(payment_options) == 3
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
@@ -140,7 +140,7 @@ def test_close_channel_elmo():
     test_force_close_channel_onchain_layer_one_layer_above_elmo()
 
 def test_force_close1_elmo():
-    elmo = Elmo(6, fee_intermediary = 1000000)
+    elmo = Elmo(6, base_fee = 1000000)
 
     elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
     elmo.network.add_channel(1, 6000000000., 2, 7000000000., None)
@@ -178,7 +178,7 @@ def test_force_close1_elmo():
         assert value == previous_balances[parties] + previous_locked_coins[parties]
 
 def test_force_close2_elmo():
-    elmo = Elmo(4, fee_intermediary = 1000000)
+    elmo = Elmo(4, base_fee = 1000000)
 
     elmo.network.add_channel(0, 3000000000., 1, 7000000000., None)
     elmo.network.add_channel(1, 6000000000., 2, 7000000000., None)
