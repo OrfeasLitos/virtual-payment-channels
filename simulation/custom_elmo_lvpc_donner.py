@@ -95,7 +95,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
 
     def get_new_virtual_channel_fee(self, path, coins_to_lock = 0):
         # TODO: change default value 0 for coins_to_lock. Atm for tests to succeed.
-        return (self.base_fee + coins_to_lock) * (len(path) - 2)
+        return (self.base_fee + coins_to_lock * self.fee_rate) * (len(path) - 2)
 
     # adjusted from LN
     def get_new_channel_option(self, sender, receiver, value, future_payments):
