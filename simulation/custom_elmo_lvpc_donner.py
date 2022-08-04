@@ -173,7 +173,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
-        new_virtual_channel_fee = self.get_new_virtual_channel_fee(path)
         # the factor is introduced so that lower channel doesn't end up with 0 balance.
         availability_factor = 4
         # TODO: to some extent we need the new_virtual_channel_fee here. Think if we can get around this,
@@ -185,6 +184,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sender_coins = self.determine_sender_coins(value, path, desired_virtual_coins, available_balances)
         if sender_coins < 0:
             return None
+        new_virtual_channel_fee = self.get_new_virtual_channel_fee(path, value + sender_coins)
         payment_information = {'kind': self.open_virtual_channel_string, 'data': (path, value, sender_coins)}
         try:
             self.do(payment_information)
@@ -237,21 +237,22 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
-        cost_sender = num_intermediaries * self.base_fee
+        fee_intermediary = self.base_fee + self.fee_rate * (value + sender_coins)
+        cost_sender = num_intermediaries * fee_intermediary
         if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
             raise ValueError
         # update the balances of the intermediaries.
         for i in range(1, num_intermediaries + 1):
-            received = (num_intermediaries - (i-1)) * self.base_fee
-            transfered = received - self.base_fee
+            received = (num_intermediaries - (i-1)) * fee_intermediary
+            transfered = received - fee_intermediary
             new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
             new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
             # we test just for new_giver_balance < 0 as in case of new virtual channel only giver_balance gets smaller
             # In case of undoing it, there was a payment done before, so there shouldn't occur numbers < 0.
             if new_giver_balance < 0:
                 for j in range(1, i):
-                    received = (num_intermediaries - (j-1)) * self.base_fee
-                    transfered = received - self.base_fee
+                    received = (num_intermediaries - (j-1)) * fee_intermediary
+                    transfered = received - fee_intermediary
                     new_taker_balance = op_give(self.network.graph[path[j]][path[j-1]]['balance'], received)
                     new_giver_balance = op_take(self.network.graph[path[j]][path[j+1]]['balance'], transfered)
                 raise ValueError
