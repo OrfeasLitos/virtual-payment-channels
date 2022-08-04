@@ -93,8 +93,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
     def get_new_virtual_channel_time(self, hops):
         return self.new_virtual_channel_delay * hops
 
-    def get_new_virtual_channel_fee(self, path, coins_to_lock = 0):
-        # TODO: change default value 0 for coins_to_lock. Atm for tests to succeed.
+    def get_new_virtual_channel_fee(self, path, coins_to_lock):
         return (self.base_fee + coins_to_lock * self.fee_rate) * (len(path) - 2)
 
     # adjusted from LN
@@ -175,8 +174,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         hops, path = cost_and_path
         # the factor is introduced so that lower channel doesn't end up with 0 balance.
         availability_factor = 4
-        # TODO: to some extent we need the new_virtual_channel_fee here. Think if we can get around this,
-        # so that we can let it depend on the coins that will be locked.
         available_balances = np.array([
             self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor for i in range(len(path)-1)
         ])
