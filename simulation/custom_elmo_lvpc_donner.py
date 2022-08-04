@@ -126,12 +126,25 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         }
 
     # this is to incorporate fee_rate
-    def determine_amount_to_lock(self, value, desired_sender_coins, available_balances):
+    def determine_sender_coins(self, value, path, desired_sender_coins, available_balances):
         """
-        This method enables the sender to determine the optimal amount of coins to put on a
+        This method enables the sender to determine the amount of coins to put on a
         new virtual channel.
         """
-        pass
+        fee_for_value = self.get_new_virtual_channel_fee(path, value)
+        # here we calculate how much balance remains after transferring value and a part of
+        # the fee to the next intermediary
+        # (this gives a lower bound on the remaining balances as fee_for_value is an upper bound on how
+        # much of the fee has to be transferred to the next intermediary)
+        remaining_balances = available_balances - value - fee_for_value
+        # now we use the remaining balances to determine how much the sender can possibly put
+        # on new virtual channel
+        smallest_remaining_balance = min(remaining_balances)
+        # we want to put exactly (if desired coins are more than remaining balance) so much on the new channel
+        # such that sender_coins + fee_sender_coins = smallest_remaining_balance
+        # where fee_sender_coins = fee_rate * sender_coins * (len(path) - 2)
+        sender_coins = min(desired_sender_coins, smallest_remaining_balance / (1 + self.fee_rate * (len(path) - 2)))
+        return sender_coins
 
     def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
         # in case we have already a channel
