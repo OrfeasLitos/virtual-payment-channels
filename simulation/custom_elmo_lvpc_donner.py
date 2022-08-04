@@ -1,5 +1,6 @@
 import math
 import operator
+import numpy as np
 from paymentmethod import PlainBitcoin, Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from network import Network_Elmo, Network_LVPC, Network_Donner
 
@@ -9,7 +10,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         self, method_name, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
         coins_for_parties = "max_value", base_fee = 10000,
-        fee_rate = 0.0004, opening_transaction_size = 200,
+        fee_rate = 0, opening_transaction_size = 200,
         pay_delay = 0.05, new_virtual_channel_delay = 1
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
@@ -136,6 +137,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         # the fee to the next intermediary
         # (this gives a lower bound on the remaining balances as fee_for_value is an upper bound on how
         # much of the fee has to be transferred to the next intermediary)
+        # available_balances should be a np.array.
         remaining_balances = available_balances - value - fee_for_value
         # now we use the remaining balances to determine how much the sender can possibly put
         # on new virtual channel
@@ -176,14 +178,11 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         availability_factor = 4
         # TODO: to some extent we need the new_virtual_channel_fee here. Think if we can get around this,
         # so that we can let it depend on the coins that will be locked.
-        base_channels_max_lock_values = [
-            self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor - value - new_virtual_channel_fee for i in range(len(path)-1)
-        ]
-        max_common_lock_value = min(
-            base_channels_max_lock_values
-        )
+        available_balances = np.array([
+            self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor for i in range(len(path)-1)
+        ])
         desired_virtual_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
-        sender_coins = min(max_common_lock_value, desired_virtual_coins)
+        sender_coins = self.determine_sender_coins(value, path, desired_virtual_coins, available_balances)
         if sender_coins < 0:
             return None
         payment_information = {'kind': self.open_virtual_channel_string, 'data': (path, value, sender_coins)}

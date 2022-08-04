@@ -16,7 +16,7 @@ class Elmo(Custom_Elmo_LVPC_Donner):
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
         coins_for_parties = "max_value", base_fee = 20000,
-        fee_rate = 0.0004, opening_transaction_size = 200,
+        fee_rate = 0, opening_transaction_size = 200,
         elmo_pay_delay = 0.05, elmo_new_virtual_channel_delay = 1
     ):
         super().__init__(
