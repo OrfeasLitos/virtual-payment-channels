@@ -125,6 +125,14 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             }
         }
 
+    # this is to incorporate fee_rate
+    def determine_amount_to_lock(self, value, desired_sender_coins, available_balances):
+        """
+        This method enables the sender to determine the optimal amount of coins to put on a
+        new virtual channel.
+        """
+        pass
+
     def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
