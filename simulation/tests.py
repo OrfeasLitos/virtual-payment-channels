@@ -186,12 +186,9 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(0, 4, future_payments)
     wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
-    new_virtual_channel_fee = method.get_new_virtual_channel_fee([0,1,4])
-    sender_coins = min(
-        method.network.graph[0][1]['balance'] - value - new_virtual_channel_fee,
-        method.network.graph[1][4]['balance'] - value - new_virtual_channel_fee,
-        wanted_sender_coins
-    )
+    assert wanted_sender_coins == 0
+    sender_coins = 0
+    new_virtual_channel_fee = method.get_new_virtual_channel_fee([0,1,4], value)
 
     locked_coins = sender_coins + value
     # review: consider testing all channels in two for loops: one for the on-path channels, of which the balances & locked coins have changed, and one for all untouched coins
@@ -243,10 +240,10 @@ def test_update_balances_new_virtual_channel_true_elmo_lvpc_donner(method_name):
     # review: it's unclear where the numbers come from
     # review: better extract them from elmo
     # review: do this in all similar spots
-    assert_eq(method.network.graph[0][1]['balance'],6000000000 - 2*base_fee)
-    assert_eq(method.network.graph[1][0]['balance'], 7000000000 + 2*base_fee)
-    assert_eq(method.network.graph[1][4]['balance'], 4000000000 - base_fee)
-    assert_eq(method.network.graph[4][1]['balance'], 8000000000 + base_fee)
+    assert_eq(method.network.graph[0][1]['balance'],6000000000 - 2*(base_fee + (value + sender_coins) * method.fee_rate))
+    assert_eq(method.network.graph[1][0]['balance'], 7000000000 + 2*(base_fee + (value + sender_coins) * method.fee_rate))
+    assert_eq(method.network.graph[1][4]['balance'], 4000000000 - (base_fee + (value + sender_coins) * method.fee_rate))
+    assert_eq(method.network.graph[4][1]['balance'], 8000000000 + (base_fee + (value + sender_coins) * method.fee_rate))
     assert_eq(method.network.graph[4][7]['balance'], 10000000000)
     assert_eq(method.network.graph[7][4]['balance'], 8000000000)
     assert_eq(method.network.graph[1][2]['balance'], 10000000000)
