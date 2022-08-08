@@ -7,14 +7,7 @@ from knowledge import Knowledge
 from paymentmethod import PlainBitcoin
 from utility import Utility
 
-def get_zipf_law(a, elements_in_support):
-    support = np.arange(0, elements_in_support)
-    probabilities = (support + 1)**(-a)
-    probabilities /= probabilities.sum()
-    zipf_law = scipy.stats.rv_discrete(name='zipf_law', values=(support, probabilities))
-    return zipf_law
-
-def random_payments(num_pays, players, max_pay, distribution = 'uniform'):
+def random_payments(players, max_pay, distribution = 'uniform', num_pays = None):
     match distribution:
         case 'uniform':
             res = collections.deque()
@@ -26,7 +19,8 @@ def random_payments(num_pays, players, max_pay, distribution = 'uniform'):
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
-            pass
+            nr_payments = np.random.zipf(2, players)
+
         case _:
             raise ValueError
 
