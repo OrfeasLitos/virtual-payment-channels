@@ -1,6 +1,5 @@
 import random
 import numpy as np
-import scipy.stats
 import sys
 import collections
 from knowledge import Knowledge
@@ -19,8 +18,19 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
-            nr_payments = np.random.zipf(2, players)
-
+            res = collections.deque()
+            # TODO: determine good value for a.
+            incoming_payments_per_player = np.random.zipf(1.8, players)
+            # assume incoming payments come from unifrom distribution
+            # example: big player that everyone pays to (in real world maybe Netflix), but
+            # that doesn't have that many outgoing payments.
+            for receiver in range(len(incoming_payments_per_player)):
+                for j in range(incoming_payments_per_player[receiver]):
+                    sender = random.randrange(players)
+                    while sender == receiver:
+                        sender = random.randrange(players)
+                    payment_value = random.randrange(max_pay)
+                    res.append((sender, receiver, value))
         case _:
             raise ValueError
 
