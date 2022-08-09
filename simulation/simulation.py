@@ -31,6 +31,19 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                         sender = random.randrange(players)
                     payment_value = random.randrange(max_pay)
                     res.append((sender, receiver, value))
+        case 'preferred-receiver':
+            # with probability p the party sends the amount to preferred receiver
+            # with probability q to a random party.
+            preferred_receivers = [random.randrange(players) for _ in range(players)]
+            p = 0.5
+            q = 1-p
+            for _ in range(num_pays):
+                sender = random.randrange(players)
+                receiver = random.randrange(players) if random.uniform(0, 1) > p else preferred_receivers[sender]
+                while receiver == sender:
+                    receiver = random.randrange(players)
+                value = random.randrange(max_pay)
+                res.append((sender, receiver, value))
         case _:
             raise ValueError
 
