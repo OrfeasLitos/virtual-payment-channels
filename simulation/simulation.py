@@ -34,7 +34,12 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
         case 'preferred-receiver':
             # with probability p the party sends the amount to preferred receiver
             # with probability q to a random party.
-            preferred_receivers = [random.randrange(players) for _ in range(players)]
+            preferred_receivers = []
+            for sender in range(players):
+                preferred_receiver = random.randrange(players)
+                while sender == preferred_receiver:
+                    preferred_receiver = random.randrange(players)
+                preferred_receivers.append(preferred_receiver)
             p = 0.5
             q = 1-p
             for _ in range(num_pays):
