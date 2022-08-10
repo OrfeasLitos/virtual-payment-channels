@@ -54,6 +54,7 @@ def test_cheapest_path():
 
 def make_example_simulation_for_all(method_name, seed = 12345, nr_players = 10, coins_for_parties = 'max_value', distribution = 'uniform'):
     random.seed(seed)
+    np.random.seed(seed)
     match method_name:
         case "LN":
             method = LN(nr_players = nr_players, coins_for_parties = coins_for_parties)

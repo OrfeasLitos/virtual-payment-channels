@@ -7,9 +7,9 @@ from paymentmethod import PlainBitcoin
 from utility import Utility
 
 def random_payments(players, max_pay, distribution = 'uniform', num_pays = None):
+    res = collections.deque()
     match distribution:
         case 'uniform':
-            res = collections.deque()
             for _ in range(num_pays):
                 sender = random.randrange(players)
                 receiver = random.randrange(players)
@@ -18,8 +18,6 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
-            # TODO: set seed for np.random
-            res = collections.deque()
             # TODO: determine good value for a.
             incoming_payments_per_player = np.random.zipf(1.8, players)
             # assume incoming payments come from unifrom distribution
