@@ -18,6 +18,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
+            # TODO: set seed for np.random
             res = collections.deque()
             # TODO: determine good value for a.
             incoming_payments_per_player = np.random.zipf(1.8, players)
@@ -29,7 +30,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                     sender = random.randrange(players)
                     while sender == receiver:
                         sender = random.randrange(players)
-                    payment_value = random.randrange(max_pay)
+                    value = random.randrange(max_pay)
                     res.append((sender, receiver, value))
         case 'preferred-receiver':
             # with probability p the party sends the amount to preferred receiver

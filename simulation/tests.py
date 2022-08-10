@@ -52,7 +52,7 @@ def test_cheapest_path():
     cost4, cheapest_path4 = network.find_cheapest_path(0, 4, 6, fee_intermediary)
     assert cost4 == 4 and cheapest_path4 == [0,1,2,3,4]
 
-def make_example_simulation_for_all(method_name, seed = 12345, nr_players = 10, coins_for_parties = 'max_value'):
+def make_example_simulation_for_all(method_name, seed = 12345, nr_players = 10, coins_for_parties = 'max_value', distribution = 'uniform'):
     random.seed(seed)
     match method_name:
         case "LN":
@@ -66,7 +66,7 @@ def make_example_simulation_for_all(method_name, seed = 12345, nr_players = 10, 
         case _:
             raise ValueError
     knowledge = Knowledge('know-all')
-    payments = random_payments(nr_players, 2000000000, distribution='uniform', num_pays = 100)
+    payments = random_payments(nr_players, 2000000000, distribution=distribution, num_pays = 100)
     utility_function = example_utility_function_for_simulation
     utility = Utility(utility_function)
     return Simulation(payments, method, knowledge, utility)
