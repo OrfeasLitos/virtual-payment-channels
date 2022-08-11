@@ -581,6 +581,47 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     assert method.network.graph[1][2]['locked_coins'] == 1000000000
     assert method.network.graph[1][0]['locked_coins'] == 0
 
+def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality(method_name):
+    # the open-virtual-channel option is the same for elmo, lvpc, donner
+    # TODO: make tests for simulation where it is different
+    match method_name:
+        case "Elmo":
+            method = Elmo(5, base_fee = 1000000)
+        case "LVPC":
+            method = LVPC(5, base_fee = 1000000)
+        case "Donner":
+            method = Donner(5, base_fee = 1000000)
+        case _:
+            raise ValueError
+    
+    method.network.add_channel(0, 3000000000000., 1, 7000000000000., None)
+    method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
+    method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
+
+    knowledge = Knowledge('know-all')
+    value = 1000000000
+    payments = collections.deque([(0, 3, value)])
+    utility_function = make_example_utility_function(10000, 5000, 1, 0)
+    utility = Utility(utility_function)
+    simulation = Simulation(payments, method, knowledge, utility)
+    results = simulation.run()
+    assert len(results) == 1
+    done_payment, payment_info = results[0]
+    assert done_payment == True
+    if method_name != "LVPC":
+        assert payment_info['kind'] == method_name + '-open-virtual-channel'
+        assert method.network.graph[0][1]['locked_coins'] == value
+        assert method.network.graph[1][2]['locked_coins'] == value
+        assert method.network.graph[2][3]['locked_coins'] == value
+    else:
+        assert method_name + 'open-channel'
+        assert method.network.graph[0][1]['locked_coins'] == 0
+        assert method.network.graph[1][2]['locked_coins'] == 0
+        assert method.network.graph[2][3]['locked_coins'] == 0
+    assert set(method.network.graph.edges()) == set(
+        [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (0, 3), (3, 0)]
+    )
+    assert method.network.graph[1][0]['locked_coins'] == 0
 
 if __name__ == "__main__":
     test_cheapest_path()

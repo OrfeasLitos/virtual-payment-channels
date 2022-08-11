@@ -236,7 +236,7 @@ class Network_LVPC(Custom_Network_Elmo_LVPC_Donner):
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
     
-    def find_cheapest_path_for_new_virtual(self, sender, receiver, amount, fee_intermediary):
+    def find_cheapest_path_for_new_virtual_lvpc(self, sender, receiver, amount, fee_intermediary):
         # TODO: think how to optimize that.
         cheapest_path = super().find_cheapest_path(sender, receiver, amount, fee_intermediary)
         if cheapest_path is None:

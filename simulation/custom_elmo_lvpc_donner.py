@@ -166,7 +166,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     function="new_virtual_donner"
                 )
             case "LVPC":
-                cost_and_path = self.network.find_cheapest_path_for_new_virtual(
+                cost_and_path = self.network.find_cheapest_path_for_new_virtual_lvpc(
                     sender, receiver, anticipated_lock_value, self.base_fee
                 )
             

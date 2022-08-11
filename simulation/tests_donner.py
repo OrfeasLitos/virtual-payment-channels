@@ -13,7 +13,8 @@ from tests import (make_example_network_elmo_lvpc_donner, make_example_simulatio
     test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner,
     test_simulation_with_elmo_lvpc_donner_ignore_centrality,
     test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance,
-    test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality
+    test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality,
+    test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality
 )
 
 
@@ -104,10 +105,14 @@ def test_simulation_with_donner_ignore_centrality_and_distance():
 def test_simulation_with_previous_channels_donner_ignore_centrality():
     test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality("Donner")
 
+def test_simulation_with_previous_channels_donner_long_path_ignore_centrality():
+    test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality("Donner")
+
 def test_simulation_with_donner():
     test_simulation_with_donner_ignore_centrality()
     test_simulation_with_donner_ignore_centrality_and_distance()
     test_simulation_with_previous_channels_donner_ignore_centrality()
+    test_simulation_with_previous_channels_donner_long_path_ignore_centrality()
     simulation = make_example_simulation_donner(nr_players = 20)
     results = simulation.run()
     print(results)
