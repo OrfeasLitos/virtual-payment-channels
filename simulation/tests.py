@@ -234,11 +234,11 @@ def test_do_elmo_lvpc_donner(method_name):
 def test_update_balances_new_virtual_channel_true_elmo_lvpc_donner(method_name):
     # Here locking isn't done yet.
     method = make_example_network_elmo_lvpc_donner(method_name)
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     path = [0, 1, 4, 7]
     value = 2000000000
     base_fee = method.base_fee
     sender_coins = 100000000
-    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     method.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
     assert_eq(method.network.graph[0][1]['balance'], balances_before[(0, 1)] - 2*(base_fee + (value + sender_coins) * method.fee_rate))
     assert_eq(method.network.graph[1][0]['balance'], balances_before[(1, 0)] + 2*(base_fee + (value + sender_coins) * method.fee_rate))

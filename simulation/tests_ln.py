@@ -330,7 +330,7 @@ def test_update_balances_pay_not_enough_money_ln():
 
 def test_update_balances_reverse_ln():
     lightning = make_example_network_ln(base_fee = 1000, ln_fee = 0.00002)
-    channels_before = [channel for channel in lightning.network.graph.edges.data("balance")]
+    balances_before = nx.get_edge_attributes(lightning.network.graph, "balance")
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
@@ -338,16 +338,11 @@ def test_update_balances_reverse_ln():
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # balances are updated, now we want to revert it
     lightning.update_balances(value, ln_fee, base_fee, path, pay=False)
-    channels_after = [channel for channel in lightning.network.graph.edges.data("balance")]
-    for i in range(len(channels_before)):
-        assert_eq(channels_before[i][2], channels_after[i][2])
-    assert_eq(lightning.network.graph[0][1]['balance'], 6000000000)
-    assert_eq(lightning.network.graph[1][0]['balance'], 7000000000)
-    assert_eq(lightning.network.graph[1][4]['balance'], 4000000000)
-    assert_eq(lightning.network.graph[4][1]['balance'], 8000000000)
-    assert_eq(lightning.network.graph[4][7]['balance'], 10000000000)
-    assert_eq(lightning.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
+    balances_after = nx.get_edge_attributes(lightning.network.graph, "balance")
+    for edge in balances_before.keys():
+        assert_eq(balances_before[edge], balances_after[edge])
+    for edge in balances_after.keys():
+        assert_eq(balances_before[edge], balances_after[edge])
 
 def test_update_balances_ln():
     test_update_balances_pay_enough_money_ln()
