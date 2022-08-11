@@ -561,7 +561,6 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
     method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
     method.network.add_channel(1, 1000000000000., 3, 800000000000., [1,2,3])
-    method.network.add_channel(0, 100000000000., 3, 80000000000., [0,1,3])
     knowledge = Knowledge('know-all')
     payments = collections.deque([(0, 2, 1000000000), (0, 1, 20000000000)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
@@ -576,7 +575,7 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     assert payment1_info['kind'] == method_name + '-pay'
     assert len(results) == 2
     assert set(method.network.graph.edges()) == set(
-        [(0, 1), (1, 0), (0, 2), (2, 0), (0, 3), (3, 0), (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)]
+        [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)]
     )
     assert method.network.graph[0][1]['locked_coins'] == 1000000000
     assert method.network.graph[1][2]['locked_coins'] == 1000000000
