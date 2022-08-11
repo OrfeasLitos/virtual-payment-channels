@@ -172,15 +172,10 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     payment_options = method.get_payment_options(0, 4, value, future_payments)
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
-
-    previous_balance01 = method.network.graph[0][1]['balance']
-    previous_balance10 = method.network.graph[1][0]['balance']
-    previous_balance14 = method.network.graph[1][4]['balance']
-    previous_balance41 = method.network.graph[4][1]['balance']
-    previous_balance12 = method.network.graph[1][2]['balance']
 
     method.do(payment_information_new_virtual_channel)
     # check first the coins of the parties
@@ -191,16 +186,15 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     new_virtual_channel_fee = method.get_new_virtual_channel_fee([0,1,4], value)
 
     locked_coins = sender_coins + value
-    # review: consider testing all channels in two for loops: one for the on-path channels, of which the balances & locked coins have changed, and one for all untouched coins
     assert method.network.graph[1][4]['locked_coins'] == locked_coins
-    assert method.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - locked_coins
+    assert method.network.graph[0][1]['balance'] == balances_before[(0, 1)] - new_virtual_channel_fee - locked_coins
     assert method.network.graph[1][0]['locked_coins'] == 0
-    assert method.network.graph[1][0]['balance'] == previous_balance10 + new_virtual_channel_fee
-    assert method.network.graph[1][4]['balance'] == previous_balance14 - locked_coins
-    assert method.network.graph[4][1]['balance'] == previous_balance41
+    assert method.network.graph[1][0]['balance'] == balances_before[(1, 0)] + new_virtual_channel_fee
+    assert method.network.graph[1][4]['balance'] == balances_before[(1, 4)] - locked_coins
+    assert method.network.graph[4][1]['balance'] == balances_before[(4, 1)]
     assert method.network.graph[4][1]['locked_coins'] == 0
     assert method.network.graph[1][2]['locked_coins'] == 0
-    assert method.network.graph[1][2]['balance'] == previous_balance12
+    assert method.network.graph[1][2]['balance'] == balances_before[(1, 2)]
     assert method.network.graph[0][4]['balance'] == 0
     assert method.network.graph[4][0]['balance'] == value
     assert method.network.graph.get_edge_data(5, 0) is None
