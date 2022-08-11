@@ -625,6 +625,10 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     assert method.network.graph[1][0]['locked_coins'] == 0
 
 def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality(method_name):
+    """
+    test that elmo and lvpc use recursive procedure when possible
+    and donner variadic.
+    """
     # the open-virtual-channel option is the same for elmo, lvpc, donner
     # TODO: make tests for simulation where it is different
     match method_name:
@@ -643,7 +647,7 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_cen
 
     knowledge = Knowledge('know-all')
     value = 10000000000
-    payments = collections.deque([(0, 2, value), (0, 3, value / 10)])
+    payments = collections.deque([(0, 2, value), (0, 3, value / 10), (0, 2, value / 5)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
     utility = Utility(utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
@@ -659,10 +663,11 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_cen
     )
     path0, _, _ = payment_info0['data']
     path1, _, _ = payment_info1['data']
+    assert len(path0) == 3
     if method_name != "Donner":
-        pass
+        assert len(path1) == 3
     else:
-        pass
+        assert len(path1) == 4
 
 if __name__ == "__main__":
     test_cheapest_path()
