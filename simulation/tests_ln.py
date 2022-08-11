@@ -292,6 +292,7 @@ def test_do_ln():
 
 def test_update_balances_pay_enough_money_ln():
     lightning = make_example_network_ln(base_fee = 1000, ln_fee = 0.00002)
+    balances_before = nx.get_edge_attributes(lightning.network.graph, "balance")
     base_fee = lightning.base_fee
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
@@ -301,15 +302,15 @@ def test_update_balances_pay_enough_money_ln():
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # sender 0 has 6000000000. in the beginning on the channel to 1
     # after update he should have value less for the transaction to 7 and 2*fee_intermediary less for the fee,
-    assert_eq(lightning.network.graph[0][1]['balance'],6000000000-value-2*fee_intermediary)
+    assert_eq(lightning.network.graph[0][1]['balance'], balances_before[(0, 1)] - value - 2*fee_intermediary)
     # the first intermediary should have value + 2*fee_intermediary more on his channel with the sender
-    assert_eq(lightning.network.graph[1][0]['balance'], 7000000000 + value + 2*fee_intermediary)
+    assert_eq(lightning.network.graph[1][0]['balance'], balances_before[(1, 0)] + value + 2*fee_intermediary)
     # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
-    assert_eq(lightning.network.graph[1][4]['balance'], 4000000000 - value - fee_intermediary)
-    assert_eq(lightning.network.graph[4][1]['balance'], 8000000000 + value + fee_intermediary)
-    assert_eq(lightning.network.graph[4][7]['balance'], 10000000000 - value)
-    assert_eq(lightning.network.graph[7][4]['balance'], 8000000000 + value)
-    assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
+    assert_eq(lightning.network.graph[1][4]['balance'], balances_before[(1, 4)] - value - fee_intermediary)
+    assert_eq(lightning.network.graph[4][1]['balance'], balances_before[(4, 1)] + value + fee_intermediary)
+    assert_eq(lightning.network.graph[4][7]['balance'], balances_before[(4, 7)] - value)
+    assert_eq(lightning.network.graph[7][4]['balance'], balances_before[(7, 4)] + value)
+    assert_eq(lightning.network.graph[1][2]['balance'], balances_before[(1, 2)])
 
 def test_update_balances_pay_not_enough_money_ln():
     lightning = make_example_network_ln(base_fee=1000, ln_fee = 0.00002)
@@ -340,7 +341,7 @@ def test_update_balances_reverse_ln():
     channels_after = [channel for channel in lightning.network.graph.edges.data("balance")]
     for i in range(len(channels_before)):
         assert_eq(channels_before[i][2], channels_after[i][2])
-    assert_eq(lightning.network.graph[0][1]['balance'],6000000000)
+    assert_eq(lightning.network.graph[0][1]['balance'], 6000000000)
     assert_eq(lightning.network.graph[1][0]['balance'], 7000000000)
     assert_eq(lightning.network.graph[1][4]['balance'], 4000000000)
     assert_eq(lightning.network.graph[4][1]['balance'], 8000000000)

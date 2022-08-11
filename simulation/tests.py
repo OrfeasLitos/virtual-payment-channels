@@ -201,6 +201,8 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     assert method.network.graph[4][1]['locked_coins'] == 0
     assert method.network.graph[1][2]['locked_coins'] == 0
     assert method.network.graph[1][2]['balance'] == previous_balance12
+    assert method.network.graph[0][4]['balance'] == 0
+    assert method.network.graph[4][0]['balance'] == value
     assert method.network.graph.get_edge_data(5, 0) is None
 
 def test_do_elmo_lvpc_donner_pay(method_name):

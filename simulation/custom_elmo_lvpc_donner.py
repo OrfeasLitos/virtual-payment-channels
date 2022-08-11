@@ -228,7 +228,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
     # TODO: think if update balances should be in network.
     # adjusted from LN
     def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
-        # the pay argument tells whether this corresponds to making a payment
+        # the new_channel argument tells whether this corresponds to making a payment
         # or undoing it.
         # all the "speaking names" like op_take, received, etc are in the case of a payment
         # in case of undoing they do the opposite.
