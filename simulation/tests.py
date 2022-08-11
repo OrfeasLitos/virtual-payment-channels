@@ -586,11 +586,11 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     # TODO: make tests for simulation where it is different
     match method_name:
         case "Elmo":
-            method = Elmo(5, base_fee = 1000000)
+            method = Elmo(4, base_fee = 1000000)
         case "LVPC":
-            method = LVPC(5, base_fee = 1000000)
+            method = LVPC(4, base_fee = 1000000)
         case "Donner":
-            method = Donner(5, base_fee = 1000000)
+            method = Donner(4, base_fee = 1000000)
         case _:
             raise ValueError
     
@@ -599,22 +599,23 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
 
     knowledge = Knowledge('know-all')
-    value = 1000000000
-    payments = collections.deque([(0, 3, value)])
+    value = 10000000000
+    payments = collections.deque([(0, 3, value), (0, 3, value / 10)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
     utility = Utility(utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
-    assert len(results) == 1
-    done_payment, payment_info = results[0]
-    assert done_payment == True
+    assert len(results) == 2
+    done_payment0, payment_info0 = results[0]
+    done_payment1, payment_info1 = results[1]
+    assert done_payment0 == True
+    assert done_payment1 == True
     if method_name != "LVPC":
-        assert payment_info['kind'] == method_name + '-open-virtual-channel'
-        assert method.network.graph[0][1]['locked_coins'] == value
-        assert method.network.graph[1][2]['locked_coins'] == value
-        assert method.network.graph[2][3]['locked_coins'] == value
+        assert payment_info0['kind'] == method_name + '-open-virtual-channel'
+        assert payment_info1['kind'] == method_name + '-pay'
     else:
-        assert method_name + 'open-channel'
+        assert payment_info0['kind'] == method_name + '-open-channel'
+        assert payment_info1['kind'] == method_name + '-pay'
         assert method.network.graph[0][1]['locked_coins'] == 0
         assert method.network.graph[1][2]['locked_coins'] == 0
         assert method.network.graph[2][3]['locked_coins'] == 0

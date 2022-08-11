@@ -110,7 +110,7 @@ def test_simulation_with_lvpc():
     test_simulation_with_lvpc_ignore_centrality()
     test_simulation_with_lvpc_ignore_centrality_and_distance()
     test_simulation_with_previous_channels_lvpc_ignore_centrality()
-    #test_simulation_with_previous_channels_lvpc_long_path_ignore_centrality()
+    test_simulation_with_previous_channels_lvpc_long_path_ignore_centrality()
     simulation = make_example_simulation_lvpc(nr_players = 20)
     results = simulation.run()
     print(results)
