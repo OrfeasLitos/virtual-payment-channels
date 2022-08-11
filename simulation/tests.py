@@ -193,7 +193,7 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     locked_coins = sender_coins + value
     # review: consider testing all channels in two for loops: one for the on-path channels, of which the balances & locked coins have changed, and one for all untouched coins
     assert method.network.graph[1][4]['locked_coins'] == locked_coins
-    assert method.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - value - sender_coins
+    assert method.network.graph[0][1]['balance'] == previous_balance01 - new_virtual_channel_fee - locked_coins
     assert method.network.graph[1][0]['locked_coins'] == 0
     assert method.network.graph[1][0]['balance'] == previous_balance10 + new_virtual_channel_fee
     assert method.network.graph[1][4]['balance'] == previous_balance14 - locked_coins
@@ -236,17 +236,15 @@ def test_update_balances_new_virtual_channel_true_elmo_lvpc_donner(method_name):
     value = 2000000000
     base_fee = method.base_fee
     sender_coins = 100000000
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     method.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
-    # review: it's unclear where the numbers come from
-    # review: better extract them from elmo
-    # review: do this in all similar spots
-    assert_eq(method.network.graph[0][1]['balance'],6000000000 - 2*(base_fee + (value + sender_coins) * method.fee_rate))
-    assert_eq(method.network.graph[1][0]['balance'], 7000000000 + 2*(base_fee + (value + sender_coins) * method.fee_rate))
-    assert_eq(method.network.graph[1][4]['balance'], 4000000000 - (base_fee + (value + sender_coins) * method.fee_rate))
-    assert_eq(method.network.graph[4][1]['balance'], 8000000000 + (base_fee + (value + sender_coins) * method.fee_rate))
-    assert_eq(method.network.graph[4][7]['balance'], 10000000000)
-    assert_eq(method.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(method.network.graph[1][2]['balance'], 10000000000)
+    assert_eq(method.network.graph[0][1]['balance'], balances_before[(0, 1)] - 2*(base_fee + (value + sender_coins) * method.fee_rate))
+    assert_eq(method.network.graph[1][0]['balance'], balances_before[(1, 0)] + 2*(base_fee + (value + sender_coins) * method.fee_rate))
+    assert_eq(method.network.graph[1][4]['balance'], balances_before[(1, 4)] - (base_fee + (value + sender_coins) * method.fee_rate))
+    assert_eq(method.network.graph[4][1]['balance'], balances_before[(4, 1)] + (base_fee + (value + sender_coins) * method.fee_rate))
+    assert_eq(method.network.graph[4][7]['balance'], balances_before[(4, 7)])
+    assert_eq(method.network.graph[7][4]['balance'], balances_before[(7, 4)])
+    assert_eq(method.network.graph[1][2]['balance'], balances_before[(1, 2)])
 
 def test_update_balances_new_virtual_channel_reverse_elmo_lvpc_donner(method_name):
     method = make_example_network_elmo_lvpc_donner(method_name)
