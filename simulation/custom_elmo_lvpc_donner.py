@@ -1,7 +1,10 @@
 import math
 import operator
 import numpy as np
-from paymentmethod import PlainBitcoin, Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
+from paymentmethod import (
+    Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE,
+    DUMMY_PAYMENT_VALUE
+)
 from network import Network_Elmo, Network_LVPC, Network_Donner
 
 class Custom_Elmo_LVPC_Donner(Payment_Network):
@@ -58,7 +61,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             encountered_parties.add(future_receiver)
             # TODO: think of a good lock_value or balance the sender wants to put on a new channel
             # maybe some factor times MULTIPLIER_CHANNEL_BALANCE
-            dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * 500000000 + value
+            dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE + value
             if future_sender != source:
                 # TODO: think about discarding first part of the tuple.
                 path_data.append((
@@ -73,7 +76,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     self.network.find_cheapest_path(source, future_receiver, dummy_lock_value, self.base_fee)
                 ))
 
-        dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * 500000000
+        dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
                 party,

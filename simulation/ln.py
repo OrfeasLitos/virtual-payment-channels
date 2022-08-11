@@ -1,7 +1,10 @@
 import math
 import numpy as np
 import operator
-from paymentmethod import PlainBitcoin, Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
+from paymentmethod import (
+    Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE,
+    DUMMY_PAYMENT_VALUE
+)
 from network import Network
 
 
@@ -61,13 +64,12 @@ class LN(Payment_Network):
 
         # taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
         # is quite old source. # TODO: look for newer source.
-        dummy_amount = 500000000
-        fee_intermediary = self.ln_fee * dummy_amount + self.base_fee
+        fee_intermediary = self.ln_fee * DUMMY_PAYMENT_VALUE + self.base_fee
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
                 party,
                 weight_other,
-                self.network.find_cheapest_path(source, party, dummy_amount, fee_intermediary)
+                self.network.find_cheapest_path(source, party, DUMMY_PAYMENT_VALUE, fee_intermediary)
             ))
         
         for counterparty, weight, cost_and_path in path_data:
