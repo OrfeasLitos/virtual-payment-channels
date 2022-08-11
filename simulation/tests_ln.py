@@ -214,6 +214,7 @@ def test_do_ln_offchain():
     base_fee, ln_fee, lightning, future_payments, value, payment_options, max_coins = (
         make_example_values_for_do_ln()
     )
+    balances_before = nx.get_edge_attributes(lightning.network.graph, "balance")
     fee_intermediary = base_fee + value*ln_fee
     for payment_option in payment_options:
         match payment_option['payment_information']['kind']:
@@ -221,18 +222,20 @@ def test_do_ln_offchain():
                 payment_information_offchain = payment_option['payment_information']
 
     # path is [0,1,4,7]
+    path, _ = payment_information_offchain['data']
+    assert path == [0,1,4,7]
     lightning = make_example_network_ln(base_fee=1000, ln_fee = 0.00002)
     lightning.do(payment_information_offchain)
     assert lightning.plain_bitcoin.coins[0] == max_coins 
     assert lightning.plain_bitcoin.coins[7] == max_coins
-    assert_eq(lightning.network.graph[0][1]['balance'], 6000000000-1000000000 - 2*fee_intermediary)
-    assert_eq(lightning.network.graph[1][0]['balance'], 7000000000 + value + 2*fee_intermediary)
+    assert_eq(lightning.network.graph[0][1]['balance'], balances_before[(0, 1)] - value - 2*fee_intermediary)
+    assert_eq(lightning.network.graph[1][0]['balance'], balances_before[(1, 0)] + value + 2*fee_intermediary)
     # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
-    assert_eq(lightning.network.graph[1][4]['balance'], 4000000000 - value - fee_intermediary)
-    assert_eq(lightning.network.graph[4][1]['balance'], 8000000000 + value + fee_intermediary)
-    assert_eq(lightning.network.graph[4][7]['balance'], 10000000000 - value)
-    assert_eq(lightning.network.graph[7][4]['balance'], 8000000000 + value)
-    assert_eq(lightning.network.graph[1][2]['balance'], 10000000000)
+    assert_eq(lightning.network.graph[1][4]['balance'], balances_before[(1, 4)] - value - fee_intermediary)
+    assert_eq(lightning.network.graph[4][1]['balance'], balances_before[(4, 1)] + value + fee_intermediary)
+    assert_eq(lightning.network.graph[4][7]['balance'], balances_before[(4, 7)] - value)
+    assert_eq(lightning.network.graph[7][4]['balance'], balances_before[(7, 4)] + value)
+    assert_eq(lightning.network.graph[1][2]['balance'], balances_before[(1, 2)])
 
 def test_do_ln_offchain_exception():
     base_fee = 1000
