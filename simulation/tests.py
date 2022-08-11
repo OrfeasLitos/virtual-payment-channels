@@ -624,6 +624,46 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     )
     assert method.network.graph[1][0]['locked_coins'] == 0
 
+def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality(method_name):
+    # the open-virtual-channel option is the same for elmo, lvpc, donner
+    # TODO: make tests for simulation where it is different
+    match method_name:
+        case "Elmo":
+            method = Elmo(4, base_fee = 1000000)
+        case "LVPC":
+            method = LVPC(4, base_fee = 1000000)
+        case "Donner":
+            method = Donner(4, base_fee = 1000000)
+        case _:
+            raise ValueError
+    
+    method.network.add_channel(0, 3000000000000., 1, 7000000000000., None)
+    method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
+    method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
+
+    knowledge = Knowledge('know-all')
+    value = 10000000000
+    payments = collections.deque([(0, 2, value), (0, 3, value / 10)])
+    utility_function = make_example_utility_function(10000, 5000, 1, 0)
+    utility = Utility(utility_function)
+    simulation = Simulation(payments, method, knowledge, utility)
+    results = simulation.run()
+    done_payment0, payment_info0 = results[0]
+    done_payment1, payment_info1 = results[1]
+    assert done_payment0 == True
+    assert done_payment1 == True
+    assert payment_info0['kind'] == method_name + '-open-virtual-channel'
+    assert payment_info1['kind'] == method_name + '-open-virtual-channel'
+    assert set(method.network.graph.edges()) == set(
+            [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (0, 2), (2, 0), (0, 3), (3, 0)]
+    )
+    path0, _, _ = payment_info0['data']
+    path1, _, _ = payment_info1['data']
+    if method_name != "Donner":
+        pass
+    else:
+        pass
+
 if __name__ == "__main__":
     test_cheapest_path()
     print("Success")

@@ -18,7 +18,8 @@ from tests import (make_example_network_elmo_lvpc_donner,
     test_simulation_with_elmo_lvpc_donner_ignore_centrality,
     test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance,
     test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality,
-    test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality
+    test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality,
+    test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality
 )
 
 def make_example_network_elmo(base_fee = 1000000):
@@ -194,6 +195,9 @@ def test_simulation_with_previous_channels_elmo_ignore_centrality():
 def test_simulation_with_previous_channels_elmo_long_path_ignore_centrality():
     test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality("Elmo")
 
+def test_simulation_with_previous_channels_elmo_recursive_ignore_centrality():
+    test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality("Elmo")
+
 def test_simulation_with_elmo():
     simulation = make_example_simulation_elmo(nr_players=20)
     results = simulation.run()
@@ -202,6 +206,7 @@ def test_simulation_with_elmo():
     test_simulation_with_elmo_ignore_centrality_and_distance()
     test_simulation_with_previous_channels_elmo_ignore_centrality()
     test_simulation_with_previous_channels_elmo_long_path_ignore_centrality()
+    test_simulation_with_previous_channels_elmo_recursive_ignore_centrality()
 
 if __name__ == "__main__":
     test_get_payment_options_elmo()

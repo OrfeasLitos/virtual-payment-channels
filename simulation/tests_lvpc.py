@@ -16,7 +16,8 @@ from tests import (
     test_simulation_with_elmo_lvpc_donner_ignore_centrality,
     test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance,
     test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality,
-    test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality
+    test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality,
+    test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality
 )
 
 
@@ -106,11 +107,15 @@ def test_simulation_with_previous_channels_lvpc_ignore_centrality():
 def test_simulation_with_previous_channels_lvpc_long_path_ignore_centrality():
     test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality("LVPC")
 
+def test_simulation_with_previous_channels_lvpc_recursive_ignore_centrality():
+    test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality("LVPC")
+
 def test_simulation_with_lvpc():
     test_simulation_with_lvpc_ignore_centrality()
     test_simulation_with_lvpc_ignore_centrality_and_distance()
     test_simulation_with_previous_channels_lvpc_ignore_centrality()
     test_simulation_with_previous_channels_lvpc_long_path_ignore_centrality()
+    #test_simulation_with_previous_channels_lvpc_recursive_ignore_centrality()
     simulation = make_example_simulation_lvpc(nr_players = 20)
     results = simulation.run()
     print(results)
