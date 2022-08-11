@@ -10,6 +10,8 @@ from network import Network, Network_Elmo
 # default max coins loosely copied from real world USD figures
 
 MULTIPLIER_CHANNEL_BALANCE = 5
+# taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
+# is quite old source. # TODO: look for newer source.
 DUMMY_PAYMENT_VALUE = 500000000
 
 def sum_future_payments_to_counterparty(sender, counterparty, future_payments):

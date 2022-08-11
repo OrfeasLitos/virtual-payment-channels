@@ -1,7 +1,7 @@
 from custom_elmo_lvpc_donner import Custom_Elmo_LVPC_Donner
 
 class Donner(Custom_Elmo_LVPC_Donner):
-    # TODO: find reasonable value for base_fee, opening_transaction_size, delay
+    # TODO: find reasonable value for opening_transaction_size, delay
     def __init__(
         self, nr_players, max_coins = 2000000000000000,
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 

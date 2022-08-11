@@ -59,8 +59,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         for future_sender, future_receiver, value in future_payments:
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
-            # TODO: think of a good lock_value or balance the sender wants to put on a new channel
-            # maybe some factor times MULTIPLIER_CHANNEL_BALANCE
             dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE + value
             if future_sender != source:
                 # TODO: think about discarding first part of the tuple.

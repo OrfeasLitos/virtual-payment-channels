@@ -61,9 +61,7 @@ class LN(Payment_Network):
                     weight_endpoint if future_sender == source else weight_intermediary,
                     self.network.find_cheapest_path(source, future_receiver, value, fee_intermediary)
                 ))
-
-        # taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
-        # is quite old source. # TODO: look for newer source.
+        
         fee_intermediary = self.ln_fee * DUMMY_PAYMENT_VALUE + self.base_fee
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
