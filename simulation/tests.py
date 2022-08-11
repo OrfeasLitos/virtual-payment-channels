@@ -106,9 +106,8 @@ def make_example_values_for_do_elmo_lvpc_donner(method_name):
     )
     value = 100000000.
     payment_options = method.get_payment_options(0, 7, value, future_payments)
-    # review: ALL_CAPS case is customarily reserved for user-adjustable global constants
-    MAX_COINS = method.plain_bitcoin.max_coins
-    return base_fee, method, future_payments, value, MAX_COINS
+    max_coins = method.plain_bitcoin.max_coins
+    return base_fee, method, future_payments, value, max_coins
 
 def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
     base_fee, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
@@ -137,19 +136,19 @@ def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_
 
 # adjusted from tests_ln
 def test_do_onchain_elmo_lvpc_donner(method_name):
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     payment_options = method.get_payment_options(0, 7, value, future_payments)
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     payment_information_onchain = payment_options[0]['payment_information']
     method.do(payment_information_onchain)
-    # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
-    assert method.plain_bitcoin.coins[0] == MAX_COINS - value - method.plain_bitcoin.get_fee() 
-    assert method.plain_bitcoin.coins[7] == MAX_COINS + value
+    # sender should have max_coins - 1 - fee many coins, receiver max_coins + 1
+    assert method.plain_bitcoin.coins[0] == max_coins- value - method.plain_bitcoin.get_fee() 
+    assert method.plain_bitcoin.coins[7] == max_coins + value
 
 def test_do_new_channel_elmo_lvpc_donner(method_name):
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     payment_options = method.get_payment_options(0, 8, value, future_payments)
@@ -162,15 +161,15 @@ def test_do_new_channel_elmo_lvpc_donner(method_name):
     sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
     receiver_coins = value
     tx_size = method.opening_transaction_size
-    assert method.plain_bitcoin.coins[0] == MAX_COINS - method.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
-    assert method.plain_bitcoin.coins[8] == MAX_COINS
+    assert method.plain_bitcoin.coins[0] == max_coins - method.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
+    assert method.plain_bitcoin.coins[8] == max_coins
     # test the balances on ln (-2 for base fee and payment, +1 for payment).
     assert method.network.graph[0][8]['balance'] == sender_coins
     assert method.network.graph[8][0]['balance'] == receiver_coins
 
 def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     # the new_virtual_channel_option is the same for elmo, lvpc and donner as it is a channel on two existing onchain channels.
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     payment_options = method.get_payment_options(0, 4, value, future_payments)
@@ -205,7 +204,7 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     assert method.network.graph.get_edge_data(5, 0) is None
 
 def test_do_elmo_lvpc_donner_pay(method_name):
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     payment_options = method.get_payment_options(0, 2, value, future_payments)
@@ -380,7 +379,7 @@ def test_pay_elmo_lvpc_donner(method_name):
     test_pay_not_enough_balance_elmo_lvpc_donner(method_name)
 
 def test_undo_new_virtual_channel_elmo_lvpc_donner(method_name):
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     # virtual channel has length 2 and both underlying channel are onchain -> equal for all 3 methods
@@ -405,7 +404,7 @@ def test_undo_new_virtual_channel_elmo_lvpc_donner(method_name):
 
 def test_undo_elmo_lvpc_donner_pay(method_name):
     #TODO: tests are very similar. Check how to unify them.
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     payment_options = method.get_payment_options(0, 2, value, future_payments)
@@ -428,7 +427,7 @@ def test_undo_elmo_lvpc_donner(method_name):
 
 def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner(method_name):
     # virtual channel is possible for elmo, lvpc and donner
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     payment_options = method.get_payment_options(0, 4, value, future_payments)
@@ -452,7 +451,7 @@ def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner(
     assert method.network.graph[1][4]['channels_above'] == []
 
 def test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner(method_name):
-    base_fee, method, future_payments, value, MAX_COINS = (
+    base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     payment_options = method.get_payment_options(0, 4, value, future_payments)

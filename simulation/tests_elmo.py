@@ -33,17 +33,6 @@ def make_example_simulation_elmo(seed = 12345, nr_players = 10, coins_for_partie
 def test_get_payment_options_elmo_channel_exists():
     test_get_payment_options_elmo_lvpc_donner_channel_exists("Elmo")
 
-# adjusted from tests_ln
-def make_example_values_for_do_elmo():
-    base_fee, elmo, future_payments = (
-        make_example_network_elmo_and_future_payments(base_fee = 1000000)
-    )
-    value = 100000000.
-    payment_options = elmo.get_payment_options(0, 7, value, future_payments)
-    # review: ALL_CAPS case is customarily reserved for user-adjustable global constants
-    MAX_COINS = elmo.plain_bitcoin.max_coins
-    return base_fee, elmo, future_payments, value, MAX_COINS
-
 def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("Elmo")
 
