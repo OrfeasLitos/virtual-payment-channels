@@ -207,6 +207,9 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     assert method.network.graph[4][0]['balance'] == value
     assert method.network.graph.get_edge_data(5, 0) is None
 
+def test_do_new_virtual_channel_not_enough_balance_elmo_lvpc_donner(method_name):
+    pass
+
 def test_do_elmo_lvpc_donner_pay(method_name):
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
@@ -226,11 +229,11 @@ def test_do_elmo_lvpc_donner_pay(method_name):
     assert method.network.graph[0][1]['balance'] == previous_balance01
 
 def test_do_elmo_lvpc_donner(method_name):
-    # TODO: test exceptions
     test_do_onchain_elmo_lvpc_donner(method_name)
     test_do_new_channel_elmo_lvpc_donner(method_name)
     test_do_new_virtual_channel_elmo_lvpc_donner(method_name)
     test_do_elmo_lvpc_donner_pay(method_name)
+    test_do_new_virtual_channel_not_enough_balance_elmo_lvpc_donner(method_name)
 
 
 def test_update_balances_new_virtual_channel_true_elmo_lvpc_donner(method_name):
