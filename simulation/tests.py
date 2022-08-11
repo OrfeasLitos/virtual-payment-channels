@@ -208,7 +208,19 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     assert method.network.graph.get_edge_data(5, 0) is None
 
 def test_do_new_virtual_channel_not_enough_balance_elmo_lvpc_donner(method_name):
-    pass
+    method = make_example_network_elmo_lvpc_donner(method_name)
+    value = 1000
+    sender_coins = 99999999999999999999999
+    path = [0,1,4]
+    payment_information_new_virtual_channel = {
+        'kind': method_name + '-new-virtual-channel',
+        'data': (path, value, sender_coins)
+    }
+    try:
+        method.do(payment_information_new_virtual_channel)
+        assert False, 'should raise exception as amount is too high'
+    except ValueError:
+        pass
 
 def test_do_elmo_lvpc_donner_pay(method_name):
     base_fee, method, future_payments, value, max_coins = (
