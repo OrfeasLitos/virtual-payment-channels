@@ -248,23 +248,18 @@ def test_update_balances_new_virtual_channel_true_elmo_lvpc_donner(method_name):
 
 def test_update_balances_new_virtual_channel_reverse_elmo_lvpc_donner(method_name):
     method = make_example_network_elmo_lvpc_donner(method_name)
-    channels_before = [channel for channel in method.network.graph.edges.data("balance")]
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     path = [0, 1, 4, 7]
     value = 2000000000
     sender_coins = 100000000
     method.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = True)
     # balances are updated, now we want to revert it
     method.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = False)
-    channels_after = [channel for channel in method.network.graph.edges.data("balance")]
-    for i in range(len(channels_before)):
-        assert_eq(channels_before[i][2], channels_after[i][2])
-    assert_eq(method.network.graph[0][1]['balance'],6000000000)
-    assert_eq(method.network.graph[1][0]['balance'], 7000000000)
-    assert_eq(method.network.graph[1][4]['balance'], 4000000000)
-    assert_eq(method.network.graph[4][1]['balance'], 8000000000)
-    assert_eq(method.network.graph[4][7]['balance'], 10000000000)
-    assert_eq(method.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(method.network.graph[1][2]['balance'], 10000000000)
+    balances_after = nx.get_edge_attributes(method.network.graph, "balance")
+    for edge in balances_before.keys():
+        assert_eq(balances_before[edge], balances_after[edge])
+    for edge in balances_after.keys():
+        assert_eq(balances_before[edge], balances_after[edge])
 
 def test_update_balances_new_virtual_channel_not_enough_money_elmo_lvpc_donner(method_name):
     method = make_example_network_elmo_lvpc_donner(method_name)
@@ -288,18 +283,19 @@ def test_update_balances_new_virtual_channel_elmo_lvpc_donner(method_name):
 
 def test_locking_and_unlocking_enough_balance_elmo_lvpc_donner(method_name):
     method = make_example_network_elmo_lvpc_donner(method_name)
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     path = [0, 1, 4, 7]
     value = 2000000000
     sender_coins = 100000000
     lock_value = value + sender_coins
     method.network.lock_coins(path, lock_value)
-    assert_eq(method.network.graph[0][1]['balance'],6000000000 - lock_value)
-    assert_eq(method.network.graph[1][0]['balance'], 7000000000)
-    assert_eq(method.network.graph[1][4]['balance'], 4000000000 - lock_value)
-    assert_eq(method.network.graph[4][1]['balance'], 8000000000)
-    assert_eq(method.network.graph[4][7]['balance'], 10000000000 - lock_value)
-    assert_eq(method.network.graph[7][4]['balance'], 8000000000)
-    assert_eq(method.network.graph[1][2]['balance'], 10000000000)
+    assert_eq(method.network.graph[0][1]['balance'], balances_before[(0, 1)] - lock_value)
+    assert_eq(method.network.graph[1][0]['balance'], balances_before[(1, 0)])
+    assert_eq(method.network.graph[1][4]['balance'], balances_before[(1, 4)] - lock_value)
+    assert_eq(method.network.graph[4][1]['balance'], balances_before[(4, 1)])
+    assert_eq(method.network.graph[4][7]['balance'], balances_before[(4, 7)] - lock_value)
+    assert_eq(method.network.graph[7][4]['balance'], balances_before[(7, 4)])
+    assert_eq(method.network.graph[1][2]['balance'], balances_before[(1, 2)])
     assert_eq(method.network.graph[0][1]['locked_coins'], lock_value)
     assert_eq(method.network.graph[1][0]['locked_coins'], 0)
     assert_eq(method.network.graph[1][4]['locked_coins'], lock_value)
