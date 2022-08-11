@@ -3,10 +3,6 @@ import networkx as nx
 import collections
 from numpy.testing import assert_almost_equal as assert_eq
 from elmo import Elmo
-from knowledge import Knowledge
-from utility import Utility
-from simulation import Simulation
-from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_ELMO
 from tests import (make_example_network_elmo_lvpc_donner,
     make_example_network_elmo_lvpc_donner_and_future_payments,
     make_example_simulation_for_all, make_example_utility_function,

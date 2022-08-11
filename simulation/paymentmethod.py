@@ -9,7 +9,7 @@ from network import Network, Network_Elmo
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
-MULTIPLIER_CHANNEL_BALANCE = MULTIPLIER_CHANNEL_BALANCE_LN = MULTIPLIER_CHANNEL_BALANCE_ELMO = MULTIPLIER_CHANNEL_BALANCE_LVPC = 5
+MULTIPLIER_CHANNEL_BALANCE = 5
 
 def sum_future_payments_to_counterparty(sender, counterparty, future_payments):
     """

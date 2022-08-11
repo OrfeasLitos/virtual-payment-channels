@@ -18,7 +18,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
-            # TODO: determine good value for a.
+            # TODO: determine good values for a.
             incoming_payments_per_player = np.random.zipf(1.8, players)
             # assume incoming payments come from unifrom distribution
             # example: big player that everyone pays to (in real world maybe Netflix), but

@@ -4,7 +4,7 @@ import networkx as nx
 from numpy.testing import assert_almost_equal as assert_eq
 from ln import LN
 from utility import Utility
-from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE_LN
+from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from tests import make_example_utility_function, make_example_simulation_for_all
 
 def make_example_network_ln(base_fee = 1000, ln_fee = 0.00002):
@@ -257,7 +257,7 @@ def test_do_ln_new_channel():
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(0, 7, future_payments)
-    sender_coins = MULTIPLIER_CHANNEL_BALANCE_LN * sum_future_payments
+    sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
     receiver_coins = value
     tx_size = lightning.opening_transaction_size
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
