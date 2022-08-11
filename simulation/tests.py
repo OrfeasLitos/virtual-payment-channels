@@ -109,6 +109,12 @@ def make_example_values_for_do_elmo_lvpc_donner(method_name):
     max_coins = method.plain_bitcoin.max_coins
     return base_fee, method, future_payments, value, max_coins
 
+def test_balances_before_and_after_equal(balances_before, balances_after):
+    for edge in balances_before.keys():
+        assert_eq(balances_before[edge], balances_after[edge])
+    for edge in balances_after.keys():
+        assert_eq(balances_before[edge], balances_after[edge])
+
 def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
     base_fee, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
     payment_options = method.get_payment_options(0, 2, 1000000000., future_payments)
@@ -252,10 +258,7 @@ def test_update_balances_new_virtual_channel_reverse_elmo_lvpc_donner(method_nam
     # balances are updated, now we want to revert it
     method.update_balances_new_virtual_channel(path, value, sender_coins, new_channel = False)
     balances_after = nx.get_edge_attributes(method.network.graph, "balance")
-    for edge in balances_before.keys():
-        assert_eq(balances_before[edge], balances_after[edge])
-    for edge in balances_after.keys():
-        assert_eq(balances_before[edge], balances_after[edge])
+    test_balances_before_and_after_equal(balances_before, balances_after)
 
 def test_update_balances_new_virtual_channel_not_enough_money_elmo_lvpc_donner(method_name):
     method = make_example_network_elmo_lvpc_donner(method_name)
@@ -330,10 +333,7 @@ def test_locking_not_enough_balance_elmo_lvpc_donner(method_name):
     except ValueError:
         balances_after_failure = nx.get_edge_attributes(method.network.graph, "balance")
         locked_coins_after_failure = nx.get_edge_attributes(method.network.graph, "locked_coins")
-        for key in balances_before.keys():
-            assert_eq(balances_before[key], balances_after_failure[key])
-        for key in locked_coins_before.keys():
-            assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
+        test_balances_before_and_after_equal(balances_before, balances_after_failure)
 
 def test_lock_and_unlock_elmo_lvpc_donner(method_name):
     test_locking_and_unlocking_enough_balance_elmo_lvpc_donner(method_name)
@@ -385,10 +385,9 @@ def test_undo_new_virtual_channel_elmo_lvpc_donner(method_name):
 
     method.do(payment_information_new_virtual_channel)
     method.undo(payment_information_new_virtual_channel)
-    balances_after_failure = nx.get_edge_attributes(method.network.graph, "balance")
+    balances_after = nx.get_edge_attributes(method.network.graph, "balance")
     locked_coins_after_failure = nx.get_edge_attributes(method.network.graph, "locked_coins")
-    for key in balances_before.keys():
-        assert_eq(balances_before[key], balances_after_failure[key])
+    test_balances_before_and_after_equal(balances_before, balances_after)
     for key in locked_coins_before.keys():
         assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
     assert sender_coins == method.plain_bitcoin.coins[0]
@@ -406,12 +405,11 @@ def test_undo_elmo_lvpc_donner_pay(method_name):
     locked_coins_before = nx.get_edge_attributes(method.network.graph, "locked_coins")
     method.do(payment_information_pay)
     method.undo(payment_information_pay)
-    balances_after_failure = nx.get_edge_attributes(method.network.graph, "balance")
-    locked_coins_after_failure = nx.get_edge_attributes(method.network.graph, "locked_coins")
-    for key in balances_before.keys():
-        assert_eq(balances_before[key], balances_after_failure[key])
+    balances_after = nx.get_edge_attributes(method.network.graph, "balance")
+    locked_coins_after = nx.get_edge_attributes(method.network.graph, "locked_coins")
+    test_balances_before_and_after_equal(balances_before, balances_after)
     for key in locked_coins_before.keys():
-        assert_eq(locked_coins_before[key], locked_coins_after_failure[key])
+        assert_eq(locked_coins_before[key], locked_coins_after[key])
 
 def test_undo_elmo_lvpc_donner(method_name):
     test_undo_new_virtual_channel_elmo_lvpc_donner(method_name)
