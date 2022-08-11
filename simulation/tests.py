@@ -546,7 +546,6 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_
 
 def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(method_name):
     # the open-virtual-channel option is the same for elmo, lvpc, donner
-    # TODO: make tests for simulation where it is different
     match method_name:
         case "Elmo":
             method = Elmo(4, base_fee = 1000000)
@@ -583,7 +582,6 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
 
 def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality(method_name):
     # the open-virtual-channel option is the same for elmo, lvpc, donner
-    # TODO: make tests for simulation where it is different
     match method_name:
         case "Elmo":
             method = Elmo(4, base_fee = 1000000)
@@ -630,7 +628,6 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_cen
     and donner variadic.
     """
     # the open-virtual-channel option is the same for elmo, lvpc, donner
-    # TODO: make tests for simulation where it is different
     match method_name:
         case "Elmo":
             method = Elmo(4, base_fee = 1000000)
