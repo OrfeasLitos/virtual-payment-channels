@@ -60,8 +60,8 @@ class Network:
         except nx.exception.NetworkXNoPath:
             return None
 
-    def get_harmonic_centrality(self):
-        return nx.harmonic_centrality(self.graph)
+    def get_harmonic_centrality(self, party):
+        return nx.harmonic_centrality(self.graph)[party]
 
 class Custom_Network_Elmo_LVPC_Donner(Network):
     def __init__(self, nr_vertices):

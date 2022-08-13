@@ -95,7 +95,7 @@ class Payment_Network(ABC):
         onchain_fee = self.plain_bitcoin.get_fee()
         if onchain_fee + value > self.plain_bitcoin.coins[sender]:
             return None
-        onchain_centrality = self.network.get_harmonic_centrality()
+        onchain_centrality = self.network.get_harmonic_centrality(sender)
         onchain_distance = self.get_distances(sender, future_payments)
         return {
             'delay': onchain_time,

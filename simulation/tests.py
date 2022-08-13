@@ -27,7 +27,7 @@ def make_example_utility_function(factor_fee, factor_delay, factor_distance, fac
             factor_fee/(1+fee) +
             factor_delay/delay +
             factor_distance * np.transpose(inverse_distance_array) @ weight_array +
-            factor_centrality * sum(centrality.values())
+            factor_centrality * centrality
             )
     return utility_function
 

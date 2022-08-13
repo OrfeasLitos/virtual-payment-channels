@@ -57,7 +57,7 @@ def test_get_payment_options_ln_enough_money():
     assert payment_options[2]['payment_information']['kind'] == 'ln-pay'
     actual_ln_pay_option = payment_options[2]
 
-    on_chain_centrality = lightning.network.get_harmonic_centrality()
+    on_chain_centrality = lightning.network.get_harmonic_centrality(0)
     onchain_fee = lightning.plain_bitcoin.get_fee()
     expected_onchain_option = {
         'delay' : 3600,
@@ -69,10 +69,7 @@ def test_get_payment_options_ln_enough_money():
         ],
         'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1000000000.)}
     }
-    ln_open_centrality = {
-        0: 4.333333333333333, 1: 4.333333333333333, 2: 4.5, 3: 4.5, 4: 4.5,
-        5: 0, 6: 0, 7: 3.8333333333333335, 8: 3.0, 9: 0
-    }
+    ln_open_centrality = 4.333333333333333
     expected_ln_open_option = {
         'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
         'fee' : lightning.plain_bitcoin.get_fee(lightning.opening_transaction_size),
@@ -89,10 +86,7 @@ def test_get_payment_options_ln_enough_money():
     expected_ln_pay_option = {
         'delay' : lightning.get_payment_time([0,1,4,7]),
         'fee' : lightning.get_payment_fee((0, 7, 1000000000.), 3),
-        'centrality' : {
-            0: 3.666666666666667, 1: 4.333333333333333, 2: 4.333333333333334, 3: 4.5,
-            4: 4.5, 5: 0, 6: 0, 7: 3.0, 8: 3.0, 9: 0
-        },
+        'centrality' : 3.666666666666667,
         'distance': [
             (100, 1), (100, 3), (100, 3), (100, 3), (1, 1), (1, 2), (1, 2),
             (1, math.inf), (1, math.inf), (1, math.inf)
@@ -109,8 +103,7 @@ def test_get_payment_options_ln_enough_money():
 
     assert_eq(expected_ln_open_option['fee'], actual_ln_open_option['fee'])
     assert_eq(expected_ln_open_option['delay'], actual_ln_open_option['delay'])
-    for key in expected_ln_open_option['centrality'].keys():
-        assert_eq(expected_ln_open_option['centrality'][key], actual_ln_open_option['centrality'][key])
+    assert_eq(expected_ln_open_option['centrality'], actual_ln_open_option['centrality'])
     expected_ln_open_option['distance'].sort()
     actual_ln_open_option['distance'].sort()
     assert expected_ln_open_option['distance'] == actual_ln_open_option['distance']
@@ -118,8 +111,7 @@ def test_get_payment_options_ln_enough_money():
 
     assert_eq(expected_ln_pay_option['delay'], actual_ln_pay_option['delay'])
     assert_eq(expected_ln_pay_option['fee'], actual_ln_pay_option['fee'])
-    for key in expected_ln_pay_option['centrality'].keys():
-        assert_eq(expected_ln_pay_option['centrality'][key], actual_ln_pay_option['centrality'][key])
+    assert_eq(expected_ln_pay_option['centrality'], actual_ln_pay_option['centrality'])
     expected_ln_pay_option['distance'].sort()
     actual_ln_pay_option['distance'].sort()
     assert expected_ln_pay_option['distance'] == actual_ln_pay_option['distance']

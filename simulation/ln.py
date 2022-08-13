@@ -137,7 +137,7 @@ class LN(Payment_Network):
         else:
             self.network.add_channel(sender, sender_coins, counterparty, value)
             new_channel_offchain_option = None
-            new_channel_centrality = self.network.get_harmonic_centrality()
+            new_channel_centrality = self.network.get_harmonic_centrality(sender)
             new_channel_distance = self.get_distances(sender, future_payments)
         self.network.remove_channel(sender, counterparty)
 
@@ -169,7 +169,7 @@ class LN(Payment_Network):
         except ValueError:
             return None
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
-        offchain_centrality = self.network.get_harmonic_centrality()
+        offchain_centrality = self.network.get_harmonic_centrality(sender)
         offchain_distance = self.get_distances(sender, future_payments)
         self.undo(payment_information)
         return {
