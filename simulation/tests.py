@@ -320,7 +320,7 @@ def test_locking_and_unlocking_enough_balance_elmo_lvpc_donner(method_name):
     assert_eq(method.network.graph[7][4]['locked_coins'], 0)
     assert_eq(method.network.graph[1][2]['locked_coins'], 0)
 
-    method.network.undo_locking(path, lock_value)
+    method.network.lock_coins(path, lock_value, unlock = True)
     assert_eq(method.network.graph[0][1]['balance'], balances_before[(0, 1)])
     assert_eq(method.network.graph[1][0]['balance'], balances_before[(1, 0)])
     assert_eq(method.network.graph[1][4]['balance'], balances_before[(1, 4)])

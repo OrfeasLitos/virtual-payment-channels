@@ -1,4 +1,3 @@
-# maybe Network should extend a class "LabeledGraph"
 import math
 import networkx as nx
 
@@ -93,29 +92,28 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
                 self.graph[receiver][sender]['channels_above'].append({idA, idB})
         self.edge_id += 1
     
-    def lock_coins(self, path, lock_value):
-        for i in range(len(path) - 1):
-            sender = path[i]
-            receiver = path[i+1]
-            if self.graph[sender][receiver]['balance'] < lock_value:
-                for j in range(i):
-                    sender = path[j]
-                    receiver = path[j+1]
-                    self.graph[sender][receiver]['balance'] += lock_value
-                    self.graph[sender][receiver]['locked_coins'] -= lock_value
-                raise ValueError
-            self.graph[sender][receiver]['balance'] -= lock_value
-            self.graph[sender][receiver]['locked_coins'] += lock_value
-
-    def undo_locking(self, path, lock_value):
-        # TODO: maybe make it similarly as for update_balances and include this with an operator
-        # and boolean variable in lock.
-        # undoes just one lock, doesn't free all locked money.
-        for i in range(len(path) - 1):
-            sender = path[i]
-            receiver = path[i+1]
-            self.graph[sender][receiver]['balance'] += lock_value
-            self.graph[sender][receiver]['locked_coins'] -= lock_value
+    def lock_coins(self, path, lock_value, unlock = False):
+        if unlock == False:
+            for i in range(len(path) - 1):
+                sender = path[i]
+                receiver = path[i+1]
+                if self.graph[sender][receiver]['balance'] < lock_value:
+                    for j in range(i):
+                        sender = path[j]
+                        receiver = path[j+1]
+                        self.graph[sender][receiver]['balance'] += lock_value
+                        self.graph[sender][receiver]['locked_coins'] -= lock_value
+                    raise ValueError
+                self.graph[sender][receiver]['balance'] -= lock_value
+                self.graph[sender][receiver]['locked_coins'] += lock_value
+        
+        else:
+            for i in range(len(path) - 1):
+                sender = path[i]
+                receiver = path[i+1]
+                self.graph[sender][receiver]['balance'] += lock_value
+                self.graph[sender][receiver]['locked_coins'] -= lock_value
+        
 
     def cooperative_close_channel(self, idA, idB):
         # convention: A is first in channels_below_reference_channel (and B last)
@@ -123,7 +121,7 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
         amountA = self.graph[idA][idB]['balance']
         amountB = self.graph[idB][idA]['balance']
         unlock_amount = amountA + amountB
-        self.undo_locking(channels_below_reference_channel_A_to_B, unlock_amount)
+        self.lock_coins(channels_below_reference_channel_A_to_B, unlock_amount, unlock = True)
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
         # if onchain channel raise ValueError
