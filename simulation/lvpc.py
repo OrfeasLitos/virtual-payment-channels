@@ -1,4 +1,3 @@
-from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from custom_elmo_lvpc_donner import Custom_Elmo_LVPC_Donner
 
 class LVPC(Custom_Elmo_LVPC_Donner):

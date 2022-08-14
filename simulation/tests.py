@@ -7,7 +7,7 @@ import networkx as nx
 import collections
 
 from simulation import Simulation, random_payments
-from paymentmethod import PlainBitcoin, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
+from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from ln import LN
 from elmo import Elmo
 from lvpc import LVPC
@@ -24,7 +24,7 @@ def make_example_utility_function(factor_fee, factor_delay, factor_distance, fac
         weight_array = weight_distance_array[:,0]
         return (
             # review: I'm not sure this is correct, let's discuss
-            factor_fee/(1+fee) +
+            factor_fee/(100+fee) +
             factor_delay/delay +
             factor_distance * np.transpose(inverse_distance_array) @ weight_array +
             factor_centrality * centrality
