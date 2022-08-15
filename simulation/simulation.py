@@ -7,7 +7,7 @@ from paymentmethod import PlainBitcoin
 from utility import Utility
 
 # max_coins of PlainBitcoin divided by 5
-MAX_PAY = 2000000000000000/5
+MAX_PAY = 2000000000000000//5
 
 def random_payments(players, max_pay, distribution = 'uniform', parameter = None):
     res = collections.deque()
@@ -63,26 +63,33 @@ def all_random_payments():
     # uniform
     payments_for_uniform = {}
     for parties in [10, 100, 1000, 10000]:
+        print("parties uniform:", parties)
         for num_payments in [100, 1000, 10000, 100000]:
             for i in range(10):
                 payments = random_payments(parties, MAX_PAY, 'uniform', num_payments)
                 payments_for_uniform[(parties, num_payments, i)] = payments
-    
-    # power law
-    payments_for_zipf = {}
-    for parties in [10, 100, 1000, 10000]:
-        for a in [2.2, 2, 1.8, 1.6]:
-            for i in range(10):
-                payments = random_payments(parties, MAX_PAY, 'zipf', a)
-                payments_for_zipf[(parties, a, i)] = payments
 
     # preferred receiver
     payments_for_preferred_receiver = {}
     for parties in [10, 100, 1000, 10000]:
+        print("parties preferred receiver:", parties)
         for num_payments in [100, 1000, 10000, 100000]:
             for i in range(10):
                 payments = random_payments(parties, MAX_PAY, 'preferred-receiver', num_payments)
                 payments_for_preferred_receiver[(parties, num_payments, i)] = payments
+    
+    # power law
+    payments_for_zipf = {}
+    for parties in [10, 100, 1000, 10000]:
+        print("parties zipf:", parties)
+        for a in [3, 2.4, 1.8]:
+            print(a)
+            for i in range(10):
+                payments = random_payments(parties, MAX_PAY, 'zipf', a)
+                payments_for_zipf[(parties, a, i)] = payments
+    
+    #TODO: pickle the outputs.
+    return payments_for_uniform, payments_for_preferred_receiver, payments_for_zipf
 
 
 class Simulation:
@@ -149,13 +156,17 @@ class Simulation:
             and self.utility == other.utility
         )
 
-"""
+
 if __name__ == "__main__":
 
     #seed = random.randrange(sys.maxsize)
     seed = 12345
     random.seed(seed)
     np.random.seed(seed)
+    payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
+    print(payments_zipf[(10000,3,0)])
+
+"""
     nr_players = 20
     # 1000 transactions, 100 players, max 10000 Bitcoin per transaction
     payments = random_payments(1000, 100, 100000)
