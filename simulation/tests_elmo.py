@@ -1,6 +1,5 @@
 
 import networkx as nx
-import collections
 from numpy.testing import assert_almost_equal as assert_eq
 from elmo import Elmo
 from tests import (make_example_network_elmo_lvpc_donner,

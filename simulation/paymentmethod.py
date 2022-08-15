@@ -1,9 +1,5 @@
 import random
-import math
-import numpy as np
-import operator
-from abc import ABC, abstractmethod, abstractproperty
-from network import Network, Network_Elmo
+from abc import ABC, abstractmethod
 
 # units in millisatoshis
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022

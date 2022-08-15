@@ -1,7 +1,6 @@
 
 import random
 import numpy as np
-import math
 from numpy.testing import assert_almost_equal as assert_eq
 import networkx as nx
 import collections
