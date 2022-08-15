@@ -6,10 +6,14 @@ from knowledge import Knowledge
 from paymentmethod import PlainBitcoin
 from utility import Utility
 
-def random_payments(players, max_pay, distribution = 'uniform', num_pays = None):
+# max_coins of PlainBitcoin divided by 5
+MAX_PAY = 2000000000000000/5
+
+def random_payments(players, max_pay, distribution = 'uniform', parameter = None):
     res = collections.deque()
     match distribution:
         case 'uniform':
+            num_pays = parameter
             for _ in range(num_pays):
                 sender = random.randrange(players)
                 receiver = random.randrange(players)
@@ -18,6 +22,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
+            a = parameter
             # TODO: determine good values for a.
             incoming_payments_per_player = np.random.zipf(1.8, players)
             # assume incoming payments come from unifrom distribution
@@ -31,6 +36,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
                     value = random.randrange(max_pay)
                     res.append((sender, receiver, value))
         case 'preferred-receiver':
+            num_pays = parameter
             # with probability p the party sends the amount to preferred receiver
             # with probability q to a random party.
             preferred_receivers = []
@@ -52,6 +58,32 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None)
             raise ValueError
 
     return res
+
+def all_random_payments():
+    # uniform
+    payments_for_uniform = {}
+    for parties in [10, 100, 1000, 10000]:
+        for num_payments in [100, 1000, 10000, 100000]:
+            for i in range(10):
+                payments = random_payments(parties, MAX_PAY, 'uniform', num_payments)
+                payments_for_uniform[(parties, num_payments, i)] = payments
+    
+    # power law
+    payments_for_zipf = {}
+    for parties in [10, 100, 1000, 10000]:
+        for a in [2.2, 2, 1.8, 1.6]:
+            for i in range(10):
+                payments = random_payments(parties, MAX_PAY, 'zipf', a)
+                payments_for_zipf[(parties, a, i)] = payments
+
+    # preferred receiver
+    payments_for_preferred_receiver = {}
+    for parties in [10, 100, 1000, 10000]:
+        for num_payments in [100, 1000, 10000, 100000]:
+            for i in range(10):
+                payments = random_payments(parties, MAX_PAY, 'preferred-receiver', num_payments)
+                payments_for_preferred_receiver[(parties, num_payments, i)] = payments
+
 
 class Simulation:
     """
@@ -123,6 +155,7 @@ if __name__ == "__main__":
     #seed = random.randrange(sys.maxsize)
     seed = 12345
     random.seed(seed)
+    np.random.seed(seed)
     nr_players = 20
     # 1000 transactions, 100 players, max 10000 Bitcoin per transaction
     payments = random_payments(1000, 100, 100000)
