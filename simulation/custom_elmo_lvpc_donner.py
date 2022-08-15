@@ -14,7 +14,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         bitcoin_fee = 1000000, bitcoin_delay = 3600, 
         coins_for_parties = "max_value", base_fee = 10000,
         fee_rate = 0.0004, opening_transaction_size = 200,
-        pay_delay = 0.05, new_virtual_channel_delay = 1
+        pay_delay = 0.05, new_virtual_channel_delay = 0.05
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.method_name = method_name
@@ -225,7 +225,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         options = [onchain_option, new_channel_option, new_virtual_channel_option, pay_option]
         return [option for option in options if option is not None]
 
-    # TODO: think if update balances should be in network.
     # adjusted from LN
     def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
         # the new_channel argument tells whether this corresponds to making a payment
