@@ -2,6 +2,7 @@ import random
 import numpy as np
 import sys
 import collections
+import pickle
 from knowledge import Knowledge
 from paymentmethod import PlainBitcoin
 from utility import Utility
@@ -83,7 +84,7 @@ def all_random_payments():
     payments_for_zipf = {}
     for parties in [10, 100, 1000, 10000]:
         print("parties zipf:", parties)
-        for a in [3, 2.4, 1.8]:
+        for a in [3, 2.5, 2]:
             print(a)
             for i in range(10):
                 payments = random_payments(parties, MAX_PAY, 'zipf', a)
@@ -165,8 +166,15 @@ if __name__ == "__main__":
     random.seed(seed)
     np.random.seed(seed)
     payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
-    print(payments_zipf[(10000,3,0)])
-
+    #print(payments_zipf[(10000,3,0)])
+    with open('random_payments_uniform.txt', 'wb') as file:
+        pickle.dump(payments_uniform, file)
+    with open('random_payments_preferred_receiver.txt', 'wb') as file:
+        pickle.dump(payments_preferred_receiver, file)
+    with open('random_payments_zipf.txt', 'wb') as file:
+        pickle.dump(payments_zipf, file)
+    
+    
 """
     nr_players = 20
     # 1000 transactions, 100 players, max 10000 Bitcoin per transaction
