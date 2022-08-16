@@ -22,10 +22,9 @@ def random_payments(players, max_pay, distribution = 'uniform', parameter = None
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
-            # TODO: shuffle payments (atm we start with a fixed receiver)
             a = parameter
             # TODO: determine good values for a.
-            incoming_payments_per_player = np.random.zipf(1.8, players)
+            incoming_payments_per_player = np.random.zipf(a, players)
             # assume incoming payments come from unifrom distribution
             # example: big player that everyone pays to (in real world maybe Netflix), but
             # that doesn't have that many outgoing payments.
@@ -36,6 +35,7 @@ def random_payments(players, max_pay, distribution = 'uniform', parameter = None
                         sender = random.randrange(players)
                     value = random.randrange(max_pay)
                     res.append((sender, receiver, value))
+            random.shuffle(res)
         case 'preferred-receiver':
             num_pays = parameter
             # with probability p the party sends the amount to preferred receiver
