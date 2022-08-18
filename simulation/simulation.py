@@ -65,7 +65,6 @@ def all_random_payments():
     # uniform
     payments_for_uniform = {}
     for parties in [10, 100, 1000, 10000]:
-        print("parties uniform:", parties)
         for num_payments in [100, 1000, 10000, 100000]:
             for i in range(10):
                 payments = random_payments(parties, MAX_PAY, 'uniform', num_payments)
@@ -74,7 +73,6 @@ def all_random_payments():
     # preferred receiver
     payments_for_preferred_receiver = {}
     for parties in [10, 100, 1000, 10000]:
-        print("parties preferred receiver:", parties)
         for num_payments in [100, 1000, 10000, 100000]:
             for i in range(10):
                 payments = random_payments(parties, MAX_PAY, 'preferred-receiver', num_payments)
@@ -83,9 +81,7 @@ def all_random_payments():
     # power law
     payments_for_zipf = {}
     for parties in [10, 100, 1000, 10000]:
-        print("parties zipf:", parties)
         for a in [3, 2.5, 2]:
-            print(a)
             for i in range(10):
                 payments = random_payments(parties, MAX_PAY, 'zipf', a)
                 payments_for_zipf[(parties, a, i)] = payments
@@ -165,14 +161,17 @@ if __name__ == "__main__":
     seed = 12345
     random.seed(seed)
     np.random.seed(seed)
-    payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
+    #payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
+    #with open('random_payments_uniform.pickle', 'wb') as file:
+        #pickle.dump(payments_uniform, file)
+    #with open('random_payments_preferred_receiver.pickle', 'wb') as file:
+        #pickle.dump(payments_preferred_receiver, file)
+    #with open('random_payments_zipf.pickle', 'wb') as file:
+        #pickle.dump(payments_zipf, file)
+    
+    #pickled_file = open("random_payments_zipf.pickle", 'rb')
+    #payments_zipf = pickle.load(pickled_file)
     #print(payments_zipf[(10000,3,0)])
-    with open('random_payments_uniform.txt', 'wb') as file:
-        pickle.dump(payments_uniform, file)
-    with open('random_payments_preferred_receiver.txt', 'wb') as file:
-        pickle.dump(payments_preferred_receiver, file)
-    with open('random_payments_zipf.txt', 'wb') as file:
-        pickle.dump(payments_zipf, file)
     
     
 """
