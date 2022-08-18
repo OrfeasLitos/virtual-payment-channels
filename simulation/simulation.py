@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import collections
 import pickle
+#from scipy.special import zeta
 from knowledge import Knowledge
 from paymentmethod import PlainBitcoin
 from utility import Utility
@@ -24,7 +25,12 @@ def random_payments(players, max_pay, distribution = 'uniform', parameter = None
                 res.append((sender, receiver, value))
         case 'zipf':
             a = parameter
-            # TODO: determine good values for a.
+            # For a > 2, we could calculate the expectation (i.e. expected number of payments)
+            # by means of the zeta function to have a similar number of payments as in the case
+            # for 'uniform' und 'preferred-receiver'.
+            # But we can't do that for a = 2, since the expectation is infinite.
+            # And even for a > 2 the convergence in the lln would probably be slow, so it 
+            # doesn't make that much sense to look at the expectation.
             incoming_payments_per_player = np.random.zipf(a, players)
             # assume incoming payments come from unifrom distribution
             # example: big player that everyone pays to (in real world maybe Netflix), but
