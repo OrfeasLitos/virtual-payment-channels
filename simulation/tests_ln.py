@@ -126,7 +126,7 @@ def test_choose_payment_method_offchain_best_ln():
     )
     payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
     utility_function = make_example_utility_function(10000, 5000, 1, 1)
-    utility = Utility(utility_function)
+    utility = Utility('customized', utility_function)
     # utilities for onchain and new channel are between 30 and 40
     # for offchain several orders of magnitude higher, just consider delay.
     payment_method = utility.choose_payment_method(payment_options)
@@ -142,7 +142,7 @@ def test_choose_payment_method_new_channel_best_ln():
     # the difference for the third term is over 100 in favor of new channel
     # the difference between the last two is about 2 in favor of new channel
     utility_function = make_example_utility_function(10000, 5000, 100, 1)
-    utility = Utility(utility_function)
+    utility = Utility('customized', utility_function)
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-open'
 
@@ -154,7 +154,7 @@ def test_choose_payment_method_onchain_best_ln():
     # there's no offchain option
     # the fee in the utility favors the onchain option.
     utility_function = make_example_utility_function(1, 0, 0, 0)
-    utility = Utility(utility_function)
+    utility = Utility('customized', utility_function)
     payment_method = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'onchain'
 

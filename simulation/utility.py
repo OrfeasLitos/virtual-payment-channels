@@ -2,11 +2,17 @@
 
 class Utility:
 
-    def __init__(self, utility_function):
+    def __init__(self, utility_mode, utility_function = None):
         """
         Utility function should have fee, delay, centrality and distances as input
         """
-        self.utility_function = utility_function
+        match utility_mode:
+            case 'sum_of_inverses':
+                pass
+            case 'customized':
+                self.utility_function = utility_function
+            case _:
+                raise ValueError
 
     def get_utility(self, fee, delay, distance, centrality):
         return self.utility_function(fee, delay, distance, centrality)
