@@ -184,15 +184,16 @@ if __name__ == "__main__":
     
 
     """
+    payments = payments_zipf[(10000, 2, 0)]
     for method in [LN(), Elmo(), Donner(), LVPC()]:
         for utility in [
             Utility('only-fee'), Utility('only-time'), Utility('add'), Utility('mul')
         ]:
             for knowledge in [
-                Knowledge('all'), Knowledge('only-mine'), Knowledge('only-next'),
+                Knowledge('all'), Knowledge('mine'), Knowledge('next'),
                 Knowledge('10-next'), Knowledge('10-next-mine')
             ]:
-                sim = Simulation(parties, payments, method, utility, knowledge)
+                sim = Simulation(10000, payments, method, utility, knowledge)
                 sim.run()
                 # for step in sim:
                 #    print(step)

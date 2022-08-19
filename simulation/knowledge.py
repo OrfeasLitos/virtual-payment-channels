@@ -30,15 +30,15 @@ class Knowledge:
         match knowledge_mode:
             case 'customized':
                 self.knowledge_function = knowledge_function
-            case 'know-all':
+            case 'all':
                 self.knowledge_function = know_all
-            case 'know-mine':
+            case 'mine':
                 self.knowledge_function = know_mine
-            case 'know-next':
+            case 'next':
                 self.knowledge_function = know_next
-            case 'know-next-10':
+            case '10-next':
                 self.knowledge_function = know_next_10
-            case 'know-my-next-10':
+            case '10-next-mine':
                 self.knowledge_function = know_my_next_10
             case _:
                 raise ValueError

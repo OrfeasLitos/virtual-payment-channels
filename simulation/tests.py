@@ -65,7 +65,7 @@ def make_example_simulation_for_all(method_name, seed = 12345, nr_players = 10, 
             method = Donner(nr_players = nr_players, coins_for_parties = coins_for_parties)
         case _:
             raise ValueError
-    knowledge = Knowledge('know-all')
+    knowledge = Knowledge('all')
     payments = random_payments(nr_players, 2000000000, distribution=distribution, num_pays = 100)
     utility_function = example_utility_function_for_simulation
     utility = Utility(utility_function)
@@ -495,7 +495,7 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality(method_name):
             )
         case _:
             raise ValueError
-    knowledge = Knowledge('know-all')
+    knowledge = Knowledge('all')
     payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
     utility_function = make_example_utility_function(10000, 5000, 10000, 0)
     utility = Utility(utility_function)
@@ -529,7 +529,7 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_
                 base_fee = 1000000, opening_transaction_size = 200, donner_pay_delay = 0.05,
                 donner_new_virtual_channel_delay = 1
             )
-    knowledge = Knowledge('know-all')
+    knowledge = Knowledge('all')
     payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
     utility_function = make_example_utility_function(10000, 5000, 0, 0)
     utility = Utility(utility_function)
@@ -559,7 +559,7 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
     method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
     method.network.add_channel(1, 1000000000000., 3, 800000000000., [1,2,3])
-    knowledge = Knowledge('know-all')
+    knowledge = Knowledge('all')
     payments = collections.deque([(0, 2, 1000000000), (0, 1, 20000000000)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
     utility = Utility(utility_function)
@@ -595,7 +595,7 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
     method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
 
-    knowledge = Knowledge('know-all')
+    knowledge = Knowledge('all')
     value = 10000000000
     payments = collections.deque([(0, 3, value), (0, 3, value / 10)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
@@ -641,7 +641,7 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_cen
     method.network.add_channel(1, 6000000000000., 2, 7000000000000., None)
     method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
 
-    knowledge = Knowledge('know-all')
+    knowledge = Knowledge('all')
     value = 10000000000
     payments = collections.deque([(0, 2, value), (0, 3, value / 10), (0, 2, value / 5)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
