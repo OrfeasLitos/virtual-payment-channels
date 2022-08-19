@@ -183,18 +183,21 @@ if __name__ == "__main__":
     payments_zipf = pickle.load(pickled_file)
     
 
-    """
+    
     payments = payments_zipf[(10000, 2, 0)]
-    for method in [LN(), Elmo(), Donner(), LVPC()]:
-        for utility in [
-            Utility('only-fee'), Utility('only-time'), Utility('add'), Utility('mul')
-        ]:
+    utilities = [
+        Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
+        Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
+        Utility('sum_of_inverses', parameters = (1000, 10000, 10000, 10000, 0))
+    ]
+    for method in [LN(10000), Elmo(10000), Donner(10000), LVPC(10000)]:
+        for utility in utilities:
             for knowledge in [
                 Knowledge('all'), Knowledge('mine'), Knowledge('next'),
                 Knowledge('10-next'), Knowledge('10-next-mine')
             ]:
-                sim = Simulation(10000, payments, method, utility, knowledge)
-                sim.run()
+                sim = Simulation(payments, method, knowledge, utility)
+                results = sim.run()
                 # for step in sim:
                 #    print(step)
-    """
+    

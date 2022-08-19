@@ -1,14 +1,25 @@
-
+import numpy as np
 
 class Utility:
 
-    def __init__(self, utility_mode, utility_function = None):
+    def __init__(self, utility_mode, utility_function = None, parameters  = None):
         """
         Utility function should have fee, delay, centrality and distances as input
         """
         match utility_mode:
             case 'sum_of_inverses':
-                pass
+                add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters
+                def utility_function(fee, delay, distance, centrality):
+                    weight_distance_array = np.array(distance)
+                    inverse_distance_array = 1/ weight_distance_array[:,1]
+                    weight_array = weight_distance_array[:,0]
+                    return (
+                        mult_fee/(add_fee+fee) +
+                        mult_delay/delay +
+                        mult_distance * np.transpose(inverse_distance_array) @ weight_array +
+                        mult_centrality * centrality
+                    )
+                self.utility_function = utility_function
             case 'customized':
                 self.utility_function = utility_function
             case _:
