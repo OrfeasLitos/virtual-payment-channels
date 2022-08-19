@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import copy
 import sys
 import collections
 import pickle
@@ -184,20 +185,21 @@ if __name__ == "__main__":
     
 
     
-    payments = payments_zipf[(10000, 2, 0)]
+    payments = payments_zipf[(100, 2, 0)]
     utilities = [
-        Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
-        Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
+        #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
+        #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
         Utility('sum_of_inverses', parameters = (1000, 10000, 10000, 10000, 0))
     ]
-    for method in [LN(10000), Elmo(10000), Donner(10000), LVPC(10000)]:
+    for method in [LN(100), Elmo(100)]:#, Donner(100), LVPC(100)]:
         for utility in utilities:
             for knowledge in [
-                Knowledge('all'), Knowledge('mine'), Knowledge('next'),
-                Knowledge('10-next'), Knowledge('10-next-mine')
+                Knowledge('all')#, Knowledge('mine'), Knowledge('next'),
+                #Knowledge('10-next'), Knowledge('10-next-mine')
             ]:
-                sim = Simulation(payments, method, knowledge, utility)
+                sim = Simulation(copy.copy(payments), method, knowledge, utility)
                 results = sim.run()
+                print(results)
                 # for step in sim:
                 #    print(step)
     
