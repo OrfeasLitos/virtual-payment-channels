@@ -6,16 +6,19 @@ import pickle
 #from scipy.special import zeta
 from knowledge import Knowledge
 from paymentmethod import PlainBitcoin
+from ln import LN
+from elmo import Elmo
+from donner import Donner
+from lvpc import LVPC
 from utility import Utility
 
 # max_coins of PlainBitcoin divided by 5
 MAX_PAY = 2000000000000000//5
 
-def random_payments(players, max_pay, distribution = 'uniform', parameter = None):
+def random_payments(players, max_pay, distribution = 'uniform', num_pays = None, power = None):
     res = collections.deque()
     match distribution:
         case 'uniform':
-            num_pays = parameter
             for _ in range(num_pays):
                 sender = random.randrange(players)
                 receiver = random.randrange(players)
@@ -24,14 +27,13 @@ def random_payments(players, max_pay, distribution = 'uniform', parameter = None
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
         case 'zipf':
-            a = parameter
             # For a > 2, we could calculate the expectation (i.e. expected number of payments)
             # by means of the zeta function to have a similar number of payments as in the case
             # for 'uniform' und 'preferred-receiver'.
             # But we can't do that for a = 2, since the expectation is infinite.
             # And even for a > 2 the convergence in the lln would probably be slow, so it 
             # doesn't make that much sense to look at the expectation.
-            incoming_payments_per_player = np.random.zipf(a, players)
+            incoming_payments_per_player = np.random.zipf(power, players)
             # assume incoming payments come from unifrom distribution
             # example: big player that everyone pays to (in real world maybe Netflix), but
             # that doesn't have that many outgoing payments.
@@ -44,7 +46,6 @@ def random_payments(players, max_pay, distribution = 'uniform', parameter = None
                     res.append((sender, receiver, value))
             random.shuffle(res)
         case 'preferred-receiver':
-            num_pays = parameter
             # with probability p the party sends the amount to preferred receiver
             # with probability q to a random party.
             preferred_receivers = []
@@ -167,56 +168,32 @@ if __name__ == "__main__":
     seed = 12345
     random.seed(seed)
     np.random.seed(seed)
-    #payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
-    #with open('random_payments_uniform.pickle', 'wb') as file:
-        #pickle.dump(payments_uniform, file)
-    #with open('random_payments_preferred_receiver.pickle', 'wb') as file:
-        #pickle.dump(payments_preferred_receiver, file)
-    #with open('random_payments_zipf.pickle', 'wb') as file:
-        #pickle.dump(payments_zipf, file)
     
-    #pickled_file = open("random_payments_zipf.pickle", 'rb')
-    #payments_zipf = pickle.load(pickled_file)
-    #print(payments_zipf[(10000,3,0)])
+    # uncomment to generate random payments.
+    """
+    payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
+    with open('random_payments_uniform.pickle', 'wb') as file:
+        pickle.dump(payments_uniform, file)
+    with open('random_payments_preferred_receiver.pickle', 'wb') as file:
+        pickle.dump(payments_preferred_receiver, file)
+    with open('random_payments_zipf.pickle', 'wb') as file:
+        pickle.dump(payments_zipf, file)
+    """
+    pickled_file = open("random_payments_zipf.pickle", 'rb')
+    payments_zipf = pickle.load(pickled_file)
     
-    
-"""
-    nr_players = 20
-    # 1000 transactions, 100 players, max 10000 Bitcoin per transaction
-    payments = random_payments(1000, 100, 100000)
-    bitcoin = PlainBitcoin()
-    # Player know everything
-    def knowledge_function(party, payments):
-        return payments
-    knowledge = Knowledge(0, payments, knowledge_function)
-    # very simple utility function
-    def utility_add(cost, time, knowledge):
-        return cost + time
-    utility = Utility(utility_add)
-    simulation = Simulation(nr_players, payments, bitcoin, knowledge, utility)
-    payments_with_method = simulation.run()
-    print(len(payments_with_method))
-    network = simulation.network
-    print(len(network.edges))
-    print(payments_with_method[:30])
-    print(list(network.edges)[:60])
-    
-    for parties in [10, 100, 1000, 10000]:
-        for num_payments in [100, 1000, 10000, 100000]:
-            for payments in random_payments(num_payments, parties, MAX_COINS/5) * 10:
-                for method in [LN(), Elmo(), Donner(), LVPC()]:
-                    for utility in [
-                        Utility('only-fee'), Utility('only-time'),
-                        Utility('add'), Utility('mul')
-                    ]:
-                        for knowledge in [
-                            Knowledge('all'), Knowledge('only-mine'),
-                            Knowledge('only-next'), Knowledge('10-next'),
-                            Knowledge('10-next-mine')
-                        ]:
-                            sim = Simulation(parties, payments, method, utility, knowledge)
-                            sim.run()
-                            # for step in sim:
-                            #    print(step)
-    
-"""
+
+    """
+    for method in [LN(), Elmo(), Donner(), LVPC()]:
+        for utility in [
+            Utility('only-fee'), Utility('only-time'), Utility('add'), Utility('mul')
+        ]:
+            for knowledge in [
+                Knowledge('all'), Knowledge('only-mine'), Knowledge('only-next'),
+                Knowledge('10-next'), Knowledge('10-next-mine')
+            ]:
+                sim = Simulation(parties, payments, method, utility, knowledge)
+                sim.run()
+                # for step in sim:
+                #    print(step)
+    """

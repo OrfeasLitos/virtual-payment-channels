@@ -2,3 +2,6 @@
 node_modules
 __pycache__
 src/figures/auto-tikz/
+simulation/random_payments_preferred_receiver.pickle
+simulation/random_payments_uniform.pickle
+simulation/random_payments_zipf.pickle

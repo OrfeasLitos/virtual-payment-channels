@@ -241,6 +241,7 @@ class Network_LVPC(Custom_Network_Elmo_LVPC_Donner):
             return None
         hops, path = cheapest_path
         # 3 is for [sender, intermediary, receiver], if longer no path possible
+        # TODO: should we open longer paths by recursion?
         if len(path) > 3:
             return None
         return cheapest_path
