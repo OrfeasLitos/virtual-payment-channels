@@ -200,6 +200,8 @@ if __name__ == "__main__":
                 sim = Simulation(copy.copy(payments), method, knowledge, utility)
                 results = sim.run()
                 print(results)
+                with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
+                    pickle.dump(results, file)
                 # for step in sim:
                 #    print(step)
     
