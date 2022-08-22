@@ -137,10 +137,10 @@ class Simulation:
             future_payments = self.knowledge.get_knowledge(sender, self.payments)
             payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)
             try:
-                payment_option = self.utility.choose_payment_method(payment_options)
+                payment_option, fee, delay = self.utility.choose_payment_method(payment_options)
                 self.payment_method.do(payment_option)
                 # True for payment done, False if not done.
-                return True, payment_option
+                return True, payment_option, fee, delay
             except ValueError:
                 return False, (sender, receiver, value)
 

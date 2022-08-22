@@ -501,10 +501,10 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality(method_name):
     utility = Utility('customized', utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
-    done_payment0, payment0_info = results[0]
+    done_payment0, payment0_info, fee0, delay0 = results[0]
     assert done_payment0 == True
     assert payment0_info['kind'] == method_name + '-open-channel'
-    done_payment1, payment1_info = results[1]
+    done_payment1, payment1_info, fee1, delay1 = results[1]
     assert done_payment1 == True
     assert payment1_info['kind'] == method_name + '-pay'
     assert len(results) == 2
@@ -535,10 +535,10 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_
     utility = Utility('customized', utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
-    done_payment0, payment0_info = results[0]
+    done_payment0, payment0_info, _, _ = results[0]
     assert done_payment0 == True
     assert payment0_info['kind'] == 'onchain'
-    done_payment1, payment1_info = results[1]
+    done_payment1, payment1_info, _, _ = results[1]
     assert done_payment1 == True
     assert payment1_info['kind'] == 'onchain'
     assert len(results) == 2
@@ -565,8 +565,8 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     utility = Utility('customized', utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
-    done_payment0, payment0_info = results[0]
-    done_payment1, payment1_info = results[1]
+    done_payment0, payment0_info, _, _ = results[0]
+    done_payment1, payment1_info, _, _ = results[1]
     assert done_payment0 == True
     assert payment0_info['kind'] == method_name + '-open-virtual-channel'
     assert done_payment1 == True
@@ -603,8 +603,8 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
     assert len(results) == 2
-    done_payment0, payment_info0 = results[0]
-    done_payment1, payment_info1 = results[1]
+    done_payment0, payment_info0, _, _ = results[0]
+    done_payment1, payment_info1, _, _ = results[1]
     assert done_payment0 == True
     assert done_payment1 == True
     if method_name != "LVPC":
@@ -648,8 +648,8 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_cen
     utility = Utility('customized', utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
-    done_payment0, payment_info0 = results[0]
-    done_payment1, payment_info1 = results[1]
+    done_payment0, payment_info0, _, _ = results[0]
+    done_payment1, payment_info1, _, _ = results[1]
     assert done_payment0 == True
     assert done_payment1 == True
     assert payment_info0['kind'] == method_name + '-open-virtual-channel'
