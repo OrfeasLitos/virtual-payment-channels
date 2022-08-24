@@ -34,14 +34,16 @@ payments_bar = [
 labels_success = ['successul_ln', 'unsuccessful_ln', 'successul_elmo', 'unsuccessul_elmo']
 
 plt.bar(x_coords_success, payments_bar, tick_label = labels_success, width = 0.8, color = ['blue', 'red'])
+plt.ylabel("Number of payments")
 plt.show()
 
 x_coords_cost = [0, 1]
-labels_cost = ['cost-ln', 'cost-elmo']
+labels_cost = ['Ln', 'Elmo']
 
 cost_bar = [
     sum_fees_ln, sum_fees_elmo,
 ]
 
 plt.bar(x_coords_cost, cost_bar, tick_label = labels_cost, width=0.5)
+plt.ylabel("Cost")
 plt.show()
