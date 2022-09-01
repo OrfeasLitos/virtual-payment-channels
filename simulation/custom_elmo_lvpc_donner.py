@@ -62,6 +62,13 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
             dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE + value
+            # TODO:
+            # I commented the part after the next if. And it made the simulation much much faster.
+            # The bottleneck seems to be the find_cheapest_path method.
+            # We precompute cheapest_paths_from_sender and use it where possible
+            # if we also want to calculate the distances for the payments in which we are intermediaries
+            # we either have to call find_cheapest_path every time or we have to precompute all shortest_paths
+            # in the network which probably doesn't scale well. But I haven't yet tested how it scales.
             if future_sender != source:
                 # TODO: think about discarding first part of the tuple.
                 path_data.append((
