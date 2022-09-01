@@ -12,6 +12,7 @@ from elmo import Elmo
 from donner import Donner
 from lvpc import LVPC
 from utility import Utility
+import time
 
 # max_coins of PlainBitcoin divided by 5
 MAX_PAY = 2000000000000000//5
@@ -198,8 +199,11 @@ if __name__ == "__main__":
                 #Knowledge('10-next'), Knowledge('10-next-mine')
             ]:
                 sim = Simulation(copy.copy(payments), method, knowledge, utility)
+                start = time.time()
                 results = sim.run()
+                end = time.time()
                 print(results)
+                print(end - start)
                 with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
                     pickle.dump(results, file)
                 # for step in sim:

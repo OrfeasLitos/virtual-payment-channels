@@ -56,7 +56,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         weight_other = 1
         encountered_parties = set({source})
         dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE
-        cheapest_paths = self.network.find_cheapest_paths(dummy_lock_value, self.base_fee)
+        cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(source, dummy_lock_value, self.base_fee)
         path_data = []
         for future_sender, future_receiver, value in future_payments:
             encountered_parties.add(future_sender)
@@ -67,13 +67,13 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
-                    None if cheapest_paths.get(future_sender) is None else cheapest_paths[future_sender].get(source)
+                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.base_fee)
                 ))
             if future_receiver != source:
                 path_data.append((
                     future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
-                    None if cheapest_paths.get(source) is None else cheapest_paths[source].get(future_receiver)
+                    cheapest_paths_from_sender.get(future_receiver)
                 ))
 
         dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE
@@ -81,7 +81,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             path_data.append((
                 party,
                 weight_other,
-                None if cheapest_paths.get(source) is None else cheapest_paths[source].get(party)
+                cheapest_paths_from_sender.get(party)
             ))
 
         for counterparty, weight, cheapest_path in path_data:
