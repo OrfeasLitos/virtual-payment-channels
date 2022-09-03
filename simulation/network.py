@@ -68,6 +68,7 @@ class Network:
                 for i in range(len(cheapest_path)-1):
                     sender_in_path = cheapest_path[i]
                     receiver_in_path = cheapest_path[i+1]
+                    # review: calculate `amount + (len(cheapest_path) - 1) * fee_intermediary` outside of inner `for`
                     if self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance'] < amount + (len(cheapest_path) - 1) * fee_intermediary:
                         cheapest_paths[receiver] = None
                         break
@@ -111,6 +112,8 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
         self.edge_id += 1
     
     def lock_coins(self, path, lock_value, unlock = False):
+        # review: This can be written more succinctly by putting the `if unlock == False` as an extra clause to the nested `if`. This way you can avoid repeating the rest of the `for`. Also `not unlock` is more pythonic than `unlock == False`.
+        # review: For better naming, you can also rename this function to lock_unlock(), remove the default value from `unlock` and define 2 functions: lock_coins() that just calls lock_unlock() with `unlock = False`, unlock_coins()/undo_locking() that just calls lock_unlock() with `unlock = True`. This way we won't call `lock_coins()` for unlocking.
         if unlock == False:
             for i in range(len(path) - 1):
                 sender = path[i]

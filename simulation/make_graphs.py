@@ -7,6 +7,7 @@ payments_ln = pickle.load(pickled_file_ln)
 num_successful_payments_ln = 0
 sum_fees_ln = 0
 for i in range(len(payments_ln)):
+# review: for payment in payments_ln: ...
     if payments_ln[i][0] == True:
         num_successful_payments_ln += 1
         sum_fees_ln += payments_ln[i][2]
@@ -19,6 +20,7 @@ payments_elmo = pickle.load(pickled_file_elmo)
 num_successful_payments_elmo = 0
 sum_fees_elmo = 0
 for i in range(len(payments_elmo)):
+# review: for payment in payments_elmo: ...
     if payments_elmo[i][0] == True:
         num_successful_payments_elmo += 1
         sum_fees_elmo += payments_elmo[i][2]

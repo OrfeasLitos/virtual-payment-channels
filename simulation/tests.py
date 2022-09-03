@@ -113,6 +113,7 @@ def test_dict_before_and_after_equal(dict_before, dict_after):
     tests if keys are equal and if values are almost equal
     """
     assert dict_before.keys() == dict_after.keys()
+    # review: remove `.keys()`
     for edge in dict_before.keys():
         assert_eq(dict_before[edge], dict_after[edge])
 
