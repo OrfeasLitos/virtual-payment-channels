@@ -65,11 +65,11 @@ class Network:
             weight_function = self.get_weight_function(amount, function)
             cheapest_paths = nx.shortest_path(self.graph, sender, weight=weight_function)
             for receiver, cheapest_path in cheapest_paths.items():
+                minimum_balance = amount + (len(cheapest_path) - 1) * fee_intermediary
                 for i in range(len(cheapest_path)-1):
                     sender_in_path = cheapest_path[i]
                     receiver_in_path = cheapest_path[i+1]
-                    # review: calculate `amount + (len(cheapest_path) - 1) * fee_intermediary` outside of inner `for`
-                    if self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance'] < amount + (len(cheapest_path) - 1) * fee_intermediary:
+                    if self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance'] < minimum_balance:
                         cheapest_paths[receiver] = None
                         break
             return cheapest_paths
