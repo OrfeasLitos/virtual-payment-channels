@@ -112,12 +112,12 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
         self.edge_id += 1
     
     def lock_unlock(self, path, lock_value, lock):
-        # review: This can be written more succinctly by putting the `if unlock == False` as an extra clause to the nested `if`. This way you can avoid repeating the rest of the `for`. Also `not unlock` is more pythonic than `unlock == False`.
-        # review: For better naming, you can also rename this function to lock_unlock(), remove the default value from `unlock` and define 2 functions: lock_coins() that just calls lock_unlock() with `unlock = False`, unlock_coins()/undo_locking() that just calls lock_unlock() with `unlock = True`. This way we won't call `lock_coins()` for unlocking.
-        if lock:
-            for i in range(len(path) - 1):
-                sender = path[i]
-                receiver = path[i+1]
+        # review: This can be written more succinctly by putting the `if unlock == False` as an extra clause to the nested `if`. This way you can avoid repeating the rest of the `for`.
+        # Question: Was this what you had in mind. Now shorter and more ifs in for-loop.
+        for i in range(len(path) - 1):
+            sender = path[i]
+            receiver = path[i+1]
+            if lock:
                 if self.graph[sender][receiver]['balance'] < lock_value:
                     for j in range(i):
                         sender = path[j]
@@ -127,14 +127,9 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
                     raise ValueError
                 self.graph[sender][receiver]['balance'] -= lock_value
                 self.graph[sender][receiver]['locked_coins'] += lock_value
-        
-        else:
-            for i in range(len(path) - 1):
-                sender = path[i]
-                receiver = path[i+1]
+            else:
                 self.graph[sender][receiver]['balance'] += lock_value
                 self.graph[sender][receiver]['locked_coins'] -= lock_value
-        
 
     def cooperative_close_channel(self, idA, idB):
         # convention: A is first in channels_below_reference_channel (and B last)
