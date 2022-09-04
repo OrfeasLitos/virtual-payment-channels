@@ -111,10 +111,10 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
                 self.graph[receiver][sender]['channels_above'].append({idA, idB})
         self.edge_id += 1
     
-    def lock_coins(self, path, lock_value, unlock = False):
+    def lock_unlock(self, path, lock_value, lock):
         # review: This can be written more succinctly by putting the `if unlock == False` as an extra clause to the nested `if`. This way you can avoid repeating the rest of the `for`. Also `not unlock` is more pythonic than `unlock == False`.
         # review: For better naming, you can also rename this function to lock_unlock(), remove the default value from `unlock` and define 2 functions: lock_coins() that just calls lock_unlock() with `unlock = False`, unlock_coins()/undo_locking() that just calls lock_unlock() with `unlock = True`. This way we won't call `lock_coins()` for unlocking.
-        if unlock == False:
+        if lock:
             for i in range(len(path) - 1):
                 sender = path[i]
                 receiver = path[i+1]
@@ -142,7 +142,7 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
         amountA = self.graph[idA][idB]['balance']
         amountB = self.graph[idB][idA]['balance']
         unlock_amount = amountA + amountB
-        self.lock_coins(channels_below_reference_channel_A_to_B, unlock_amount, unlock = True)
+        self.lock_unlock(channels_below_reference_channel_A_to_B, unlock_amount, lock = False)
         channels_below_reference_channel_B_to_A = self.graph[idB][idA]['channels_below']
         channels_above_reference_channel = self.graph[idA][idB]['channels_above']
         # if onchain channel raise ValueError

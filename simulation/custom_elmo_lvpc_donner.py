@@ -295,7 +295,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 # important that next line is at that position so that Error gets raised in case update is not possible
                 # before anything else is done.
                 self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
-                self.network.lock_coins(path, sender_coins + value)
+                self.network.lock_unlock(path, sender_coins + value, lock=True)
                 self.network.add_channel(sender, sender_coins, receiver, value, path)
             case self.pay_string:
                 sender, receiver, value = payment_information['data']

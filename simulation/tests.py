@@ -307,7 +307,7 @@ def test_locking_and_unlocking_enough_balance_elmo_lvpc_donner(method_name):
     value = 2000000000
     sender_coins = 100000000
     lock_value = value + sender_coins
-    method.network.lock_coins(path, lock_value)
+    method.network.lock_unlock(path, lock_value, lock=True)
     assert_eq(method.network.graph[0][1]['balance'], balances_before[(0, 1)] - lock_value)
     assert_eq(method.network.graph[1][0]['balance'], balances_before[(1, 0)])
     assert_eq(method.network.graph[1][4]['balance'], balances_before[(1, 4)] - lock_value)
@@ -323,7 +323,7 @@ def test_locking_and_unlocking_enough_balance_elmo_lvpc_donner(method_name):
     assert_eq(method.network.graph[7][4]['locked_coins'], 0)
     assert_eq(method.network.graph[1][2]['locked_coins'], 0)
 
-    method.network.lock_coins(path, lock_value, unlock = True)
+    method.network.lock_unlock(path, lock_value, lock = False)
     assert_eq(method.network.graph[0][1]['balance'], balances_before[(0, 1)])
     assert_eq(method.network.graph[1][0]['balance'], balances_before[(1, 0)])
     assert_eq(method.network.graph[1][4]['balance'], balances_before[(1, 4)])
@@ -348,7 +348,7 @@ def test_locking_not_enough_balance_elmo_lvpc_donner(method_name):
     balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     locked_coins_before = nx.get_edge_attributes(method.network.graph, "locked_coins")
     try:
-        method.network.lock_coins(path, lock_value)
+        method.network.lock_unlock(path, lock_value, lock=True)
         assert False, "should raise ValueError"
     except ValueError:
         balances_after_failure = nx.get_edge_attributes(method.network.graph, "balance")
