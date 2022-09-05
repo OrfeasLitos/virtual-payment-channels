@@ -5,3 +5,5 @@ src/figures/auto-tikz/
 simulation/random_payments_preferred_receiver.pickle
 simulation/random_payments_uniform.pickle
 simulation/random_payments_zipf.pickle
+simulation/example_results_Elmo.pickle
+simulation/example_results_ln.pickle
