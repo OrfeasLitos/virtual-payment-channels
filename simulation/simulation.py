@@ -95,7 +95,6 @@ def all_random_payments():
                 payments = random_payments(parties, MAX_PAY, 'zipf', a)
                 payments_for_zipf[(parties, a, i)] = payments
     
-    #TODO: pickle the outputs.
     return payments_for_uniform, payments_for_preferred_receiver, payments_for_zipf
 
 
@@ -186,17 +185,17 @@ if __name__ == "__main__":
     
 
     
-    payments = payments_zipf[(100, 2, 0)]
+    payments = payments_zipf[(1000, 2.5, 0)]
     utilities = [
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
         Utility('sum_of_inverses', parameters = (1000, 10000, 10000, 10000, 0))
     ]
-    for method in [LN(100), Elmo(100)]:#, Donner(100), LVPC(100)]:
+    for method in [Elmo(1000)]:#, LN(100), Donner(100), LVPC(100)]:
         for utility in utilities:
             for knowledge in [
-                Knowledge('all')#, Knowledge('mine'), Knowledge('next'),
-                #Knowledge('10-next'), Knowledge('10-next-mine')
+                Knowledge('10-next')#, Knowledge('all'), Knowledge('next'),
+                #Knowledge('mine'), Knowledge('10-next-mine')
             ]:
                 sim = Simulation(copy.copy(payments), method, knowledge, utility)
                 start = time.time()
