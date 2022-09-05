@@ -180,18 +180,20 @@ if __name__ == "__main__":
     with open('random_payments_zipf.pickle', 'wb') as file:
         pickle.dump(payments_zipf, file)
     """
-    pickled_file = open("random_payments_zipf.pickle", 'rb')
-    payments_zipf = pickle.load(pickled_file)
-    
+    pickled_file_zipf = open("random_payments_zipf.pickle", 'rb')
+    payments_zipf = pickle.load(pickled_file_zipf)
+    pickled_file_uniform = open("random_payments_uniform.pickle", 'rb')
+    payments_uniform = pickle.load(pickled_file_uniform)
 
     
-    payments = payments_zipf[(1000, 2.5, 0)]
+    #payments = payments_zipf[(100, 2., 0)]
+    payments = payments_uniform[(100, 1000, 0)]
     utilities = [
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
         Utility('sum_of_inverses', parameters = (1000, 10000, 10000, 10000, 0))
     ]
-    for method in [Elmo(1000)]:#, LN(100), Donner(100), LVPC(100)]:
+    for method in [Elmo(100), Donner(100), LVPC(100)]:#, LN(1000)]:
         for utility in utilities:
             for knowledge in [
                 Knowledge('10-next')#, Knowledge('all'), Knowledge('next'),

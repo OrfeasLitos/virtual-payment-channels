@@ -7,3 +7,5 @@ simulation/random_payments_uniform.pickle
 simulation/random_payments_zipf.pickle
 simulation/example_results_Elmo.pickle
 simulation/example_results_ln.pickle
+simulation/example_results_Donner.pickle
+simulation/example_results_LVPC.pickle
