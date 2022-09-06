@@ -611,16 +611,16 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     done_payment1, payment_info1, _, _ = results[1]
     assert done_payment0 == True
     assert done_payment1 == True
+    assert payment_info0['kind'] == method_name + '-open-virtual-channel'
+    assert payment_info1['kind'] == method_name + '-pay'
     if method_name != "LVPC":
-        assert payment_info0['kind'] == method_name + '-open-virtual-channel'
-        assert payment_info1['kind'] == method_name + '-pay'
+        assert set(method.network.graph.edges()) == set(
+            [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (0, 3), (3, 0)]
+        )
     else:
-        assert payment_info0['kind'] == method_name + '-open-virtual-channel'
-        assert payment_info1['kind'] == method_name + '-pay'
-    # TODO: check edges for LVPC
-    #assert set(method.network.graph.edges()) == set(
-        #[(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (0, 3), (3, 0)]
-    #)
+        assert set(method.network.graph.edges()) == set(
+            [(0, 1), (1, 0), (1, 2), (2, 1), (2, 3), (3, 2), (0, 3), (3, 0), (0, 2), (2, 0)]
+        )
     assert method.network.graph[1][0]['locked_coins'] == 0
 
 def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality(method_name):
