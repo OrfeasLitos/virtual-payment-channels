@@ -136,7 +136,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             }
         }
 
-    # this is to incorporate fee_rate
     def determine_sender_coins(self, value, path, desired_sender_coins, available_balances):
         """
         This method enables the sender to determine the amount of coins to put on a
@@ -192,11 +191,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sender_coins = self.determine_sender_coins(value, path, desired_virtual_coins, available_balances)
         if sender_coins < 0:
             return None
-        # TODO: adjust fee for LVPC
-        new_virtual_channel_fee = self.get_new_virtual_channel_fee(path, value + sender_coins)
         payment_information = {'kind': self.open_virtual_channel_string, 'data': (path, value, sender_coins)}
         try:
-            self.do(payment_information)
+            new_virtual_channel_fee = self.do(payment_information)
         except ValueError:
             return None
         new_virtual_channel_time = self.get_new_virtual_channel_time(hops)
@@ -245,7 +242,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
-        # TODO: adjust fee for LVPC
         fee_intermediary = self.base_fee + self.fee_rate * (value + sender_coins)
         cost_sender = num_intermediaries * fee_intermediary
         if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
@@ -296,25 +292,30 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
                 if self.open_virtual_channel_string == "LVPC-open-virtual-channel":
+                    new_virtual_channel_fee = 0
                     for i in range(len(path)-2):
                         path_for_recursion = [sender] + path[i+1:i+3]
                         sender_coins_recursion = sender_coins / (MULTIPLIER_BALANCE_RECURSION_LVPC**i)
                         sender_coins_recursion = sender_coins_recursion + value if i != len(path)-3 else sender_coins_recursion
-                        receiver_coins_for_recursion = (
+                        receiver_coins_recursion = (
                             0 if i != len(path)-3 else value
                         )
                         receiver_recursion = path_for_recursion[-1]
+                        new_virtual_channel_fee += self.get_new_virtual_channel_fee(
+                            path_for_recursion, sender_coins_recursion + receiver_coins_recursion
+                        )
                         # important that next line is at that position so that Error gets raised in case update is not possible
                         # before anything else is done.
                         self.update_balances_new_virtual_channel(
-                            path_for_recursion, receiver_coins_for_recursion, sender_coins_recursion, new_channel=True
+                            path_for_recursion, receiver_coins_recursion, sender_coins_recursion, new_channel=True
                         )
                         self.network.lock_unlock(
-                            path_for_recursion, sender_coins_recursion + receiver_coins_for_recursion, lock=True
+                            path_for_recursion, sender_coins_recursion + receiver_coins_recursion, lock=True
                         )
                         self.network.add_channel(
-                            sender, sender_coins_recursion, receiver_recursion, receiver_coins_for_recursion, path_for_recursion
+                            sender, sender_coins_recursion, receiver_recursion, receiver_coins_recursion, path_for_recursion
                         )
+                    return new_virtual_channel_fee
                 else:
                     sender = path[0]
                     receiver = path[-1]
@@ -323,6 +324,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
                     self.network.lock_unlock(path, sender_coins + value, lock=True)
                     self.network.add_channel(sender, sender_coins, receiver, value, path)
+                    new_virtual_channel_fee = self.get_new_virtual_channel_fee(path, value + sender_coins)
+                    return new_virtual_channel_fee
             case self.pay_string:
                 sender, receiver, value = payment_information['data']
                 self.pay(sender, receiver, value)
