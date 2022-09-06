@@ -102,7 +102,10 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         return distances
 
     def get_new_virtual_channel_time(self, hops):
-        return self.new_virtual_channel_delay * hops
+        if self.method_name == "LVPC":
+            return 2 * self.new_virtual_channel_delay * (hops - 1)
+        else:
+            return self.new_virtual_channel_delay * hops
 
     def get_new_virtual_channel_fee(self, path, coins_to_lock):
         return (self.base_fee + coins_to_lock * self.fee_rate) * (len(path) - 2)
