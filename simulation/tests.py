@@ -400,6 +400,8 @@ def test_undo_new_virtual_channel_elmo_lvpc_donner(method_name):
     sender_coins = method.plain_bitcoin.coins[0]
     receiver_coins = method.plain_bitcoin.coins[4]
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+    path = payment_options[2]['payment_information']['data'][0]
+    assert path == [0, 1, 4]
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
     balances_before = nx.get_edge_attributes(method.network.graph, "balance")
     locked_coins_before = nx.get_edge_attributes(method.network.graph, "locked_coins")
