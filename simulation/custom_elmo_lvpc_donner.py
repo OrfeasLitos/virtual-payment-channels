@@ -7,6 +7,8 @@ from paymentmethod import (
 )
 from network import Network_Elmo, Network_LVPC, Network_Donner
 
+MULTIPLIER_BALANCE_RECURSION_LVPC = 1.5
+
 class Custom_Elmo_LVPC_Donner(Payment_Network):
     # TODO: find reasonable value for base_fee, opening_transaction_size, delay
     def __init__(
@@ -174,7 +176,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     function="new_virtual_donner"
                 )
             case "LVPC":
-                cost_and_path = self.network.find_cheapest_path_for_new_virtual_lvpc(
+                cost_and_path = self.network.find_cheapest_path(
                     sender, receiver, anticipated_lock_value, self.base_fee
                 )
             
@@ -190,6 +192,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sender_coins = self.determine_sender_coins(value, path, desired_virtual_coins, available_balances)
         if sender_coins < 0:
             return None
+        # TODO: adjust fee for LVPC
         new_virtual_channel_fee = self.get_new_virtual_channel_fee(path, value + sender_coins)
         payment_information = {'kind': self.open_virtual_channel_string, 'data': (path, value, sender_coins)}
         try:
@@ -242,6 +245,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
         sender = path[0]
+        # TODO: adjust fee for LVPC
         fee_intermediary = self.base_fee + self.fee_rate * (value + sender_coins)
         cost_sender = num_intermediaries * fee_intermediary
         if cost_sender > self.network.graph[sender][path[1]]['balance'] and new_channel == True:
@@ -291,12 +295,34 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             case self.open_virtual_channel_string:
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
-                receiver = path[-1]
-                # important that next line is at that position so that Error gets raised in case update is not possible
-                # before anything else is done.
-                self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
-                self.network.lock_unlock(path, sender_coins + value, lock=True)
-                self.network.add_channel(sender, sender_coins, receiver, value, path)
+                if self.open_virtual_channel_string == "LVPC-open-virtual-channel":
+                    for i in range(len(path)-2):
+                        path_for_recursion = [sender] + path[i+1:i+3]
+                        sender_coins_recursion = sender_coins / (MULTIPLIER_BALANCE_RECURSION_LVPC**i)
+                        sender_coins_recursion = sender_coins_recursion + value if i != len(path)-3 else sender_coins_recursion
+                        receiver_coins_for_recursion = (
+                            0 if i != len(path)-3 else value
+                        )
+                        receiver_recursion = path_for_recursion[-1]
+                        # important that next line is at that position so that Error gets raised in case update is not possible
+                        # before anything else is done.
+                        self.update_balances_new_virtual_channel(
+                            path_for_recursion, receiver_coins_for_recursion, sender_coins_recursion, new_channel=True
+                        )
+                        self.network.lock_unlock(
+                            path_for_recursion, sender_coins_recursion + receiver_coins_for_recursion, lock=True
+                        )
+                        self.network.add_channel(
+                            sender, sender_coins_recursion, receiver_recursion, receiver_coins_for_recursion, path_for_recursion
+                        )
+                else:
+                    sender = path[0]
+                    receiver = path[-1]
+                    # important that next line is at that position so that Error gets raised in case update is not possible
+                    # before anything else is done.
+                    self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
+                    self.network.lock_unlock(path, sender_coins + value, lock=True)
+                    self.network.add_channel(sender, sender_coins, receiver, value, path)
             case self.pay_string:
                 sender, receiver, value = payment_information['data']
                 self.pay(sender, receiver, value)
@@ -308,9 +334,19 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             case self.open_virtual_channel_string:
                 path, value, sender_coins = payment_information['data']
                 sender = path[0]
-                receiver = path[-1]
-                amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
-                self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
+                if self.open_virtual_channel_string == "LVPC-open-virtual-channel":
+                    for i in range(len(path)-3, -1, -1):
+                        path_for_recursion = [sender] + path[i+1:i+3]
+                        receiver = path_for_recursion[-1]
+                        amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
+                        self.update_balances_new_virtual_channel(
+                            path_for_recursion, amount_receiver, amount_sender, new_channel=False
+                        )
+                else:
+                    sender = path[0]
+                    receiver = path[-1]
+                    amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
+                    self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
             case self.pay_string:
                 sender, receiver, value = payment_information['data']
                 if self.network.graph.get_edge_data(sender, receiver) is None:
