@@ -475,7 +475,7 @@ def test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner(meth
     assert method.network.graph[4][0]['channels_below'] is None
     assert method.network.graph.get_edge_data(1, 4) is None
 
-# The following two tests should give the same result for elmo, lvpc and donner as in the beginning,
+# The following two tests should give the same result for elmo, lvpc and donner as in the beginning
 # of the simulation the differences in the virtual channel don't show up yet.
 def test_simulation_with_elmo_lvpc_donner_ignore_centrality(method_name):
     match method_name:
@@ -579,8 +579,8 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     assert set(method.network.graph.edges()) == set(
         [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)]
     )
-    #assert method.network.graph[0][1]['locked_coins'] == 1000000000
-    #assert method.network.graph[1][2]['locked_coins'] == 1000000000
+    assert method.network.graph[0][1]['locked_coins'] == 1000000000
+    assert method.network.graph[1][2]['locked_coins'] == 1000000000
     assert method.network.graph[1][0]['locked_coins'] == 0
 
 def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality(method_name):
