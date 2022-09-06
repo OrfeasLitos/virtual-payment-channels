@@ -37,15 +37,6 @@ def test_get_payment_options_lvpc_channel_exists():
 def test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("LVPC")
 
-"""
-def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible1():
-    base_fee, lvpc, future_payments = make_example_network_lvpc_and_future_payments()
-    payment_options = lvpc.get_payment_options(0, 7, 100000000., future_payments)
-    assert len(payment_options) == 3
-    assert payment_options[0]['payment_information']['kind'] == 'onchain'
-    assert payment_options[1]['payment_information']['kind'] == 'LVPC-open-channel'
-"""
-
 def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("LVPC")
 
