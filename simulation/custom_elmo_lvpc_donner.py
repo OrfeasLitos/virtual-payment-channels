@@ -295,7 +295,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     for i in range(len(path)-2):
                         path_for_recursion = [sender] + path[i+1:i+3]
                         sender_coins_recursion = sender_coins / (MULTIPLIER_BALANCE_RECURSION_LVPC**i)
-                        sender_coins_recursion = sender_coins_recursion + value if i != len(path)-3 else sender_coins_recursion
+                        if i != len(path)-3:
+                            sender_coins_recursion += value
                         receiver_coins_recursion = (
                             0 if i != len(path)-3 else value
                         )

@@ -112,8 +112,6 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
         self.edge_id += 1
     
     def lock_unlock(self, path, lock_value, lock):
-        # review: This can be written more succinctly by putting the `if unlock == False` as an extra clause to the nested `if`. This way you can avoid repeating the rest of the `for`.
-        # Question: Was this what you had in mind. Now shorter and more ifs in for-loop.
         for i in range(len(path) - 1):
             sender = path[i]
             receiver = path[i+1]

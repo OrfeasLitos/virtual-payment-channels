@@ -112,13 +112,9 @@ def test_dict_before_and_after_equal(dict_before, dict_after):
     """
     tests if keys are equal and if values are almost equal
     """
-    assert dict_before == dict_after
-    # review: remove `.keys()`
-    # on testing '==' for dicts it seems that it tests for equal keys and for
-    # values up to 15 decimal places which could be a problem with rounding errors.
-    # That's why I tested at first for equal keys and then for values (up to 7 decimal places).
-    # The tests still work after removing '.keys()' on my machine, so we I left out '.keys()'
-    # and the extra value tests.
+    assert dict_before.keys() == dict_after.keys()
+    for edge in dict_before:
+        assert_eq(dict_before[edge], dict_after[edge])
 
 def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
     base_fee, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
