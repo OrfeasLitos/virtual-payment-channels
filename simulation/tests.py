@@ -415,6 +415,26 @@ def test_undo_new_virtual_channel_elmo_lvpc_donner(method_name):
     assert sender_coins == method.plain_bitcoin.coins[0]
     assert receiver_coins == method.plain_bitcoin.coins[4]
 
+def test_undo_new_virtual_channel_long_path_elmo_lvpc_donner(method_name):
+    base_fee, method, future_payments, value, max_coins = (
+        make_example_values_for_do_elmo_lvpc_donner(method_name)
+    )
+    # virtual channel has length 2 and both underlying channel are onchain -> equal for all 3 methods
+    payment_options = method.get_payment_options(0, 7, value, future_payments)
+    assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
+    path = payment_options[2]['payment_information']['data'][0]
+    assert path == [0, 1, 4, 7]
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+    balances_before = nx.get_edge_attributes(method.network.graph, "balance")
+    locked_coins_before = nx.get_edge_attributes(method.network.graph, "locked_coins")
+
+    method.do(payment_information_new_virtual_channel)
+    method.undo(payment_information_new_virtual_channel)
+    balances_after = nx.get_edge_attributes(method.network.graph, "balance")
+    locked_coins_after = nx.get_edge_attributes(method.network.graph, "locked_coins")
+    test_dict_before_and_after_equal(balances_before, balances_after)
+    test_dict_before_and_after_equal(locked_coins_before, locked_coins_after)
+
 def test_undo_elmo_lvpc_donner_pay(method_name):
     #TODO: tests are very similar. Check how to unify them.
     base_fee, method, future_payments, value, max_coins = (
@@ -434,6 +454,7 @@ def test_undo_elmo_lvpc_donner_pay(method_name):
 
 def test_undo_elmo_lvpc_donner(method_name):
     test_undo_new_virtual_channel_elmo_lvpc_donner(method_name)
+    test_undo_new_virtual_channel_long_path_elmo_lvpc_donner(method_name)
     test_undo_elmo_lvpc_donner_pay(method_name)
 
 def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner(method_name):

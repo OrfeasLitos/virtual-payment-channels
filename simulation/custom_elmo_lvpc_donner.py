@@ -168,7 +168,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         # this is a simplification. TODO: think if this is what we want.
         anticipated_lock_value = sum_future_payments + value
         match self.method_name:
-            case "Elmo":
+            case "Elmo" | "LVPC":
                 cost_and_path = self.network.find_cheapest_path(
                     sender, receiver, anticipated_lock_value, self.base_fee
                 )
@@ -176,10 +176,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 cost_and_path = self.network.find_cheapest_path(
                     sender, receiver, anticipated_lock_value, self.base_fee,
                     function="new_virtual_donner"
-                )
-            case "LVPC":
-                cost_and_path = self.network.find_cheapest_path(
-                    sender, receiver, anticipated_lock_value, self.base_fee
                 )
             
         if cost_and_path is None:
@@ -319,7 +315,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                             sender, sender_coins_recursion, receiver_recursion, receiver_coins_recursion, path_for_recursion
                         )
                     return new_virtual_channel_fee
-                else:
+                else: # Donner or Elmo
                     sender = path[0]
                     receiver = path[-1]
                     # important that next line is at that position so that Error gets raised in case update is not possible
