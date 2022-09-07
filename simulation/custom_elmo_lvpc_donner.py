@@ -130,7 +130,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         if sender_coins < 0:
             return None
         self.network.add_channel(sender, sender_coins, receiver, value, None)
-        new_channel_centrality = self.network.get_harmonic_centrality(sender)
+        new_channel_centrality = self.network.get_centrality(sender)
         new_channel_distance = self.get_distances(sender, future_payments)
         self.network.close_channel(sender, receiver)
         return {
@@ -201,7 +201,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         except ValueError:
             return None
         new_virtual_channel_time = self.get_new_virtual_channel_time(hops)
-        new_virtual_channel_centrality = self.network.get_harmonic_centrality(sender)
+        new_virtual_channel_centrality = self.network.get_centrality(sender)
         new_virtual_channel_distance = self.get_distances(sender, future_payments)
         self.undo(payment_information)
         return {
@@ -218,7 +218,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             self.do(payment_information)
         except ValueError:
             return None
-        centrality_pay = self.network.get_harmonic_centrality(sender)
+        centrality_pay = self.network.get_centrality(sender)
         distance_pay = self.get_distances(sender, future_payments)
         self.undo(payment_information)
         return {

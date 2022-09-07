@@ -78,7 +78,7 @@ class Network:
             return None
 
 
-    def get_harmonic_centrality(self, party):
+    def get_centrality(self, party):
         return nx.harmonic_centrality(self.graph)[party]
 
 class Custom_Network_Elmo_LVPC_Donner(Network):

@@ -57,7 +57,7 @@ def test_get_payment_options_ln_enough_money():
     assert payment_options[2]['payment_information']['kind'] == 'ln-pay'
     actual_ln_pay_option = payment_options[2]
 
-    on_chain_centrality = lightning.network.get_harmonic_centrality(0)
+    on_chain_centrality = lightning.network.get_centrality(0)
     onchain_fee = lightning.plain_bitcoin.get_fee()
     expected_onchain_option = {
         'delay' : 3600,

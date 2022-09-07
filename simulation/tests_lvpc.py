@@ -57,7 +57,6 @@ def test_do_new_virtual_channel_long_path_lvpc():
     future_payments = [(0,1,2000000000.), (0, 8, 3000000000.)]
     balances_before = nx.get_edge_attributes(lvpc.network.graph, "balance")
     payment_options = lvpc.get_payment_options(0, 7, value, future_payments)
-    print(payment_options)
     assert payment_options[2]['payment_information']['kind'] == 'LVPC-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
 
