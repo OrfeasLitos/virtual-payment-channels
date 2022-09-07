@@ -93,8 +93,15 @@ def test_do_new_virtual_channel_long_path_lvpc():
     assert_eq(lvpc.network.graph[1][2]['locked_coins'], 0)
     assert_eq(lvpc.network.graph[1][2]['balance'], balances_before[(1, 2)])
     assert_eq(lvpc.network.graph[0][4]['balance'], 0)
-    #assert_eq(lvpc.network.graph[4][0]['balance'],
-    assert lvpc.network.graph.get_edge_data(5, 0) is None
+    assert_eq(lvpc.network.graph[0][4]['locked_coins'], locked_coins_second_channel)
+    assert_eq(lvpc.network.graph[4][7]['locked_coins'], locked_coins_second_channel)
+    # the balance of zero here comes from the fact that sender_coins_first_channel is the minimum value,
+    # i.e. everything he puts on the channel will be locked.
+    assert_eq(lvpc.network.graph[0][4]['balance'], 0)
+    assert_eq(lvpc.network.graph[4][0]['locked_coins'], 0)
+    assert_eq(lvpc.network.graph[4][0]['balance'], new_virtual_channel_fee_second_channel)
+    assert_eq(lvpc.network.graph[7][4]['balance'], balances_before[(7, 4)])
+    assert_eq(lvpc.network.graph[7][4]['locked_coins'], 0)
     
 
 def test_do_lvpc():
