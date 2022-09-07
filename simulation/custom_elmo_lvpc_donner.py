@@ -108,6 +108,11 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             return self.new_virtual_channel_delay * hops
 
     def get_new_virtual_channel_fee(self, path, coins_to_lock):
+        """
+        Returns the correct values for Elmo and Donner.
+        And the correct values for LVPC for path of length 3.
+        Fees for longer paths in LVPC are calculated recursively using this function.
+        """
         return (self.base_fee + coins_to_lock * self.fee_rate) * (len(path) - 2)
 
     # adjusted from LN
@@ -296,7 +301,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                         path_for_recursion = [sender] + path[i+1:i+3]
                         sender_coins_recursion = sender_coins / (MULTIPLIER_BALANCE_RECURSION_LVPC**i)
                         if i != len(path)-3:
-                            sender_coins_recursion += value
+                            sender_coins_recursion += value * (1 + self.fee_rate) + self.base_fee
                         receiver_coins_recursion = (
                             0 if i != len(path)-3 else value
                         )

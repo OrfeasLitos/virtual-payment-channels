@@ -1,5 +1,7 @@
 
 from lvpc import LVPC
+import networkx as nx
+from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from tests import (
     make_example_network_elmo_lvpc_donner,
     make_example_network_elmo_lvpc_donner_and_future_payments,
@@ -17,7 +19,8 @@ from tests import (
     test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance,
     test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality,
     test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality,
-    test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality
+    test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_centrality,
+    make_example_values_for_do_elmo_lvpc_donner
 )
 
 
@@ -46,8 +49,44 @@ def test_get_payment_options_lvpc():
     #test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible1()
     test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2()
 
+def test_do_new_virtual_channel_long_path_lvpc():
+    # the new_virtual_channel_option is the same for elmo, lvpc and donner as it is a channel on two existing onchain channels.
+    lvpc = make_example_network_lvpc()
+    value = 10000000.
+    future_payments = [(0,1,2000000000.), (0, 8, 3000000000.)]
+    balances_before = nx.get_edge_attributes(lvpc.network.graph, "balance")
+    payment_options = lvpc.get_payment_options(0, 7, value, future_payments)
+    print(payment_options)
+    assert payment_options[2]['payment_information']['kind'] == 'LVPC-open-virtual-channel'
+    payment_information_new_virtual_channel = payment_options[2]['payment_information']
+
+    lvpc.do(payment_information_new_virtual_channel)
+    # check first the coins of the parties
+    sum_future_payments = sum_future_payments_to_counterparty(0, 7, future_payments)
+    wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
+    assert wanted_sender_coins == 0
+    sender_coins = 0
+    new_virtual_channel_fee_first_channel = lvpc.get_new_virtual_channel_fee([0,1,4], value)
+
+    locked_coins = sender_coins + value
+    """
+    assert lvpc.network.graph[1][4]['locked_coins'] == locked_coins
+    assert lvpc.network.graph[0][1]['balance'] == balances_before[(0, 1)] - new_virtual_channel_fee_first_channel - locked_coins
+    assert lvpc.network.graph[1][0]['locked_coins'] == 0
+    assert lvpc.network.graph[1][0]['balance'] == balances_before[(1, 0)] + new_virtual_channel_fee_first_channel
+    assert lvpc.network.graph[1][4]['balance'] == balances_before[(1, 4)] - locked_coins
+    assert lvpc.network.graph[4][1]['balance'] == balances_before[(4, 1)]
+    assert lvpc.network.graph[4][1]['locked_coins'] == 0
+    assert lvpc.network.graph[1][2]['locked_coins'] == 0
+    assert lvpc.network.graph[1][2]['balance'] == balances_before[(1, 2)]
+    assert lvpc.network.graph[0][4]['balance'] == 0
+    assert lvpc.network.graph[4][0]['balance'] == value
+    assert lvpc.network.graph.get_edge_data(5, 0) is None
+    """
+
 def test_do_lvpc():
     test_do_elmo_lvpc_donner("LVPC")
+    test_do_new_virtual_channel_long_path_lvpc()
 
 def test_update_balances_new_virtual_channel_lvpc():
     test_update_balances_new_virtual_channel_elmo_lvpc_donner("LVPC")
