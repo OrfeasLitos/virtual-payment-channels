@@ -83,7 +83,7 @@ class Payment_Network(ABC):
             pass
 
     @abstractmethod
-    def get_distances(self, sender, future_payments):
+    def get_distances_and_paths_from_source(self, sender, future_payments):
         pass
 
     def get_onchain_option(self, sender, receiver, value, future_payments):
@@ -92,7 +92,8 @@ class Payment_Network(ABC):
         if onchain_fee + value > self.plain_bitcoin.coins[sender]:
             return None
         onchain_centrality = self.network.get_centrality(sender)
-        onchain_distance = self.get_distances(sender, future_payments)
+        # TODO: breaks compatibility with ln change it in ln.
+        onchain_distance, cheapest_paths_from_sender = self.get_distances_and_paths_from_source(sender, future_payments)
         return {
             'delay': onchain_time,
             'fee': onchain_fee,

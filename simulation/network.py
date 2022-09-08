@@ -78,8 +78,9 @@ class Network:
             return None
 
 
-    def get_centrality(self, party):
-        return nx.harmonic_centrality(self.graph)[party]
+    def get_centrality(self, party, paths=None):
+        graph = self.graph
+        return 0 if graph.number_of_edges() == 0 else nx.local_reaching_centrality(graph, party, paths)
 
 class Custom_Network_Elmo_LVPC_Donner(Network):
     def __init__(self, nr_vertices):

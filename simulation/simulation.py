@@ -186,17 +186,17 @@ if __name__ == "__main__":
     payments_uniform = pickle.load(pickled_file_uniform)
 
     
-    #payments = payments_zipf[(100, 2., 0)]
-    payments = payments_uniform[(100, 1000, 0)]
+    payments = payments_zipf[(1000, 3., 0)]
+    #payments = payments_uniform[(100, 1000, 0)]
     utilities = [
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
         Utility('sum_of_inverses', parameters = (1000, 10000, 10000, 10000, 0))
     ]
-    for method in [Elmo(100), Donner(100), LVPC(100)]:#, LN(1000)]:
+    for method in [Elmo(1000)]:#, Donner(100), LVPC(100)]:#, LN(1000)]:
         for utility in utilities:
             for knowledge in [
-                Knowledge('10-next')#, Knowledge('all'), Knowledge('next'),
+                Knowledge('all')#, Knowledge('10-next'), Knowledge('next'),
                 #Knowledge('mine'), Knowledge('10-next-mine')
             ]:
                 sim = Simulation(copy.copy(payments), method, knowledge, utility)
