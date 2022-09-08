@@ -59,7 +59,6 @@ class Network:
         except nx.exception.NetworkXNoPath:
             return None
 
-    # TODO: test if this is faster for get_distances.
     def find_cheapest_paths_from_sender(self, sender, amount, fee_intermediary, function = "standard"):
         try:
             weight_function = self.get_weight_function(amount, function)

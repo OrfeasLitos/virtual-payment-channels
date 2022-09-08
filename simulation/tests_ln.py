@@ -69,11 +69,11 @@ def test_get_payment_options_ln_enough_money():
         ],
         'payment_information': { 'kind': 'onchain', 'data': (0, 7, 1000000000.)}
     }
-    ln_open_centrality = 4.333333333333333
+
     expected_ln_open_option = {
         'delay' : lightning.plain_bitcoin.bitcoin_delay + lightning.ln_delay,
         'fee' : lightning.plain_bitcoin.get_fee(lightning.opening_transaction_size),
-        'centrality' : ln_open_centrality,
+        'centrality' : None,
         'distance': [
             (100, 1), (100, 1), (100, 1), (100, 3), (1, 1), (1, 2), (1, 2),
             (1, math.inf), (1, math.inf), (1, math.inf)
@@ -86,7 +86,7 @@ def test_get_payment_options_ln_enough_money():
     expected_ln_pay_option = {
         'delay' : lightning.get_payment_time([0,1,4,7]),
         'fee' : lightning.get_payment_fee((0, 7, 1000000000.), 3),
-        'centrality' : 3.666666666666667,
+        'centrality' : None,
         'distance': [
             (100, 1), (100, 3), (100, 3), (100, 3), (1, 1), (1, 2), (1, 2),
             (1, math.inf), (1, math.inf), (1, math.inf)
@@ -103,7 +103,6 @@ def test_get_payment_options_ln_enough_money():
 
     assert_eq(expected_ln_open_option['fee'], actual_ln_open_option['fee'])
     assert_eq(expected_ln_open_option['delay'], actual_ln_open_option['delay'])
-    assert_eq(expected_ln_open_option['centrality'], actual_ln_open_option['centrality'])
     expected_ln_open_option['distance'].sort()
     actual_ln_open_option['distance'].sort()
     assert expected_ln_open_option['distance'] == actual_ln_open_option['distance']
@@ -111,7 +110,6 @@ def test_get_payment_options_ln_enough_money():
 
     assert_eq(expected_ln_pay_option['delay'], actual_ln_pay_option['delay'])
     assert_eq(expected_ln_pay_option['fee'], actual_ln_pay_option['fee'])
-    assert_eq(expected_ln_pay_option['centrality'], actual_ln_pay_option['centrality'])
     expected_ln_pay_option['distance'].sort()
     actual_ln_pay_option['distance'].sort()
     assert expected_ln_pay_option['distance'] == actual_ln_pay_option['distance']
@@ -134,14 +132,10 @@ def test_choose_payment_method_offchain_best_ln():
 
 def test_choose_payment_method_new_channel_best_ln():
     _, _, lightning, future_payments = (
-        make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 200)
+        make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
     payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
-    # there's no offchain option
-    # the first two terms in utility are both smaller than one for new_channel and onchain
-    # the difference for the third term is over 100 in favor of new channel
-    # the difference between the last two is about 2 in favor of new channel
-    utility_function = make_example_utility_function(10000, 5000, 100, 1)
+    utility_function = make_example_utility_function(10000, 5000, 200, 1)
     utility = Utility('customized', utility_function)
     payment_method, _, _ = utility.choose_payment_method(payment_options)
     assert payment_method['kind'] == 'ln-open'

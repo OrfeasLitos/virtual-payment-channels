@@ -31,7 +31,7 @@ class LN(Payment_Network):
         sender, receiver, value = payment
         return (self.base_fee +  value * self.ln_fee) * num_hops
 
-    def get_distances(self, source, future_payments):
+    def get_distances_and_paths_from_source(self, source, future_payments):
         """
         Returns weighted distances to the future parties and to parties not occuring in future payments.
         Muiltiple payments to same party give multiple distances.
@@ -44,6 +44,11 @@ class LN(Payment_Network):
         # weight for other parties
         weight_other = 1
         encountered_parties = set({source})
+        fee_intermediary = self.ln_fee * DUMMY_PAYMENT_VALUE + self.base_fee
+        # TODO: think if this is what we want.
+        cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(
+            source, DUMMY_PAYMENT_VALUE, fee_intermediary
+        )
         path_data = []
         for future_sender, future_receiver, value in future_payments:
             fee_intermediary = self.ln_fee * value + self.base_fee
@@ -60,7 +65,7 @@ class LN(Payment_Network):
                 path_data.append((
                     future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
-                    self.network.find_cheapest_path(source, future_receiver, value, fee_intermediary)
+                    cheapest_paths_from_sender.get(future_receiver)
                 ))
         
         fee_intermediary = self.ln_fee * DUMMY_PAYMENT_VALUE + self.base_fee
@@ -68,17 +73,16 @@ class LN(Payment_Network):
             path_data.append((
                 party,
                 weight_other,
-                self.network.find_cheapest_path(source, party, DUMMY_PAYMENT_VALUE, fee_intermediary)
+                cheapest_paths_from_sender.get(party)
             ))
         
-        for counterparty, weight, cost_and_path in path_data:
-            if cost_and_path is None:
+        for counterparty, weight, cheapest_path in path_data:
+            if cheapest_path is None:
                 distances.append((weight, math.inf))
             else:
-                _, cheapest_path = cost_and_path
                 distances.append((weight, len(cheapest_path)-1))
 
-        return distances
+        return distances, cheapest_paths_from_sender
 
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
         # the pay argument tells whether this corresponds to making a payment
@@ -138,8 +142,12 @@ class LN(Payment_Network):
         else:
             self.network.add_channel(sender, sender_coins, counterparty, value)
             new_channel_offchain_option = None
-            new_channel_distance = self.get_distances(sender, future_payments)
-            new_channel_centrality = self.network.get_centrality(sender)
+            new_channel_distance, cheapest_paths_from_sender = (
+                self.get_distances_and_paths_from_source(sender, future_payments)
+            )
+            new_channel_centrality = self.network.get_centrality(
+                sender, cheapest_paths_from_sender
+            )
         self.network.remove_channel(sender, counterparty)
 
         return {
@@ -170,8 +178,10 @@ class LN(Payment_Network):
         except ValueError:
             return None
         offchain_fee = self.get_payment_fee(payment, offchain_hops)
-        offchain_distance = self.get_distances(sender, future_payments)
-        offchain_centrality = self.network.get_centrality(sender)
+        offchain_distance, cheapest_paths_from_sender = (
+            self.get_distances_and_paths_from_source(sender, future_payments)
+        )
+        offchain_centrality = self.network.get_centrality(sender, cheapest_paths_from_sender)
         self.undo(payment_information)
         return {
             'delay': offchain_time,
