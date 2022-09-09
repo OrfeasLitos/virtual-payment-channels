@@ -10,12 +10,12 @@ from network import Network_Elmo, Network_LVPC, Network_Donner
 MULTIPLIER_BALANCE_RECURSION_LVPC = 1.5
 
 class Custom_Elmo_LVPC_Donner(Payment_Network):
-    # TODO: find reasonable value for base_fee, opening_transaction_size, delay
     def __init__(
         self, method_name, nr_players, max_coins = 2000000000000000,
-        bitcoin_fee = 1000000, bitcoin_delay = 3600, 
-        coins_for_parties = "max_value", base_fee = 10000,
-        fee_rate = 0.0004, opening_transaction_size = 200,
+        bitcoin_fee = 1000000, bitcoin_delay = 3600,
+        coins_for_parties = "max_value", base_fee = 20000,
+        # review: opening_transaction_size must probably be specified by whoever inherits this class
+        fee_rate = 0.0004, opening_transaction_size,
         pay_delay = 0.05, new_virtual_channel_delay = 0.05
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
