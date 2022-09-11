@@ -117,10 +117,11 @@ class LN(Payment_Network):
         self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
         self.network.graph[receiver][path[-2]]['balance'] = op_take(self.network.graph[receiver][path[-2]]['balance'], value)
 
-    def get_new_channel_option(self, sender, receiver, value, future_payments, counterparty):
+    def get_new_channel_option(self, sender, receiver, value, knowledge_sender, counterparty):
         # case channel already exists.
         if self.network.graph.get_edge_data(sender, counterparty) is not None:
             return None
+        future_payments, num_payments_sender, num_total_payments = knowledge_sender
         new_channel_time = self.plain_bitcoin.get_delay() + self.ln_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(sender, counterparty, future_payments)
@@ -164,11 +165,12 @@ class LN(Payment_Network):
             }
         }
 
-    def get_offchain_option(self, sender, receiver, value, future_payments):
+    def get_offchain_option(self, sender, receiver, value, knowledge_sender):
         fee_intermediary = fee_intermediary = self.ln_fee * value + self.base_fee
         offchain_cost_and_path = self.network.find_cheapest_path(sender, receiver, value, fee_intermediary)
         if offchain_cost_and_path is None:
             return None
+        future_payments, num_payments_sender, num_total_payments = knowledge_sender
         offchain_hops, offchain_path = offchain_cost_and_path
         offchain_time = self.get_payment_time(offchain_path)
         payment = (sender, receiver, value)

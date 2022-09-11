@@ -5,7 +5,7 @@ from numpy.testing import assert_almost_equal as assert_eq
 from ln import LN
 from utility import Utility
 from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
-from tests import make_example_utility_function, make_example_simulation_for_all
+from tests import make_example_utility_function, make_example_simulation_for_all, get_knowledge_sender
 
 def make_example_network_ln(base_fee = 1000, ln_fee = 0.00002):
     lightning = LN(10, base_fee = base_fee, ln_fee = ln_fee)
@@ -49,7 +49,9 @@ def test_get_payment_options_ln_enough_money():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = lightning.get_payment_options(sender, 7, 1000000000., knowledge_sender)
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     actual_onchain_option = payment_options[0]
     assert payment_options[1]['payment_information']['kind'] == 'ln-open'
@@ -122,7 +124,9 @@ def test_choose_payment_method_offchain_best_ln():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1, ln_fee = 0.00002)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = lightning.get_payment_options(sender, 7, 1., knowledge_sender)
     utility_function = make_example_utility_function(10000, 5000, 1, 1)
     utility = Utility('customized', utility_function)
     # utilities for onchain and new channel are between 30 and 40
@@ -134,7 +138,9 @@ def test_choose_payment_method_new_channel_best_ln():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = lightning.get_payment_options(sender, 7, 1000000000., knowledge_sender)
     utility_function = make_example_utility_function(10000, 5000, 200, 1)
     utility = Utility('customized', utility_function)
     payment_method, _, _ = utility.choose_payment_method(payment_options)
@@ -144,7 +150,9 @@ def test_choose_payment_method_onchain_best_ln():
     _, _, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 200)
     )
-    payment_options = lightning.get_payment_options(0, 7, 1000000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = lightning.get_payment_options(sender, 7, 1000000000., knowledge_sender)
     # there's no offchain option
     # the fee in the utility favors the onchain option.
     utility_function = make_example_utility_function(1, 0, 0, 0)
@@ -161,8 +169,10 @@ def test_LN():
     nr_players = 10
     lightning = LN(nr_players)
     future_payments = [(0,1,2.), (0, 7, 1.5), (0,7,2.1), (0, 8, 3.)]
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
     result = sum_future_payments_to_counterparty(0, 7, future_payments)
-    payment_options = lightning.get_payment_options(0, 7, 1., future_payments)
+    payment_options = lightning.get_payment_options(0, 7, 1., knowledge_sender)
     assert result == 3.6
 
 def make_example_values_for_do_ln():
@@ -170,7 +180,9 @@ def make_example_values_for_do_ln():
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
     value = 1000000000.
-    payment_options = lightning.get_payment_options(0, 7, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = lightning.get_payment_options(sender, 7, value, knowledge_sender)
     max_coins = lightning.plain_bitcoin.max_coins
     return base_fee, ln_fee, lightning, future_payments, value, payment_options, max_coins
 
