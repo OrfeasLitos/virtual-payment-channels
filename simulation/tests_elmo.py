@@ -5,7 +5,7 @@ from elmo import Elmo
 from tests import (make_example_network_elmo_lvpc_donner,
     make_example_network_elmo_lvpc_donner_and_future_payments,
     make_example_simulation_for_all, make_example_utility_function,
-    test_get_payment_options_elmo_lvpc_donner_channel_exists,
+    get_knowledge_sender, test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
     test_do_elmo_lvpc_donner,
@@ -42,7 +42,9 @@ def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible1():
 
 def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible2():
     base_fee, elmo, future_payments = make_example_network_elmo_and_future_payments()
-    payment_options = elmo.get_payment_options(0, 7, 100000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = elmo.get_payment_options(sender, 7, 100000000., knowledge_sender)
     assert len(payment_options) == 3
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == 'Elmo-open-channel'
@@ -76,14 +78,18 @@ def test_coop_close_channel_first_virtual_layer_one_layer_above_elmo(forward = T
     elmo = make_example_network_elmo()
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 300000000.), (0, 3, 2500000000.)]
     value1 = 100000000
-    payment_options1 = elmo.get_payment_options(0, 3, value1, future_payments)
+    sender1 = 0
+    knowledge_sender1 = get_knowledge_sender(sender1, future_payments)
+    payment_options1 = elmo.get_payment_options(sender1, 3, value1, knowledge_sender1)
     assert payment_options1[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
     payment_information_new_virtual_channel1 = payment_options1[2]['payment_information']
 
     elmo.do(payment_information_new_virtual_channel1)
 
     value2 = 1000000
-    payment_options2 = elmo.get_payment_options(0, 8, value2, future_payments)
+    sender2 = 0
+    knowledge_sender2 = get_knowledge_sender(sender2, future_payments)
+    payment_options2 = elmo.get_payment_options(sender2, 8, value2, knowledge_sender2)
     assert payment_options2[2]['payment_information']['kind'] == 'Elmo-open-virtual-channel'
     assert payment_options2[2]['payment_information']['data'][0] == [0, 3, 8]
     payment_information_new_virtual_channel2 = payment_options2[2]['payment_information']

@@ -6,7 +6,7 @@ from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNE
 from tests import (
     make_example_network_elmo_lvpc_donner,
     make_example_network_elmo_lvpc_donner_and_future_payments,
-    make_example_simulation_for_all,
+    make_example_simulation_for_all, get_knowledge_sender,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
@@ -56,7 +56,9 @@ def test_do_new_virtual_channel_long_path_lvpc():
     value = 10000000.
     future_payments = [(0,1,2000000000.), (0, 8, 3000000000.)]
     balances_before = nx.get_edge_attributes(lvpc.network.graph, "balance")
-    payment_options = lvpc.get_payment_options(0, 7, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = lvpc.get_payment_options(sender, 7, value, knowledge_sender)
     assert payment_options[2]['payment_information']['kind'] == 'LVPC-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
 
