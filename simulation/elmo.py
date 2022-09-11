@@ -19,6 +19,6 @@ class Elmo(Custom_Elmo_LVPC_Donner):
         elmo_pay_delay = 0.05, elmo_new_virtual_channel_delay = 0.05
     ):
         super().__init__(
-            "Elmo", nr_players, max_coins, bitcoin_fee, bitcoin_delay,  coins_for_parties, base_fee,
-            fee_rate, opening_transaction_size, elmo_pay_delay, elmo_new_virtual_channel_delay
+            "Elmo", nr_players, opening_transaction_size, max_coins, bitcoin_fee, bitcoin_delay,  coins_for_parties, base_fee,
+            fee_rate, elmo_pay_delay, elmo_new_virtual_channel_delay
         )

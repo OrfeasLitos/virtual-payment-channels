@@ -6,7 +6,7 @@ class LVPC(Custom_Elmo_LVPC_Donner):
         opening_transaction_size = 121.5, lvpc_pay_delay = 0.05, lvpc_new_virtual_channel_delay = 0.05
     ):
         super().__init__(
-            "LVPC", nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties,
-            base_fee, fee_rate, opening_transaction_size, lvpc_pay_delay,
+            "LVPC", nr_players, opening_transaction_size, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties,
+            base_fee, fee_rate, lvpc_pay_delay,
             lvpc_new_virtual_channel_delay
         )

@@ -11,6 +11,6 @@ class Donner(Custom_Elmo_LVPC_Donner):
     ):
     # review: opening_transaction_size = 78.5 + 43*(len(path)-1)
         super().__init__(
-            "Donner", nr_players, max_coins, bitcoin_fee, bitcoin_delay,  coins_for_parties, base_fee,
-            fee_rate, opening_transaction_size, donner_pay_delay, donner_new_virtual_channel_delay
+            "Donner", nr_players, opening_transaction_size, max_coins, bitcoin_fee, bitcoin_delay,
+            coins_for_parties, base_fee, fee_rate, donner_pay_delay, donner_new_virtual_channel_delay
         )

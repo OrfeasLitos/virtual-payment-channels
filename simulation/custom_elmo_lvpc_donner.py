@@ -11,15 +11,16 @@ MULTIPLIER_BALANCE_RECURSION_LVPC = 1.5
 
 class Custom_Elmo_LVPC_Donner(Payment_Network):
     def __init__(
-        self, method_name, nr_players, max_coins = 2000000000000000,
-        bitcoin_fee = 1000000, bitcoin_delay = 3600,
-        coins_for_parties = "max_value", base_fee = 20000,
         # review: opening_transaction_size must probably be specified by whoever inherits this class
-        fee_rate = 0.0004, opening_transaction_size,
+        self, method_name, nr_players, opening_transaction_size,
+        max_coins = 2000000000000000, bitcoin_fee = 1000000,
+        bitcoin_delay = 3600, coins_for_parties = "max_value",
+        base_fee = 20000, fee_rate = 0.0004,
         pay_delay = 0.05, new_virtual_channel_delay = 0.05
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.method_name = method_name
+        self.opening_transaction_size = opening_transaction_size
         self.open_channel_string = method_name + "-open-channel"
         self.open_virtual_channel_string = method_name + "-open-virtual-channel"
         self.pay_string = method_name + "-pay"
@@ -35,10 +36,15 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
 
         self.base_fee = base_fee
         self.fee_rate = fee_rate
-        self.opening_transaction_size = opening_transaction_size
         # delay for opening new virtual channel (per hop)
         self.pay_delay = pay_delay
         self.new_virtual_channel_delay = new_virtual_channel_delay
+
+    def get_opening_transaction_size(self, path=None):
+        if self.method_name == "Donner":
+            return 78.5 + 43*(len(path)-1)
+        else:
+            return 121.5
 
     # adjusted from LN
     # review: This should be minimum for parties with a channel,
