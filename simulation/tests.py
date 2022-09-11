@@ -98,13 +98,24 @@ def make_example_network_elmo_lvpc_donner_and_future_payments(method_name, base_
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 3000000000.)]
     return base_fee, method, future_payments
 
+def get_knowledge_sender(sender, future_payments):
+    """
+    For the case the sender knows all future_payments
+    """
+    return (
+        future_payments, len([payment for payment in future_payments if payment[0] == sender]),
+        len(future_payments)
+    )
+
 # adjusted from tests_ln
 def make_example_values_for_do_elmo_lvpc_donner(method_name):
     base_fee, method, future_payments = (
         make_example_network_elmo_lvpc_donner_and_future_payments(method_name, base_fee = 1000000)
     )
     value = 100000000.
-    payment_options = method.get_payment_options(0, 7, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(0, 7, value, knowledge_sender)
     max_coins = method.plain_bitcoin.max_coins
     return base_fee, method, future_payments, value, max_coins
 
@@ -118,7 +129,9 @@ def test_dict_before_and_after_equal(dict_before, dict_after):
 
 def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
     base_fee, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
-    payment_options = method.get_payment_options(0, 2, 1000000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 2, 1000000000., knowledge_sender)
     assert len(payment_options) == 2
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == method_name + '-pay'
@@ -126,7 +139,9 @@ def test_get_payment_options_elmo_lvpc_donner_channel_exists(method_name):
 def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible(method_name):
     # virtual channel not possible because of too high value and future payments, would need too much balance
     base_fee, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
-    payment_options = method.get_payment_options(0, 7, 10000000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 7, 10000000000., knowledge_sender)
     assert len(payment_options) == 2
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
@@ -135,7 +150,9 @@ def test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_
     # shortest path should have length 3 and all channels are onchain, so it should give the same results for
     # Elmo, LVPC and Donner
     base_fee, method, future_payments = make_example_network_elmo_lvpc_donner_and_future_payments(method_name)
-    payment_options = method.get_payment_options(0, 4, 100000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 4, 100000000., knowledge_sender)
     assert len(payment_options) == 3
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
@@ -146,7 +163,9 @@ def test_do_onchain_elmo_lvpc_donner(method_name):
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
-    payment_options = method.get_payment_options(0, 7, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 7, value, knowledge_sender)
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     payment_information_onchain = payment_options[0]['payment_information']
     method.do(payment_information_onchain)
@@ -158,7 +177,9 @@ def test_do_new_channel_elmo_lvpc_donner(method_name):
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
-    payment_options = method.get_payment_options(0, 8, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 8, value, knowledge_sender)
     assert payment_options[1]['payment_information']['kind'] == method_name + '-open-channel'
     payment_information_new_channel = payment_options[1]['payment_information']
 
@@ -180,7 +201,9 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     balances_before = nx.get_edge_attributes(method.network.graph, "balance")
-    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 4, value, knowledge_sender)
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
 
@@ -225,7 +248,9 @@ def test_do_elmo_lvpc_donner_pay(method_name):
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
-    payment_options = method.get_payment_options(0, 2, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 2, value, knowledge_sender)
     assert payment_options[1]['payment_information']['kind'] == method_name + '-pay'
     payment_information_pay = payment_options[1]['payment_information']
 
@@ -392,7 +417,9 @@ def test_undo_new_virtual_channel_elmo_lvpc_donner(method_name):
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     # virtual channel has length 2 and both underlying channel are onchain -> equal for all 3 methods
-    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 4, value, knowledge_sender)
     sender_coins = method.plain_bitcoin.coins[0]
     receiver_coins = method.plain_bitcoin.coins[4]
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
@@ -416,7 +443,9 @@ def test_undo_new_virtual_channel_long_path_elmo_lvpc_donner(method_name):
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
     # virtual channel has length 2 and both underlying channel are onchain -> equal for all 3 methods
-    payment_options = method.get_payment_options(0, 7, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 7, value, knowledge_sender)
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
     path = payment_options[2]['payment_information']['data'][0]
     assert path == [0, 1, 4, 7]
@@ -436,7 +465,9 @@ def test_undo_elmo_lvpc_donner_pay(method_name):
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
-    payment_options = method.get_payment_options(0, 2, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 2, value, knowledge_sender)
     assert payment_options[1]['payment_information']['kind'] == method_name + '-pay'
     payment_information_pay = payment_options[1]['payment_information']
     balances_before = nx.get_edge_attributes(method.network.graph, "balance")
@@ -458,7 +489,9 @@ def test_coop_close_channel_first_virtual_layer_no_layer_above_elmo_lvpc_donner(
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
-    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 4, value, knowledge_sender)
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
 
@@ -482,7 +515,9 @@ def test_force_close_channel_onchain_layer_one_layer_above_elmo_lvpc_donner(meth
     base_fee, method, future_payments, value, max_coins = (
         make_example_values_for_do_elmo_lvpc_donner(method_name)
     )
-    payment_options = method.get_payment_options(0, 4, value, future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = method.get_payment_options(sender, 4, value, knowledge_sender)
     assert payment_options[2]['payment_information']['kind'] == method_name + '-open-virtual-channel'
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
 

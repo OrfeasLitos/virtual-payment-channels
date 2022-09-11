@@ -134,8 +134,8 @@ class Simulation:
             #self.network = self.network.apply(best_method)
 
             # ideally, one could take the initial network state and the list of payments and reach the final network state
-            future_payments = self.knowledge.get_knowledge(sender, self.payments)
-            payment_options = self.payment_method.get_payment_options(sender, receiver, value, future_payments)
+            knowledge_sender = self.knowledge.get_knowledge(sender, self.payments)
+            payment_options = self.payment_method.get_payment_options(sender, receiver, value, knowledge_sender)
             try:
                 payment_option, fee, delay = self.utility.choose_payment_method(payment_options)
                 self.payment_method.do(payment_option)

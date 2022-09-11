@@ -1,16 +1,19 @@
 import collections
 import itertools
 
-def know_all(party, payments):
-    return payments
-
 def know_mine(party, payments):
     return collections.deque([payment for payment in payments if payment[0] == party])
+
+def know_all(party, payments):
+    return payments, len(know_mine(party, payments)), len(payments)
 
 def get_know_next_n(n):
     # works also for empty list
     def know_next_n(party, payments):
-        return collections.deque(itertools.islice(payments, 0, n))
+        return (
+            collections.deque(itertools.islice(payments, 0, n)),
+            len(know_mine(party, payments)), len(payments)
+        )
     return know_next_n
 
 know_next = get_know_next_n(1)
@@ -19,7 +22,10 @@ know_next_10 = get_know_next_n(10)
 def get_know_my_next_n(n):
     def know_my_next_n(party, payments):
         my_payments = [payment for payment in payments if payment[0] == party]
-        return collections.deque(my_payments[:n])
+        return (
+            collections.deque(my_payments[:n]),
+            len(know_mine(party, payments)), len(payments)
+        )
     return know_my_next_n
 
 know_my_next_10 = get_know_my_next_n(10)

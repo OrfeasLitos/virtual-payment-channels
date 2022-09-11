@@ -86,7 +86,8 @@ class Payment_Network(ABC):
     def get_distances_and_paths_from_source(self, sender, future_payments):
         pass
 
-    def get_onchain_option(self, sender, receiver, value, future_payments):
+    def get_onchain_option(self, sender, receiver, value, knowledge_sender):
+        future_payments, num_payments_sender, num_total_payments = knowledge_sender
         onchain_time = self.plain_bitcoin.get_delay()
         onchain_fee = self.plain_bitcoin.get_fee()
         if onchain_fee + value > self.plain_bitcoin.coins[sender]:

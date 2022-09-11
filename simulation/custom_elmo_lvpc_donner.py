@@ -123,10 +123,11 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         return (self.base_fee + coins_to_lock * self.fee_rate) * (len(path) - 2)
 
     # adjusted from LN
-    def get_new_channel_option(self, sender, receiver, value, future_payments):
+    def get_new_channel_option(self, sender, receiver, value, knowledge_sender):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
+        future_payments, num_payments_sender, num_total_payments = knowledge_sender
         new_channel_time = self.plain_bitcoin.get_delay() + self.pay_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
@@ -172,10 +173,11 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sender_coins = min(desired_sender_coins, smallest_remaining_balance / (1 + self.fee_rate * (len(path) - 2)))
         return sender_coins
 
-    def get_new_virtual_channel_option(self, sender, receiver, value, future_payments):
+    def get_new_virtual_channel_option(self, sender, receiver, value, knowledge_sender):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
+        future_payments, num_payments_sender, num_total_payments = knowledge_sender
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         # this is a simplification. TODO: think if this is what we want.
         anticipated_lock_value = sum_future_payments + value
@@ -219,7 +221,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             'payment_information': payment_information
         }
 
-    def get_pay_option(self, sender, receiver, value, future_payments):
+    def get_pay_option(self, sender, receiver, value, knowledge_sender):
+        future_payments, num_payments_sender, num_total_payments = knowledge_sender
         payment_information = {'kind': self.pay_string, 'data': (sender, receiver, value)}
         try:
             self.do(payment_information)
@@ -236,11 +239,11 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             'payment_information': payment_information
         }
 
-    def get_payment_options(self, sender, receiver, value, future_payments):
-        onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
-        new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments)
-        new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, future_payments)
-        pay_option = self.get_pay_option(sender, receiver, value, future_payments)
+    def get_payment_options(self, sender, receiver, value, knowledge_sender):
+        onchain_option = self.get_onchain_option(sender, receiver, value, knowledge_sender)
+        new_channel_option = self.get_new_channel_option(sender, receiver, value, knowledge_sender)
+        new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, knowledge_sender)
+        pay_option = self.get_pay_option(sender, receiver, value, knowledge_sender)
         options = [onchain_option, new_channel_option, new_virtual_channel_option, pay_option]
         return [option for option in options if option is not None]
 

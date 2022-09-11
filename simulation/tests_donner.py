@@ -1,6 +1,6 @@
 
 from tests import (make_example_network_elmo_lvpc_donner, make_example_simulation_for_all,
-    make_example_network_elmo_lvpc_donner_and_future_payments,
+    make_example_network_elmo_lvpc_donner_and_future_payments, get_knowledge_sender,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
@@ -41,7 +41,9 @@ def test_get_payment_options_donner_no_channel_exists_virtual_channel_possible1(
 # same as in Elmo
 def test_get_payment_options_donner_no_channel_exists_virtual_channel_possible2():
     fee_intermediary, donner, future_payments = make_example_network_donner_and_future_payments()
-    payment_options = donner.get_payment_options(0, 7, 100000000., future_payments)
+    sender = 0
+    knowledge_sender = get_knowledge_sender(sender, future_payments)
+    payment_options = donner.get_payment_options(sender, 7, 100000000., knowledge_sender)
     assert len(payment_options) == 3
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     assert payment_options[1]['payment_information']['kind'] == 'Donner-open-channel'
@@ -56,15 +58,19 @@ def test_get_payment_options_donner():
 def test_get_payment_options_and_weight_function_donner():
     donner = make_example_network_donner()
     future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 300000000.), (0, 3, 2500000000.)]
+    sender1 = 0
+    knowledge_sender1 = get_knowledge_sender(sender1, future_payments)
     value1 = 100000000
-    payment_options1 = donner.get_payment_options(0, 3, value1, future_payments)
+    payment_options1 = donner.get_payment_options(sender1, 3, value1, knowledge_sender1)
     assert payment_options1[2]['payment_information']['kind'] == 'Donner-open-virtual-channel'
     payment_information_new_virtual_channel1 = payment_options1[2]['payment_information']
 
     donner.do(payment_information_new_virtual_channel1)
 
     value2 = 1000000
-    payment_options2 = donner.get_payment_options(0, 8, value2, future_payments)
+    sender2 = 0
+    knowledge_sender2 = get_knowledge_sender(sender2, future_payments)
+    payment_options2 = donner.get_payment_options(sender2, 8, value2, knowledge_sender2)
     assert len(payment_options2) == 3
     assert payment_options2[2]['payment_information']['kind'] == 'Donner-open-virtual-channel'
     assert payment_options2[2]['payment_information']['data'][0] == [0, 2, 3, 8]
