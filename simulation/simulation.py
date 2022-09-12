@@ -4,7 +4,6 @@ import copy
 import sys
 import collections
 import pickle
-#from scipy.special import zeta
 from knowledge import Knowledge
 from paymentmethod import PlainBitcoin
 from ln import LN
@@ -13,6 +12,7 @@ from donner import Donner
 from lvpc import LVPC
 from utility import Utility
 import time
+import flamegraph
 
 # max_coins of PlainBitcoin divided by 5
 MAX_PAY = 2000000000000000//5
@@ -165,6 +165,7 @@ class Simulation:
 
 if __name__ == "__main__":
 
+    flamegraph.start_profile_thread(fd=open("./perf_1.log", "w"))
     #seed = random.randrange(sys.maxsize)
     seed = 12345
     random.seed(seed)
