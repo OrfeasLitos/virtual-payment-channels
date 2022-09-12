@@ -66,6 +66,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE
         fee_intermediary = self.base_fee + dummy_lock_value * self.fee_rate
         cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(source, dummy_lock_value, fee_intermediary)
+        #cheapest_paths = self.network.find_all_cheapest_paths(dummy_lock_value, fee_intermediary)
         path_data = []
         for future_sender, future_receiver, value in future_payments:
             encountered_parties.add(future_sender)
