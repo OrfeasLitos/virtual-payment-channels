@@ -9,3 +9,5 @@ simulation/example_results_Elmo.pickle
 simulation/example_results_ln.pickle
 simulation/example_results_Donner.pickle
 simulation/example_results_LVPC.pickle
+simulation/perf_1.log
+simulation/perf_1.svg
