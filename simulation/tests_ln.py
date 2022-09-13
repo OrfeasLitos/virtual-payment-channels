@@ -53,7 +53,7 @@ def test_get_payment_options_ln_enough_money():
     receiver = 7
     value = 1000000000.
     knowledge_sender = get_knowledge_sender(sender, future_payments)
-    sum_future_payments = sum_future_payments_to_counterparty(0, receiver, future_payments)
+    sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
     payment_options = lightning.get_payment_options(sender, receiver, value, knowledge_sender)
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     actual_onchain_option = payment_options[0]

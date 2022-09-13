@@ -209,7 +209,7 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
 
     method.do(payment_information_new_virtual_channel)
     # check first the coins of the parties
-    sum_future_payments = sum_future_payments_to_counterparty(0, 4, future_payments)
+    sum_future_payments = sum_future_payments_to_counterparty(sender, 4, future_payments)
     wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
     assert wanted_sender_coins == 0
     sender_coins = 0
