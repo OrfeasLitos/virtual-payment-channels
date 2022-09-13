@@ -266,18 +266,6 @@ class Network_LVPC(Custom_Network_Elmo_LVPC_Donner):
     # in elmo that's no problem because we can have more channels below, but in LVPC that's not possible.
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
-    
-    def find_cheapest_path_for_new_virtual_lvpc(self, sender, receiver, amount, fee_intermediary):
-        # TODO: think how to optimize that.
-        cheapest_path = super().find_cheapest_path(sender, receiver, amount, fee_intermediary)
-        if cheapest_path is None:
-            return None
-        hops, path = cheapest_path
-        # 3 is for [sender, intermediary, receiver], if longer no path possible
-        # TODO: should we open longer paths by recursion?
-        if len(path) > 3:
-            return None
-        return cheapest_path
 
 class Network_Donner(Custom_Network_Elmo_LVPC_Donner):
     def __init__(self, nr_vertices):
