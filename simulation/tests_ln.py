@@ -50,8 +50,11 @@ def test_get_payment_options_ln_enough_money():
         make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
     )
     sender = 0
+    receiver = 7
+    value = 1000000000.
     knowledge_sender = get_knowledge_sender(sender, future_payments)
-    payment_options = lightning.get_payment_options(sender, 7, 1000000000., knowledge_sender)
+    sum_future_payments = sum_future_payments_to_counterparty(0, receiver, future_payments)
+    payment_options = lightning.get_payment_options(sender, receiver, value, knowledge_sender)
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     actual_onchain_option = payment_options[0]
     assert payment_options[1]['payment_information']['kind'] == 'ln-open'
@@ -82,7 +85,10 @@ def test_get_payment_options_ln_enough_money():
         ],
         'payment_information' : {
             'kind' : 'ln-open',
-            'data' : (0, 7, 1000000000., 7, 18000000000., None)
+            'data' : (
+                sender, receiver, value, receiver,
+                sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value, None
+            )
         }
     }
     expected_ln_pay_option = {
@@ -258,7 +264,7 @@ def test_do_ln_new_channel():
     lightning.do(payment_information_new_channel)
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(0, 7, future_payments)
-    sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
+    sender_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
     receiver_coins = value
     tx_size = lightning.opening_transaction_size
     assert lightning.plain_bitcoin.coins[0] == max_coins - lightning.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 

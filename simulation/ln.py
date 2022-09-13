@@ -127,7 +127,7 @@ class LN(Payment_Network):
         sum_future_payments = sum_future_payments_to_counterparty(sender, counterparty, future_payments)
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_channel_fee,
-            MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
+            sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
         )
         if sender_coins < 0:
             return None
