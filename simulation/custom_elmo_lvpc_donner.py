@@ -140,7 +140,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_channel_fee,
             (
-                # TODO: adjust tests to new formula.
                 sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
                 #* (num_unknown_payments/num_total_payments +
                 #num_unknown_payments_sender / num_payments_sender)
