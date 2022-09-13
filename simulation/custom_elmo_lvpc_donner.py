@@ -1,6 +1,7 @@
 import math
 import operator
 import numpy as np
+import networkx as nx
 from paymentmethod import (
     Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE,
     DUMMY_PAYMENT_VALUE
@@ -67,6 +68,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         fee_intermediary = self.base_fee + dummy_lock_value * self.fee_rate
         cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(source, dummy_lock_value, fee_intermediary)
         #cheapest_paths = self.network.find_all_cheapest_paths(dummy_lock_value, fee_intermediary)
+        #near_parties = nx.single_source_shortest_path_length(self.network.graph, source, 5)
         path_data = []
         for future_sender, future_receiver, value in future_payments:
             encountered_parties.add(future_sender)
@@ -79,7 +81,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             # if we also want to calculate the distances for the payments in which we are intermediaries
             # we either have to call find_cheapest_path every time or we have to precompute all shortest_paths
             # in the network which probably doesn't scale well. But I haven't yet tested how it scales.
-            if future_sender != source:
+            if future_sender != source: #and future_sender in near_parties:
                 # TODO: think about discarding first part of the tuple.
                 path_data.append((
                     future_sender,
