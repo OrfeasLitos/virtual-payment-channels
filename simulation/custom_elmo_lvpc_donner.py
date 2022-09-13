@@ -68,6 +68,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         fee_intermediary = self.base_fee + dummy_lock_value * self.fee_rate
         cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(source, dummy_lock_value, fee_intermediary)
         #cheapest_paths = self.network.find_all_cheapest_paths(dummy_lock_value, fee_intermediary)
+        calculated_cheapest_paths = {}
         #near_parties = nx.single_source_shortest_path_length(self.network.graph, source, 5)
         path_data = []
         for future_sender, future_receiver, value in future_payments:
@@ -82,11 +83,16 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             # we either have to call find_cheapest_path every time or we have to precompute all shortest_paths
             # in the network which probably doesn't scale well. But I haven't yet tested how it scales.
             if future_sender != source: #and future_sender in near_parties:
+                if (future_sender, source) not in calculated_cheapest_paths:
+                    cheapest_path = self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.base_fee)
+                    calculated_cheapest_paths[(future_sender, source)] = cheapest_path
+                else:
+                    cheapest_path = calculated_cheapest_paths[(future_sender, source)]
                 # TODO: think about discarding first part of the tuple.
                 path_data.append((
                     future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
-                    self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.base_fee)
+                    cheapest_path
                 ))
             if future_receiver != source:
                 path_data.append((
