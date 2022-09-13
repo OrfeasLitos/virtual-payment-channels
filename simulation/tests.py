@@ -186,7 +186,7 @@ def test_do_new_channel_elmo_lvpc_donner(method_name):
     method.do(payment_information_new_channel)
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(0, 8, future_payments)
-    sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
+    sender_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
     receiver_coins = value
     tx_size = method.opening_transaction_size
     assert method.plain_bitcoin.coins[0] == max_coins - method.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
