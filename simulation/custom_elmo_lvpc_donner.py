@@ -117,6 +117,10 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
 
         return distances, cheapest_paths_from_sender
 
+    # review: after all, the `new_virtual_channel_delay` parameter is useless, because the situation is more complicated:
+    # Donner: (hops+1)*BASE_DELAY
+    # Elmo: (12*hops-12)*BASE_DELAY
+    # LVPC: (8*hops-7)*BASE_DELAY
     def get_new_virtual_channel_time(self, hops):
         if self.method_name == "LVPC":
             return 2 * self.new_virtual_channel_delay * (hops - 1)
