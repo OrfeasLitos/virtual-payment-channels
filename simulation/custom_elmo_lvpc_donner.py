@@ -41,12 +41,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         self.base_delay = base_delay
         self.pay_delay = 1.5 * base_delay
 
-    def get_opening_transaction_size(self, path=None):
-        if self.method_name == "Donner":
-            return 78.5 + 43*(len(path)-1)
-        else:
-            return 121.5
-
     # adjusted from LN
     # review: This should be minimum for parties with a channel,
     # review: progressively larger for parties that can open a channel on a progressively larger virtual layer
