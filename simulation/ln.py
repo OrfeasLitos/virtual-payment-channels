@@ -195,8 +195,6 @@ class LN(Payment_Network):
 
     def get_payment_options(self, sender, receiver, value, future_payments):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
-        # review: consider trying out opening other channels as well, e.g. a channel with the party that appears most often (possibly weighted by coins) in our future
-        # TODO: make a loop that gives us several possible new channels with different counterparties
         counterparty = receiver
         new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments, counterparty)
         offchain_option = self.get_offchain_option(sender, receiver, value, future_payments)
