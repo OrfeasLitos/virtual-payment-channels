@@ -210,12 +210,20 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     method.do(payment_information_new_virtual_channel)
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(sender, 4, future_payments)
-    wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
-    assert wanted_sender_coins == 0
-    sender_coins = 0
-    new_virtual_channel_fee = method.get_new_virtual_channel_fee([0,1,4], value)
-
+    wanted_sender_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
+    assert wanted_sender_coins == MULTIPLIER_CHANNEL_BALANCE * value
+    path = [0,1,4]
+    availability_factor = 4
+    available_balances = np.array([
+        method.network.graph[path[i]][path[i+1]]['balance'] /
+        availability_factor for i in range(len(path)-1)
+    ])
+    sender_coins = method.determine_sender_coins(
+        value, path, wanted_sender_coins, available_balances
+    )
     locked_coins = sender_coins + value
+    new_virtual_channel_fee = method.get_new_virtual_channel_fee(path, locked_coins)
+
     assert method.network.graph[1][4]['locked_coins'] == locked_coins
     assert method.network.graph[0][1]['balance'] == balances_before[(0, 1)] - new_virtual_channel_fee - locked_coins
     assert method.network.graph[1][0]['locked_coins'] == 0
@@ -225,7 +233,7 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     assert method.network.graph[4][1]['locked_coins'] == 0
     assert method.network.graph[1][2]['locked_coins'] == 0
     assert method.network.graph[1][2]['balance'] == balances_before[(1, 2)]
-    assert method.network.graph[0][4]['balance'] == 0
+    assert method.network.graph[0][4]['balance'] == sender_coins
     assert method.network.graph[4][0]['balance'] == value
     assert method.network.graph.get_edge_data(5, 0) is None
 
@@ -612,7 +620,9 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     method.network.add_channel(2, 4000000000000., 3, 8000000000000., None)
     method.network.add_channel(1, 1000000000000., 3, 800000000000., [1,2,3])
     knowledge = Knowledge('all')
-    payments = collections.deque([(0, 2, 1000000000), (0, 1, 20000000000)])
+    value0 = 1000000000
+    value1 = 20000000000
+    payments = collections.deque([(0, 2, value0), (0, 1, value1)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
     utility = Utility('customized', utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
@@ -627,8 +637,21 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     assert set(method.network.graph.edges()) == set(
         [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2)]
     )
-    assert method.network.graph[0][1]['locked_coins'] == 1000000000
-    assert method.network.graph[1][2]['locked_coins'] == 1000000000
+    sum_future_payments0 = 0
+    wanted_sender_coins0 = sum_future_payments0 + MULTIPLIER_CHANNEL_BALANCE * value0
+    assert wanted_sender_coins0 == MULTIPLIER_CHANNEL_BALANCE * value0
+    path0 = [0,1,2]
+    availability_factor = 4
+    available_balances = np.array([
+        method.network.graph[path0[i]][path0[i+1]]['balance'] /
+        availability_factor for i in range(len(path0)-1)
+    ])
+    sender_coins = method.determine_sender_coins(
+        value0, path0, wanted_sender_coins0, available_balances
+    )
+    locked_coins0 = sender_coins + value0
+    assert method.network.graph[0][1]['locked_coins'] == locked_coins0
+    assert method.network.graph[1][2]['locked_coins'] == locked_coins0
     assert method.network.graph[1][0]['locked_coins'] == 0
 
 def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_centrality(method_name):

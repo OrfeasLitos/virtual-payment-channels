@@ -212,7 +212,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         available_balances = np.array([
             self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor for i in range(len(path)-1)
         ])
-        desired_virtual_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
+        desired_virtual_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
         sender_coins = self.determine_sender_coins(value, path, desired_virtual_coins, available_balances)
         if sender_coins < 0:
             return None
