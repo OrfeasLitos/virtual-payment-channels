@@ -1,7 +1,8 @@
-
+import numpy as np
 from numpy.testing import assert_almost_equal as assert_eq
 import networkx as nx
 from lvpc import LVPC
+from custom_elmo_lvpc_donner import MULTIPLIER_BALANCE_RECURSION_LVPC
 from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
 from tests import (
     make_example_network_elmo_lvpc_donner,
@@ -65,21 +66,43 @@ def test_do_new_virtual_channel_long_path_lvpc():
     lvpc.do(payment_information_new_virtual_channel)
     # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(0, 7, future_payments)
-    wanted_sender_coins = MULTIPLIER_CHANNEL_BALANCE * sum_future_payments
-    assert wanted_sender_coins == 0
-    sender_coins_first_channel = value * (1 + lvpc.fee_rate) + lvpc.base_fee
+    wanted_sender_coins_first_channel = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
+    assert wanted_sender_coins_first_channel == MULTIPLIER_CHANNEL_BALANCE * value
+    sender_coins_first_channel_recursion = wanted_sender_coins_first_channel + value * (1 + lvpc.fee_rate) + lvpc.base_fee
+    path_first_channel = [0,1,4]
+    availability_factor = 4
+    available_balances_first_channel = np.array([
+        lvpc.network.graph[path_first_channel[i]][path_first_channel[i+1]]['balance'] /
+        availability_factor for i in range(len(path_first_channel)-1)
+    ])
+    sender_coins_first_channel = lvpc.determine_sender_coins(
+        value, path_first_channel, sender_coins_first_channel_recursion, available_balances_first_channel
+    )
     receiver_coins_first_channel = 0
     locked_coins_first_channel = sender_coins_first_channel + receiver_coins_first_channel
     new_virtual_channel_fee_first_channel = lvpc.get_new_virtual_channel_fee(
-        [0,1,4], locked_coins_first_channel
+        path_first_channel, locked_coins_first_channel
     )
-    sender_coins_second_channel = 0
+
+    wanted_sender_coins_second_channel = wanted_sender_coins_first_channel / MULTIPLIER_BALANCE_RECURSION_LVPC
+    path_second_channel = [0,4,7]
+    available_balances_second_channel = np.array([
+        lvpc.network.graph[path_second_channel[i]][path_second_channel[i+1]]['balance'] /
+        availability_factor for i in range(len(path_second_channel)-1)
+    ])
+    sender_coins_second_channel = lvpc.determine_sender_coins(
+        0, path_second_channel, wanted_sender_coins_second_channel, available_balances_second_channel
+    )
     receiver_coins_second_channel = value
     locked_coins_second_channel = sender_coins_second_channel + receiver_coins_second_channel
     new_virtual_channel_fee_second_channel = lvpc.get_new_virtual_channel_fee(
-        [0,4,7], locked_coins_second_channel
+        path_second_channel, locked_coins_second_channel
     )
     
+    locked_coins_second_channel = wanted_sender_coins_second_channel + receiver_coins_second_channel
+    new_virtual_channel_fee_second_channel = lvpc.get_new_virtual_channel_fee(
+        [0,4,7], locked_coins_second_channel
+    )
     assert_eq(lvpc.network.graph[1][4]['locked_coins'], locked_coins_first_channel)
     assert_eq(lvpc.network.graph[0][1]['locked_coins'], locked_coins_first_channel)
     assert_eq(
@@ -93,12 +116,12 @@ def test_do_new_virtual_channel_long_path_lvpc():
     assert_eq(lvpc.network.graph[4][1]['locked_coins'], 0)
     assert_eq(lvpc.network.graph[1][2]['locked_coins'], 0)
     assert_eq(lvpc.network.graph[1][2]['balance'], balances_before[(1, 2)])
-    assert_eq(lvpc.network.graph[0][4]['balance'], 0)
+    assert_eq(
+        lvpc.network.graph[0][4]['balance'],
+        sender_coins_first_channel - new_virtual_channel_fee_second_channel - locked_coins_second_channel
+    )
     assert_eq(lvpc.network.graph[0][4]['locked_coins'], locked_coins_second_channel)
     assert_eq(lvpc.network.graph[4][7]['locked_coins'], locked_coins_second_channel)
-    # the balance of zero here comes from the fact that sender_coins_first_channel is the minimum value,
-    # i.e. everything he puts on the channel will be locked.
-    assert_eq(lvpc.network.graph[0][4]['balance'], 0)
     assert_eq(lvpc.network.graph[4][0]['locked_coins'], 0)
     assert_eq(lvpc.network.graph[4][0]['balance'], new_virtual_channel_fee_second_channel)
     assert_eq(lvpc.network.graph[7][4]['balance'], balances_before[(7, 4)])
