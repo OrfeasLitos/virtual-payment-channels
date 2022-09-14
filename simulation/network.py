@@ -254,10 +254,6 @@ class Network_Elmo(Custom_Network_Elmo_LVPC_Donner):
         super().__init__(nr_vertices)
 
 class Network_LVPC(Custom_Network_Elmo_LVPC_Donner):
-    # TODO: check channel closing in LVPC.
-    # in our setting we shouldn't have a problem since we always only close the topmost channel,
-    # but how would it be handled if we close a channel below?
-    # in elmo that's no problem because we can have more channels below, but in LVPC that's not possible.
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
 
