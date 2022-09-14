@@ -16,8 +16,7 @@ a prominent approach is to optimistically handle
   and only use the underlying blockchain protocol as an
   arbiter in case of dispute.
 
-The key primitive of PCN protocols is a 
-payment (or more generally, state) channel. 
+The key primitive of PCN protocols is a payment channel.
 Two parties initiate the channel by locking
 some funds on-chain and subsequently
 exchange direct messages to update the state of the channel.
@@ -48,7 +47,7 @@ provided a better solution that enabled channels staying open
 for an arbitrary duration: the key idea was to duplicate the
 state of the channel between the two counterparties, say Alice and Bob, and facilitate a punishment mechanism that can be triggered by Bob whenever Alice posts an old state update and vice-versa. The script timelocking is essential to allow an honest counterparty some time to act.
 
-Interconnecting state channels in LN enables any two parties to transmit funds
+Interconnecting channels in LN enables any two parties to transmit funds
 to each other as long as they can find a route of payment channels that connects
 them. The downside of this mechanism is that it requires the direct involvement
 of all the parties along the path for each payment. Instead, ``virtual payment
