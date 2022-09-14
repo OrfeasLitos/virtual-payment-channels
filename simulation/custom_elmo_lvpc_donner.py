@@ -17,7 +17,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         max_coins = 2000000000000000, bitcoin_fee = 1000000,
         bitcoin_delay = 3600, coins_for_parties = "max_value",
         base_fee = 20000, fee_rate = 0.0004,
-        pay_delay = 0.05, new_virtual_channel_delay = 0.05
+        base_delay = 0.05
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.method_name = method_name
@@ -38,8 +38,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         self.base_fee = base_fee
         self.fee_rate = fee_rate
         # delay for opening new virtual channel (per hop)
-        self.pay_delay = pay_delay
-        self.new_virtual_channel_delay = new_virtual_channel_delay
+        self.base_delay = base_delay
+        self.pay_delay = 1.5 * base_delay
 
     def get_opening_transaction_size(self, path=None):
         if self.method_name == "Donner":
@@ -123,9 +123,11 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
     # LVPC: (8*hops-7)*BASE_DELAY
     def get_new_virtual_channel_time(self, hops):
         if self.method_name == "LVPC":
-            return 2 * self.new_virtual_channel_delay * (hops - 1)
+            return (8 * hops - 7) * self.base_delay
+        elif self.method_name == "Elmo":
+            return (12 * hops - 12) * self.base_delay
         else:
-            return self.new_virtual_channel_delay * hops
+            return (hops + 1) * self.base_delay
 
     def get_new_virtual_channel_fee(self, path, coins_to_lock):
         """
