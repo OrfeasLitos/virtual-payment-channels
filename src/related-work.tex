@@ -15,6 +15,13 @@ A number of attacks have been identified against LN. The wormhole
   close in a short amount of time, reducing the blockchain liveness and enabling
   a malicious party to steal off-chain funds.
 
+  To the best of our knowledge, no formal treatment of the privacy of LN exists.
+  Nevertheless, it intuitively improves upon the privacy of on-chain Bitcoin
+  transactions, as LN payments do not leave a permanent record: only
+  intermediaries of each payment are informed. It can be argued that Elmo
+  further improves privacy, as individual payments are completely hidden from
+  the intermediaries of a virtual channel.
+
   Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve the network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
   further increase network efficiency by preventing routes from becoming   unavailable due to lack of well-balanced funds.
 
@@ -68,13 +75,13 @@ non-custo\-dial chains (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lowe
   unfortunately inheriting the fixed lifetime limitation.
   Let ``simple channels'' be those built directly on-chain, i.e.\ channels that are not
   virtual.
-  Bitcoin-Compatible Virtual Channels~\cite{cryptoeprint:2020:554} also enables
+  Bitcoin-Compatible Virtual Channels~\cite{9519487} also enables
   virtual channels on top of two preexisting simple channels
   and offers two protocols, the first of which guarantees that the channel will
   stay off-chain for an agreed period, while the second allows the single intermediary
   to turn the virtual into a simple channel.
   This strategy has the shortcoming that even if it is made
-  recursive (a direction left open in~\cite{cryptoeprint:2020:554}) after $k$
+  recursive (a direction left open in~\cite{9519487}) after $k$
   applications of the constructor the virtual channel participant will have to
   publish on-chain $k$ transactions in order to close the channel if all
   intermediaries actively monitor the blockchain.
@@ -115,7 +122,7 @@ non-custo\-dial chains (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lowe
               & ✗                  & \LEFTcircle\footnote{lacks security analysis}
                                                & ✗         & Bitcoin \\
     \hline
-    BCVC~\cite{cryptoeprint:2020:554}
+    BCVC~\cite{9519487}
               & ✓                  & ✗         & ✗         & Bitcoin \\
     \hline
     Perun~\cite{perun}

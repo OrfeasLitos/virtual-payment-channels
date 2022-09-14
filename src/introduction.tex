@@ -1,51 +1,47 @@
 \section{Introduction}
-  The popularity of blockchain protocols 
-  in recent years has stretched their
-  performance  exposing a number of scalability considerations. 
-In particular, 
-Bitcoin and related blockchain protocols exhibit very high
-  latency (e.g.\ Bitcoin has a latency of 1h~\cite{bitcoin})
-  and a very low throughput (e.g., Bitcoin can handle at most 7
-  transactions per second~\cite{scaling}), 
-both significant shortcomings that jeopardize wider 
-use and adoption and are to a certain extent inherent~\cite{scaling}.
-To address these considerations
-a prominent approach is to optimistically handle
-  transactions off-chain via a ``Payment Channel Network'' 
-  (PCN) (see, e.g.,~\cite{DBLP:conf/fc/GudgeonMRMG20} for a survey)
-  and only use the underlying blockchain protocol as an
+  The popularity of blockchain protocols in recent years has stretched their
+  performance exposing a number of scalability considerations. In particular,
+  Bitcoin and related blockchain protocols exhibit very high latency (e.g.\
+  Bitcoin has a latency of 1h~\cite{bitcoin}) and a very low throughput (e.g.,
+  Bitcoin can handle at most 7 transactions per second~\cite{scaling}), both
+  significant shortcomings that jeopardize wider use and adoption and are to a
+  certain extent inherent~\cite{scaling}. To address these considerations a
+  prominent approach is to optimistically handle payments via a ``Payment
+  Channel Network'' (PCN) (see, e.g.,~\cite{DBLP:conf/fc/GudgeonMRMG20} for a
+  survey). Payments over a PCN happen \emph{off-chain}, i.e.\ without adding any
+  transactions to the underlying blockchain. They only use the blockchain as an
   arbiter in case of dispute.
 
-The key primitive of PCN protocols is a payment channel.
-Two parties initiate the channel by locking
-some funds on-chain and subsequently
-exchange direct messages to update the state of the channel.
-The key feature is that state updates are not posted on-chain
-and hence they remain unencumbered by the performance limitations
-of the underlying blockchain protocol. 
-Given this primitive, multiple overlapping payment
-channels can be combined and form the PCN. 
+The key primitive of PCN protocols is a payment channel. Two parties initiate
+the channel by locking some funds on-chain and subsequently exchange direct
+messages to update the state of the channel. The key feature is that state
+updates are not posted on-chain and hence they remain unencumbered by the
+performance limitations of the underlying blockchain protocol. Given this
+primitive, multiple overlapping payment channels can be combined and form the
+PCN.
 
-Closing a channel is an operation that involves posting the 
-state of the channel on-chain; it is essential that any party
-individually can close a channel as otherwise a malicious counterparty (i.e.\ the
-other channel participant)
-could prevent an honest party  from
-accessing their funds. This functionality
-however raises an important design consideration: how to prevent malicious parties from posting old states of the channel.
+Closing a channel is an operation that involves posting the state of the channel
+on-chain. Closing should be efficient, i.e.\ needing $O(1)$ on-chain
+transactions, independent of the number of payments that have occured off-chain.
+It is also essential that any party can unilaterally close a channel as
+otherwise a malicious counterparty (i.e.\ the other channel participant) could
+prevent an honest party from accessing their funds. This functionality however
+raises an important design consideration: how to prevent malicious parties from
+posting old states of the channel.
 %
-Addressing this issue can be done with some suitable use
-of  transaction ``timelocks'', a feature that prevents a transaction
-or a specific script from being processed on-chain
-prior to a specific time (measured in block height). 
+Addressing this issue can be done with some suitable use of transaction
+``timelocks'', a feature that prevents a transaction or a specific script from
+being processed on-chain prior to a specific time (measured in block height).
 %
-For instance, diminishing transaction timelocks
-facilitated the Duplex Micropayment Channels (DMC)~\cite{decker}
-at the expense of bounding the overall lifetime of a channel. 
-Using script timelocks, the Lightning Network (LN)~\cite{lightning}
-provided a better solution that enabled channels staying open
-for an arbitrary duration: the key idea was to duplicate the
-state of the channel between the two counterparties, say Alice and Bob, and facilitate a punishment mechanism that can be triggered by Bob whenever Alice posts an old state update and vice-versa. The script timelocking is essential to allow an honest counterparty some time to act.
+For instance, diminishing transaction timelocks facilitated the Duplex
+Micropayment Channels (DMC)~\cite{decker} at the expense of bounding the overall
+lifetime of a channel. Using script timelocks, the Lightning Network
+(LN)~\cite{lightning} provided a better solution that enabled channels staying
+open for an arbitrary duration: the key idea was to duplicate the state of the
+channel between the two counterparties, say Alice and Bob, and facilitate a
+punishment mechanism that can be triggered by Bob whenever Alice posts an old
+state update and vice-versa. The script timelocking is essential to allow an
+honest counterparty some time to act.
 
 Interconnecting channels in LN enables any two parties to transmit funds
 to each other as long as they can find a route of payment channels that connects
@@ -53,16 +49,20 @@ them. The downside of this mechanism is that it requires the direct involvement
 of all the parties along the path for each payment. Instead, ``virtual payment
 channels'', suggest the more attractive approach of putting a one-time off-chain
 initialization step to set up a virtual payment channel, which subsequently can
-be used for direct payments with complexity  ---in the optimistic case---
+be used for direct payments with complexity ---in the optimistic case---
 independent of the length of the path. When the virtual channel has exhausted
-its usefulness, it can be closed off-chain if involved parties cooperate.
+its usefulness, it can be closed off-chain if involved parties cooperate. Such a
+protocol can be very attractive for parties that need to send money to each
+other often.
 Initial constructions for virtual channels essentially capitalized on the extended functionality of Ethereum, e.g.,
 Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more
-recent work~\cite{cryptoeprint:2020:554}  brought them closer to
+recent work~\cite{9519487} brought them closer to
 Bitcoin-compatibility (by leveraging adaptor
 signatures~\cite{cryptoeprint:2020:476}).
 
-A virtual channel constructor can be thought of as an  {\em operator} over the underlying primitive of a state channel. We can identify three   natural desiderata for this operator. 
+A virtual channel constructor can be thought of as an \emph{operator} over the
+underlying primitive of a state channel. We can identify three natural
+desiderata for this operator.
 
 \begin{itemize}
 \item Recursive. A recursive virtual channel constructor can operate over
@@ -86,7 +86,7 @@ the parties that take part in any of underlying channels.
 
 We note that recursiveness, while identified already as an important design
 property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}), has not been achieved in the context of Bitcoin-compatible channels 
-(it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{cryptoeprint:2020:554}).
+(it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{9519487}).
 The reason behind this are the severe limitations imposed to the design by the scripting language of Bitcoin-compatible systems. 
 %
 With respect to the other two properties, observe that successive applications
@@ -94,9 +94,9 @@ of a recursive {\em binary} virtual channel operator to make it variadic will
 break symmetry (since the sequence of operator applications will impact the
 participants' functions with respect to the resulting channel). This is of
 particular concern since most previous virtual channel constructors proposed are
-binary, c.f.~\cite{DBLP:conf/ccs/DziembowskiFH18,cryptoeprint:2020:554,10.1007/978-3-030-65411-5_18}.
+binary, c.f.~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
 
-\paragraph{Our Contributions.}  We present  the first  Bitcoin-suitable
+\paragraph{Our Contributions.} We present the first Bitcoin-suitable
 recursive virtual channel constructor that supports channels
 with an indefinite lifetime. In addition, our constructor, Elmo (named after St.
 Elmo's fire), is variadic and symmetric. In our constructor, both optimistic and
@@ -119,14 +119,21 @@ off-chain, or instead opt for unilateral on-chain closing, following any arbitra
 activation sequence. The latter is achieved by making it feasible for anyone to
 become an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
 
-  We formally prove the security of the constructor protocol in the
-  Universally Composable security (UC)~\cite{uc} setting; our ideal functionality is global, according to the
-  definition of~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The construction relies
-  on the \texttt{ANYPREVOUT} signature type (slated for inclusion in the next
-  Bitcoin update), which does not sign the hash of the transaction it spends,
-  therefore allowing for a single pre-signed transaction to spend any output
-  with a suitable script. We conjecture that any virtual channel constructor protocol that
-  has participants store transactions in their local state
-  and offers an efficient closing operation via $O(1)$ transactions
-  will have an exponentially large state in the number of intermediaries, unless
-  \texttt{ANYPREVOUT} is available.
+  We formally prove the security of the constructor protocol in the Universally
+  Composable security (UC)~\cite{uc} setting; our ideal functionality is global,
+  according to the definition of~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The
+  construction relies on the \texttt{ANYPREVOUT} signature type (slated for
+  inclusion in the next Bitcoin update), which does not sign the hash of the
+  transaction it spends, therefore allowing for a single pre-signed transaction
+  to spend any output with a suitable script. We conjecture that, if
+  \texttt{ANYPREVOUT} is unavailable, no efficient virtual channel constructor
+  protocol over Bitcoin can be built. More specifically, if any such protocol
+  (i) offers an efficient closing operation (i.e.\ with $O(1)$ on-chain
+  transactions) and (ii) has parties store the channel state as transactions and
+  signatures in their local storage, then each party will need exponentially
+  large space in the number of intermediaries. Note that the second protocol
+  requirement is natural, since, to our knowledge, all trustless layer $2$
+  protocols over Bitcoin require all implicated protocol parties to actively
+  sign off every state transition and locally store the relevant transactions
+  and signatures of their counterparties, thus ensuring their ability to
+  unilaterally exit later.

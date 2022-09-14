@@ -1,7 +1,7 @@
 \section{Efficiency Evaluation}
   \label{section:comparison}
   We offer here a comparison of this work with
-  LVPC~\cite{10.1007/978-3-030-65411-5_18}, BCVC~\cite{cryptoeprint:2020:554}
+  LVPC~\cite{10.1007/978-3-030-65411-5_18}, BCVC~\cite{9519487}
   and Donner~\cite{donner} in terms of communication efficiency when opening and
   updating. We also compare
   the maximum on-chain cost for an endpoint to unilaterally close its virtual
@@ -17,7 +17,7 @@
   preferred to raw bytes. For Table~\ref{table:comparison:overhead:3-parties},
   transaction size is calculated in raw bytes instead, to better align with the
   counting method used in the efficiency evaluation found
-  in~\cite{cryptoeprint:2020:554}. We used the tool found in
+  in~\cite{9519487}. We used the tool found in
   \url{https://jlopp.github.io/bitcoin-transaction-size-calculator/} to aid size
   calculation.} and number of transactions. The comparison is performed both for
   channels of length $3$ and for channels of length $n$. In the second
@@ -31,9 +31,9 @@
   virtual channels between other parties (which could be used as shortcuts).
 
   BCVC proposes $4$ configurations, each with different efficiency
-  characteristics: over Generalised Channels~\cite{cryptoeprint:2020:476} (GC)
+  characteristics: over Generalised Channels~\cite{DBLP:journals/iacr/AumayrEEFHMMR20} (GC)
   or Lightning, and with or without validity (V or NV respectively); we include
-  all of them here. We refer the reader to~\cite{cryptoeprint:2020:554} for more
+  all of them here. We refer the reader to~\cite{9519487} for more
   details.
 
   Since all constructions produce pairwise channels, updates (a.k.a.\ payments)
@@ -82,7 +82,7 @@
     \end{center}
     \end{minipage}
     \caption{Efficiency comparison of a $3$-party channel in Elmo and
-    BCVC~\cite{cryptoeprint:2020:554}}
+    BCVC~\cite{9519487}}
     \label{table:comparison:overhead:3-parties}
   \end{table*}
 
