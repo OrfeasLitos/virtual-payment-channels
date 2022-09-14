@@ -123,8 +123,8 @@ become an initiator towards closing the channel, while subsequent respondents, f
   We formally prove the security of the constructor protocol in the
   Universally Composable security (UC)~\cite{uc} setting; our ideal functionality is global, according to the
   definition of~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The construction relies
-  on the \texttt{ANYPREVOUT} signature type (currently under discussion for
-  future inclusion in Bitcoin), which does not sign the hash of the transaction it spends,
+  on the \texttt{ANYPREVOUT} signature type (slated for inclusion in the next
+  Bitcoin update), which does not sign the hash of the transaction it spends,
   therefore allowing for a single pre-signed transaction to spend any output
   with a suitable script. We conjecture that any virtual channel constructor protocol that
   has participants store transactions in their local state
