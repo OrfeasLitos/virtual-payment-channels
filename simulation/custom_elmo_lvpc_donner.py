@@ -72,7 +72,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             # in the network which probably doesn't scale well. But I haven't yet tested how it scales.
             if future_sender != source: #and future_sender in near_parties:
                 if (future_sender, source) not in calculated_cheapest_paths:
-                    cheapest_path = self.network.find_cheapest_path(future_sender, source, dummy_lock_value, self.base_fee)
+                    cheapest_path = self.network.find_cheapest_path(
+                        future_sender, source, dummy_lock_value, self.base_fee + dummy_lock_value * self.fee_rate
+                    )
                     calculated_cheapest_paths[(future_sender, source)] = cheapest_path
                 else:
                     cheapest_path = calculated_cheapest_paths[(future_sender, source)]
