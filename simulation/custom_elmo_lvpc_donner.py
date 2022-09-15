@@ -12,7 +12,6 @@ MULTIPLIER_BALANCE_RECURSION_LVPC = 1.5
 
 class Custom_Elmo_LVPC_Donner(Payment_Network):
     def __init__(
-        # review: opening_transaction_size must probably be specified by whoever inherits this class
         self, method_name, nr_players, opening_transaction_size,
         max_coins = 2000000000000000, bitcoin_fee = 1000000,
         bitcoin_delay = 3600, coins_for_parties = "max_value",
@@ -127,7 +126,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         """
         return (self.base_fee + coins_to_lock * self.fee_rate) * (len(path) - 2)
 
-    # adjusted from LN
     def get_new_channel_option(self, sender, receiver, value, knowledge_sender):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
@@ -305,7 +303,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             case 'onchain':
                 self.plain_bitcoin.pay(payment_information['data'])
             case self.open_channel_string:
-                # adjusted from LN-open
                 sender, receiver, value, sender_coins = payment_information['data']
                 self.network.add_channel(sender, sender_coins, receiver, value, None)
                 # next update the coins of sender
