@@ -10,7 +10,7 @@ from tests import (
     make_example_simulation_for_all, get_knowledge_sender,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible,
     test_do_elmo_lvpc_donner,
     test_update_balances_new_virtual_channel_elmo_lvpc_donner,
     test_lock_and_unlock_elmo_lvpc_donner,
@@ -40,19 +40,17 @@ def test_get_payment_options_lvpc_channel_exists():
     test_get_payment_options_elmo_lvpc_donner_channel_exists("LVPC")
 
 def test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible():
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("LVPC")
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible("LVPC")
 
-def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2():
+def test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible():
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("LVPC")
 
 def test_get_payment_options_lvpc():
     test_get_payment_options_lvpc_channel_exists()
     test_get_payment_options_lvpc_no_channel_exists_virtual_channel_possible()
-    #test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible1()
-    test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible2()
+    test_get_payment_options_lvpc_no_channel_exists_no_virtual_channel_possible()
 
 def test_do_new_virtual_channel_long_path_lvpc():
-    # the new_virtual_channel_option is the same for elmo, lvpc and donner as it is a channel on two existing onchain channels.
     lvpc = make_example_network_lvpc()
     value = 10000000.
     future_payments = [(0,1,2000000000.), (0, 8, 3000000000.)]

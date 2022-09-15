@@ -7,7 +7,7 @@ from tests import (make_example_network_elmo_lvpc_donner,
     make_example_simulation_for_all, make_example_utility_function,
     get_knowledge_sender, test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible,
     test_do_elmo_lvpc_donner,
     test_update_balances_new_virtual_channel_elmo_lvpc_donner,
     test_lock_and_unlock_elmo_lvpc_donner,
@@ -38,7 +38,7 @@ def test_get_payment_options_elmo_no_channel_exists_no_virtual_channel_possible(
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("Elmo")
 
 def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible1():
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("Elmo")
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible("Elmo")
 
 def test_get_payment_options_elmo_no_channel_exists_virtual_channel_possible2():
     base_fee, elmo, future_payments = make_example_network_elmo_and_future_payments()

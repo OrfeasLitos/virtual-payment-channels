@@ -3,7 +3,7 @@ from tests import (make_example_network_elmo_lvpc_donner, make_example_simulatio
     make_example_network_elmo_lvpc_donner_and_future_payments, get_knowledge_sender,
     test_get_payment_options_elmo_lvpc_donner_channel_exists,
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible,
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1,
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible,
     test_do_elmo_lvpc_donner,
     test_update_balances_new_virtual_channel_elmo_lvpc_donner,
     test_lock_and_unlock_elmo_lvpc_donner,
@@ -36,7 +36,7 @@ def test_get_payment_options_donner_no_channel_exists_no_virtual_channel_possibl
     test_get_payment_options_elmo_lvpc_donner_no_channel_exists_no_virtual_channel_possible("Donner")
 
 def test_get_payment_options_donner_no_channel_exists_virtual_channel_possible1():
-    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible1("Donner")
+    test_get_payment_options_elmo_lvpc_donner_no_channel_exists_virtual_channel_possible("Donner")
 
 # same as in Elmo
 def test_get_payment_options_donner_no_channel_exists_virtual_channel_possible2():
