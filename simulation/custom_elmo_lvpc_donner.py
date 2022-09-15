@@ -24,15 +24,14 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         self.open_channel_string = method_name + "-open-channel"
         self.open_virtual_channel_string = method_name + "-open-virtual-channel"
         self.pay_string = method_name + "-pay"
-        match method_name:
-            case "Elmo":
-                self.network = Network_Elmo(nr_players)
-            case "LVPC":
-                self.network = Network_LVPC(nr_players)
-            case "Donner":
-                self.network = Network_Donner(nr_players)
-            case _:
-                raise ValueError
+        if method_name == "Elmo":
+            self.network = Network_Elmo(nr_players)
+        elif method_name == "LVPC":
+            self.network = Network_LVPC(nr_players)
+        elif method_name == "Donner":
+            self.network = Network_Donner(nr_players)
+        else:
+            raise ValueError
 
         self.base_fee = base_fee
         self.fee_rate = fee_rate
@@ -187,16 +186,17 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
         # this is a simplification. TODO: think if this is what we want.
         anticipated_lock_value = sum_future_payments + value
-        match self.method_name:
-            case "Elmo" | "LVPC":
-                cost_and_path = self.network.find_cheapest_path(
-                    sender, receiver, anticipated_lock_value, self.base_fee
-                )
-            case "Donner":
-                cost_and_path = self.network.find_cheapest_path(
-                    sender, receiver, anticipated_lock_value, self.base_fee,
-                    function="new_virtual_donner"
-                )
+        if self.method_name == "Elmo" or self.method_name == "LVPC":
+            cost_and_path = self.network.find_cheapest_path(
+                sender, receiver, anticipated_lock_value, self.base_fee
+            )
+        elif self.method_name == "Donner":
+            cost_and_path = self.network.find_cheapest_path(
+                sender, receiver, anticipated_lock_value, self.base_fee,
+                function="new_virtual_donner"
+            )
+        else:
+            raise ValueError
             
         if cost_and_path is None:
             return None
@@ -295,87 +295,85 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         self.network.graph[receiver][sender]['balance'] = self.network.graph[receiver][sender]['balance'] + value
 
     def do(self, payment_information):
-        match payment_information['kind']:
-            case 'onchain':
-                self.plain_bitcoin.pay(payment_information['data'])
-            case self.open_channel_string:
-                sender, receiver, value, sender_coins = payment_information['data']
-                self.network.add_channel(sender, sender_coins, receiver, value, None)
-                # next update the coins of sender
-                amount_sender = - (
-                    sender_coins + value +
-                    self.plain_bitcoin.get_fee(self.opening_transaction_size)
-                )
-                self.plain_bitcoin.update_coins(sender, amount_sender)
-            case self.open_virtual_channel_string:
-                path, value, sender_coins = payment_information['data']
-                sender = path[0]
-                if self.open_virtual_channel_string == "LVPC-open-virtual-channel":
-                    new_virtual_channel_fee = 0
-                    for i in range(len(path)-2):
-                        path_for_recursion = [sender] + path[i+1:i+3]
-                        sender_coins_recursion = sender_coins / (MULTIPLIER_BALANCE_RECURSION_LVPC**i)
-                        if i != len(path)-3:
-                            sender_coins_recursion += value * (1 + self.fee_rate) + self.base_fee
-                        receiver_coins_recursion = (
-                            0 if i != len(path)-3 else value
-                        )
-                        receiver_recursion = path_for_recursion[-1]
-                        new_virtual_channel_fee += self.get_new_virtual_channel_fee(
-                            path_for_recursion, sender_coins_recursion + receiver_coins_recursion
-                        )
-                        # important that next line is at that position so that Error gets raised in case update is not possible
-                        # before anything else is done.
-                        self.update_balances_new_virtual_channel(
-                            path_for_recursion, receiver_coins_recursion, sender_coins_recursion, new_channel=True
-                        )
-                        self.network.lock_unlock(
-                            path_for_recursion, sender_coins_recursion + receiver_coins_recursion, lock=True
-                        )
-                        self.network.add_channel(
-                            sender, sender_coins_recursion, receiver_recursion, receiver_coins_recursion, path_for_recursion
-                        )
-                    return new_virtual_channel_fee
-                else: # Donner or Elmo
-                    sender = path[0]
-                    receiver = path[-1]
+        if payment_information['kind'] == 'onchain':
+            self.plain_bitcoin.pay(payment_information['data'])
+        elif payment_information['kind'] == self.open_channel_string:
+            sender, receiver, value, sender_coins = payment_information['data']
+            self.network.add_channel(sender, sender_coins, receiver, value, None)
+            # next update the coins of sender
+            amount_sender = - (
+                sender_coins + value +
+                self.plain_bitcoin.get_fee(self.opening_transaction_size)
+            )
+            self.plain_bitcoin.update_coins(sender, amount_sender)
+        elif payment_information['kind'] == self.open_virtual_channel_string:
+            path, value, sender_coins = payment_information['data']
+            sender = path[0]
+            if self.open_virtual_channel_string == "LVPC-open-virtual-channel":
+                new_virtual_channel_fee = 0
+                for i in range(len(path)-2):
+                    path_for_recursion = [sender] + path[i+1:i+3]
+                    sender_coins_recursion = sender_coins / (MULTIPLIER_BALANCE_RECURSION_LVPC**i)
+                    if i != len(path)-3:
+                        sender_coins_recursion += value * (1 + self.fee_rate) + self.base_fee
+                    receiver_coins_recursion = (
+                        0 if i != len(path)-3 else value
+                    )
+                    receiver_recursion = path_for_recursion[-1]
+                    new_virtual_channel_fee += self.get_new_virtual_channel_fee(
+                        path_for_recursion, sender_coins_recursion + receiver_coins_recursion
+                    )
                     # important that next line is at that position so that Error gets raised in case update is not possible
                     # before anything else is done.
-                    self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
-                    self.network.lock_unlock(path, sender_coins + value, lock=True)
-                    self.network.add_channel(sender, sender_coins, receiver, value, path)
-                    new_virtual_channel_fee = self.get_new_virtual_channel_fee(path, value + sender_coins)
-                    return new_virtual_channel_fee
-            case self.pay_string:
-                sender, receiver, value = payment_information['data']
-                self.pay(sender, receiver, value)
-            case _:
-                raise ValueError
+                    self.update_balances_new_virtual_channel(
+                        path_for_recursion, receiver_coins_recursion, sender_coins_recursion, new_channel=True
+                    )
+                    self.network.lock_unlock(
+                        path_for_recursion, sender_coins_recursion + receiver_coins_recursion, lock=True
+                    )
+                    self.network.add_channel(
+                        sender, sender_coins_recursion, receiver_recursion, receiver_coins_recursion, path_for_recursion
+                    )
+                return new_virtual_channel_fee
+            else: # Donner or Elmo
+                sender = path[0]
+                receiver = path[-1]
+                # important that next line is at that position so that Error gets raised in case update is not possible
+                # before anything else is done.
+                self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
+                self.network.lock_unlock(path, sender_coins + value, lock=True)
+                self.network.add_channel(sender, sender_coins, receiver, value, path)
+                new_virtual_channel_fee = self.get_new_virtual_channel_fee(path, value + sender_coins)
+                return new_virtual_channel_fee
+        elif payment_information['kind'] == self.pay_string:
+            sender, receiver, value = payment_information['data']
+            self.pay(sender, receiver, value)
+        else:
+            raise ValueError
 
     def undo(self, payment_information):
-        match payment_information['kind']:
-            case self.open_virtual_channel_string:
-                path, value, sender_coins = payment_information['data']
-                sender = path[0]
-                if self.open_virtual_channel_string == "LVPC-open-virtual-channel":
-                    for i in range(len(path)-3, -1, -1):
-                        path_for_recursion = [sender] + path[i+1:i+3]
-                        receiver = path_for_recursion[-1]
-                        amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
-                        self.update_balances_new_virtual_channel(
-                            path_for_recursion, amount_receiver, amount_sender, new_channel=False
-                        )
-                else:
-                    sender = path[0]
-                    receiver = path[-1]
+        if payment_information['kind'] == self.open_virtual_channel_string:
+            path, value, sender_coins = payment_information['data']
+            sender = path[0]
+            if self.open_virtual_channel_string == "LVPC-open-virtual-channel":
+                for i in range(len(path)-3, -1, -1):
+                    path_for_recursion = [sender] + path[i+1:i+3]
+                    receiver = path_for_recursion[-1]
                     amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
-                    self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
-            case self.pay_string:
-                sender, receiver, value = payment_information['data']
-                if self.network.graph.get_edge_data(sender, receiver) is None:
-                    raise ValueError
-                self.network.graph[sender][receiver]['balance'] += value
-                self.network.graph[receiver][sender]['balance'] -= value
-            case _:
+                    self.update_balances_new_virtual_channel(
+                        path_for_recursion, amount_receiver, amount_sender, new_channel=False
+                    )
+            else:
+                sender = path[0]
+                receiver = path[-1]
+                amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
+                self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
+        elif payment_information['kind'] == self.pay_string:
+            sender, receiver, value = payment_information['data']
+            if self.network.graph.get_edge_data(sender, receiver) is None:
                 raise ValueError
+            self.network.graph[sender][receiver]['balance'] += value
+            self.network.graph[receiver][sender]['balance'] -= value
+        else:
+            raise ValueError
 

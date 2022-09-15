@@ -19,48 +19,47 @@ MAX_PAY = 2000000000000000//5
 
 def random_payments(players, max_pay, distribution = 'uniform', num_pays = None, power = None):
     res = collections.deque()
-    match distribution:
-        case 'uniform':
-            for _ in range(num_pays):
-                sender = random.randrange(players)
+    if distribution == 'uniform':
+        for _ in range(num_pays):
+            sender = random.randrange(players)
+            receiver = random.randrange(players)
+            while receiver == sender:
                 receiver = random.randrange(players)
-                while receiver == sender:
-                    receiver = random.randrange(players)
-                value = random.randrange(max_pay)
-                res.append((sender, receiver, value))
-        case 'zipf':
-            incoming_payments_per_player = np.random.zipf(power, players)
-            # assume incoming payments come from unifrom distribution
-            # example: big player that everyone pays to (in real world maybe Netflix), but
-            # that doesn't have that many outgoing payments.
-            for receiver in range(len(incoming_payments_per_player)):
-                for j in range(incoming_payments_per_player[receiver]):
-                    sender = random.randrange(players)
-                    while sender == receiver:
-                        sender = random.randrange(players)
-                    value = random.randrange(max_pay)
-                    res.append((sender, receiver, value))
-            random.shuffle(res)
-        case 'preferred-receiver':
-            # with probability p the party sends the amount to preferred receiver
-            # with probability q to a random party.
-            preferred_receivers = []
-            for sender in range(players):
-                preferred_receiver = random.randrange(players)
-                while sender == preferred_receiver:
-                    preferred_receiver = random.randrange(players)
-                preferred_receivers.append(preferred_receiver)
-            p = 0.5
-            q = 1-p
-            for _ in range(num_pays):
+            value = random.randrange(max_pay)
+            res.append((sender, receiver, value))
+    elif distribution == 'zipf':
+        incoming_payments_per_player = np.random.zipf(power, players)
+        # assume incoming payments come from unifrom distribution
+        # example: big player that everyone pays to (in real world maybe Netflix), but
+        # that doesn't have that many outgoing payments.
+        for receiver in range(len(incoming_payments_per_player)):
+            for j in range(incoming_payments_per_player[receiver]):
                 sender = random.randrange(players)
-                receiver = random.randrange(players) if random.uniform(0, 1) > p else preferred_receivers[sender]
-                while receiver == sender:
-                    receiver = random.randrange(players)
+                while sender == receiver:
+                    sender = random.randrange(players)
                 value = random.randrange(max_pay)
                 res.append((sender, receiver, value))
-        case _:
-            raise ValueError
+        random.shuffle(res)
+    elif distribution == 'preferred-receiver':
+        # with probability p the party sends the amount to preferred receiver
+        # with probability q to a random party.
+        preferred_receivers = []
+        for sender in range(players):
+            preferred_receiver = random.randrange(players)
+            while sender == preferred_receiver:
+                preferred_receiver = random.randrange(players)
+            preferred_receivers.append(preferred_receiver)
+        p = 0.5
+        q = 1-p
+        for _ in range(num_pays):
+            sender = random.randrange(players)
+            receiver = random.randrange(players) if random.uniform(0, 1) > p else preferred_receivers[sender]
+            while receiver == sender:
+                receiver = random.randrange(players)
+            value = random.randrange(max_pay)
+            res.append((sender, receiver, value))
+    else:
+        raise ValueError
 
     return res
 

@@ -198,38 +198,36 @@ class LN(Payment_Network):
         return [option for option in options if option is not None]
 
     def do(self, payment_information):
-        match payment_information['kind']:
-            case 'onchain':
-                self.plain_bitcoin.pay(payment_information['data'])
-            case 'ln-open':
-                (
-                    sender, receiver, value, counterparty, sender_coins,
-                    new_channel_offchain_option
-                ) = payment_information['data']
-                counterparty_coins = value if counterparty == receiver else 0
-                self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
-                # next update the coins of sender
-                amount_sender = - (
-                    sender_coins + counterparty_coins +
-                    self.plain_bitcoin.get_fee(self.opening_transaction_size)
-                )
-                self.plain_bitcoin.update_coins(sender, amount_sender)
-                # use ln-pay here to make the off-chain payment after opening a new channel.
-                if counterparty != receiver:
-                    self.do(new_channel_offchain_option['payment_information'])
-            case 'ln-pay':
-                offchain_path, value = payment_information['data']
-                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = True)
-            case _:
-                raise ValueError
+        if payment_information['kind'] == 'onchain':
+            self.plain_bitcoin.pay(payment_information['data'])
+        elif payment_information['kind'] == 'ln-open':
+            (
+                sender, receiver, value, counterparty, sender_coins,
+                new_channel_offchain_option
+            ) = payment_information['data']
+            counterparty_coins = value if counterparty == receiver else 0
+            self.network.add_channel(sender, sender_coins, counterparty, counterparty_coins)
+            # next update the coins of sender
+            amount_sender = - (
+                sender_coins + counterparty_coins +
+                self.plain_bitcoin.get_fee(self.opening_transaction_size)
+            )
+            self.plain_bitcoin.update_coins(sender, amount_sender)
+            # use ln-pay here to make the off-chain payment after opening a new channel.
+            if counterparty != receiver:
+                self.do(new_channel_offchain_option['payment_information'])
+        elif payment_information['kind'] == 'ln-pay':
+            offchain_path, value = payment_information['data']
+            self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = True)
+        else:
+            raise ValueError
 
     def undo(self, payment_information):
-        match payment_information['kind']:
-            case 'ln-pay':
-                offchain_path, value = payment_information['data']
-                self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = False)
-            case _:
-                raise ValueError
+        if payment_information['kind'] == 'ln-pay':
+            offchain_path, value = payment_information['data']
+            self.update_balances(value, self.ln_fee, self.base_fee, offchain_path, pay = False)
+        else:
+            raise ValueError
 
     def equal_channels(self, other):
         if self.network.graph.nodes() != other.network.graph.nodes():

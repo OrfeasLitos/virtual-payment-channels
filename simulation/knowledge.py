@@ -33,21 +33,20 @@ know_my_next_10 = get_know_my_next_n(10)
 
 class Knowledge:
     def __init__(self, knowledge_mode, knowledge_function = None):
-        match knowledge_mode:
-            case 'customized':
-                self.knowledge_function = knowledge_function
-            case 'all':
-                self.knowledge_function = know_all
-            case 'mine':
-                self.knowledge_function = know_mine
-            case 'next':
-                self.knowledge_function = know_next
-            case '10-next':
-                self.knowledge_function = know_next_10
-            case '10-next-mine':
-                self.knowledge_function = know_my_next_10
-            case _:
-                raise ValueError
+        if knowledge_mode == 'customized':
+            self.knowledge_function = knowledge_function
+        elif knowledge_mode == 'all':
+            self.knowledge_function = know_all
+        elif knowledge_mode == 'mine':
+            self.knowledge_function = know_mine
+        elif knowledge_mode == 'next':
+            self.knowledge_function = know_next
+        elif knowledge_mode == '10-next':
+            self.knowledge_function = know_next_10
+        elif knowledge_mode == '10-next-mine':
+            self.knowledge_function = know_my_next_10
+        else:
+            raise ValueError
 
 
     def get_knowledge(self, party, payments):

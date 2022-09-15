@@ -266,18 +266,17 @@ class Network_Donner(Custom_Network_Elmo_LVPC_Donner):
         The balance acts as a threshold.
         If the amount is bigger than the balance the weight is math.inf, otherwise it is 1.
         """
-        match function:
-            case "new_virtual_donner":
-                def weight_function(sender, receiver, edge_attributes):
-                    if edge_attributes['balance'] < amount or edge_attributes['channels_below'] is not None:
-                        return math.inf
-                    return 1
-            case "standard":
-                def weight_function(sender, receiver, edge_attributes):
-                    if edge_attributes['balance'] < amount:
-                        return math.inf
-                    return 1
-            case _:
-                return None
+        if function == "new_virtual_donner":
+            def weight_function(sender, receiver, edge_attributes):
+                if edge_attributes['balance'] < amount or edge_attributes['channels_below'] is not None:
+                    return math.inf
+                return 1
+        elif function == "standard":
+            def weight_function(sender, receiver, edge_attributes):
+                if edge_attributes['balance'] < amount:
+                    return math.inf
+                return 1
+        else:
+            return None
             
         return weight_function

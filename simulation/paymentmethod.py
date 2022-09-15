@@ -28,16 +28,15 @@ class PlainBitcoin():
         self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
-        match coins_for_parties:
-            case "max_value":
-                self.coins = {i: max_coins for i in range(nr_players)}
-            case "small_value":
-                self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
-            case "random":
-                # maybe better Pareto distribution?
-                self.coins = {i: max(0, random.normalvariate(max_coins/2, max_coins/4)) for i in range(nr_players)}
-            case _:
-                raise ValueError
+        if coins_for_parties == "max_value":
+            self.coins = {i: max_coins for i in range(nr_players)}
+        elif coins_for_parties == "small_value":
+            self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
+        elif coins_for_parties == "random":
+            # maybe better Pareto distribution?
+            self.coins = {i: max(0, random.normalvariate(max_coins/2, max_coins/4)) for i in range(nr_players)}
+        else:
+            raise ValueError
 
     def get_unit_transaction_cost(self):
         return (self.bitcoin_fee, self.bitcoin_delay)
