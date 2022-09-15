@@ -125,7 +125,6 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
             for i in range(len(path) - 1):
                 sender = path[i]
                 receiver = path[i+1]
-                # TODO: maybe store it just on one edge as an optimization.
                 self.graph[sender][receiver]['channels_above'].append({idA, idB})
                 self.graph[receiver][sender]['channels_above'].append({idA, idB})
         self.edge_id += 1
@@ -261,7 +260,6 @@ class Network_Donner(Custom_Network_Elmo_LVPC_Donner):
     def __init__(self, nr_vertices):
         super().__init__(nr_vertices)
 
-    # TODO: check if we really need the function argument. Depends on how we want to handle distances
     def get_weight_function(self, amount, function = "standard"):
         """
         This function returns the weight function we use in the following.
