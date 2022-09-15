@@ -77,15 +77,12 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     calculated_cheapest_paths[(future_sender, source)] = cheapest_path
                 else:
                     cheapest_path = calculated_cheapest_paths[(future_sender, source)]
-                # TODO: think about discarding first part of the tuple.
                 path_data.append((
-                    future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
                     cheapest_path
                 ))
             if future_receiver != source:
                 path_data.append((
-                    future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
                     cheapest_paths_from_sender.get(future_receiver)
                 ))
@@ -93,12 +90,11 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
-                party,
                 weight_other,
                 cheapest_paths_from_sender.get(party)
             ))
 
-        for counterparty, weight, cheapest_path in path_data:
+        for weight, cheapest_path in path_data:
             if cheapest_path is None:
                 distances.append((weight, math.inf))
             else:

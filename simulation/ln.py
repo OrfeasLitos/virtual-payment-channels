@@ -55,15 +55,12 @@ class LN(Payment_Network):
             encountered_parties.add(future_sender)
             encountered_parties.add(future_receiver)
             if future_sender != source:
-                # TODO: think about discarding first part of the tuple.
                 path_data.append((
-                    future_sender,
                     weight_endpoint if future_receiver == source else weight_intermediary,
                     self.network.find_cheapest_path(future_sender, source, value, fee_intermediary)
                 ))
             if future_receiver != source:
                 path_data.append((
-                    future_receiver,
                     weight_endpoint if future_sender == source else weight_intermediary,
                     cheapest_paths_from_sender.get(future_receiver)
                 ))
@@ -71,12 +68,11 @@ class LN(Payment_Network):
         fee_intermediary = self.ln_fee * DUMMY_PAYMENT_VALUE + self.base_fee
         for party in (set(self.network.graph.nodes()).difference(encountered_parties)):
             path_data.append((
-                party,
                 weight_other,
                 cheapest_paths_from_sender.get(party)
             ))
         
-        for counterparty, weight, cheapest_path in path_data:
+        for weight, cheapest_path in path_data:
             if cheapest_path is None:
                 distances.append((weight, math.inf))
             else:
