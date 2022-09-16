@@ -67,7 +67,7 @@ def make_example_simulation_for_all(method_name, seed = 12345, nr_players = 10, 
     knowledge = Knowledge('all')
     payments = random_payments(nr_players, 2000000000, distribution=distribution, num_pays = 100)
     utility_function = example_utility_function_for_simulation
-    utility = Utility('customized', utility_function)
+    utility = Utility('customized', utility_function=utility_function)
     return Simulation(payments, method, knowledge, utility)
 
 
@@ -556,7 +556,7 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality(method_name):
     knowledge = Knowledge('all')
     payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
     utility_function = make_example_utility_function(10000, 5000, 10000, 0)
-    utility = Utility('customized', utility_function)
+    utility = Utility('customized', utility_function=utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
     done_payment0, payment0_info, fee0, delay0 = results[0]
@@ -587,7 +587,7 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_
     knowledge = Knowledge('all')
     payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
     utility_function = make_example_utility_function(10000, 5000, 0, 0)
-    utility = Utility('customized', utility_function)
+    utility = Utility('customized', utility_function=utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
     done_payment0, payment0_info, _, _ = results[0]
@@ -619,7 +619,7 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     value1 = 20000000000
     payments = collections.deque([(0, 2, value0), (0, 1, value1)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
-    utility = Utility('customized', utility_function)
+    utility = Utility('customized', utility_function=utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
     done_payment0, payment0_info, _, _ = results[0]
@@ -669,7 +669,7 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_long_path_ignore_cen
     value = 10000000000
     payments = collections.deque([(0, 3, value), (0, 3, value / 10)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
-    utility = Utility('customized', utility_function)
+    utility = Utility('customized', utility_function=utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
     assert len(results) == 2
@@ -713,7 +713,7 @@ def test_simulation_with_previous_channels_elmo_donner_lvpc_recursive_ignore_cen
     value = 10000000000
     payments = collections.deque([(0, 2, value), (0, 3, value / 10), (0, 2, value / 5)])
     utility_function = make_example_utility_function(10000, 5000, 1, 0)
-    utility = Utility('customized', utility_function)
+    utility = Utility('customized', utility_function=utility_function)
     simulation = Simulation(payments, method, knowledge, utility)
     results = simulation.run()
     done_payment0, payment_info0, _, _ = results[0]

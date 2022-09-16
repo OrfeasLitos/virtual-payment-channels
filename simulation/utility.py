@@ -3,7 +3,7 @@ import random
 
 class Utility:
 
-    def __init__(self, utility_mode, utility_function = None, parameters = None, personalization = None):
+    def __init__(self, utility_mode, personalization = None, parameters = None, utility_function = None):
         """
         Utility function should have fee, delay, centrality and distances as input
         """
