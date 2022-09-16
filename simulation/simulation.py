@@ -180,14 +180,14 @@ if __name__ == "__main__":
     payments_uniform = pickle.load(pickled_file_uniform)
 
     
-    payments = payments_zipf[(1000, 3., 0)]
+    payments = payments_zipf[(100, 3., 0)]
     #payments = payments_uniform[(100, 1000, 0)]
     utilities = [
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
-        Utility('sum_of_inverses', parameters = (1000, 10000, 10000, 10000, 0))
+        Utility('sum_of_inverses', personalization = ("50-50", 100), parameters = [(1, 1000000, 10000, 0.0001, 0), (1, 0, 10000, 0.0001, 0)])
     ]
-    for method in [Elmo(1000)]:#, Donner(100), LVPC(100)]:#, LN(1000)]:
+    for method in [Elmo(100)]:#, Donner(100), LVPC(100)]:#, LN(1000)]:
         for utility in utilities:
             for knowledge in [
                 Knowledge('all')#, Knowledge('10-next'), Knowledge('next'),
@@ -197,6 +197,7 @@ if __name__ == "__main__":
                 start = time.time()
                 results = sim.run()
                 end = time.time()
+                print(results)
                 print(end - start)
                 with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
                     pickle.dump(results, file)

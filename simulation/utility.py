@@ -1,6 +1,20 @@
 import numpy as np
 import random
 
+def sum_of_inverses_utility_function(
+        add_fee, mult_fee, mult_delay, mult_distance, mult_centrality,
+        fee, delay, distance, centrality
+    ):
+    weight_distance_array = np.array(distance)
+    inverse_distance_array = 1/ weight_distance_array[:,1]
+    weight_array = weight_distance_array[:,0]
+    return (
+        mult_fee/(add_fee+fee) +
+        mult_delay/delay +
+        mult_distance * np.transpose(inverse_distance_array) @ weight_array +
+        mult_centrality * centrality
+    )
+
 class Utility:
 
     def __init__(self, utility_mode, personalization = None, parameters = None, utility_function = None):
@@ -8,26 +22,40 @@ class Utility:
         Utility function should have fee, delay, centrality and distances as input
         """
         if utility_mode == 'sum_of_inverses':
-            if personalization == "same-utility":
-                add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters[0]
-            elif personalization == "50-50":
-                if random.uniform() < 0.5:
-                    add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters[0]
-                else:
-                    add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters[1]
-            else:
+            if personalization is None:
                 raise ValueError
-            def utility_function(party, fee, delay, distance, centrality):
-                weight_distance_array = np.array(distance)
-                inverse_distance_array = 1/ weight_distance_array[:,1]
-                weight_array = weight_distance_array[:,0]
-                return (
-                    mult_fee/(add_fee+fee) +
-                    mult_delay/delay +
-                    mult_distance * np.transpose(inverse_distance_array) @ weight_array +
-                    mult_centrality * centrality
-                )
-            self.utility_function = utility_function
+            else:
+                personalization_kind, num_parties = personalization
+            if personalization_kind == "same-utility":
+                add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters[0]
+                def utility_function(party, fee, delay, distance, centrality):
+                    return sum_of_inverses_utility_function(
+                        add_fee, mult_fee, mult_delay, mult_distance, mult_centrality,
+                        fee, delay, distance, centrality
+                    )
+                self.utility_function = utility_function
+            elif personalization_kind == "50-50":
+                add_fee0, mult_fee0, mult_delay0, mult_distance0, mult_centrality0 = parameters[0]
+                add_fee1, mult_fee1, mult_delay1, mult_distance1, mult_centrality1 = parameters[1]
+                parties_parameters0 = []
+                parties_parameters1 = []
+                for party in range(num_parties):
+                    if random.uniform(0, 1) < 0.5:
+                        parties_parameters0.append(party)
+                    else:
+                        parties_parameters1.append(party)
+                def utility_function(party, fee, delay, distance, centrality):
+                    if party in parties_parameters0:
+                        return sum_of_inverses_utility_function(
+                            add_fee0, mult_fee0, mult_delay0, mult_distance0, mult_centrality0,
+                            fee, delay, distance, centrality
+                        )
+                    else:
+                        return sum_of_inverses_utility_function(
+                            add_fee1, mult_fee1, mult_delay1, mult_distance1, mult_centrality1,
+                            fee, delay, distance, centrality
+                        )
+                self.utility_function = utility_function
 
         elif utility_mode == 'customized':
             self.utility_function = utility_function
