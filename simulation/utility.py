@@ -1,13 +1,22 @@
 import numpy as np
+import random
 
 class Utility:
 
-    def __init__(self, utility_mode, utility_function = None, parameters  = None):
+    def __init__(self, utility_mode, utility_function = None, parameters = None, personalization = None):
         """
         Utility function should have fee, delay, centrality and distances as input
         """
         if utility_mode == 'sum_of_inverses':
-            add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters
+            if personalization == "same-utility":
+                add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters[0]
+            elif personalization == "50-50":
+                if random.uniform() < 0.5:
+                    add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters[0]
+                else:
+                    add_fee, mult_fee, mult_delay, mult_distance, mult_centrality = parameters[1]
+            else:
+                raise ValueError
             def utility_function(party, fee, delay, distance, centrality):
                 weight_distance_array = np.array(distance)
                 inverse_distance_array = 1/ weight_distance_array[:,1]
@@ -19,6 +28,7 @@ class Utility:
                     mult_centrality * centrality
                 )
             self.utility_function = utility_function
+
         elif utility_mode == 'customized':
             self.utility_function = utility_function
         else:
