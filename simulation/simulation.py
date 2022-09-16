@@ -12,7 +12,7 @@ from donner import Donner
 from lvpc import LVPC
 from utility import Utility
 import time
-import flamegraph
+#import flamegraph
 
 # max_coins of PlainBitcoin divided by 5
 MAX_PAY = 2000000000000000//5
@@ -130,7 +130,7 @@ class Simulation:
             knowledge_sender = self.knowledge.get_knowledge(sender, self.payments)
             payment_options = self.payment_method.get_payment_options(sender, receiver, value, knowledge_sender)
             try:
-                payment_option, fee, delay = self.utility.choose_payment_method(payment_options)
+                payment_option, fee, delay = self.utility.choose_payment_method(sender, payment_options)
                 self.payment_method.do(payment_option)
                 # True for payment done, False if not done.
                 return True, payment_option, fee, delay
@@ -158,7 +158,7 @@ class Simulation:
 
 if __name__ == "__main__":
 
-    flamegraph.start_profile_thread(fd=open("./perf_1.log", "w"))
+    #flamegraph.start_profile_thread(fd=open("./perf_1.log", "w"))
     #seed = random.randrange(sys.maxsize)
     seed = 12345
     random.seed(seed)
@@ -197,7 +197,6 @@ if __name__ == "__main__":
                 start = time.time()
                 results = sim.run()
                 end = time.time()
-                print(results)
                 print(end - start)
                 with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
                     pickle.dump(results, file)
