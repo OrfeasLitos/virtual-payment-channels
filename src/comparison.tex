@@ -6,11 +6,11 @@
   updating. We also compare
   the maximum on-chain cost for an endpoint to unilaterally close its virtual
   channel. Furthermore, we compare the maximum on-chain cost for an intermediary
-  to close its base channel. In order to only show the costs caused by
-  supporting a virtual channel, we subtract the cost the intermediary would pay
-  to close its channel if it was not supporting any virtual channel. Lastly, we
-  compare the maximum total on-chain cost, aggregated over all parties. On-chain
-  cost is measured in terms of size\footnote{For
+  to close its base channel. Note that, in order to only show the costs caused
+  by supporting a virtual channel, we subtract the cost the intermediary would
+  pay to close its channel if it was not supporting any virtual channel. Lastly,
+  we compare the maximum total on-chain cost, aggregated over all parties.
+  On-chain cost is measured in terms of size\footnote{For
   Table~\ref{table:comparison:overhead:n-parties:close}, transaction size is
   calculated in
   so-called ``virtual bytes'', which map directly to on-chain fees and thus are
