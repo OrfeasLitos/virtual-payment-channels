@@ -54,9 +54,10 @@
   channels, in other words the channel considered is opened without the help of
   recursion.
 
-  \begin{table*}
+  \addtolength{\intextsep}{-15pt}
+  \begin{table}[h!]
     \begin{minipage}{\textwidth}
-    \begin{center}
+    \centering
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
     \hline
               & \multicolumn{2}{|c|}{Open}
@@ -79,12 +80,12 @@
     Elmo      & 7 & 5245 & 4 & 1517 & 20 & 8002 & 4 & 2223 \\
     \hline
     \end{tabular}
-    \end{center}
     \end{minipage}
     \caption{Efficiency comparison of a $3$-party channel in Elmo and
     BCVC~\cite{9519487}}
     \label{table:comparison:overhead:3-parties}
-  \end{table*}
+  \end{table}
+  \addtolength{\intextsep}{15pt}
 
   In Table~\ref{table:comparison:overhead:n-parties:open} we compare the
   resources needed to open a new virtual channel both for each party
@@ -105,7 +106,8 @@
   therefore the first intermediary (the party after the funder) incurs
   [intermediary's costs - fundee's costs] for all three measured quantities.
 
-  \begin{table*}
+  \addtolength{\intextsep}{-15pt}
+  \begin{table}[h!]
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|c|}
     \hline
@@ -167,11 +169,11 @@
     \caption{Open efficiency comparison of virtual channel protocols with $n$
     parties and $k$ payments}
     \label{table:comparison:overhead:n-parties:open}
-  \end{table*}
+  \end{table}
 
-  \begin{table*}
+  \begin{table}[h!]
     \begin{minipage}{\textwidth}
-    \begin{center}
+    \centering
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
     \hline
     \multicolumn{9}{|c|}{Unilateral Close} \\
@@ -193,12 +195,12 @@
               684.5$\end{tabular} \\
     \hline
     \end{tabular}
-    \end{center}
     \end{minipage}
     \caption{On-chain worst-case closing efficiency comparison of virtual
     channel protocols with $n$ parties}
     \label{table:comparison:overhead:n-parties:close}
-  \end{table*}
+  \end{table}
+  \addtolength{\intextsep}{15pt}
 
   The on-chain number of transactions to close a virtual channel in the case of
   LVPC is calculated as follows: One ``split'' transaction is needed for each
