@@ -813,7 +813,7 @@
       \Comment{counterparty has closed maliciously}
         \State \textsc{ln}.\textsc{submitAndCheckRevocation}($j$)
       \Else \: \Comment{counterparty is idle}
-        \While{$\not\exists$ unspent \texttt{output} $\in \Sigma$ that $C_{P, i}$
+        \While{$\neg\exists$ unspent \texttt{output} $\in \Sigma$ that $C_{P, i}$
         can spend} \Comment{possibly due to an active timelock}
           \State wait for input (\textsc{check virtual}) \Comment{ignore other
           messages}
