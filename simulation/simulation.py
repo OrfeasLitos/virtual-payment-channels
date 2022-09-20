@@ -28,7 +28,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None,
             value = random.randrange(max_pay)
             res.append((sender, receiver, value))
     elif distribution == 'zipf':
-        incoming_payments_per_player = np.random.zipf(power, players)
+        incoming_payments_per_player = np.random.zipf(power, players) * 100
         # assume incoming payments come from unifrom distribution
         # example: big player that everyone pays to (in real world maybe Netflix), but
         # that doesn't have that many outgoing payments.
