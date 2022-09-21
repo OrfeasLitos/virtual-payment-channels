@@ -16,6 +16,8 @@ import time
 
 # max_coins of PlainBitcoin divided by 5
 MAX_PAY = 2000000000000000//5
+ROUNDS_RANDOM_PAYMENTS = 20
+SEED = 12345
 
 def random_payments(players, max_pay, distribution = 'uniform', num_pays = None, power = None):
     res = collections.deque()
@@ -68,7 +70,7 @@ def all_random_payments():
     payments_for_uniform = {}
     for parties in [10, 100, 1000, 10000]:
         for num_payments in [100, 1000, 10000, 100000]:
-            for i in range(10):
+            for i in range(ROUNDS_RANDOM_PAYMENTS):
                 payments = random_payments(parties, MAX_PAY, 'uniform', num_payments)
                 payments_for_uniform[(parties, num_payments, i)] = payments
 
@@ -76,7 +78,7 @@ def all_random_payments():
     payments_for_preferred_receiver = {}
     for parties in [10, 100, 1000, 10000]:
         for num_payments in [100, 1000, 10000, 100000]:
-            for i in range(10):
+            for i in range(ROUNDS_RANDOM_PAYMENTS):
                 payments = random_payments(parties, MAX_PAY, 'preferred-receiver', num_payments)
                 payments_for_preferred_receiver[(parties, num_payments, i)] = payments
     
@@ -84,7 +86,7 @@ def all_random_payments():
     payments_for_zipf = {}
     for parties in [10, 100, 1000, 10000]:
         for a in [3, 2.5, 2]:
-            for i in range(10):
+            for i in range(ROUNDS_RANDOM_PAYMENTS):
                 payments = random_payments(parties, MAX_PAY, 'zipf', power=a)
                 payments_for_zipf[(parties, a, i)] = payments
     
@@ -160,12 +162,11 @@ if __name__ == "__main__":
 
     #flamegraph.start_profile_thread(fd=open("./perf_1.log", "w"))
     #seed = random.randrange(sys.maxsize)
-    seed = 12345
-    random.seed(seed)
-    np.random.seed(seed)
     
     # uncomment to generate random payments.
     """
+    random.seed(SEED)
+    np.random.seed(SEED)
     payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
     with open('random_payments_uniform.pickle', 'wb') as file:
         pickle.dump(payments_uniform, file)
@@ -182,6 +183,8 @@ if __name__ == "__main__":
     
     payments = payments_zipf[(1000, 2., 0)]
     print(len(payments))
+    random.seed(SEED + 100)
+    np.random.seed(SEED + 100)
     #payments = payments_uniform[(100, 1000, 0)]
     utilities = [
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
