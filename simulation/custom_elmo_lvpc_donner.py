@@ -16,7 +16,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         max_coins = 2000000000000000, bitcoin_fee = 1000000,
         bitcoin_delay = 3600, coins_for_parties = "max_value",
         base_fee = 20000, fee_rate = 0.0004,
-        base_delay = 0.05
     ):
         super().__init__(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.method_name = method_name
@@ -36,8 +35,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         self.base_fee = base_fee
         self.fee_rate = fee_rate
         # delay for opening new virtual channel (per hop)
-        self.base_delay = base_delay
-        self.pay_delay = 1.5 * base_delay
+        self.pay_delay = 1.5 * self.base_delay
 
     def get_distances_and_paths_from_source(self, source, future_payments):
         """

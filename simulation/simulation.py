@@ -85,7 +85,7 @@ def all_random_payments():
     for parties in [10, 100, 1000, 10000]:
         for a in [3, 2.5, 2]:
             for i in range(10):
-                payments = random_payments(parties, MAX_PAY, 'zipf', a)
+                payments = random_payments(parties, MAX_PAY, 'zipf', power=a)
                 payments_for_zipf[(parties, a, i)] = payments
     
     return payments_for_uniform, payments_for_preferred_receiver, payments_for_zipf
@@ -204,4 +204,4 @@ if __name__ == "__main__":
                     pickle.dump(results, file)
                 # for step in sim:
                 #    print(step)
-    
+

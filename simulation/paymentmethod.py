@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 MULTIPLIER_CHANNEL_BALANCE = 5
 # DUMMY_PAYMENT_VALUE taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
 DUMMY_PAYMENT_VALUE = 500000000
+BASE_DELAY = 0.05
 
 def sum_future_payments_to_counterparty(sender, counterparty, future_payments):
     """
@@ -75,6 +76,7 @@ class Payment_Network(ABC):
         bitcoin_delay = 3600, coins_for_parties = "max_value"
     ):
         self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        self.base_delay = BASE_DELAY
         @property
         @abstractmethod
         def network(self):

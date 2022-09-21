@@ -6,6 +6,6 @@ class LVPC(Custom_Elmo_LVPC_Donner):
         fee_rate = 0.0004, opening_transaction_size = 121.5, lvpc_base_delay = 0.05
     ):
         super().__init__(
-            "LVPC", nr_players, opening_transaction_size, max_coins, bitcoin_fee, bitcoin_delay,
-            coins_for_parties,base_fee, fee_rate, lvpc_base_delay,
+            "LVPC", nr_players, opening_transaction_size, max_coins, bitcoin_fee,
+            bitcoin_delay, coins_for_parties,base_fee, fee_rate
         )

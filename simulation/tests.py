@@ -539,17 +539,17 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality(method_name):
         case "Elmo":
             method = Elmo(
                 nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-                base_fee = 1000000, opening_transaction_size = 200, elmo_base_delay = 0.05
+                base_fee = 1000000, opening_transaction_size = 200
             )
         case "LVPC":
             method = LVPC(
                 nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-                base_fee = 1000000, opening_transaction_size = 200, lvpc_base_delay = 0.05
+                base_fee = 1000000, opening_transaction_size = 200
             )
         case "Donner":
             method = Donner(
                 nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-                base_fee = 1000000, opening_transaction_size = 200, donner_base_delay = 0.05
+                base_fee = 1000000, opening_transaction_size = 200
             )
         case _:
             raise ValueError
@@ -572,17 +572,17 @@ def test_simulation_with_elmo_lvpc_donner_ignore_centrality_and_distance(method_
         case "Elmo":
             method = Elmo(
                 nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-                base_fee = 1000000, opening_transaction_size = 200, elmo_base_delay = 0.05,
+                base_fee = 1000000, opening_transaction_size = 200
             )
         case "LVPC":
             method = LVPC(
                 nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-                base_fee = 1000000, opening_transaction_size = 200, lvpc_base_delay = 0.05
+                base_fee = 1000000, opening_transaction_size = 200
             )
         case "Donner":
             method = Donner(
                 nr_players = 3, bitcoin_fee = 1000000, bitcoin_delay = 3600, coins_for_parties='max_value',
-                base_fee = 1000000, opening_transaction_size = 200, donner_base_delay = 0.05
+                base_fee = 1000000, opening_transaction_size = 200
             )
     knowledge = Knowledge('all')
     payments = collections.deque([(0, 1, 100000000000), (0, 1, 10000000000)])
