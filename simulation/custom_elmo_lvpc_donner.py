@@ -9,6 +9,7 @@ from paymentmethod import (
 from network import Network_Elmo, Network_LVPC, Network_Donner
 
 MULTIPLIER_BALANCE_RECURSION_LVPC = 1.5
+AVAILABILITY_FACTOR = 4
 
 class Custom_Elmo_LVPC_Donner(Payment_Network):
     def __init__(
@@ -202,9 +203,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             return None
         hops, path = cost_and_path
         # the factor is introduced so that lower channel doesn't end up with 0 balance.
-        availability_factor = 4
         available_balances = np.array([
-            self.network.graph[path[i]][path[i+1]]['balance'] / availability_factor for i in range(len(path)-1)
+            self.network.graph[path[i]][path[i+1]]['balance'] / AVAILABILITY_FACTOR for i in range(len(path)-1)
         ])
         desired_virtual_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
         sender_coins = self.determine_sender_coins(value, path, desired_virtual_coins, available_balances)

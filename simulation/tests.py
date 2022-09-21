@@ -7,6 +7,7 @@ import collections
 
 from simulation import Simulation, random_payments
 from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
+from custom_elmo_lvpc_donner import AVAILABILITY_FACTOR
 from ln import LN
 from elmo import Elmo
 from lvpc import LVPC
@@ -210,10 +211,9 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     wanted_sender_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
     assert wanted_sender_coins == MULTIPLIER_CHANNEL_BALANCE * value
     path = [0,1,4]
-    availability_factor = 4
     available_balances = np.array([
         method.network.graph[path[i]][path[i+1]]['balance'] /
-        availability_factor for i in range(len(path)-1)
+        AVAILABILITY_FACTOR for i in range(len(path)-1)
     ])
     sender_coins = method.determine_sender_coins(
         value, path, wanted_sender_coins, available_balances
@@ -636,10 +636,9 @@ def test_simulation_with_previous_channels_elmo_lvpc_donner_ignore_centrality(me
     wanted_sender_coins0 = sum_future_payments0 + MULTIPLIER_CHANNEL_BALANCE * value0
     assert wanted_sender_coins0 == MULTIPLIER_CHANNEL_BALANCE * value0
     path0 = [0,1,2]
-    availability_factor = 4
     available_balances = np.array([
         method.network.graph[path0[i]][path0[i+1]]['balance'] /
-        availability_factor for i in range(len(path0)-1)
+        AVAILABILITY_FACTOR for i in range(len(path0)-1)
     ])
     sender_coins = method.determine_sender_coins(
         value0, path0, wanted_sender_coins0, available_balances
