@@ -197,12 +197,14 @@ if __name__ == "__main__":
     payments = payments_zipf[(1000, 3., 0)]
     random.seed(SEED + 100)
     np.random.seed(SEED + 100)
-    #payments = payments_uniform[(100, 1000, 0)]
+    #payments = payments_uniform[(100, 10000, 0)]
+    #payments = payments_preferred_receiver[(100, 10000, 0)]
     utilities = [
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
         #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
         Utility('sum_of_inverses', personalization = ("same-utility", 1000), parameters = [(1, 1000000, 10000, 0.0001, 0), (1, 0, 10000, 0.0001, 0)])
     ]
+    print(len(payments))
     for method in [Elmo(1000)]:#, Donner(100), LVPC(100)]:#, LN(1000)]:
         for utility in utilities:
             for knowledge in [
@@ -218,7 +220,6 @@ if __name__ == "__main__":
                 for result in results:
                     if not result[0]:
                         num_failed += 1
-                print(len(payments))
                 print(num_failed)
                 with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
                     pickle.dump(results, file)
