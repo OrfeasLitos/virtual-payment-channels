@@ -69,7 +69,7 @@ def make_example_simulation_for_all(method_name, seed = 12345, nr_players = 10, 
         case _:
             raise ValueError
     knowledge = Knowledge('all')
-    payments = random_payments(nr_players, 2000000000, distribution=distribution, num_pays = 100)
+    payments = random_payments(nr_players, distribution=distribution, num_pays = 100)
     utility_function = example_utility_function_for_simulation
     utility = Utility('customized', utility_function=utility_function)
     return Simulation(payments, method, knowledge, utility)
