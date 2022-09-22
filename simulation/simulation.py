@@ -12,6 +12,7 @@ from donner import Donner
 from lvpc import LVPC
 from utility import Utility
 import time
+from tqdm import tqdm
 #import flamegraph
 
 # max_coins of PlainBitcoin divided by 5
@@ -30,16 +31,25 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None,
             value = random.randrange(max_pay)
             res.append((sender, receiver, value))
     elif distribution == 'zipf':
-        incoming_payments_per_player = np.random.zipf(power, players) * 100
-        # assume incoming payments come from unifrom distribution
-        # example: big player that everyone pays to (in real world maybe Netflix), but
+        # assume incoming payments come from power law distribution
+        # and the parties that pay from a uniform distribution
+        # example: big player that everyone pays to, but
         # that doesn't have that many outgoing payments.
+        incoming_payments_per_player = np.random.zipf(power, players) * 100
+        # we want a parameter for the payment value of 2.16
+        # for approximately 80-20 rule (and power law).
+        # the mean of a zeta variable with parameter 2.16 is approximately 7.25
+        # We want a mean of MAX_PAY / 2
+        num_pays = sum(incoming_payments_per_player)
+        values = np.random.zipf(2.16, num_pays) * (MAX_PAY / 2)
+        num_value = 0
         for receiver in range(len(incoming_payments_per_player)):
             for j in range(incoming_payments_per_player[receiver]):
                 sender = random.randrange(players)
                 while sender == receiver:
                     sender = random.randrange(players)
-                value = random.randrange(max_pay)
+                value = values[num_value]
+                num_value += 1
                 res.append((sender, receiver, value))
         random.shuffle(res)
     elif distribution == 'preferred-receiver':
@@ -84,9 +94,10 @@ def all_random_payments():
     
     # power law
     payments_for_zipf = {}
-    for parties in [10, 100, 1000, 10000]:
-        for a in [3, 2.5, 2]:
-            for i in range(ROUNDS_RANDOM_PAYMENTS):
+    for parties in [10, 100, 1000]:
+        print(parties)
+        for a in tqdm([3, 2.5, 2]):
+            for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
                 payments = random_payments(parties, MAX_PAY, 'zipf', power=a)
                 payments_for_zipf[(parties, a, i)] = payments
     
@@ -164,7 +175,7 @@ if __name__ == "__main__":
     #seed = random.randrange(sys.maxsize)
     
     # uncomment to generate random payments.
-    """
+    
     random.seed(SEED)
     np.random.seed(SEED)
     payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
@@ -207,4 +218,4 @@ if __name__ == "__main__":
                     pickle.dump(results, file)
                 # for step in sim:
                 #    print(step)
-
+    """
