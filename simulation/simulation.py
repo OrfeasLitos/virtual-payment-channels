@@ -94,6 +94,7 @@ def all_random_payments():
     
     # power law
     payments_for_zipf = {}
+    # only up to 1000 parties
     for parties in [10, 100, 1000]:
         print(parties)
         for a in tqdm([3, 2.5, 2]):
@@ -179,6 +180,7 @@ if __name__ == "__main__":
     random.seed(SEED)
     np.random.seed(SEED)
     payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
+    """
     with open('random_payments_uniform.pickle', 'wb') as file:
         pickle.dump(payments_uniform, file)
     with open('random_payments_preferred_receiver.pickle', 'wb') as file:
@@ -192,7 +194,7 @@ if __name__ == "__main__":
     payments_uniform = pickle.load(pickled_file_uniform)
 
     
-    payments = payments_zipf[(1000, 2., 0)]
+    payments = payments_zipf[(1000, 3., 0)]
     print(len(payments))
     random.seed(SEED + 100)
     np.random.seed(SEED + 100)
@@ -212,10 +214,12 @@ if __name__ == "__main__":
                 start = time.time()
                 results = sim.run()
                 end = time.time()
-                print(results)
                 print(end - start)
+                num_failed = 0
+                for result in results:
+                    if not result[0]:
+                        num_failed += 1
+                print(num_failed)
                 with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
                     pickle.dump(results, file)
-                # for step in sim:
-                #    print(step)
-    """
+
