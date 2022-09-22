@@ -37,7 +37,6 @@ class Network:
         The balance acts as a threshold.
         If the amount is bigger than the balance the weight is math.inf, otherwise it is 1.
         """
-        # TODO: Check whether higher order functions make some optimizations harder.
         def weight_function(sender, receiver, edge_attributes):
             if edge_attributes['balance'] >= amount:
                 return 1
@@ -71,26 +70,6 @@ class Network:
                     if self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance'] < minimum_balance:
                         cheapest_paths[receiver] = None
                         break
-            return cheapest_paths
-
-        except nx.exception.NetworkXNoPath:
-            return None
-
-        # TODO: test if this is faster for get_distances.
-    def find_all_cheapest_paths(self, amount, fee_intermediary, function = "standard"):
-        try:
-            weight_function = self.get_weight_function(amount, function)
-            cheapest_paths = nx.shortest_path(self.graph, weight=weight_function)
-            for sender, receiver_and_cheapest_path in cheapest_paths.items():
-                if receiver_and_cheapest_path == None:
-                    continue
-                for receiver, cheapest_path in receiver_and_cheapest_path.items():
-                    for i in range(len(cheapest_path)-1):
-                        sender_in_path = cheapest_path[i]
-                        receiver_in_path = cheapest_path[i+1]
-                        if self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance'] < amount + (len(cheapest_path) - 1) * fee_intermediary:
-                            cheapest_paths[sender][receiver] = None
-                            break
             return cheapest_paths
 
         except nx.exception.NetworkXNoPath:
@@ -239,8 +218,6 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
 
         return coins_for_chain
 
-    #TODO: maybe we can optimize that.
-    # for simplicity use for now cooperative close for virtual channel
     def close_channel(self, idA, idB):
         if self.graph[idA][idB]['channels_below'] is None:
             self.force_close_channel(idA, idB)
