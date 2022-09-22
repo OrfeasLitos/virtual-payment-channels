@@ -201,7 +201,7 @@ def test_do_ln_onchain():
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     payment_information_onchain = payment_options[0]['payment_information']
     lightning.do(payment_information_onchain)
-    # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
+    # sender should have MAX_COINS - value - fee many coins, receiver MAX_COINS + value
     assert lightning.plain_bitcoin.coins[0] == MAX_COINS - value - lightning.plain_bitcoin.get_fee() 
     assert lightning.plain_bitcoin.coins[7] == MAX_COINS + value
 
@@ -303,7 +303,6 @@ def test_update_balances_pay_enough_money_ln():
     ln_fee = lightning.ln_fee
     path = [0, 1, 4, 7]
     value = 2000000000
-    # 1 -> base_fee, 2 -> len(path) - 2
     fee_intermediary = base_fee + value*ln_fee
     lightning.update_balances(value, ln_fee, base_fee, path, pay=True)
     # sender 0 has 6000000000. in the beginning on the channel to 1
