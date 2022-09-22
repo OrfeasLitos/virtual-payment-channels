@@ -16,7 +16,7 @@ from tqdm import tqdm
 #import flamegraph
 
 # max_coins of PlainBitcoin divided by 5
-MAX_PAY = 2000000000000000//10
+MAX_PAY = 2000000000000000//50
 ROUNDS_RANDOM_PAYMENTS = 20
 SEED = 12345
 
@@ -95,7 +95,7 @@ def all_random_payments():
     # power law
     payments_for_zipf = {}
     # only up to 1000 parties
-    for parties in [10, 100, 1000]:
+    for parties in [10, 100]:
         print(parties)
         for a in tqdm([3, 2.5, 2]):
             for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
