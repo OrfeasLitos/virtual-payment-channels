@@ -16,7 +16,7 @@ from tqdm import tqdm
 #import flamegraph
 
 # max_coins of PlainBitcoin divided by 5
-MAX_PAY = 2000000000000000//5
+MAX_PAY = 2000000000000000//10
 ROUNDS_RANDOM_PAYMENTS = 20
 SEED = 12345
 
@@ -187,14 +187,14 @@ if __name__ == "__main__":
         pickle.dump(payments_preferred_receiver, file)
     with open('random_payments_zipf.pickle', 'wb') as file:
         pickle.dump(payments_zipf, file)
-    """
+    
     pickled_file_zipf = open("random_payments_zipf.pickle", 'rb')
     payments_zipf = pickle.load(pickled_file_zipf)
     pickled_file_uniform = open("random_payments_uniform.pickle", 'rb')
     payments_uniform = pickle.load(pickled_file_uniform)
-
+    """
     
-    payments = payments_zipf[(1000, 3., 0)]
+    payments = payments_zipf[(10, 3., 0)]
     print(len(payments))
     random.seed(SEED + 100)
     np.random.seed(SEED + 100)
