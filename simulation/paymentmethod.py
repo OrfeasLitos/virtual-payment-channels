@@ -26,7 +26,7 @@ class PlainBitcoin():
     # the total fee is num_vbytes * price_per_vbyte
     # price per vbyte currently at about 1 satoshi
     def __init__(self, nr_players, bitcoin_fee = 1000,
-                bitcoin_delay = 3600, coins_for_parties = "max_value"):
+                bitcoin_delay = 3600, coins_for_parties = "random"):
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
         if coins_for_parties == "max_value":
@@ -34,7 +34,6 @@ class PlainBitcoin():
         elif coins_for_parties == "small_value":
             self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
         elif coins_for_parties == "random":
-            # maybe better Pareto distribution?
             self.coins = {i: max(0, random.normalvariate(MAX_COINS/2, MAX_COINS/4)) for i in range(nr_players)}
         else:
             raise ValueError
