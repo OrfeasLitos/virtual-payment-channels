@@ -15,12 +15,13 @@ import time
 from tqdm import tqdm
 #import flamegraph
 
-# max_coins of PlainBitcoin divided by 5
-MAX_PAY = 2000000000000000//50
 ROUNDS_RANDOM_PAYMENTS = 20
 SEED = 12345
 
-def random_payments(players, max_pay, distribution = 'uniform', num_pays = None, power = None):
+def random_payments(players, distribution = 'uniform', num_pays = None, power = None):
+    """
+    num_pays gives the number of total payments
+    """
     res = collections.deque()
     if distribution == 'uniform':
         for _ in range(num_pays):
@@ -28,7 +29,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None,
             receiver = random.randrange(players)
             while receiver == sender:
                 receiver = random.randrange(players)
-            value = random.randrange(max_pay)
+            value = random.randrange(MAX_COINS * players // num_pays)
             res.append((sender, receiver, value))
     elif distribution == 'zipf':
         # assume incoming payments come from power law distribution
@@ -36,12 +37,11 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None,
         # example: big player that everyone pays to, but
         # that doesn't have that many outgoing payments.
         incoming_payments_per_player = np.random.zipf(power, players) * 100
+        num_pays = sum(incoming_payments_per_player)
         # we want a parameter for the payment value of 2.16
         # for approximately 80-20 rule (and power law).
         # the mean of a zeta variable with parameter 2.16 is approximately 7.25
-        # We want a mean of MAX_PAY / 2
-        num_pays = sum(incoming_payments_per_player)
-        values = np.random.zipf(2.16, num_pays) * (MAX_PAY / 2)
+        values = np.random.zipf(2.16, num_pays) * (MAX_COINS * players // (num_pays * 7.25))
         num_value = 0
         for receiver in range(len(incoming_payments_per_player)):
             for j in range(incoming_payments_per_player[receiver]):
@@ -68,7 +68,7 @@ def random_payments(players, max_pay, distribution = 'uniform', num_pays = None,
             receiver = random.randrange(players) if random.uniform(0, 1) > p else preferred_receivers[sender]
             while receiver == sender:
                 receiver = random.randrange(players)
-            value = random.randrange(max_pay)
+            value = random.randrange(MAX_COINS * players // num_pays)
             res.append((sender, receiver, value))
     else:
         raise ValueError
@@ -81,7 +81,7 @@ def all_random_payments():
     for parties in [10, 100, 1000, 10000]:
         for num_payments in [100, 1000, 10000, 100000]:
             for i in range(ROUNDS_RANDOM_PAYMENTS):
-                payments = random_payments(parties, MAX_PAY, 'uniform', num_payments)
+                payments = random_payments(parties, 'uniform', num_payments)
                 payments_for_uniform[(parties, num_payments, i)] = payments
 
     # preferred receiver
@@ -89,17 +89,17 @@ def all_random_payments():
     for parties in [10, 100, 1000, 10000]:
         for num_payments in [100, 1000, 10000, 100000]:
             for i in range(ROUNDS_RANDOM_PAYMENTS):
-                payments = random_payments(parties, MAX_PAY, 'preferred-receiver', num_payments)
+                payments = random_payments(parties, 'preferred-receiver', num_payments)
                 payments_for_preferred_receiver[(parties, num_payments, i)] = payments
     
     # power law
     payments_for_zipf = {}
     # only up to 1000 parties
-    for parties in [10, 100]:
+    for parties in [10, 100, 1000]:
         print(parties)
         for a in tqdm([3, 2.5, 2]):
             for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
-                payments = random_payments(parties, MAX_PAY, 'zipf', power=a)
+                payments = random_payments(parties, 'zipf', power=a)
                 payments_for_zipf[(parties, a, i)] = payments
     
     return payments_for_uniform, payments_for_preferred_receiver, payments_for_zipf
@@ -194,8 +194,7 @@ if __name__ == "__main__":
     payments_uniform = pickle.load(pickled_file_uniform)
     """
     
-    payments = payments_zipf[(10, 3., 0)]
-    print(len(payments))
+    payments = payments_zipf[(1000, 3., 0)]
     random.seed(SEED + 100)
     np.random.seed(SEED + 100)
     #payments = payments_uniform[(100, 1000, 0)]
@@ -207,8 +206,8 @@ if __name__ == "__main__":
     for method in [Elmo(1000)]:#, Donner(100), LVPC(100)]:#, LN(1000)]:
         for utility in utilities:
             for knowledge in [
-                Knowledge('10-next')#, Knowledge('all'), Knowledge('next'),
-                #Knowledge('mine'), Knowledge('10-next-mine')
+                Knowledge('10-next-mine')#, Knowledge('all'), Knowledge('next'),
+                #Knowledge('mine'), Knowledge('10-next')
             ]:
                 sim = Simulation(copy.copy(payments), method, knowledge, utility)
                 start = time.time()
@@ -219,6 +218,7 @@ if __name__ == "__main__":
                 for result in results:
                     if not result[0]:
                         num_failed += 1
+                print(len(payments))
                 print(num_failed)
                 with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
                     pickle.dump(results, file)
