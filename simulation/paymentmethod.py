@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 # default on-chain fees from https://bitcoinfees.net/ for an 1-input-2-output P2WPKH on 14/4/2022
 # default max coins loosely copied from real world USD figures
 
+MAX_COINS = 2000000000000000
 MULTIPLIER_CHANNEL_BALANCE = 5
 # DUMMY_PAYMENT_VALUE taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
 DUMMY_PAYMENT_VALUE = 500000000
@@ -24,18 +25,17 @@ def sum_future_payments_to_counterparty(sender, counterparty, future_payments):
 class PlainBitcoin():
     # the total fee is num_vbytes * price_per_vbyte
     # price per vbyte currently at about 1 satoshi
-    def __init__(self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000,
+    def __init__(self, nr_players, bitcoin_fee = 1000,
                 bitcoin_delay = 3600, coins_for_parties = "max_value"):
-        self.max_coins = max_coins
         self.bitcoin_fee = bitcoin_fee
         self.bitcoin_delay = bitcoin_delay
         if coins_for_parties == "max_value":
-            self.coins = {i: max_coins for i in range(nr_players)}
+            self.coins = {i: MAX_COINS for i in range(nr_players)}
         elif coins_for_parties == "small_value":
             self.coins = {i: bitcoin_fee * 10000 for i in range(nr_players)}
         elif coins_for_parties == "random":
             # maybe better Pareto distribution?
-            self.coins = {i: max(0, random.normalvariate(max_coins/2, max_coins/4)) for i in range(nr_players)}
+            self.coins = {i: max(0, random.normalvariate(MAX_COINS/2, MAX_COINS/4)) for i in range(nr_players)}
         else:
             raise ValueError
 
@@ -63,7 +63,6 @@ class PlainBitcoin():
 
     def __eq__(self, other):
         return (
-            self.max_coins == other.max_coins and
             self.bitcoin_fee == other.bitcoin_fee and
             self.bitcoin_delay == other.bitcoin_delay and
             self.coins == other.coins
@@ -72,10 +71,10 @@ class PlainBitcoin():
 # this should act as super class for LN, Elmo, etc.
 class Payment_Network(ABC):
     def __init__(
-        self, nr_players, max_coins = 2000000000000000, bitcoin_fee = 1000000,
+        self, nr_players, bitcoin_fee = 1000000,
         bitcoin_delay = 3600, coins_for_parties = "max_value"
     ):
-        self.plain_bitcoin = PlainBitcoin(nr_players, max_coins, bitcoin_fee, bitcoin_delay, coins_for_parties)
+        self.plain_bitcoin = PlainBitcoin(nr_players, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.base_delay = BASE_DELAY
         @property
         @abstractmethod

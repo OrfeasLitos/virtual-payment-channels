@@ -4,7 +4,10 @@ import networkx as nx
 from numpy.testing import assert_almost_equal as assert_eq
 from ln import LN
 from utility import Utility
-from paymentmethod import sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE
+from paymentmethod import (
+    sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE,
+    MAX_COINS
+)
 from tests import make_example_utility_function, make_example_simulation_for_all, get_knowledge_sender
 
 def make_example_network_ln(base_fee = 1000, ln_fee = 0.00002):
@@ -189,19 +192,18 @@ def make_example_values_for_do_ln():
     sender = 0
     knowledge_sender = get_knowledge_sender(sender, future_payments)
     payment_options = lightning.get_payment_options(sender, 7, value, knowledge_sender)
-    max_coins = lightning.plain_bitcoin.max_coins
-    return base_fee, ln_fee, lightning, future_payments, value, payment_options, max_coins
+    return base_fee, ln_fee, lightning, future_payments, value, payment_options
 
 def test_do_ln_onchain():
-    base_fee, ln_fee, lightning, future_payments, value, payment_options, max_coins = (
+    base_fee, ln_fee, lightning, future_payments, value, payment_options = (
         make_example_values_for_do_ln()
     )
     assert payment_options[0]['payment_information']['kind'] == 'onchain'
     payment_information_onchain = payment_options[0]['payment_information']
     lightning.do(payment_information_onchain)
-    # sender should have max_coins - 1 - fee many coins, receiver max_coins + 1
-    assert lightning.plain_bitcoin.coins[0] == max_coins - value - lightning.plain_bitcoin.get_fee() 
-    assert lightning.plain_bitcoin.coins[7] == max_coins + value
+    # sender should have MAX_COINS - 1 - fee many coins, receiver MAX_COINS + 1
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - value - lightning.plain_bitcoin.get_fee() 
+    assert lightning.plain_bitcoin.coins[7] == MAX_COINS + value
 
 def test_do_ln_onchain_exception():
     lightning = make_example_network_ln(base_fee = 1000, ln_fee = 0.00002)
@@ -215,7 +217,7 @@ def test_do_ln_onchain_exception():
         pass
 
 def test_do_ln_offchain():
-    base_fee, ln_fee, lightning, future_payments, value, payment_options, max_coins = (
+    base_fee, ln_fee, lightning, future_payments, value, payment_options = (
         make_example_values_for_do_ln()
     )
     balances_before = nx.get_edge_attributes(lightning.network.graph, "balance")
@@ -230,8 +232,8 @@ def test_do_ln_offchain():
     assert path == [0,1,4,7]
     lightning = make_example_network_ln(base_fee=1000, ln_fee = 0.00002)
     lightning.do(payment_information_offchain)
-    assert lightning.plain_bitcoin.coins[0] == max_coins 
-    assert lightning.plain_bitcoin.coins[7] == max_coins
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS 
+    assert lightning.plain_bitcoin.coins[7] == MAX_COINS
     assert_eq(lightning.network.graph[0][1]['balance'], balances_before[(0, 1)] - value - 2*fee_intermediary)
     assert_eq(lightning.network.graph[1][0]['balance'], balances_before[(1, 0)] + value + 2*fee_intermediary)
     # the first intermediary should have fee_intermediary less on his channel with 2nd intermediary.
@@ -255,7 +257,7 @@ def test_do_ln_offchain_exception():
         pass
 
 def test_do_ln_new_channel():
-    _, _, lightning, future_payments, value, payment_options, max_coins = (
+    _, _, lightning, future_payments, value, payment_options = (
         make_example_values_for_do_ln()
     )
     assert payment_options[1]['payment_information']['kind'] == 'ln-open'
@@ -267,8 +269,8 @@ def test_do_ln_new_channel():
     sender_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
     receiver_coins = value
     tx_size = lightning.opening_transaction_size
-    assert lightning.plain_bitcoin.coins[0] == max_coins - lightning.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
-    assert lightning.plain_bitcoin.coins[7] == max_coins
+    assert lightning.plain_bitcoin.coins[0] == MAX_COINS - lightning.plain_bitcoin.get_fee(tx_size) - sender_coins - receiver_coins 
+    assert lightning.plain_bitcoin.coins[7] == MAX_COINS
     # test the balances on ln (-2 for base fee and payment, +1 for payment).
     assert lightning.network.graph[0][7]['balance'] == sender_coins 
     assert lightning.network.graph[7][0]['balance'] == receiver_coins

@@ -5,7 +5,7 @@ import sys
 import collections
 import pickle
 from knowledge import Knowledge
-from paymentmethod import PlainBitcoin
+from paymentmethod import PlainBitcoin, MAX_COINS
 from ln import LN
 from elmo import Elmo
 from donner import Donner
