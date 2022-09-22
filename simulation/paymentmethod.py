@@ -67,7 +67,7 @@ class PlainBitcoin():
             self.coins == other.coins
         )
             
-# this should act as super class for LN, Elmo, etc.
+# this acts as super class for LN, Elmo, LVPC, Donner
 class Payment_Network(ABC):
     def __init__(
         self, nr_players, bitcoin_fee = 1000000,

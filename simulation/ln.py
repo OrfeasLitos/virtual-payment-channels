@@ -44,7 +44,6 @@ class LN(Payment_Network):
         weight_other = 1
         encountered_parties = set({source})
         fee_intermediary = self.ln_fee * DUMMY_PAYMENT_VALUE + self.base_fee
-        # TODO: think if this is what we want.
         cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(
             source, DUMMY_PAYMENT_VALUE, fee_intermediary
         )

@@ -53,7 +53,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE
         fee_intermediary = self.base_fee + dummy_lock_value * self.fee_rate
         cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(source, dummy_lock_value, fee_intermediary)
-        #cheapest_paths = self.network.find_all_cheapest_paths(dummy_lock_value, fee_intermediary)
         calculated_cheapest_paths = {}
         #near_parties = nx.single_source_shortest_path_length(self.network.graph, source, 5)
         path_data = []
@@ -184,7 +183,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             return None
         future_payments, num_payments_sender, num_total_payments = knowledge_sender
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
-        # this is a simplification. TODO: think if this is what we want.
+        # this is a simplification to calculate cheapest paths
         anticipated_lock_value = sum_future_payments + value
         if self.method_name == "Elmo" or self.method_name == "LVPC":
             cost_and_path = self.network.find_cheapest_path(
@@ -252,7 +251,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         options = [onchain_option, new_channel_option, new_virtual_channel_option, pay_option]
         return [option for option in options if option is not None]
 
-    # adjusted from LN
     def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
         # the new_channel argument tells whether this corresponds to making a payment
         # or undoing it.
