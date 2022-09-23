@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 # default max coins loosely copied from real world USD figures
 
 MAX_COINS = 2000000000000000
-MULTIPLIER_CHANNEL_BALANCE = 40
+MULTIPLIER_CHANNEL_BALANCE = 10
 # DUMMY_PAYMENT_VALUE taken from here: https://coingate.com/blog/post/lightning-network-bitcoin-stats-progress
 DUMMY_PAYMENT_VALUE = 500000000
 BASE_DELAY = 0.05
