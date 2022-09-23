@@ -334,22 +334,27 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     new_virtual_channel_fee += self.get_new_virtual_channel_fee(
                         path_for_recursion, sender_coins_recursion + receiver_coins_recursion
                     )
-                    # important that next line is at that position so that Error gets raised in case update is not possible
+                    # important that next line is at that position 
+                    # so that Error gets raised in case update is not possible
                     # before anything else is done.
                     self.update_balances_new_virtual_channel(
-                        path_for_recursion, receiver_coins_recursion, sender_coins_recursion, new_channel=True
+                        path_for_recursion, receiver_coins_recursion,
+                        sender_coins_recursion, new_channel=True
                     )
                     self.network.lock_unlock(
-                        path_for_recursion, sender_coins_recursion + receiver_coins_recursion, lock=True
+                        path_for_recursion, sender_coins_recursion + receiver_coins_recursion,
+                        lock=True
                     )
                     self.network.add_channel(
-                        sender, sender_coins_recursion, receiver_recursion, receiver_coins_recursion, path_for_recursion
+                        sender, sender_coins_recursion, receiver_recursion,
+                        receiver_coins_recursion, path_for_recursion
                     )
                 return new_virtual_channel_fee
             else: # Donner or Elmo
                 sender = path[0]
                 receiver = path[-1]
-                # important that next line is at that position so that Error gets raised in case update is not possible
+                # important that next line is at that position
+                # so that Error gets raised in case update is not possible
                 # before anything else is done.
                 self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
                 self.network.lock_unlock(path, sender_coins + value, lock=True)
@@ -370,15 +375,21 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 for i in range(len(path)-3, -1, -1):
                     path_for_recursion = [sender] + path[i+1:i+3]
                     receiver = path_for_recursion[-1]
-                    amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
+                    amount_sender, amount_receiver = self.network.cooperative_close_channel(
+                        sender, receiver
+                    )
                     self.update_balances_new_virtual_channel(
                         path_for_recursion, amount_receiver, amount_sender, new_channel=False
                     )
             else:
                 sender = path[0]
                 receiver = path[-1]
-                amount_sender, amount_receiver = self.network.cooperative_close_channel(sender, receiver)
-                self.update_balances_new_virtual_channel(path, amount_receiver, amount_sender, new_channel=False)
+                amount_sender, amount_receiver = self.network.cooperative_close_channel(
+                    sender, receiver
+                )
+                self.update_balances_new_virtual_channel(
+                    path, amount_receiver, amount_sender, new_channel=False
+                )
         elif payment_information['kind'] == self.pay_string:
             sender, receiver, value = payment_information['data']
             if self.network.graph.get_edge_data(sender, receiver) is None:
