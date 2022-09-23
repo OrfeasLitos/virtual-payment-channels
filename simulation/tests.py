@@ -209,8 +209,6 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     )
     payment_information_new_virtual_channel = payment_options[2]['payment_information']
 
-    method.do(payment_information_new_virtual_channel)
-    # check first the coins of the parties
     sum_future_payments = sum_future_payments_to_counterparty(sender, 4, future_payments)
     wanted_sender_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
     assert wanted_sender_coins == MULTIPLIER_CHANNEL_BALANCE * value
@@ -224,6 +222,8 @@ def test_do_new_virtual_channel_elmo_lvpc_donner(method_name):
     )
     locked_coins = sender_coins + value
     new_virtual_channel_fee = method.get_new_virtual_channel_fee(path, locked_coins)
+
+    method.do(payment_information_new_virtual_channel)
 
     assert method.network.graph[1][4]['locked_coins'] == locked_coins
     assert method.network.graph[0][1]['balance'] == balances_before[(0, 1)] - new_virtual_channel_fee - locked_coins
