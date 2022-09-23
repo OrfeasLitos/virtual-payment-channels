@@ -292,19 +292,28 @@
 
         \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
         \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
-        \State $\texttt{bridge}_1 \gets 5/\{\pk{1, 2, 1}, \pk{i-1, 2, 1}, \pk{i,
-        2, 1}, \pk{i+1, 2, 1}, \pk{n, 2, 1}\} \wedge \texttt{"1"}$ \Comment{We
-        reuse the $\pk{j, 2, 1}$ keys for all \texttt{bridge}s to avoid new
-        keys}
+        \State $\texttt{bridge}_1 \gets 4/\{\pk{1, 2, 1}, \pk{i-1, 2, 1},
+        \pk{i+1, 2, 1}, \pk{n, 2, 1}\} \wedge \texttt{"1"}$ \Comment{We reuse
+        the $\pk{j, 2, 1}$ keys for all \texttt{bridge}s to avoid new keys}
+        \State $\texttt{revocation}_1 \gets 4/\{\pk{\mathrm{funder},
+        \mathrm{rev}}, \pk{\mathrm{loc}, \mathrm{rev}}, \pk{\mathrm{right},
+        \mathrm{rev}}, \pk{\mathrm{fundee}, \mathrm{rev}}\} \wedge \texttt{"1"}$
         \ForAll{$k \in \{m, \dots, l\} \setminus \{i\}$}
-          \State $\texttt{bridge}_{2, k} \gets 5/\{\pk{1, 2, 1}, \pk{i-1, 2, 1},
-          \pk{i, 2, 1}, \pk{i+1, 2, 1}, \pk{n, 2, 1}\} \wedge \texttt{"2,} k
-          \texttt{"}$
+          \State $\texttt{bridge}_{2, k} \gets 4/\{\pk{1, 2, 1}, \pk{i-1, 2, 1},
+          \pk{i+1, 2, 1}, \pk{n, 2, 1}\} \wedge \texttt{"2,} k \texttt{"}$
+          \State $\texttt{revocation}_{2, k} \gets 4/\{\pk{\mathrm{funder},
+          \mathrm{rev}}, \pk{\mathrm{loc}, \mathrm{rev}}, \pk{\mathrm{right},
+          \mathrm{rev}}, \pk{\mathrm{fundee}, \mathrm{rev}}\} \wedge
+          \texttt{"2,} k \texttt{"}$
         \EndFor
         \ForAll{$(k_1, k_2) \in \{m, \dots, i-1\} \times \{i+1, \dots, l\}$}
-          \State $\texttt{bridge}_{3, k_1, k_2} \gets 5/\{\pk{1, 2, 1}, \pk{i-1,
-          2, 1}, \pk{i, 2, 1}, \pk{i+1, 2, 1}, \pk{n, 2, 1}\} \wedge
-          \texttt{"3,} k_1 \texttt{,} k_2 \texttt{"}$
+          \State $\texttt{bridge}_{3, k_1, k_2} \gets 4/\{\pk{1, 2, 1}, \pk{i-1,
+          2, 1}, \pk{i+1, 2, 1}, \pk{n, 2, 1}\} \wedge \texttt{"3,} k_1
+          \texttt{,} k_2 \texttt{"}$
+          \State $\texttt{revocation}_{3, k_1, k_2} \gets
+          4/\{\pk{\mathrm{funder}, \mathrm{rev}}, \pk{\mathrm{loc},
+          \mathrm{rev}}, \pk{\mathrm{right}, \mathrm{rev}}, \pk{\mathrm{fundee},
+          \mathrm{rev}}\} \wedge \texttt{"3,} k_1 \texttt{,} k_2 \texttt{"}$
         \EndFor
 
         \State \Comment{After funding is complete, $A_j$ has the signature of
@@ -336,7 +345,19 @@
               \State $\vee$ (if $(i+1 < n)$ then $\mathit{all}_{i+1, i}$ else
               False)
               \label{code:virtual-layer:mid-txs:initiator:right-all}
-              \State $\vee \texttt{bridge}_1$
+              \State $\vee \texttt{revocation}_1$
+              \State $\vee$ (
+              \Indent
+                \State if $(i-1 = 1 \wedge i+1 = n)$ then $\texttt{bridge}_1$
+                \label{code:virtual-layer:mid-txs:initiator:i-is-2:n-is-3}
+                \State else if $(i-1 > 1 \wedge i+1 = n)$ then
+                $\texttt{bridge}_1 + t_{i-1}$
+                \State else if $(i-1 = 1 \wedge i+1 < n)$ then
+                $\texttt{bridge}_1 + t_{i+1}$
+                \State else \StarComment{$i-1 > 1 \wedge i+1 < n$}
+                $\texttt{bridge}_1 + \max{(t_{i-1}, t_{i+1})}$
+              \EndIndent
+              \State )
             \EndIndent
             \State )
             \label{code:virtual-layer:mid-txs:initiator:virt-out}
@@ -351,22 +372,8 @@
           \EndIndent
           \State output:
           \Indent
-            \State ($c_{\mathrm{virt}}$,
-            \Indent
-              \State \texttt{revocation}
-              \State $\vee$ (
-              \Indent
-                \State if $(i-1 = 1 \wedge i+1 = n)$ then \texttt{virt\_fund}
-                \label{code:virtual-layer:mid-txs:initiator:i-is-2:n-is-3}
-                \State else if $(i-1 > 1 \wedge i+1 = n)$ then
-                $\texttt{virt\_fund} + t_{i-1}$
-                \State else if $(i-1 = 1 \wedge i+1 < n)$ then
-                $\texttt{virt\_fund} + t_{i+1}$
-                \State else \StarComment{$i-1 > 1 \wedge i+1 < n$}
-                $\texttt{virt\_fund} + \max{(t_{i-1}, t_{i+1})}$
-              \EndIndent
-              \State )
-            \EndIndent
+            \State ($c_{\mathrm{virt}}$, \texttt{revocation} $\vee$
+            \texttt{virt\_fund})
           \EndIndent
         \EndIndent
 
@@ -387,8 +394,9 @@
               \State ($c_{\mathrm{virt}}$,
               \Indent
                 \State (if $(n > 3)$ then ($\mathit{all}_{3, 2} \vee
-                \texttt{bridge}_{2, 1})$
-                \State else $\texttt{bridge}_{2, 1}$)
+                \texttt{revocation}_{2, 1} \vee (\texttt{bridge}_{2, 1} + t_3))$
+                \State else $\texttt{revocation}_{2, 1} \vee \texttt{bridge}_{2,
+                1}$)
               \EndIndent
               \State )
             \EndIndent
@@ -401,13 +409,8 @@
             \EndIndent
             \State output:
             \Indent
-              \State ($c_{\mathrm{virt}}$,
-              \Indent
-                \State \texttt{revocation} $\vee$
-                \State (if $(n > 3)$ then $(\texttt{virt\_fund} + t_3)$
-                \State else \texttt{virt\_fund})
-              \EndIndent
-              \State )
+              \State ($c_{\mathrm{virt}}$, \texttt{revocation}
+              $\vee$ \texttt{virt\_fund})
             \EndIndent
           \EndIndent
         \EndIf
@@ -428,8 +431,10 @@
               \State ($c_{\mathrm{virt}}$,
               \Indent
                 \State (if $(n-2 > 1)$ then $(\mathit{all}_{n-2, n-1} \vee
-                \texttt{bridge}_{2, n})$
-                \State else $\texttt{bridge}_{2, n}$)
+                \texttt{revocation}_{2, n} \vee (\texttt{bridge}_{2, n} +
+                t_{n-2}))$
+                \State else $\texttt{revocation}_{2, n} \vee \texttt{bridge}_{2,
+                n}$)
               \EndIndent
               \State )
             \EndIndent
@@ -442,13 +447,8 @@
             \EndIndent
             \State output:
             \Indent
-              \State ($c_{\mathrm{virt}}$,
-              \Indent
-                \State \texttt{revocation} $\vee$
-                \State (if $(n - 2 > 1)$ then $(\texttt{virt\_fund} + t_{n-2})$
-                \State else \texttt{virt\_fund})
-              \EndIndent
-              \State )
+              \State ($c_{\mathrm{virt}}$, \texttt{revocation} $\vee$
+              \texttt{virt\_fund})
             \EndIndent
           \EndIndent
         \EndIf
@@ -472,7 +472,21 @@
                 \State (if $(k-1 > 1)$ then $\mathit{all}_{k-1, i}$ else False)
                 \State $\vee$ (if $(i+1 < n)$ then $\mathit{all}_{i+1, k}$ else
                 False)
-                \State $\vee \texttt{bridge}_{2, k}$
+                \State $\vee \texttt{revocation}_{2, k}$
+                \State $\vee$ (
+                \Indent
+                  \State if $(k-1 = 1 \wedge i+1 = n)$ then $\texttt{bridge}_{2,
+                  k}$
+                  \State else if $(k-1 > 1 \wedge i+1 = n)$ then
+                  $\texttt{bridge}_{2, k} + t_{k-1}$
+                  \State else if $(k-1 = 1 \wedge i+1 < n)$ then
+                  $\texttt{bridge}_{2, k} + t_{i+1}$
+                  \State else \StarComment{$k-1 > 1 \wedge i+1 < n$}
+                  \Indent
+                    \State $\texttt{bridge}_{2, k} + \max{(t_{k-1}, t_{i+1})}$
+                  \EndIndent
+                \EndIndent
+                \State )
               \EndIndent
               \State )
             \EndIndent
@@ -485,24 +499,8 @@
             \EndIndent
             \State output:
             \Indent
-              \State ($c_{\mathrm{virt}}$,
-              \Indent
-                \State \texttt{revocation}
-                \State $\vee$ (
-                \Indent
-                  \State if $(k-1 = 1 \wedge i+1 = n)$ then \texttt{virt\_fund}
-                  \State else if $(k-1 > 1 \wedge i+1 = n)$ then
-                  $\texttt{virt\_fund} + t_{k-1}$
-                  \State else if $(k-1 = 1 \wedge i+1 < n)$ then
-                  $\texttt{virt\_fund} + t_{i+1}$
-                  \State else \StarComment{$k-1 > 1 \wedge i+1 < n$}
-                  \Indent
-                    \State $\texttt{virt\_fund} + \max{(t_{k-1}, t_{i+1})}$
-                  \EndIndent
-                \EndIndent
-                \State )
-              \EndIndent
-              \State )
+              \State ($c_{\mathrm{virt}}$, \texttt{revocation} $\vee$
+              \texttt{virt\_fund})
             \EndIndent
           \EndIndent
         \EndFor
@@ -526,7 +524,22 @@
                 \State (if $(i-1 > 1)$ then $\mathit{all}_{i-1, k}$ else False)
                 \State $\vee$ (if $(k+1 < n)$ then $\mathit{all}_{k+1, i}$ else
                 False)
-                \State $\vee \texttt{bridge}_{2, k}$
+                \State $\vee \texttt{revocation}_{2, k}$
+                \State $\vee$ (
+                \Indent
+                  \State if $(i-1 = 1 \wedge k+1 = n)$ then $\texttt{bridge}_{2,
+                  k}$
+                  \State else if $(i-1 > 1 \wedge k+1 = n)$ then
+                  $\texttt{bridge}_{2, k} + t_{i-1}$
+                  \State else if $(i-1 = 1 \wedge k+1 < n)$ then
+                  $\texttt{bridge}_{2, k} + t_{k+1}$
+                  \State else \StarComment{$i-1 > 1 \wedge k+1 < n$}
+                  \Indent
+                    \State $\texttt{bridge}_{2, k} + \max{(t_{i-1}, t_{k+1})}$
+                  \EndIndent
+                \EndIndent
+                \State )
+
               \EndIndent
               \State )
             \EndIndent
@@ -539,24 +552,8 @@
             \EndIndent
             \State output:
             \Indent
-              \State ($c_{\mathrm{virt}}$,
-              \Indent
-                \State $\vee$ \texttt{revocation}
-                \State $\vee$ (
-                \Indent
-                  \State if $(i-1 = 1 \wedge k+1 = n)$ then \texttt{virt\_fund}
-                  \State else if $(i-1 > 1 \wedge k+1 = n)$ then
-                  $\texttt{virt\_fund} + t_{i-1}$
-                  \State else if $(i-1 = 1 \wedge k+1 < n)$ then
-                  $\texttt{virt\_fund} + t_{k+1}$
-                  \State else \StarComment{$i-1 > 1 \wedge k+1 < n$}
-                  \Indent
-                    \State $\texttt{virt\_fund} + \max{(t_{i-1}, t_{k+1})}$
-                  \EndIndent
-                \EndIndent
-                \State )
-              \EndIndent
-              \State )
+              \State ($c_{\mathrm{virt}}$, $\vee$ \texttt{revocation} $\vee$
+              \texttt{virt\_fund})
             \EndIndent
           \EndIndent
         \EndFor
@@ -580,7 +577,22 @@
                 n-1)}}$ else False)
                 \State $\vee$ (if $(k_2+1 < n)$ then $\mathit{all}_{k_2+1,
                 \max{(k_1, 2)}}$ else False)
-                \State $\vee \texttt{bridge}_{3, k_1, k_2}$
+                \State $\vee \texttt{revocation}_{3, k_1, k_2}$
+                \State $\vee$ (
+                \Indent
+                  \State if $(k_1-1 \leq 1 \wedge k_2+1 \geq n)$ then
+                  $\texttt{bridge}_{3, k_1, k_2}$
+                  \State else if $(k_1-1 > 1 \wedge k_2+1 \geq n)$ then
+                  $\texttt{bridge}_{3, k_1, k_2} + t_{k_1-1}$
+                  \State else if $(k_1-1 \leq 1 \wedge k_2+1 < n)$ then
+                  $\texttt{bridge}_{3, k_1, k_2} + t_{k_2+1}$
+                  \State else \StarComment{$k_1-1 > 1 \wedge k_2+1 < n$}
+                  \Indent
+                    \State $\texttt{bridge}_{3, k_1, k_2} + \max{(t_{k_1-1},
+                    t_{k_2+1})}$
+                  \EndIndent
+                \EndIndent
+                \State )
               \EndIndent
               \State )
             \EndIndent
@@ -593,25 +605,8 @@
             \EndIndent
             \State output:
             \Indent
-              \State ($c_{\mathrm{virt}}$,
-              \Indent
-                \State $\vee$ \texttt{revocation}
-                \State $\vee$ (
-                \Indent
-                  \State if $(k_1-1 \leq 1 \wedge k_2+1 \geq n)$ then
-                  \texttt{virt\_fund}
-                  \State else if $(k_1-1 > 1 \wedge k_2+1 \geq n)$ then
-                  $\texttt{virt\_fund} + t_{k_1-1}$
-                  \State else if $(k_1-1 \leq 1 \wedge k_2+1 < n)$ then
-                  $\texttt{virt\_fund} + t_{k_2+1}$
-                  \State else \StarComment{$k_1-1 > 1 \wedge k_2+1 < n$}
-                  \Indent
-                    \State $\texttt{virt\_fund} + \max{(t_{k_1-1}, t_{k_2+1})}$
-                  \EndIndent
-                \EndIndent
-                \State )
-              \EndIndent
-              \State )
+              \State ($c_{\mathrm{virt}}$, $\vee$ \texttt{revocation} $\vee$
+              \texttt{virt\_fund})
             \EndIndent
           \EndIndent
         \EndFor
@@ -659,18 +654,21 @@
         \mathrm{rev}}\}$
         \State $\texttt{virt\_fund} \gets 2/\{\pk{\mathrm{left},
         \mathrm{virt}}, \pk{\mathrm{right}, \mathrm{virt}}\}$
-        \State $\texttt{revocation} \gets 2/\{\pk{\mathrm{interm},
-        \mathrm{rev}}, \pk{\mathrm{endpoint}, \mathrm{rev}}\}$
+        \State $\texttt{revocation} \gets \texttt{revocation}_1 \gets
+        2/\{\pk{\mathrm{interm}, \mathrm{rev}}, \pk{\mathrm{endpoint},
+        \mathrm{rev}}\}$
         \If{$i = 1$} \Comment{funder's tx}
           \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
           \pk{\mathrm{all}, n}\} \wedge \texttt{"1"}$
-        \Else \: \Comment{fundee's tx}
+          \State $\texttt{bridge} \gets 2/\{\pk{\mathit{all}, 2},
+          \pk{\mathit{all}, n}\} \wedge \texttt{"1"}$ \Comment{We reuse the
+          $\pk{\mathit{all}, j}$ keys to avoid new keys}
+        \Else \: \Comment{$i = n$, fundee's tx}
           \State $\mathit{all} \gets n/\{\pk{\mathrm{all}, 1}, \dots,
           \pk{\mathrm{all}, n}\} \wedge \texttt{"}n\texttt{"}$
+          \State $\texttt{bridge} \gets 2/\{\pk{\mathit{all}, 1},
+          \pk{\mathit{all}, n-1}\} \wedge \texttt{"1"}$
         \EndIf
-        \State $\texttt{bridge} \gets 3/\{\pk{1, 2, 1}, \pk{2, 2, 1}, \pk{n, 2,
-        1}\} \wedge \texttt{"1"}$ \Comment{We reuse the $\pk{j, 2, 1}$ keys to
-        avoid new keys}
         \State $\mathrm{TX}_1 \gets \mathrm{TX}$: \Comment{endpoints only have
         an ``initiator'' tx}
         \Indent
@@ -682,7 +680,8 @@
           \Indent
             \State $(c_{\mathrm{tot}} - c_{\mathrm{virt}}, \texttt{new\_fund})$,
             \label{code:virtual-layer:endpoint-txs:new-fund}
-            \State $(c_{\mathrm{virt}}, \mathit{all} \vee \texttt{bridge})$
+            \State $(c_{\mathrm{virt}}, \mathit{all} \vee
+            \texttt{revocation}_1 \vee (\texttt{bridge} + t))$
             \label{code:virtual-layer:endpoint-txs:virt}
           \EndIndent
         \EndIndent
@@ -695,7 +694,7 @@
           \State output:
           \Indent
             \State $(c_{\mathrm{virt}}, \texttt{revocation} \vee
-            (\texttt{virt\_fund} + t))$
+            \texttt{virt\_fund})$
           \EndIndent
         \EndIndent
         \State \Return $\mathrm{TX}_1$, $B_1$
@@ -737,12 +736,6 @@
       \State ensure that the following signatures are present in
       $\mathrm{sigs}_{\mathrm{byLeft}}$ and store them:
       \begin{itemize}
-        \item \Comment{$2$ signatures}
-      \end{itemize}
-      \Indent
-        \State sig($B_{i, 1}, \pk{1, 2, 1}$), sig($B_{i, 1}, \pk{i-1, 2, 1}$)
-      \EndIndent
-      \begin{itemize}
         \item \Comment{$(l-m) \cdot (i-1)$ signatures}
       \end{itemize}
       \Indent
@@ -750,16 +743,6 @@
         [i-1]:$
         \Indent
           \State sig($\mathrm{TX}_{i, 2, k}, \pk{j, i, k}$)
-        \EndIndent
-      \EndIndent
-      \begin{itemize}
-        \item \Comment{$2 \cdot (l-m)$ signatures}
-      \end{itemize}
-      \Indent
-        \State $\forall k \in \{m, \dots, l\} \setminus \{i\}:$
-        \Indent
-          \State sig($B_{i, 2, k}, \pk{1, 2, 1}$), sig($B_{i, 2, k}, \pk{i-1, 2,
-          1}$)
         \EndIndent
       \EndIndent
       \begin{itemize}
@@ -772,17 +755,6 @@
         \Indent
           \State sig($\mathrm{TX}_{i, 3, k_1, k_2}, \pk{j, i, k_1}$),
           sig($\mathrm{TX}_{i, 3, k_1, k_2}, \pk{j, i, k_2}$),
-        \EndIndent
-      \EndIndent
-      \begin{itemize}
-        \item \Comment{$2 \cdot (i-m) \cdot (l-i)$ signatures}
-      \end{itemize}
-      \Indent
-        \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots,
-        l\}:$
-        \Indent
-          \State sig($B_{i, 3, k_1, k_2}, \pk{1, 2, 1}$), sig($B_{i, 3, k_1,
-          k_2}, \pk{i-1, 2, 1}$)
         \EndIndent
       \EndIndent
       \State $\mathrm{sigs}_{\mathrm{toRight}} \gets
@@ -823,6 +795,38 @@
         \in [n-1] \setminus \{1\}, s \in [n-1] \setminus \{1, p\}}$, $(\pk{k, 2,
         1})_{k \in [n]}$, $(\pk{k, n-1, n})_{k \in [n]}$, $(t_k)_{k \in [n-1]
         \setminus \{1\}}$)
+        \If{$j = i - 1$}
+          \State ensure that the following signatures are present in
+          $\mathrm{sigs}_{\mathrm{byLeft}}$ and store them:
+          \begin{itemize}
+            \item \Comment{$2$ signatures}
+          \end{itemize}
+          \Indent
+            \State sig($B_{i-1, 1}, \pk{1, 2, 1}$), sig($B_{i-1, 1}, \pk{i-1, 2,
+            1}$)
+          \EndIndent
+          \begin{itemize}
+            \item \Comment{$2(l-m)$ signatures}
+          \end{itemize}
+          \Indent
+            \State $\forall k \in \{m, \dots, l\} \setminus \{i\}:$
+            \Indent
+              \State sig($B_{i-1, 2, k}, \pk{1, 2, 1}$), sig($B_{i-1, 2, k},
+              \pk{i-1, 2, 1}$)
+            \EndIndent
+          \EndIndent
+          \begin{itemize}
+            \item \Comment{$2(i-m) \cdot (l-i)$ signatures}
+          \end{itemize}
+          \Indent
+            \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1,
+            \dots, l\}:$
+            \Indent
+              \State sig($B_{i-1, 3, k_1, k_2}, \pk{1, 2, 1}$), sig($B_{i-1, 3,
+              k_1, k_2}, \pk{i-1, 2, 1}$)
+            \EndIndent
+          \EndIndent
+        \EndIf
         \IfThenElse{$j < i$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toLeft}}$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toRight}}$}
@@ -853,57 +857,6 @@
       \State call
       $\bar{P}$.\textsc{circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
       and assign returned value to $\mathrm{sigs}_{\mathrm{byRight}}$
-      \State ensure that the following signatures are present in
-      $\mathrm{sigs}_{\mathrm{byRight}}$ and store them:
-      \begin{itemize}
-        \item \Comment{$2$ signatures}
-      \end{itemize}
-      \Indent
-        \State sig($B_{i, 1}, \pk{i+1, 2, 1}$), sig($B_{i, 1}, \pk{n, 2, 1}$)
-      \EndIndent
-      \begin{itemize}
-        \item \Comment{$(l-m) \cdot (n-i)$ signatures}
-      \end{itemize}
-      \Indent
-        \State $\forall k \in \{m, \dots, l\} \setminus \{i\}, \forall j \in
-        \{i+1, \dots, n\}:$
-        \Indent
-          \State sig($\mathrm{TX}_{i, 2, k}, \pk{j, i, k}$)
-        \EndIndent
-      \EndIndent
-      \begin{itemize}
-        \item \Comment{$2 \cdot (l-m)$ signatures}
-      \end{itemize}
-      \Indent
-        \State $\forall k \in \{m, \dots, l\} \setminus \{i\}:$
-        \Indent
-          \State sig($B_{i, 2, k}, \pk{i+1, 2, 1}$), sig($B_{i, 2, k}, \pk{n, 2,
-          1}$)
-        \EndIndent
-      \EndIndent
-      \begin{itemize}
-        \item \Comment{$2 \cdot (i-m) \cdot (l-i) \cdot
-        (n-i)$ signatures}
-      \end{itemize}
-      \Indent
-        \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots,
-        l\}, \forall j \in \{i+1, \dots, n\}:$
-        \Indent
-          \State sig($\mathrm{TX}_{i, 3, k_1, k_2}, \pk{j, i, k_1}$),
-          sig($\mathrm{TX}_{i, 3, k_1, k_2}, \pk{j, i, k_2}$)
-        \EndIndent
-      \EndIndent
-      \begin{itemize}
-        \item \Comment{$2 \cdot (i-m) \cdot (l-i)$ signatures}
-      \end{itemize}
-      \Indent
-        \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1, \dots,
-        l\}:$
-        \Indent
-          \State sig($B_{i, 3, k_1, k_2}, \pk{i+1, 2, 1}$), sig($B_{i, 3, k_1,
-          k_2}, \pk{n, 2, 1}$)
-        \EndIndent
-      \EndIndent
       \State output (\textsc{virtualSigsBack},
       $\mathrm{sigs}_{\mathrm{toLeft}}$, $\mathrm{sigs}_{\mathrm{byRight}}$)
     \end{algorithmic}
@@ -1002,12 +955,18 @@
         1})_{h \in [n]}$, $(\pk{h, n-1, n})_{h \in [n]}$, $(t_h)_{h \in [n-1]
         \setminus \{1\}}$)
         \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
+          \State ensure that sig($B_{j, 2, k}, \pk{1, 2, 1}$), sig($B_{j, 2, k},
+          \pk{n-1, 2, 1}$) are present in $\mathrm{sigs}_{\mathrm{byLeft}}$ and
+          store them
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{n, j, k}$,
           \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
           \State add \textsc{sign}($B_{j, 2, k}$, $\sk{n, 2, 1}$,
           \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
         \EndFor
         \ForAll{$k_1 \in \{m, \dots, j-1\}, k_2 \in \{j+1, \dots, l\}$}
+          \State ensure that sig($B_{j, 3, k_1, k_2}, \pk{1, 2, 1}$), sig($B_{j,
+          3, k_1, k_2}, \pk{n-1, 2, 1}$) are present in
+          $\mathrm{sigs}_{\mathrm{byLeft}}$ and store them
           \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{n, j,
           k_1}$, \texttt{ANYPREVOUT}) to $\mathrm{sigs}_{\mathrm{toLeft}}$
           \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{n, j,
@@ -1079,6 +1038,21 @@
       \label{code:virtual-layer:funder-sigs:tx-none}
       \State ensure that sig($B_{1, 1}, \pk{2, 2, 1}$), sig($B_{1, 1}, \pk{n, 2,
       1}$) are present in $\mathrm{sigs}_{\mathrm{byRight}}$ and store them
+      \label{code:virtual-layer:funder-sigs:verify-bridge}
+      \ForAll{$j \in [n-1] \setminus \{1\}$}
+        \IfThenElse{$j = 2$}{$m \gets 1$}{$m \gets 2$}
+        \IfThenElse{$j = n-1$}{$l \gets n$}{$l \gets n-1$}
+        \ForAll{$k \in \{m, \dots, l\} \setminus \{j\}$}
+          \State ensure that sig($B_{j, 2, k}, \pk{2, 2, 1}$), sig($B_{j, 2, k},
+          \pk{n, 2, 1}$) are present in $\mathrm{sigs}_{\mathrm{byRight}}$ and
+          store them
+        \EndFor
+        \ForAll{$k_1 \in \{m, \dots, j-1\}, k_2 \in \{j+1, \dots, l\}$}
+          \State ensure that sig($B_{j, 3, k_1, k_2}, \pk{2, 2, 1}$), sig($B_{j,
+          3, k_1, k_2}, \pk{n, 2, 1}$) are present in
+          $\mathrm{sigs}_{\mathrm{byRight}}$ and store them
+        \EndFor
+      \EndFor
       \State \Return (\textsc{ok})
     \end{algorithmic}
   \end{processbox}
@@ -1392,14 +1366,19 @@
         \mathrm{TX}_{i-1, 2, k} \in \Sigma$} \Comment{left counterparty
         maliciously published old virtual tx}
           \If{$\exists k \in \mathbb{N}: \mathrm{TX}_{i-1, 2, k} \in
-          \Sigma$}
-            \State $(B, \sk{}) \gets (B_{i-1, 2, k}, \sk{i, i-1, k})$
+          \Sigma$} \Comment{exactly one of the two pairs is valid. That is OK}
+            \State $(R_a, \sk{a}, R_b, \sk{b}) \gets (R_{i-1, 2, k}, \sk{i, 2,
+            1}, R_{\mathrm{loc}, \mathrm{left}, \mathrm{virt}}, \sk{i,
+            \mathrm{rev}})$
           \Else
-            \State $(B, \sk{}) \gets (B_{i-1, 1}, \sk{i, 1})$
+            \State $(R_a, \sk{a}, R_b, \sk{b}) \gets (R_{i-1, 1}, \sk{i, 2, 1},
+            R_{\mathrm{loc}, \mathrm{left}, \mathrm{virt}}, \sk{i,
+            \mathrm{rev}})$
           \EndIf
-          \State input (\textsc{submit}, ($B$, $R_{\mathrm{loc}, \mathrm{left},
-          \mathrm{virt}}$, $R_{\mathrm{loc}, \mathrm{left}, \mathrm{fund}}$),
-          (\textsc{sign}($B$, $\sk{}$), \textsc{sign}($R_{\mathrm{loc},
+          \State input (\textsc{submit}, ($R_a$, $R_b$, $R_{\mathrm{loc},
+          \mathrm{left}, \mathrm{virt}}$, $R_{\mathrm{loc}, \mathrm{left},
+          \mathrm{fund}}$), (\textsc{sign}($R_a$, $\sk{a}$),
+          (\textsc{sign}($R_b$, $\sk{b}$), \textsc{sign}($R_{\mathrm{loc},
           \mathrm{left}, \mathrm{virt}}$, $\sk{i, \mathrm{rev}}$),
           \textsc{sign}($R_{\mathrm{loc}, \mathrm{left}, \mathrm{fund}}$,
           $\sk{i, \mathrm{rev}}$))) to \ledger
@@ -1468,19 +1447,17 @@
       $(\mathrm{TX}_{i, 3, k_1, k_2})_{k_1, k_2 \in [n]}$ that can be appended
       to $\Sigma$ in a valid way \Comment{ignore invalid subscript combinations}
       \label{code:virtual-layer:close:tx}
-      \State $\texttt{txs} \gets (\mathrm{TX}_p, B_p)$
       \State let \texttt{sigs} be the set of stored signatures that sign
-      either $\mathrm{TX}_p$ or $B_p$
+      $\mathrm{TX}_p$
       \State add \textsc{sign}($\mathrm{TX}_p$, $\sk{i, \mathrm{left},
       \mathrm{fund}, \mathrm{old}}$, \texttt{ANYPREVOUT}),
       \textsc{sign}($\mathrm{TX}_p$, $\sk{i, \mathrm{right}, \mathrm{fund},
       \mathrm{old}}$, \texttt{ANYPREVOUT}), $(\textsc{sign}(\mathrm{TX}_p,
-      \sk{i, j, k}, \texttt{ANYPREVOUT}))_{j, k \in [n]}$, $(\textsc{sign}(B_p,
       \sk{i, j, k}, \texttt{ANYPREVOUT}))_{j, k \in [n]}$ to \texttt{sigs}
       \Comment{ignore invalid signatures}
       \State ignore all messages except for (\textsc{check if closing}) by $R$
       \State $\textit{State} \gets \textsc{closing}$
-      \State send (\textsc{submit}, \texttt{txs}, \texttt{sigs}) to \ledger
+      \State send (\textsc{submit}, $\mathrm{TX}_p$, \texttt{sigs}) to \ledger
     \end{algorithmic}
   \end{processbox}
   \captionof{figure}{}
@@ -1501,10 +1478,18 @@
         expired/non-existent timelock in $\Sigma$ \Comment{new base funding
         output}
         \label{code:virtual-layer:check-chain-close:funder:output-funder}
-        \State ensure that there exists an output with $c_{\mathrm{virt}}$ coins
-        and a $2/\{\pk{\mathrm{left}, \mathrm{virt}}, \pk{\mathrm{right},
-        \mathrm{virt}}\}$ spending method with expired/non-existent timelock in
-        $\Sigma$ \Comment{virtual funding output}
+        \State ensure that there either exists an output with
+        $c_{\mathrm{virt}}$ coins and a $2/\{\pk{\mathrm{left}, \mathrm{virt}},
+        \pk{\mathrm{right}, \mathrm{virt}}\}$ spending method with
+        expired/non-existent timelock in $\Sigma$ \StarComment{virtual funding
+        output by a ``bridge'' tx} or a $\texttt{bridge}_p$ output. In the
+        latter case, collect all $B_p$'s signatures in \texttt{sigs}, add
+        \textsc{sign}($B_p$, $\sk{1, 2, 1}$, \texttt{ANYPREVOUT}) (or, if $p =
+        n, 1$, \textsc{sign}($B_p$, $\sk{1, n-1, n}$, \texttt{ANYPREVOUT})
+        instead) to \texttt{sigs}, send (\textsc{submit}, $B_p$, \texttt{sigs})
+        to \ledger and keep waiting here for (\textsc{check if closing}) by $R$
+        until $B_p$ is in $\Sigma$ returned by sending (\textsc{read}) to
+        \ledger.
         \label{code:virtual-layer:check-chain-close:funder:output-virt}
       \ElsIf{$i = n$} \Comment{we are \texttt{host\_fundee}}
         \State ensure that there exists an output with $c_P + c_{\bar{P}} -
@@ -1512,10 +1497,18 @@
         \mathrm{new}}, \pk{n, \mathrm{fund}, \mathrm{new}}\}$ spending method
         with expired/non-existent timelock in $\Sigma$ \Comment{new base funding
         output}
-        \State ensure that there exists an output with $c_{\mathrm{virt}}$ coins
-        and a $2/\{\pk{\mathrm{left}, \mathrm{virt}}, \pk{\mathrm{right},
-        \mathrm{virt}}\}$ spending method with expired/non-existent timelock in
-        $\Sigma$ \Comment{virtual funding output}
+        \State ensure that there either exists an output with
+        $c_{\mathrm{virt}}$ coins and a $2/\{\pk{\mathrm{left}, \mathrm{virt}},
+        \pk{\mathrm{right}, \mathrm{virt}}\}$ spending method with
+        expired/non-existent timelock in $\Sigma$ \StarComment{virtual funding
+        output by a ``bridge'' tx} or a $\texttt{bridge}_p$ output. In the
+        latter case, collect all $B_p$'s signatures in \texttt{sigs}, add
+        \textsc{sign}($B_p$, $\sk{1, 2, 1}$, \texttt{ANYPREVOUT}) (or, if $p =
+        n, 1$, \textsc{sign}($B_p$, $\sk{1, n-1, n}$, \texttt{ANYPREVOUT})
+        instead) to \texttt{sigs}, send (\textsc{submit}, $B_p$, \texttt{sigs})
+        to \ledger and keep waiting here for (\textsc{check if closing}) by $R$
+        until $B_p$ is in $\Sigma$ returned by sending (\textsc{read}) to
+        \ledger.
       \Else \: \Comment{we are intermediary}
         \IfThenElse{$\mathtt{side} = \text{``left''}$}{$j \gets i-1$}{$j \gets
         i+1$} \Comment{\texttt{side} is defined for all intermediaries -- c.f.\
@@ -1524,9 +1517,18 @@
         \State ensure that there exists an output with $c_P + c_{\bar{P}} -
         c_{\mathrm{virt}}$ coins and a $2/\{\pk{i, \mathrm{fund}, \mathrm{new}},
         \pk{j, \mathrm{fund}, \mathrm{new}}\}$ spending method with
-        expired/non-existent timelock and an output with $c_{\mathrm{virt}}$
-        coins and a $\pk{i, \mathrm{out}}$ spending method with
         expired/non-existent timelock in $\Sigma$
+        \State ensure that there either exists an output with
+        $c_{\mathrm{virt}}$ coins and a $\pk{i, \mathrm{out}}$ spending method
+        with expired/non-existent timelock in $\Sigma$ \StarComment{virtual
+        funding output by a ``bridge'' tx} or a $\texttt{bridge}_{i-1, p}$
+        output. In the latter case, collect all $B_{i-1, p}$'s signatures in
+        \texttt{sigs}, add \textsc{sign}($B_{i-1, p}$, $\sk{1, 2, 1}$,
+        \texttt{ANYPREVOUT}) (or, if $i-1, p = n, 1$, \textsc{sign}($B_{i-1,
+        p}$, $\sk{1, n-1, n}$, \texttt{ANYPREVOUT}) instead) to \texttt{sigs},
+        send (\textsc{submit}, $B_{i-1, p}$, \texttt{sigs}) to \ledger and keep
+        waiting here for (\textsc{check if closing}) by $R$ until $B_{i-1, p}$
+        is in $\Sigma$ returned by sending (\textsc{read}) to \ledger.
       \EndIf
       \State $\textit{State} \gets \textsc{closed}$
       \State output (\textsc{closed}) to $R$
@@ -1680,8 +1682,37 @@
         \State extract $\mathrm{sig}_{n, i, \mathrm{left}, \mathrm{rev},
         \mathrm{virt}}$ from \texttt{right\_revocations}
         \State ensure \textsc{verify}($R_{\mathrm{loc}, \mathrm{left}}$,
-        $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$, $\pk{n, \mathrm{rev}}$) =
-        True
+        $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev}}$, $\pk{n, \mathrm{rev}}$)
+        = True
+        \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
+        \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
+        \State ensure that the following signatures are present in
+        \texttt{right\_revocations} and store them:
+        \begin{itemize}
+          \item \Comment{$1$ signature}
+        \end{itemize}
+        \Indent
+          \State sig($R_{i-1, 1}, \pk{n, \mathrm{rev}}$)
+        \EndIndent
+        \begin{itemize}
+          \item \Comment{$l-m$ signatures}
+        \end{itemize}
+        \Indent
+          \State $\forall k \in \{m, \dots, l\} \setminus \{i\}:$
+          \Indent
+            \State sig($R_{i-1, 2, k}, \pk{n, \mathrm{rev}}$)
+          \EndIndent
+        \EndIndent
+        \begin{itemize}
+          \item \Comment{$(i-m) \cdot (l-i)$ signatures}
+        \end{itemize}
+        \Indent
+          \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1,
+          \dots, l\}:$
+          \Indent
+            \State sig($R_{i-1, 3, k_1, k_2}, \pk{n, \mathrm{rev}}$)
+          \EndIndent
+        \EndIndent
         \label{code:virtual-layer:coop-close-intermediary:verify-left-virt-rev-end}
       \Else \: \Comment{$i = n$, we are host of fundee}
         \State output (\textsc{revoke}) to \texttt{fundee}
@@ -1690,10 +1721,46 @@
         \Comment{executed by \texttt{fundee}}
         \State \trustedcode{$\mathrm{sig}_{P, R, i} \gets
         \textsc{sign}(R_{\bar{P}, i}, \sk{P, R, i})$}
+        \State \trustedcode{$\texttt{virtual\_revocation\_sigs} \gets
+        \emptyset$}
+        \For{\trustedcode{$j \in [n-1]$}}
+          \State \trustedcode{$R_{j, 1} \gets$ TX \{input: $\mathrm{TX}_{j,
+          1}.\texttt{revocation}_1$, output: $(c_{\mathrm{virt}}, \pk{j+1,
+          \mathrm{out}})$\}}
+          \State \trustedcode{$\mathrm{sig}_{j, R, 1, i} \gets
+          \textsc{sign}(R_{j, 1}, \sk{i, \mathrm{rev}})$;
+          $\texttt{virtual\_revocation\_sigs} \gets
+          \texttt{virtual\_revocation\_sigs} \cup \mathrm{sig}_{j, R, 1, i}$}
+          \IfThenElse{\trustedcode{$j = 2$}}{\trustedcode{$m \gets
+          1$}}{\trustedcode{$m \gets 2$}}
+          \IfThenElse{\trustedcode{$j = n-1$}}{\trustedcode{$l \gets
+          n$}}{\trustedcode{$l \gets n-1$}}
+          \For{\trustedcode{$k \in \{m, \dots, l\}$}}
+            \State \trustedcode{$R_{j, 2, k} \gets$ TX \{input: $\mathrm{TX}_{j,
+            2, k}.\texttt{revocation}_{2, k}$, output: $(c_{\mathrm{virt}},
+            \pk{j+1, \mathrm{out}})$\}}
+            \State \trustedcode{$\mathrm{sig}_{j, R, 2, k, i} \gets
+            \textsc{sign}(R_{j, 2, k}, \sk{i, \mathrm{rev}})$;
+            $\texttt{virtual\_revocation\_sigs} \gets
+            \texttt{virtual\_revocation\_sigs} \cup \mathrm{sig}_{j, R, 2, k,
+            i}$}
+          \EndFor
+          \For{\trustedcode{$k_1 \in \{m, \dots, j-1\}, k_2 \in \{j+1, \dots,
+          l\}$}}
+            \State \trustedcode{$R_{j, 3, k_1, k_2} \gets$ TX \{input:
+            $\mathrm{TX}_{j, 3, k_1, k_2}.\texttt{revocation}_{3, k_1, k_2}$,
+            output: $(c_{\mathrm{virt}}, \pk{j+1, \mathrm{out}})$\}}
+            \State \trustedcode{$\mathrm{sig}_{j, R, 3, k_1, k_2, i} \gets
+            \textsc{sign}(R_{j, 3, k_1, k_2}, \sk{i, \mathrm{rev}})$;
+            $\texttt{virtual\_revocation\_sigs} \gets
+            \texttt{virtual\_revocation\_sigs} \cup \mathrm{sig}_{j, R, 3, k_1,
+            k_2, i}$}
+          \EndFor
+        \EndFor
         \State \trustedcode{input (\textsc{revocations}, $\mathrm{sig}_{P, R,
-        i}$) to $\texttt{host}_P$}
-        \State rename received signature to $\mathrm{sig}_{n, \mathrm{right},
-        R}$
+        i}$, \texttt{virtual\_revocation\_sigs}) to $\texttt{host}_P$}
+        \State rename received signature $\mathrm{sig}_{P, R, i}$ to
+        $\mathrm{sig}_{n, \mathrm{right}, R}$
         \ForAll{$j \in \{2, \dots, n\}$}
           \State $R_{j, \mathrm{left}} \gets$ TX \{input: $(c_{\mathrm{virt}},
           4/\{\pk{1, \mathrm{rev}}, \pk{j-1, \mathrm{rev}}, \pk{j,
@@ -1753,7 +1820,7 @@
         \mathrm{left}, R}$), ($\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev},
         \mathrm{virt}}$, $\mathrm{sig}_{n, \mathrm{left}, \mathrm{rev},
         \mathrm{fund}}$, $(\mathrm{sig}_{n, j, \mathrm{left}, \mathrm{rev}})_{j
-        \in \{2, \dots, n\}}$))
+        \in \{2, \dots, n\}}$), \texttt{virtual\_rev\_sigs})
       \EndIf
       \State send $M$ to $\bar{P}$ and expect reply (\textsc{coop close
       revocations}, \texttt{left\_revocations})
@@ -1782,6 +1849,38 @@
       \mathrm{fund}}$, $\mathrm{sig}_{i-1, \mathrm{left}, \mathrm{rev},
       \mathrm{fund}}$, $\pk{i-1, \mathrm{rev}}$) = True
       \label{code:virtual-layer:coop-close-intermediary:verify-left-fund-rev}
+      \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
+      \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
+      \State ensure that the following signatures are present in
+      \texttt{left\_revocations} and store them:
+      \begin{itemize}
+        \item \Comment{$2$ signatures}
+      \end{itemize}
+      \Indent
+        \State sig($R_{i-1, 1}, \pk{1, \mathrm{rev}}$), sig($R_{i-1, 1},
+        \pk{i-1, \mathrm{rev}}$)
+      \EndIndent
+      \begin{itemize}
+        \item \Comment{$2(l-m)$ signatures}
+      \end{itemize}
+      \Indent
+        \State $\forall k \in \{m, \dots, l\} \setminus \{i\}:$
+        \Indent
+          \State sig($R_{i-1, 2, k}, \pk{1, \mathrm{rev}}$), sig($R_{i-1, 2, k},
+          \pk{i-1, \mathrm{rev}}$)
+        \EndIndent
+      \EndIndent
+      \begin{itemize}
+        \item \Comment{$2(i-m) \cdot (l-i)$ signatures}
+      \end{itemize}
+      \Indent
+        \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1,
+        \dots, l\}:$
+        \Indent
+          \State sig($R_{i-1, 3, k_1, k_2}, \pk{1, \mathrm{rev}}$), sig($R_{i-1,
+          3, k_1, k_2}, \pk{i-1, \mathrm{rev}}$)
+        \EndIndent
+      \EndIndent
       \State output (\textsc{verify rev}, $\mathrm{sig}_{i-1, \mathrm{right},
       R}$, $\texttt{host}_P$) to \texttt{guest}
       \State \trustedcode{store received signature as $\mathrm{sig}_{bar{P}, R,
@@ -1852,6 +1951,35 @@
         \State \trustedcode{$\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev},
         \mathrm{fund}} \gets \textsc{sign}(R_{\mathrm{rem}, \mathrm{right},
         \mathrm{fund}}, \sk{i, \mathrm{rev}})$}
+        \State \trustedcode{$R_{i, 1} \gets$ TX \{input: $\mathrm{TX}_{i,
+        1}.\texttt{revocation}_1$, output: $(c_{\mathrm{virt}}, \pk{i+1,
+        \mathrm{out}})$\}}
+        \State \trustedcode{$\mathrm{sig}_{i, R, 1, i} \gets \textsc{sign}(R_{i,
+        1}, \sk{i, \mathrm{rev}})$; $\texttt{left\_revocations} \gets
+        \texttt{left\_revocations} \cup \mathrm{sig}_{i, R, 1, i}$}
+        \IfThenElse{\trustedcode{$i = 2$}}{\trustedcode{$m \gets
+        1$}}{\trustedcode{$m \gets 2$}}
+        \IfThenElse{\trustedcode{$i = n-1$}}{\trustedcode{$l \gets
+        n$}}{\trustedcode{$l \gets n-1$}}
+        \For{\trustedcode{$k \in \{m, \dots, l\}$}}
+          \State \trustedcode{$R_{i, 2, k} \gets$ TX \{input: $\mathrm{TX}_{i,
+          2, k}.\texttt{revocation}_{2, k}$, output: $(c_{\mathrm{virt}},
+          \pk{i+1, \mathrm{out}})$\}}
+          \State \trustedcode{$\mathrm{sig}_{i, R, 2, k, i} \gets
+          \textsc{sign}(R_{i, 2, k}, \sk{i, \mathrm{rev}})$;
+          $\texttt{left\_revocations} \gets \texttt{left\_revocations} \cup
+          \mathrm{sig}_{i, R, 2, k, i}$}
+        \EndFor
+        \For{\trustedcode{$k_1 \in \{m, \dots, i-1\}, k_2 \in \{i+1, \dots,
+        l\}$}}
+          \State \trustedcode{$R_{i, 3, k_1, k_2} \gets$ TX \{input:
+          $\mathrm{TX}_{i, 3, k_1, k_2}.\texttt{revocation}_{3, k_1, k_2}$,
+          output: $(c_{\mathrm{virt}}, \pk{i+1, \mathrm{out}})$\}}
+          \State \trustedcode{$\mathrm{sig}_{i, R, 3, k_1, k_2, i} \gets
+          \textsc{sign}(R_{i, 3, k_1, k_2}, \sk{i, \mathrm{rev}})$;
+          $\texttt{left\_revocations} \gets \texttt{left\_revocations} \cup
+          \mathrm{sig}_{i, R, 3, k_1, k_2, i}$}
+        \EndFor
         \State \trustedcode{send (\textsc{coop close revocations},
         (\texttt{left\_revocations}, $\mathrm{sig}_{i, \mathrm{right}, R}$,
         $\mathrm{sig}_{i, \mathrm{right}, \mathrm{rev}, \mathrm{virt}}$,
@@ -1871,6 +1999,47 @@
         \State \trustedcode{ensure \textsc{verify}($R_{P, i}$,
         $\mathrm{sig}_{\bar{P}, R, i}$, $\pk{\bar{P}, R, i}$) = True}
         \label{code:virtual-layer:coop-close-intermediary:fundee-verify-rev}
+        \For{\trustedcode{$j \in [n-1]$}}
+          \IfThenElse{\trustedcode{$j = 2$}}{\trustedcode{$m \gets
+          1$}}{\trustedcode{$m \gets 2$}}
+          \IfThenElse{\trustedcode{$j = n-1$}}{\trustedcode{$l \gets
+          n$}}{\trustedcode{$l \gets n-1$}}
+          \State \trustedcode{ensure that the following signatures are present
+          in \texttt{left\_revocations} and store them:} \Comment{exclude
+          signatures by $j+1$ if $j = n-1$}
+          \begin{itemize}
+            \item \Comment{$3$ signatures}
+          \end{itemize}
+          \Indent
+            \State \trustedcode{sig($R_{j, 1}, \pk{1, \mathrm{rev}}$),
+            sig($R_{j, 1}, \pk{j, \mathrm{rev}}$), sig($R_{j, 1}, \pk{j+1,
+            \mathrm{rev}}$)}
+          \EndIndent
+          \begin{itemize}
+            \item \Comment{$3(l-m)$ signatures}
+          \end{itemize}
+          \Indent
+            \State \trustedcode{$\forall k \in \{m, \dots, l\} \setminus
+            \{i\}:$}
+            \Indent
+              \State \trustedcode{sig($R_{j, 2, k}, \pk{1, \mathrm{rev}}$),
+              sig($R_{j, 2, k}, \pk{j, \mathrm{rev}}$), sig($R_{j, 2, k},
+              \pk{j+1, \mathrm{rev}}$)}
+            \EndIndent
+          \EndIndent
+          \begin{itemize}
+            \item \Comment{$3(i-m) \cdot (l-i)$ signatures}
+          \end{itemize}
+          \Indent
+            \State \trustedcode{$\forall k_1 \in \{m, \dots, i-1\}, \forall k_2
+            \in \{i+1, \dots, l\}:$}
+            \Indent
+              \State \trustedcode{sig($R_{j, 3, k_1, k_2}, \pk{1,
+              \mathrm{rev}}$), sig($R_{j, 3, k_1, k_2}, \pk{j, \mathrm{rev}}$),
+              sig($R_{j, 3, k_1, k_2}, \pk{j+1, \mathrm{rev}}$)}
+            \EndIndent
+          \EndIndent
+        \EndFor
         \State \trustedcode{$\itistate \gets \textsc{coop closed}$}
         \label{code:virtual-layer:coop-close-intermediary:fundee-coop-closed}
         \If{$\texttt{close\_initiator} = P$} \Comment{\environment instructed us
