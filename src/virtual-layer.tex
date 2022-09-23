@@ -1384,20 +1384,13 @@
           $\sk{i, \mathrm{rev}}$))) to \ledger
         \EndIf
         \If{$\mathrm{TX}_{i+1, 1} \in \Sigma \vee \exists k \in \mathbb{N}:
-        \mathrm{TX}_{i+1, 2, k} \in \Sigma$} \Comment{right
-        counterparty maliciously published old virtual tx}
-          \If{$\exists k \in \mathbb{N}: \mathrm{TX}_{i+1, 2, k} \in
-          \Sigma$}
-            \State $(B, \sk{}) \gets (B_{i+1, 2, k}, \sk{i, i+1, k})$
-          \Else
-            \State $(B, \sk{}) \gets (B_{i+1, 1}, \sk{i, 1})$
-          \EndIf
-          \State input (\textsc{submit}, ($B$, $R_{\mathrm{loc}, \mathrm{right},
+        \mathrm{TX}_{i+1, 2, k} \in \Sigma$} \Comment{right counterparty
+        maliciously published old virtual tx}
+          \State input (\textsc{submit}, ($R_{\mathrm{loc}, \mathrm{right},
           \mathrm{virt}}$, $R_{\mathrm{loc}, \mathrm{right}, \mathrm{fund}}$),
-          (\textsc{sign}($B$, $\sk{}$), \textsc{sign}($R_{\mathrm{loc},
-          \mathrm{right}, \mathrm{virt}}$, $\sk{i, \mathrm{rev}}$),
-          \textsc{sign}($R_{\mathrm{loc}, \mathrm{right}, \mathrm{fund}}$,
-          $\sk{i, \mathrm{rev}}$))) to \ledger
+          (\textsc{sign}($R_{\mathrm{loc}, \mathrm{right}, \mathrm{virt}}$,
+          $\sk{i, \mathrm{rev}}$), \textsc{sign}($R_{\mathrm{loc},
+          \mathrm{right}, \mathrm{fund}}$, $\sk{i, \mathrm{rev}}$))) to \ledger
         \EndIf
         \State output (\textsc{nothing revoked}) to $R$
       \EndIndent
