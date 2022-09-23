@@ -41,7 +41,7 @@ def random_payments(players, distribution = 'uniform', num_pays = None, power = 
         # we want a parameter for the payment value of 2.16
         # for approximately 80-20 rule (and power law).
         # the mean of a zeta variable with parameter 2.16 is approximately 7.25
-        values = np.random.zipf(2.16, num_pays) * (MAX_COINS * players // (num_pays * 7.25))
+        values = np.random.zipf(2.16, num_pays) * (MAX_COINS * players // (2 * num_pays * 7.25))
         num_value = 0
         for receiver in range(len(incoming_payments_per_player)):
             for j in range(incoming_payments_per_player[receiver]):
