@@ -1,7 +1,6 @@
 import math
 import operator
 import numpy as np
-import networkx as nx
 from paymentmethod import (
     Payment_Network, sum_future_payments_to_counterparty, MULTIPLIER_CHANNEL_BALANCE,
     DUMMY_PAYMENT_VALUE
@@ -39,7 +38,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
 
     def get_distances_and_paths_from_source(self, source, future_payments):
         """
-        Returns weighted distances to the future parties and 
+        Returns weighted distances to the future parties and
         to parties not occuring in future payments.
         Muiltiple payments to same party give multiple distances.
         """
@@ -128,7 +127,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
-        future_payments, num_payments_sender, num_total_payments = knowledge_sender
+        future_payments, _, _ = knowledge_sender
         new_channel_time = self.plain_bitcoin.get_delay() + self.pay_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(
@@ -167,15 +166,16 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         fee_for_value = self.get_new_virtual_channel_fee(path, value)
         # here we calculate how much balance remains after transferring value and a part of
         # the fee to the next intermediary
-        # (this gives a lower bound on the remaining balances as fee_for_value is an upper bound on how
-        # much of the fee has to be transferred to the next intermediary)
+        # (this gives a lower bound on the remaining balances as fee_for_value is an upper bound
+        # on how much of the fee has to be transferred to the next intermediary)
         # available_balances should be a np.array.
         remaining_balances = available_balances - value - fee_for_value
         # now we use the remaining balances to determine how much the sender can possibly put
         # on new virtual channel
         smallest_remaining_balance = min(remaining_balances)
-        # we want to put exactly (if desired coins are more than remaining balance) so much on the new channel
-        # such that sender_coins + fee_sender_coins = smallest_remaining_balance
+        # we want to put exactly (if desired coins are more than remaining balance) 
+        # so much on the new channel such that 
+        # sender_coins + fee_sender_coins = smallest_remaining_balance
         # where fee_sender_coins = fee_rate * sender_coins * (len(path) - 2)
         sender_coins = min(
             desired_sender_coins,
@@ -187,7 +187,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         # in case we have already a channel
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
-        future_payments, num_payments_sender, num_total_payments = knowledge_sender
+        future_payments, _, _ = knowledge_sender
         sum_future_payments = sum_future_payments_to_counterparty(
             sender, receiver, future_payments
         )
@@ -204,7 +204,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             )
         else:
             raise ValueError
-            
+
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
@@ -355,7 +355,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                     new_virtual_channel_fee += self.get_new_virtual_channel_fee(
                         path_for_recursion, sender_coins_recursion + receiver_coins_recursion
                     )
-                    # important that next line is at that position 
+                    # important that next line is at that position
                     # so that Error gets raised in case update is not possible
                     # before anything else is done.
                     self.update_balances_new_virtual_channel(
@@ -423,4 +423,3 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             self.network.graph[receiver][sender]['balance'] -= value
         else:
             raise ValueError
-
