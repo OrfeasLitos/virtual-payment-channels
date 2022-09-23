@@ -30,6 +30,6 @@ if __name__ == "__main__":
         results = sim.run()
         end = time.time()
         print("Time one round: ", end - start)
-        with open("results_power_law" + method.method_name + "_{}".format(i) + ".pickle", 'wb') as file:
+        with open("results_uniform" + method.method_name + "_{}".format(i) + ".pickle", 'wb') as file:
             pickle.dump(results, file)
 
