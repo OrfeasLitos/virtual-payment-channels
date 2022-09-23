@@ -15,9 +15,6 @@ if __name__ == "__main__":
     random.seed(SEED + 100)
     np.random.seed(SEED + 100)
     
-    pickled_file_zipf = open("random_payments_zipf.pickle", 'rb')
-    payments_zipf = pickle.load(pickled_file_zipf)
-
     utility = Utility(
         'sum_of_inverses', personalization = ("50-50", 1000),
         parameters = [(1, 100000000, 1000, 0.001, 0.1), (1, 1000000, 10000, 0.001, 0.1)]
@@ -25,9 +22,10 @@ if __name__ == "__main__":
     knowledge = Knowledge('10-next-mine')
     method = Elmo(1000)
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
-        payments = payments_zipf[(1000, 2., i)]
-        print("Number payments: ", len(payments))
-        sim = Simulation(payments, method, knowledge, utility)
+        pickled_file_zipf = open('random_payments_zipf_1000_' + '_{}_'.format(i) + '.pickle', 'rb')
+        payments_zipf = pickle.load(pickled_file_zipf)
+        print("Number payments: ", len(payments_zipf))
+        sim = Simulation(payments_zipf, method, knowledge, utility)
         start = time.time()
         results = sim.run()
         end = time.time()
