@@ -2,7 +2,7 @@
 import random
 import pickle
 import time
-import tqdm
+from tqdm import tqdm
 import numpy as np
 
 from utility import Utility
