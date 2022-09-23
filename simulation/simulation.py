@@ -180,7 +180,7 @@ if __name__ == "__main__":
     random.seed(SEED)
     np.random.seed(SEED)
     payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
-    """
+
     with open('random_payments_uniform.pickle', 'wb') as file:
         pickle.dump(payments_uniform, file)
     with open('random_payments_preferred_receiver.pickle', 'wb') as file:
@@ -188,39 +188,3 @@ if __name__ == "__main__":
     with open('random_payments_zipf.pickle', 'wb') as file:
         pickle.dump(payments_zipf, file)
     
-    pickled_file_zipf = open("random_payments_zipf.pickle", 'rb')
-    payments_zipf = pickle.load(pickled_file_zipf)
-    pickled_file_uniform = open("random_payments_uniform.pickle", 'rb')
-    payments_uniform = pickle.load(pickled_file_uniform)
-    """
-    
-    payments = payments_zipf[(1000, 2., 0)]
-    random.seed(SEED + 100)
-    np.random.seed(SEED + 100)
-    #payments = payments_uniform[(100, 10000, 0)]
-    #payments = payments_preferred_receiver[(100, 10000, 0)]
-    utilities = [
-        #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 0)),
-        #Utility('sum_of_inverses', parameters = (1000, 1000000, 1000, 10000, 1000000)),
-        Utility('sum_of_inverses', personalization = ("same-utility", 1000), parameters = [(1, 1000000, 10000, 0.0001, 0), (1, 0, 10000, 0.0001, 0)])
-    ]
-    print(len(payments))
-    for method in [Elmo(1000)]:#, Donner(100), LVPC(100)]:#, LN(1000)]:
-        for utility in utilities:
-            for knowledge in [
-                Knowledge('10-next-mine')#, Knowledge('all'), Knowledge('next'),
-                #Knowledge('mine'), Knowledge('10-next')
-            ]:
-                sim = Simulation(copy.copy(payments), method, knowledge, utility)
-                start = time.time()
-                results = sim.run()
-                end = time.time()
-                print(end - start)
-                num_failed = 0
-                for result in results:
-                    if not result[0]:
-                        num_failed += 1
-                print(num_failed)
-                with open('example_results_' + method.method_name + '.pickle', 'wb') as file:
-                    pickle.dump(results, file)
-
