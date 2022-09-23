@@ -156,7 +156,7 @@ class Simulation:
 
     def run(self):
         res = []
-        for step in self:
+        for step in tqdm(self):
             res.append(step)
         return res
 
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     payments_uniform = pickle.load(pickled_file_uniform)
     """
     
-    payments = payments_zipf[(1000, 3., 0)]
+    payments = payments_zipf[(1000, 2., 0)]
     random.seed(SEED + 100)
     np.random.seed(SEED + 100)
     #payments = payments_uniform[(100, 10000, 0)]

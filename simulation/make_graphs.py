@@ -1,5 +1,4 @@
 import pickle
-from turtle import width
 import matplotlib.pyplot as plt
 
 """
@@ -22,12 +21,30 @@ payments_elmo = pickle.load(pickled_file_elmo)
 num_successful_payments_elmo = 0
 sum_fees_elmo = 0
 sum_delays_elmo = 0
+num_onchain = 0
+num_new_virtual_channel = 0
+num_new_channel = 0
+num_pay = 0
 for payment in payments_elmo:
     if payment[0] == True:
         num_successful_payments_elmo += 1
         sum_fees_elmo += payment[2]
         sum_delays_elmo += payment[3]
+        if payment[1]['kind'] == 'onchain':
+            num_onchain += 1
+        elif payment[1]['kind'] == 'Elmo-open-channel':
+            num_new_channel += 1
+        elif payment[1]['kind'] == 'Elmo-open-virtual-channel':
+            num_new_virtual_channel += 1
+        elif payment[1]['kind'] == 'Elmo-pay':
+            num_pay += 1
+        else:
+            pass
 
+print("Onchain", num_onchain)
+print("New channel", num_new_channel)
+print("New virtual channel", num_new_virtual_channel)
+print("Pay", num_pay)
 print(sum_fees_elmo)
 print("Delays: ", sum_delays_elmo)
 num_unsuccessful_payments_elmo = len(payments_elmo) - num_successful_payments_elmo
