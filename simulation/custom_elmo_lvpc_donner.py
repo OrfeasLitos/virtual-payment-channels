@@ -169,7 +169,10 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         # we want to put exactly (if desired coins are more than remaining balance) so much on the new channel
         # such that sender_coins + fee_sender_coins = smallest_remaining_balance
         # where fee_sender_coins = fee_rate * sender_coins * (len(path) - 2)
-        sender_coins = min(desired_sender_coins, smallest_remaining_balance / (1 + self.fee_rate * (len(path) - 2)))
+        sender_coins = min(
+            desired_sender_coins,
+            smallest_remaining_balance / (1 + self.fee_rate * (len(path) - 2))
+        )
         return sender_coins
 
     def get_new_virtual_channel_option(self, sender, receiver, value, knowledge_sender):
@@ -177,7 +180,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
         future_payments, num_payments_sender, num_total_payments = knowledge_sender
-        sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
+        sum_future_payments = sum_future_payments_to_counterparty(
+            sender, receiver, future_payments
+        )
         # this is a simplification to calculate cheapest paths
         anticipated_lock_value = sum_future_payments + value
         if self.method_name == "Elmo" or self.method_name == "LVPC":
@@ -195,7 +200,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         if cost_and_path is None:
             return None
         hops, path = cost_and_path
-        # the factor is introduced so that lower channel doesn't end up with 0 balance.
+        # the AVAILABILITY_FACTOR is used so that lower channel doesn't end up with 0 balance.
         available_balances = np.array([
             self.network.graph[path[i]][path[i+1]]['balance'] / AVAILABILITY_FACTOR for i in range(len(path)-1)
         ])
@@ -251,7 +256,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         # or undoing it.
         # all the descriptive names like "op_take", "received", etc are in the case of a payment
         # in case of undoing they do the opposite.
-        op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
+        op_take, op_give = (
+            (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
+        )
         num_intermediaries = len(path) - 2
         sender = path[0]
         fee_intermediary = self.base_fee + self.fee_rate * (value + sender_coins)
@@ -262,20 +269,32 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         for i in range(1, num_intermediaries + 1):
             received = (num_intermediaries - (i-1)) * fee_intermediary
             transfered = received - fee_intermediary
-            new_taker_balance = op_take(self.network.graph[path[i]][path[i-1]]['balance'], received)
-            new_giver_balance = op_give(self.network.graph[path[i]][path[i+1]]['balance'], transfered)
-            # we test just for new_giver_balance < 0 as in case of new virtual channel only giver_balance gets smaller
-            # In case of undoing it, there was a payment done before, so there shouldn't occur numbers < 0.
+            new_taker_balance = op_take(
+                self.network.graph[path[i]][path[i-1]]['balance'], received
+            )
+            new_giver_balance = op_give(
+                self.network.graph[path[i]][path[i+1]]['balance'], transfered
+            )
+            # we test just for new_giver_balance < 0 as in case of new virtual channel
+            # only giver_balance gets smaller.
+            # In case of undoing it, there was a payment done before,
+            # so there shouldn't occur numbers < 0.
             if new_giver_balance < 0:
                 for j in range(1, i):
                     received = (num_intermediaries - (j-1)) * fee_intermediary
                     transfered = received - fee_intermediary
-                    new_taker_balance = op_give(self.network.graph[path[j]][path[j-1]]['balance'], received)
-                    new_giver_balance = op_take(self.network.graph[path[j]][path[j+1]]['balance'], transfered)
+                    new_taker_balance = op_give(
+                        self.network.graph[path[j]][path[j-1]]['balance'], received
+                    )
+                    new_giver_balance = op_take(
+                        self.network.graph[path[j]][path[j+1]]['balance'], transfered
+                    )
                 raise ValueError
             self.network.graph[path[i]][path[i-1]]['balance'] = new_taker_balance
             self.network.graph[path[i]][path[i+1]]['balance'] = new_giver_balance
-        self.network.graph[sender][path[1]]['balance'] = op_give(self.network.graph[sender][path[1]]['balance'], cost_sender)
+        self.network.graph[sender][path[1]]['balance'] = op_give(
+            self.network.graph[sender][path[1]]['balance'], cost_sender
+        )
 
 
     def pay(self, sender, receiver, value):
@@ -283,8 +302,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             raise ValueError
         elif self.network.graph[sender][receiver]['balance'] < value:
             raise ValueError
-        self.network.graph[sender][receiver]['balance'] = self.network.graph[sender][receiver]['balance'] - value
-        self.network.graph[receiver][sender]['balance'] = self.network.graph[receiver][sender]['balance'] + value
+        self.network.graph[sender][receiver]['balance'] -= value
+        self.network.graph[receiver][sender]['balance'] += value
 
     def do(self, payment_information):
         if payment_information['kind'] == 'onchain':
