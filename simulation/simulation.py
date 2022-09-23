@@ -69,12 +69,13 @@ def all_random_payments():
     # power law
     payments_for_zipf = {}
     # only up to 1000 parties
-    for parties in [10, 100, 1000]:
+    for parties in [1000]:
         print(parties)
-        for a in tqdm([3, 2.5, 2]):
+        for a in [2]:
             for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
                 payments = random_payments(parties, 'zipf', power=a)
-                payments_for_zipf[(parties, a, i)] = payments
+                with open('random_payments_zipf' + '_{}_'.format(parties) + '_{}_'.format(i) + '.pickle', 'wb') as file:
+                    pickle.dump(payments, file)
     
     return payments_for_zipf
 
@@ -152,8 +153,7 @@ if __name__ == "__main__":
     
     random.seed(SEED)
     np.random.seed(SEED)
-    payments_zipf = all_random_payments()
+    all_random_payments()
 
-    with open('random_payments_zipf.pickle', 'wb') as file:
-        pickle.dump(payments_zipf, file)
+
     
