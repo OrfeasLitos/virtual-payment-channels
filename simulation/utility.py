@@ -8,12 +8,11 @@ def sum_of_inverses_utility_function(
     weight_distance_array = np.array(distance)
     inverse_distance_array = 1/ weight_distance_array[:,1]
     weight_array = weight_distance_array[:,0]
-    return (
-        mult_fee/(add_fee+fee) +
-        mult_delay/delay +
-        mult_distance * np.transpose(inverse_distance_array) @ weight_array +
-        mult_centrality * centrality
-    )
+    utility_fee = mult_fee/(add_fee+fee)
+    utility_delay = mult_delay/delay
+    utility_distance = mult_distance * np.transpose(inverse_distance_array) @ weight_array
+    utility_centrality = mult_centrality * centrality
+    return utility_fee + utility_delay + utility_distance + utility_centrality
 
 class Utility:
 
