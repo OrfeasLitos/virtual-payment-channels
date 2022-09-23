@@ -26,7 +26,7 @@ def random_payments(players, distribution = 'uniform', num_pays = None, power = 
         # and the parties that pay from a uniform distribution
         # example: big player that everyone pays to, but
         # that doesn't have that many outgoing payments.
-        incoming_payments_per_player = np.random.zipf(power, players) * 100
+        incoming_payments_per_player = np.random.zipf(power, players) * 50
         num_pays = sum(incoming_payments_per_player)
         # we want a parameter for the payment value of 2.16
         # for approximately 80-20 rule (and power law).
@@ -67,17 +67,22 @@ def random_payments(players, distribution = 'uniform', num_pays = None, power = 
 
 def all_random_payments():
     # power law
-    payments_for_zipf = {}
     # only up to 1000 parties
-    for parties in [1000]:
+    for parties in [500]:
         print(parties)
         for a in [2]:
             for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
                 payments = random_payments(parties, 'zipf', power=a)
                 with open('random_payments_zipf' + '_{}_'.format(parties) + '_{}_'.format(i) + '.pickle', 'wb') as file:
                     pickle.dump(payments, file)
-    
-    return payments_for_zipf
+
+    # uniform
+    for parties in [3000]:
+        for num_payments in [90000]:
+            for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
+                payments = random_payments(parties, 'uniform', num_payments)
+                with open('random_payments_uniform' + '_{}_'.format(parties) + '_{}_'.format(i) + '.pickle', 'wb') as file:
+                    pickle.dump(payments, file)
 
 class Simulation:
     """
