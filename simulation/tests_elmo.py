@@ -206,7 +206,6 @@ def test_simulation_with_previous_channels_elmo_recursive_ignore_centrality():
 def test_simulation_with_elmo():
     simulation = make_example_simulation_elmo(nr_players=20)
     results = simulation.run()
-    print(results)
     test_simulation_with_elmo_ignore_centrality()
     test_simulation_with_elmo_ignore_centrality_and_distance()
     test_simulation_with_previous_channels_elmo_ignore_centrality()

@@ -125,7 +125,6 @@ def test_simulation_with_donner():
     test_simulation_with_previous_channels_donner_recursive_ignore_centrality()
     simulation = make_example_simulation_donner(nr_players = 20)
     results = simulation.run()
-    print(results)
 
 if __name__ == "__main__":
     test_get_payment_options_donner()
