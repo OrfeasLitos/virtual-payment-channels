@@ -125,11 +125,6 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         if self.network.graph.get_edge_data(sender, receiver) is not None:
             return None
         future_payments, num_payments_sender, num_total_payments = knowledge_sender
-        num_unknown_payments = num_total_payments - len(future_payments)
-        num_unknown_payments_sender = (
-            num_payments_sender - 
-            len([payment for payment in future_payments if payment[0] == sender])
-        )
         new_channel_time = self.plain_bitcoin.get_delay() + self.pay_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
         sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
