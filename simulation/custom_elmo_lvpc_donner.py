@@ -39,7 +39,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
 
     def get_distances_and_paths_from_source(self, source, future_payments):
         """
-        Returns weighted distances to the future parties and to parties not occuring in future payments.
+        Returns weighted distances to the future parties and 
+        to parties not occuring in future payments.
         Muiltiple payments to same party give multiple distances.
         """
         distances = []
@@ -52,7 +53,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         encountered_parties = set({source})
         dummy_lock_value = MULTIPLIER_CHANNEL_BALANCE * DUMMY_PAYMENT_VALUE
         fee_intermediary = self.base_fee + dummy_lock_value * self.fee_rate
-        cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(source, dummy_lock_value, fee_intermediary)
+        cheapest_paths_from_sender = self.network.find_cheapest_paths_from_sender(
+            source, dummy_lock_value, fee_intermediary
+        )
         calculated_cheapest_paths = {}
         #near_parties = nx.single_source_shortest_path_length(self.network.graph, source, 5)
         path_data = []
@@ -70,7 +73,8 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             if future_sender != source: #and future_sender in near_parties:
                 if (future_sender, source) not in calculated_cheapest_paths:
                     cheapest_path = self.network.find_cheapest_path(
-                        future_sender, source, dummy_lock_value, self.base_fee + dummy_lock_value * self.fee_rate
+                        future_sender, source, dummy_lock_value,
+                        self.base_fee + dummy_lock_value * self.fee_rate
                     )
                     calculated_cheapest_paths[(future_sender, source)] = cheapest_path
                 else:
@@ -127,7 +131,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         future_payments, num_payments_sender, num_total_payments = knowledge_sender
         new_channel_time = self.plain_bitcoin.get_delay() + self.pay_delay
         new_channel_fee = self.plain_bitcoin.get_fee(self.opening_transaction_size)
-        sum_future_payments = sum_future_payments_to_counterparty(sender, receiver, future_payments)
+        sum_future_payments = sum_future_payments_to_counterparty(
+            sender, receiver, future_payments
+        )
         sender_coins = min(
             self.plain_bitcoin.coins[sender] - value - new_channel_fee,
             (
@@ -137,7 +143,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         if sender_coins < 0:
             return None
         self.network.add_channel(sender, sender_coins, receiver, value, None)
-        new_channel_distance, cheapest_paths_from_sender = self.get_distances_and_paths_from_source(sender, future_payments)
+        new_channel_distance, cheapest_paths_from_sender = (
+            self.get_distances_and_paths_from_source(sender, future_payments)
+        )
         new_channel_centrality = self.network.get_centrality(sender, cheapest_paths_from_sender)
         self.network.close_channel(sender, receiver)
         return {
@@ -202,20 +210,29 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
         hops, path = cost_and_path
         # the AVAILABILITY_FACTOR is used so that lower channel doesn't end up with 0 balance.
         available_balances = np.array([
-            self.network.graph[path[i]][path[i+1]]['balance'] / AVAILABILITY_FACTOR for i in range(len(path)-1)
+            self.network.graph[path[i]][path[i+1]]['balance'] /
+            AVAILABILITY_FACTOR for i in range(len(path)-1)
         ])
         desired_virtual_coins = sum_future_payments + MULTIPLIER_CHANNEL_BALANCE * value
-        sender_coins = self.determine_sender_coins(value, path, desired_virtual_coins, available_balances)
+        sender_coins = self.determine_sender_coins(
+            value, path, desired_virtual_coins, available_balances
+        )
         if sender_coins < 0:
             return None
-        payment_information = {'kind': self.open_virtual_channel_string, 'data': (path, value, sender_coins)}
+        payment_information = {
+            'kind': self.open_virtual_channel_string, 'data': (path, value, sender_coins)
+        }
         try:
             new_virtual_channel_fee = self.do(payment_information)
         except ValueError:
             return None
         new_virtual_channel_time = self.get_new_virtual_channel_time(hops)
-        new_virtual_channel_distance, cheapest_paths_from_sender = self.get_distances_and_paths_from_source(sender, future_payments)
-        new_virtual_channel_centrality = self.network.get_centrality(sender, cheapest_paths_from_sender)
+        new_virtual_channel_distance, cheapest_paths_from_sender = (
+            self.get_distances_and_paths_from_source(sender, future_payments)
+        )
+        new_virtual_channel_centrality = self.network.get_centrality(
+            sender, cheapest_paths_from_sender
+        )
         self.undo(payment_information)
         return {
             'delay': new_virtual_channel_time,
@@ -232,7 +249,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
             self.do(payment_information)
         except ValueError:
             return None
-        distance_pay, cheapest_paths_from_sender = self.get_distances_and_paths_from_source(sender, future_payments)
+        distance_pay, cheapest_paths_from_sender = (
+            self.get_distances_and_paths_from_source(sender, future_payments)
+        )
         centrality_pay = self.network.get_centrality(sender, cheapest_paths_from_sender)
         self.undo(payment_information)
         return {
@@ -246,7 +265,9 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
     def get_payment_options(self, sender, receiver, value, knowledge_sender):
         onchain_option = self.get_onchain_option(sender, receiver, value, knowledge_sender)
         new_channel_option = self.get_new_channel_option(sender, receiver, value, knowledge_sender)
-        new_virtual_channel_option = self.get_new_virtual_channel_option(sender, receiver, value, knowledge_sender)
+        new_virtual_channel_option = self.get_new_virtual_channel_option(
+            sender, receiver, value, knowledge_sender
+        )
         pay_option = self.get_pay_option(sender, receiver, value, knowledge_sender)
         options = [onchain_option, new_channel_option, new_virtual_channel_option, pay_option]
         return [option for option in options if option is not None]
@@ -356,10 +377,14 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
                 # important that next line is at that position
                 # so that Error gets raised in case update is not possible
                 # before anything else is done.
-                self.update_balances_new_virtual_channel(path, value, sender_coins, new_channel=True)
+                self.update_balances_new_virtual_channel(
+                    path, value, sender_coins, new_channel=True
+                )
                 self.network.lock_unlock(path, sender_coins + value, lock=True)
                 self.network.add_channel(sender, sender_coins, receiver, value, path)
-                new_virtual_channel_fee = self.get_new_virtual_channel_fee(path, value + sender_coins)
+                new_virtual_channel_fee = self.get_new_virtual_channel_fee(
+                    path, value + sender_coins
+                )
                 return new_virtual_channel_fee
         elif payment_information['kind'] == self.pay_string:
             sender, receiver, value = payment_information['data']

@@ -57,7 +57,10 @@ def test_get_payment_options_donner():
 
 def test_get_payment_options_and_weight_function_donner():
     donner = make_example_network_donner()
-    future_payments = [(0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.), (0, 8, 300000000.), (0, 3, 2500000000.)]
+    future_payments = [
+        (0,1,2000000000.), (0, 7, 1500000000.), (0,7,2100000000.),
+        (0, 8, 300000000.), (0, 3, 2500000000.)
+    ]
     sender1 = 0
     knowledge_sender1 = get_knowledge_sender(sender1, future_payments)
     value1 = 100000000
