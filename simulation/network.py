@@ -127,7 +127,6 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
                 self.graph[sender][receiver]['locked_coins'] -= lock_value
 
     def cooperative_close_channel(self, idA, idB):
-        # convention: A is first in channels_below_reference_channel (and B last)
         channels_below_reference_channel_A_to_B = self.graph[idA][idB]['channels_below']
         amountA = self.graph[idA][idB]['balance']
         amountB = self.graph[idB][idA]['balance']
@@ -245,6 +244,7 @@ class Network_Donner(Custom_Network_Elmo_LVPC_Donner):
         """
         if function == "new_virtual_donner":
             def weight_function(sender, receiver, edge_attributes):
+                # donner can not open recursively.
                 if edge_attributes['balance'] < amount or edge_attributes['channels_below'] is not None:
                     return math.inf
                 return 1
