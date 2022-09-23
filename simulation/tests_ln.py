@@ -35,7 +35,7 @@ def make_example_simulation_ln(seed = 12345, nr_players = 10, coins_for_parties 
 def test_get_payment_fee_ln():
     def get_payment_fee_with_path(base_fee, ln_fee, payment, path):
         sender, receiver, value = payment
-        return (base_fee +  value * ln_fee) * (len(path) - 1)
+        return (base_fee +  value * ln_fee) * (len(path) - 2)
     base_fee, ln_fee, lightning, future_payments = (
         make_example_network_ln_and_future_payments(base_fee = 1, ln_fee = 0.00002)
     )
@@ -138,19 +138,17 @@ def test_choose_payment_method_offchain_best_ln():
     payment_options = lightning.get_payment_options(sender, 7, 1., knowledge_sender)
     utility_function = make_example_utility_function(10000, 5000, 1, 1)
     utility = Utility('customized', utility_function=utility_function)
-    # utilities for onchain and new channel are between 30 and 40
-    # for offchain several orders of magnitude higher, just consider delay.
     payment_method, fee, delay = utility.choose_payment_method(sender, payment_options)
     assert payment_method['kind'] == 'ln-pay'
 
 def test_choose_payment_method_new_channel_best_ln():
     _, _, lightning, future_payments = (
-        make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.00002)
+        make_example_network_ln_and_future_payments(base_fee = 1000, ln_fee = 0.2)
     )
     sender = 0
     knowledge_sender = get_knowledge_sender(sender, future_payments)
     payment_options = lightning.get_payment_options(sender, 7, 1000000000., knowledge_sender)
-    utility_function = make_example_utility_function(10000, 5000, 200, 1)
+    utility_function = make_example_utility_function(10000, 50, 200, 1)
     utility = Utility('customized', utility_function=utility_function)
     payment_method, _, _ = utility.choose_payment_method(sender, payment_options)
     assert payment_method['kind'] == 'ln-open'

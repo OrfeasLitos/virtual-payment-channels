@@ -24,11 +24,11 @@ class LN(Payment_Network):
         self.base_fee = base_fee
 
     def get_payment_time(self, path):
-        return self.ln_delay * len(path)
+        return self.ln_delay * (len(path)-1)
 
     def get_payment_fee(self, payment, num_hops):
         sender, receiver, value = payment
-        return (self.base_fee +  value * self.ln_fee) * num_hops
+        return (self.base_fee +  value * self.ln_fee) * (num_hops-1)
 
     def get_distances_and_paths_from_source(self, source, future_payments):
         """
