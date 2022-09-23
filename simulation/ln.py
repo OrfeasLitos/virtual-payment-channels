@@ -190,7 +190,9 @@ class LN(Payment_Network):
     def get_payment_options(self, sender, receiver, value, future_payments):
         onchain_option = self.get_onchain_option(sender, receiver, value, future_payments)
         counterparty = receiver
-        new_channel_option = self.get_new_channel_option(sender, receiver, value, future_payments, counterparty)
+        new_channel_option = self.get_new_channel_option(
+            sender, receiver, value, future_payments, counterparty
+        )
         offchain_option = self.get_offchain_option(sender, receiver, value, future_payments)
         options = [onchain_option, new_channel_option, offchain_option]
         return [option for option in options if option is not None]
