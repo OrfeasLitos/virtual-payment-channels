@@ -81,7 +81,7 @@ class LN(Payment_Network):
     def update_balances(self, value, ln_fee, base_fee, path, pay = False):
         # the pay argument tells whether this corresponds to making a payment
         # or undoing it.
-        # all the "speaking names" like op_take, received, etc are in the case of a payment
+        # all the descriptive names like "op_take", "received", etc are in the case of a payment
         # in case of undoing they do the opposite.
         op_take, op_give = (operator.add, operator.sub) if pay else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2

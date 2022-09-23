@@ -254,7 +254,7 @@ class Custom_Elmo_LVPC_Donner(Payment_Network):
     def update_balances_new_virtual_channel(self, path, value, sender_coins, new_channel = False):
         # the new_channel argument tells whether this corresponds to making a payment
         # or undoing it.
-        # all the "speaking names" like op_take, received, etc are in the case of a payment
+        # all the descriptive names like "op_take", "received", etc are in the case of a payment
         # in case of undoing they do the opposite.
         op_take, op_give = (operator.add, operator.sub) if new_channel else (operator.sub, operator.add)
         num_intermediaries = len(path) - 2
