@@ -52,7 +52,11 @@ class Network:
             for i in range(len(cheapest_path)-1):
                 sender_in_path = cheapest_path[i]
                 receiver_in_path = cheapest_path[i+1]
-                if self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance'] < amount + (len(cheapest_path) - 1) * fee_intermediary:
+                minimum_balance = amount + (len(cheapest_path) - 1) * fee_intermediary
+                actual_balance = (
+                    self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance']
+                )
+                if actual_balance < minimum_balance:
                     return None
             return len(cheapest_path) - 1, cheapest_path
         except nx.exception.NetworkXNoPath:
@@ -67,7 +71,10 @@ class Network:
                 for i in range(len(cheapest_path)-1):
                     sender_in_path = cheapest_path[i]
                     receiver_in_path = cheapest_path[i+1]
-                    if self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance'] < minimum_balance:
+                    actual_balance = (
+                        self.graph.get_edge_data(sender_in_path, receiver_in_path)['balance']
+                    )
+                    if actual_balance < minimum_balance:
                         cheapest_paths[receiver] = None
                         break
             return cheapest_paths
@@ -77,7 +84,10 @@ class Network:
 
     def get_centrality(self, party, paths=None):
         graph = self.graph
-        return 0 if graph.number_of_edges() == 0 else nx.local_reaching_centrality(graph, party, paths)
+        return (
+            0 if graph.number_of_edges() == 0
+            else nx.local_reaching_centrality(graph, party, paths)
+        )
 
 class Custom_Network_Elmo_LVPC_Donner(Network):
     def __init__(self, nr_vertices):
@@ -107,7 +117,7 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
                 self.graph[sender][receiver]['channels_above'].append({idA, idB})
                 self.graph[receiver][sender]['channels_above'].append({idA, idB})
         self.edge_id += 1
-    
+
     def lock_unlock(self, path, lock_value, lock):
         for i in range(len(path) - 1):
             sender = path[i]
@@ -154,14 +164,20 @@ class Custom_Network_Elmo_LVPC_Donner(Network):
             startpath_D_to_C = self.graph[idD][idC]['channels_below'][:first_index_reverse]
             endpath_D_to_C = self.graph[idD][idC]['channels_below'][second_index_reverse + 1:]
             self.graph[idC][idD]['channels_below'] = (
-                startpath_C_to_D + 
-                (list(reversed(channels_below_reference_channel_A_to_B)) if is_right_party_closing else channels_below_reference_channel_A_to_B) + 
-                endpath_C_to_D
+                startpath_C_to_D +
+                (
+                    list(reversed(channels_below_reference_channel_A_to_B))
+                    if is_right_party_closing
+                    else channels_below_reference_channel_A_to_B
+                ) + endpath_C_to_D
             )
             self.graph[idD][idC]['channels_below'] = (
                 startpath_D_to_C +
-                (list(reversed(channels_below_reference_channel_B_to_A)) if is_right_party_closing else channels_below_reference_channel_B_to_A) +
-                endpath_D_to_C
+                (
+                    list(reversed(channels_below_reference_channel_B_to_A))
+                    if is_right_party_closing
+                    else channels_below_reference_channel_B_to_A
+                ) + endpath_D_to_C
             )
         #adjust channels above.
         path = channels_below_reference_channel_A_to_B
