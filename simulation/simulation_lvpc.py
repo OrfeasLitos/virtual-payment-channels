@@ -2,6 +2,7 @@
 import random
 import pickle
 import time
+import tqdm
 import numpy as np
 
 from utility import Utility
@@ -23,13 +24,13 @@ if __name__ == "__main__":
     )
     knowledge = Knowledge('10-next-mine')
     method = LVPC(1000)
-    for i in range(ROUNDS_RANDOM_PAYMENTS):
+    for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
         payments = payments_zipf[(1000, 2., i)]
-        print(len(payments))
+        print("Number payments: ", len(payments))
         sim = Simulation(payments, method, knowledge, utility)
         start = time.time()
         results = sim.run()
         end = time.time()
-        print(end - start)
+        print("Time one round: ", end - start)
         with open("example_results_" + method.method_name + "_{}".format(i) + ".pickle", 'wb') as file:
             pickle.dump(results, file)
