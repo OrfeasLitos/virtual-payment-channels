@@ -1,19 +1,9 @@
 import random
 import numpy as np
-import copy
-import sys
 import collections
 import pickle
-from knowledge import Knowledge
-from paymentmethod import PlainBitcoin, MAX_COINS
-from ln import LN
-from elmo import Elmo
-from donner import Donner
-from lvpc import LVPC
-from utility import Utility
-import time
+from paymentmethod import MAX_COINS
 from tqdm import tqdm
-#import flamegraph
 
 ROUNDS_RANDOM_PAYMENTS = 20
 SEED = 12345
@@ -76,22 +66,6 @@ def random_payments(players, distribution = 'uniform', num_pays = None, power = 
     return res
 
 def all_random_payments():
-    # uniform
-    payments_for_uniform = {}
-    for parties in [10, 100, 1000, 10000]:
-        for num_payments in [100, 1000, 10000, 100000]:
-            for i in range(ROUNDS_RANDOM_PAYMENTS):
-                payments = random_payments(parties, 'uniform', num_payments)
-                payments_for_uniform[(parties, num_payments, i)] = payments
-
-    # preferred receiver
-    payments_for_preferred_receiver = {}
-    for parties in [10, 100, 1000, 10000]:
-        for num_payments in [100, 1000, 10000, 100000]:
-            for i in range(ROUNDS_RANDOM_PAYMENTS):
-                payments = random_payments(parties, 'preferred-receiver', num_payments)
-                payments_for_preferred_receiver[(parties, num_payments, i)] = payments
-    
     # power law
     payments_for_zipf = {}
     # only up to 1000 parties
@@ -102,8 +76,7 @@ def all_random_payments():
                 payments = random_payments(parties, 'zipf', power=a)
                 payments_for_zipf[(parties, a, i)] = payments
     
-    return payments_for_uniform, payments_for_preferred_receiver, payments_for_zipf
-
+    return payments_for_zipf
 
 class Simulation:
     """
@@ -179,12 +152,8 @@ if __name__ == "__main__":
     
     random.seed(SEED)
     np.random.seed(SEED)
-    payments_uniform, payments_preferred_receiver, payments_zipf = all_random_payments()
+    payments_zipf = all_random_payments()
 
-    with open('random_payments_uniform.pickle', 'wb') as file:
-        pickle.dump(payments_uniform, file)
-    with open('random_payments_preferred_receiver.pickle', 'wb') as file:
-        pickle.dump(payments_preferred_receiver, file)
     with open('random_payments_zipf.pickle', 'wb') as file:
         pickle.dump(payments_zipf, file)
     
