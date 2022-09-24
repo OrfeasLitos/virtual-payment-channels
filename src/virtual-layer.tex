@@ -806,21 +806,21 @@
             1}$)
           \EndIndent
           \begin{itemize}
-            \item \Comment{$2(l-m)$ signatures}
+            \item \Comment{$2(l-m')$ signatures}
           \end{itemize}
           \Indent
-            \State $\forall k \in \{m, \dots, l\} \setminus \{i\}:$
+            \State $\forall k \in \{m', \dots, l'\} \setminus \{i\}:$
             \Indent
               \State sig($B_{i-1, 2, k}, \pk{1, 2, 1}$), sig($B_{i-1, 2, k},
               \pk{i-1, 2, 1}$)
             \EndIndent
           \EndIndent
           \begin{itemize}
-            \item \Comment{$2(i-m) \cdot (l-i)$ signatures}
+            \item \Comment{$2(i-m') \cdot (l'-i)$ signatures}
           \end{itemize}
           \Indent
-            \State $\forall k_1 \in \{m, \dots, i-1\}, \forall k_2 \in \{i+1,
-            \dots, l\}:$
+            \State $\forall k_1 \in \{m', \dots, i-1\}, \forall k_2 \in \{i+1,
+            \dots, l'\}:$
             \Indent
               \State sig($B_{i-1, 3, k_1, k_2}, \pk{1, 2, 1}$), sig($B_{i-1, 3,
               k_1, k_2}, \pk{i-1, 2, 1}$)
