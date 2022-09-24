@@ -64,10 +64,12 @@ description of the protocol in prose.
         $c_{\mathrm{virt}}$ \Comment{$1$ counterparty if we are endpoint, $2$
         counterparties if we are intermediary}
         \State Exchange signatures with counterparties and verify them
-        \State Generate and sign all $O(n^3)$ virtual transactions \Comment{one
+        \State Generate and sign all $O(n^3)$ virtual and bridge transactions
+        \Comment{one
         signature for each virtual input -- each virtual input needs one
         signature from each party. Only ``extend-interval'' and
-        ``merge-intervals'' transactions need these signatures}
+        ``merge-intervals'' transactions need these signatures. Each bridge
+        transaction needs $4$ signatures.}
         \State Exchange all signatures among all base channel parties and verify
         that all our virtual transactions have fully signed virtual inputs
         \State Exchange with counterparties and verify signatures for the
@@ -119,8 +121,8 @@ description of the protocol in prose.
 
       \item Unilaterally closing:
       \begin{algorithmic}[0]
-        \State Publish all initiator transactions that are needed to put our
-        funding output on the ledger
+        \State Publish all initiator and bridge transactions that are needed to
+        put our funding output on the ledger
         \State Publish our latest commitment transaction to the ledger
       \end{algorithmic}
 
@@ -142,9 +144,9 @@ description of the protocol in prose.
         \end{itemize}
         \State Generate new revocation keypairs
         \State Exchange and verify signatures and revocation public keys
-        \State Generate and sign revocation transactions for both the old
-        virtual transactions (with the virtual revocation keys) and the old
-        commitment transactions (with the normal revocation keys)
+        \State Generate and sign revocation transactions for the old
+        virtual and bridge transactions (with the virtual revocation keys) and
+        the old commitment transactions (with the normal revocation keys)
         \State Exchange and verify signatures \Comment{if a party publishes a
         revoked virtual transaction, its various outputs can be spent by
         revocation transactions so that its ($1$ or $2$) counterparties can
@@ -157,7 +159,7 @@ description of the protocol in prose.
         \If{the ledger contains an old commitment transaction}
           \State Sign and publish the corresponding revocation transaction
         \EndIf
-        \If{the ledger contains an old virtual transaction}
+        \If{the ledger contains an old virtual or bridge transaction}
           \State Sign and publish the corresponding revocation transaction(s)
         \EndIf
       \end{algorithmic}

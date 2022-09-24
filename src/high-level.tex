@@ -92,6 +92,7 @@
   Figure~\ref{figure:payment-layer}).
 
   \begin{figure}
+    \centering
     \subimport{./figures/manual-tikz/}{payment-layer.tex}
     \caption{Funding, commitment and revocation transactions}
     \label{figure:payment-layer}
@@ -141,9 +142,12 @@
   different unique keys, separate on-chain funding outputs, a possibly different
   balance and number of updates. After the $n$ parties follow our novel virtual
   channel opening protocol, they will all hold off-chain a number of new,
-  ``virtual'' transactions that spend their respective funding transactions and
-  can themselves be spent by new commitment transactions in a manner that
-  ensures fair funds allocation for all honest parties.
+  ``virtual'' transactions that spend their respective funding transactions. The
+  ``virtual'' transactions can be spent by ``bridge'' transactions which in turn
+  are spendable by new commitment transactions in a manner that ensures fair
+  funds allocation for all honest parties. ``Bridge'' transactions take
+  advantage of \texttt{ANYPREVOUT} to ensure that each of $P_1, P_n$ only needs
+  to maintain a single commitment transaction.
 
   In particular, apart from the transactions of simple channels (i.e.\
   commitment and revocation txs), each of the two
@@ -238,6 +242,17 @@
   funding their channel -- lack of such signatures would allow two colluding
   intermediaries to claim the virtual output for themselves.
 
+  Each virtual transaction is accompanied by a ``bridge'' transaction. Any
+  virtual output may end up funding the virtual channel, but the various virtual
+  outputs do not have the same script, thus there cannot be a single commitment
+  transaction able to spend all of them. Without the bridge transaction, the
+  parties of the virtual channel would have to keep track of $O(n^3)$ commitment
+  transactions to be able to close their channel securely in every case, making
+  channel updates expensive. This is fixed by the bridge transactions, which all
+  have exactly the same output, unifying the interface between the
+  virtualisation and the payment transactions and thus making virtual channel
+  updates as cheap as simple channel updates.
+
   To understand why this multitude of virtual transactions is needed, we now
   zoom out from the individual party and discuss the dynamic of unilateral
   closing as a
@@ -261,7 +276,7 @@
   published their virtual transactions and in effect joins the two intervals into
   one.
 
-  Each virtual output can also be used as the funding output for the virtual
+  Each virtual output can also be used to fund the virtual
   channel after a timelock, to protect from unresponsive parties blocking the
   virtual channel indefinitely. This in turn means that if an intermediary
   observes either of its funding outputs being spent, it has to publish its
@@ -291,9 +306,7 @@
   their virtual transactions. For example, $P_3$'s extend-interval tx that
   extends the interval $\{P_1, P_2\}$ to $\{P_1, P_2, P_3\}$ must be able to
   spend both the virtual output of $P_2$'s initiator transaction and $P_2$'s
-  extend-interval transaction which has spent $P_1$'s initiator transaction. The
-  same issue is faced by commitment transactions of a virtual channel, as any
-  virtual output can potentially be used as the funding ouput for the channel.
+  extend-interval transaction which has spent $P_1$'s initiator transaction.
   In order for the received signatures for virtual and commitment txs to be
   valid for multiple previous outputs, the previously proposed
   \texttt{ANYPREVOUT} sighash flag~\cite{anyprevout} is needed to be added to
@@ -364,12 +377,14 @@
   the virtual output of $B$ and the funding output of $(C, D)$ while producing a
   virtual output with the interval $\{A, B, C\}$. Finally $D$ publishes the last
   extend-interval transaction, thus producing an interval with all players.
-  Instead of a virtual output, it produces the funding output for the virtual
-  channel $(A, E)$. Now $A$ can spend this funding output with its latest
-  commitment transaction. Note that if any of $B$, $C$ or $D$ does
-  not act within the timelock prescribed in their consumed virtual output, then
-  $A$ or $E$ can spend the virtual output with their latest commitment
-  transaction, thus eventually $A$ can close its virtual channel in all cases.
+  No more virtual transactions can be published. Now $A$ can spend the virtual
+  output of the last extend-interval transaction with the relevant bridge
+  transaction, which can then be spent by the latest commitment transaction.
+  Note that if any of $B$, $C$ or $D$ does not act within the timelock
+  prescribed in their consumed virtual output, then $A$ or $E$ can spend the
+  virtual output with the relevant bridge transaction and this with the latest
+  commitment transaction, thus eventually $A$ can close its virtual channel in
+  all cases.
 
   \begin{figure*}
     \subimport{./figures/manual-tikz/}{example-start-end.tex}

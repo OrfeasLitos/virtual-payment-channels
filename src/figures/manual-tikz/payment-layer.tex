@@ -11,18 +11,18 @@
   \draw [->] (funding) ..controls (40.199bp,39.124bp) and (83.589bp,39.124bp)  .. (funding_out);
   \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
   \pgfsetstrokecolor{strokecol}
-  \draw (152.0bp,71.124bp) node {$2/\{\pk{A, F}, \pk{B, F}\}$};
+  \draw (152.0bp,93.124bp) node {$2/\{\pk{A, F}, \pk{B, F}\}$};
   \draw [->] (funding_out) -- (commitment);
   \draw [->] (commitment) -- (commitment_out_1);
-  \draw (530.39bp,133.124bp) node {$2/\{\pk{A, R}, \pk{B, R}\}$};
-  \draw (530.39bp,90.124bp) node {$\vee (\pk{A, \mathrm{out}} + t)$};
+  \draw (530.39bp,138.124bp) node {$2/\{\pk{A, R}, \pk{B, R}\}$};
+  \draw (530.39bp,95.124bp) node {$\vee (\pk{A, \mathrm{out}} + t)$};
   \draw [->] (commitment) -- (commitment_out_2);
-  \draw (443.29bp,5.124bp) node {$\pk{B, \mathrm{out}}$};
+  \draw (481.29bp,4.124bp) node {$\pk{B, \mathrm{out}}$};
   \draw (339.52bp,26.036bp) node {$$};
   \draw (508.89bp,6.0bp) node {$$};
   \draw [->] (commitment_out_1) -- (revocation);
   \draw [->] (revocation) -- (revocation_out);
-  \draw (872.87bp,97.124bp) node {$\pk{B, \mathrm{out}}$};
+  \draw (891.87bp,97.124bp) node {$\pk{B, \mathrm{out}}$};
   \draw (788.1bp,66.124bp) node {$$};
   \draw (849.87bp,66.124bp) node {$$};
 %
