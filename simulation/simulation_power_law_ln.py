@@ -20,8 +20,8 @@ if __name__ == "__main__":
         parameters = [(1, 100000000, 1000, 0.001, 0.1), (1, 1000000, 10000, 0.001, 0.1)]
     )
     knowledge = Knowledge('10-next-mine')
-    method = LN(500)
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
+        method = LN(500)
         with open('random_payments_zipf_500_' + '_{}_'.format(i) + '.pickle', 'rb') as pickled_file_zipf:
             payments_zipf = pickle.load(pickled_file_zipf)
         print("Number payments: ", len(payments_zipf))

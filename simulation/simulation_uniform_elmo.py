@@ -20,8 +20,8 @@ if __name__ == "__main__":
         parameters = [(1, 100000000, 1000, 0.001, 0.1)]
     )
     knowledge = Knowledge('10-next-mine')
-    method = Elmo(3000)
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
+        method = Elmo(3000)
         with open('random_payments_uniform_3000_' + '_{}_'.format(i) + '.pickle', 'rb') as pickled_file_uniform:
             payments_uniform = pickle.load(pickled_file_uniform)
         print("Number payments: ", len(payments_uniform))
