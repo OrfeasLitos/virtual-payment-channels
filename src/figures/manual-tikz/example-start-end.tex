@@ -29,6 +29,7 @@
   \node (B_virt) at (278.19bp,326.5bp) [draw,ellipse] {$B$};
   \node (C_virt) at (453.19bp,476.5bp) [draw,ellipse] {$C$};
   \node (D_virt) at (615.19bp,626.5bp) [draw,ellipse] {$D$};
+  \node (bridge) at (690.19bp,750.0bp) [draw,ellipse] {$Br$};
   \coordinate (A_fund) at (74.193bp,262.0bp);
   \coordinate (A_virt_out) at (192.19bp,262.0bp);
   \coordinate (B_fund) at (163.19bp,412.0bp);
@@ -39,7 +40,10 @@
   \coordinate (C_virt_out) at (548.19bp,562.0bp);
   \coordinate (D_fund) at (510.19bp,712.0bp);
   \coordinate (D_self) at (563.19bp,712.0bp);
-  \coordinate (D_virt_out) at (730.19bp,712.0bp);
+  \coordinate (D_virt_out) at (690.19bp,712.0bp);
+  \coordinate (bridge_out) at (690.19bp,820.0bp);
+  \draw [->] (D_virt_out) -> (bridge);
+  \draw [->] (bridge) -> (bridge_out);
   \draw [->] (AB_funding_in) ..controls (83.193bp,49.54bp) and (83.193bp,68.053bp)  .. (AB_funding_out);
   \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
   \pgfsetstrokecolor{strokecol}
@@ -78,6 +82,7 @@
   \draw [->] (D_virt) ..controls (595.19bp,684.26bp) and (595.19bp,621.19bp)  .. (D_self);
   \draw (566.69bp,693.0bp) node {$\pk{D, \mathrm{out}}$};
   \draw [->] (D_virt) ..controls (632.78bp,637.61bp) and (646.7bp,645.95bp)  .. (658.19bp,654.0bp) .. controls (673.55bp,664.75bp) and (689.99bp,677.66bp)  .. (D_virt_out);
-  \draw (660.19bp,670.0bp) node {$2/\{\pk{A, V}, \pk{E, V}\}$};
+  \draw (660.19bp,670.0bp) node {$3/\{\pk{\{A, D, E\}, V}\}$};
+  \draw (660.19bp,790.0bp) node {$2/\{\pk{A, V}, \pk{E, V}\}$};
 \end{tikzpicture}
 
