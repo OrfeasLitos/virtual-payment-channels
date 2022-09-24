@@ -735,6 +735,7 @@
       \mathrm{sig}, \pk{}) =$ True}
       \State ensure that the following signatures are present in
       $\mathrm{sigs}_{\mathrm{byLeft}}$ and store them:
+      % TODO: I think we never check for sigs from the right. c.f. ~~~~ mark
       \begin{itemize}
         \item \Comment{$(l-m) \cdot (i-1)$ signatures}
       \end{itemize}
@@ -857,6 +858,7 @@
       \State call
       $\bar{P}$.\textsc{circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{toRight}}$)
       and assign returned value to $\mathrm{sigs}_{\mathrm{byRight}}$
+      % TODO: ~~~~ maybe we have to check for sigs byRight here
       \State output (\textsc{virtualSigsBack},
       $\mathrm{sigs}_{\mathrm{toLeft}}$, $\mathrm{sigs}_{\mathrm{byRight}}$)
     \end{algorithmic}
