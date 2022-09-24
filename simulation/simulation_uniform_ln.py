@@ -22,8 +22,8 @@ if __name__ == "__main__":
     knowledge = Knowledge('10-next-mine')
     method = LN(3000)
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
-        pickled_file_uniform = open('random_payments_uniform_3000_' + '_{}_'.format(i) + '.pickle', 'rb')
-        payments_uniform = pickle.load(pickled_file_uniform)
+        with open('random_payments_uniform_3000_' + '_{}_'.format(i) + '.pickle', 'rb') as pickled_file_uniform:
+            payments_uniform = pickle.load(pickled_file_uniform)
         print("Number payments: ", len(payments_uniform))
         sim = Simulation(payments_uniform, method, knowledge, utility)
         start = time.time()

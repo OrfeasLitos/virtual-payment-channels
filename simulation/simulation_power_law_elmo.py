@@ -22,8 +22,8 @@ if __name__ == "__main__":
     knowledge = Knowledge('10-next-mine')
     method = Elmo(500)
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
-        pickled_file_zipf = open('random_payments_zipf_500_' + '_{}_'.format(i) + '.pickle', 'rb')
-        payments_zipf = pickle.load(pickled_file_zipf)
+        with open('random_payments_zipf_500_' + '_{}_'.format(i) + '.pickle', 'rb') as pickled_file_zipf:
+            payments_zipf = pickle.load(pickled_file_zipf)
         print("Number payments: ", len(payments_zipf))
         sim = Simulation(payments_zipf, method, knowledge, utility)
         start = time.time()
