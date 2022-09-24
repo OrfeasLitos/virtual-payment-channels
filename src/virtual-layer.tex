@@ -831,14 +831,14 @@
         \IfThenElse{$j < i$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toLeft}}$}{$\mathrm{sigs} \gets
         \mathrm{sigs}_{\mathrm{toRight}}$}
-        \If{$i \in \{1, n\} \vee j \in \{i-1, i+1\}$}
+        \If{$j \in \{i-1, i+1\}$}
           \State add \textsc{sign}($B_{j, 1}$, $\sk{i, 2, 1}$,
           \texttt{ANYPREVOUT}) to sigs
         \EndIf
         \ForAll{$k \in \{m', \dots, l'\} \setminus \{j\}$}
           \State add \textsc{sign}($\mathrm{TX}_{j, 2, k}$, $\sk{i, j, k}$,
           \texttt{ANYPREVOUT}) to sigs
-          \If{$i \in \{1, n\} \vee j \in \{i-1, i+1\}$}
+          \If{$j \in \{i-1, i+1\}$}
             \State add \textsc{sign}($B_{j, 2, k}$, $\sk{i, 2, 1}$,
             \texttt{ANYPREVOUT}) to sigs
           \EndIf
@@ -848,7 +848,7 @@
           k_1}$, \texttt{ANYPREVOUT}) to sigs
           \State add \textsc{sign}($\mathrm{TX}_{j, 3, k_1, k_2}$, $\sk{i, j,
           k_2}$, \texttt{ANYPREVOUT}) to sigs
-          \If{$i \in \{1, n\} \vee j \in \{i-1, i+1\}$}
+          \If{$j \in \{i-1, i+1\}$}
             \State add \textsc{sign}($B_{j, 3, k_1, k_2}$, $\sk{i, 2, 1}$,
             \texttt{ANYPREVOUT}) to sigs
           \EndIf
