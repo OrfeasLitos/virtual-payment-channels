@@ -93,9 +93,11 @@
   channel identifiers ($8$ bytes each, as defined by the Lightning Network
   specification\footnote{\url{https://github.com/lightning/bolts/blob/master/07-routing-gossip.md\#definition-of-short_channel_id}}),
   transaction output identifiers ($36$ bytes), secret keys ($32$ bytes each),
-  public keys ($33$ bytes each, compressed form -- these double as party
-  identifiers), signatures ($71$ bytes each), coins ($8$ bytes each), times and
-  timelocks (both $4$ bytes each). UC-specific data is ignored.
+  public keys ($32$ bytes each, compressed form -- these double as party
+  identifiers), Schnorr signatures ($64$ bytes each), coins ($8$ bytes each),
+  times and timelocks (both $4$ bytes each). The resources are exact for $n \geq
+  4$ parties, whereas for $n = 3$ they slightly overestimate. UC-specific data
+  is ignored.
 
   In LVPC, every intermediary, apart from the first one, acts both as a fundee
   in a new virtual channel with the funder and as an intermediary in the
