@@ -34,7 +34,6 @@ def get_know_my_next_n(n):
 
 know_my_next_10 = get_know_my_next_n(10)
 
-
 class Knowledge:
     def __init__(self, knowledge_mode, knowledge_function = None):
         if knowledge_mode == 'customized':
@@ -49,6 +48,8 @@ class Knowledge:
             self.knowledge_function = know_next_10
         elif knowledge_mode == '10-next-mine':
             self.knowledge_function = know_my_next_10
+        elif knowledge_mode == '100-next-mine':
+            self.knowledge_function = get_know_my_next_n(100)
         else:
             raise ValueError
 
