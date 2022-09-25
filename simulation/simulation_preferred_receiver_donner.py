@@ -19,7 +19,7 @@ if __name__ == "__main__":
         'sum_of_inverses', personalization = ("50-50", 100),
         parameters = [(1, 100000000, 1000, 0.001, 0.1), (1, 1000000, 10000, 0.001, 0.1)]
     )
-    knowledge = Knowledge('mine')
+    knowledge = Knowledge('100-next-mine')
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
         method = Donner(100)
         with open('random_payments_preferred_receiver_1000' + '_{}'.format(i) + '.pickle', 'rb') as pickled_file_preferred_receiver:
