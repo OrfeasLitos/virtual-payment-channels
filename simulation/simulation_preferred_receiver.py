@@ -10,7 +10,7 @@ from tqdm import tqdm
 def all_random_payments_preferred_receiver():
     # preferred receiver
     for parties in [100]:
-        for num_payments in [10000]:
+        for num_payments in [100000]:
             for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
                 payments = random_payments(parties, 'preferred-receiver', num_payments)
                 with open('random_payments_preferred_receiver' + '_{}_'.format(parties) + '{}'.format(i) + '.pickle', 'wb') as file:
@@ -30,4 +30,3 @@ if __name__ == "__main__":
     all_random_payments_preferred_receiver()
 
 
-    

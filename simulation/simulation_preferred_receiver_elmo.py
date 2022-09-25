@@ -1,4 +1,3 @@
-
 import random
 import pickle
 import time
@@ -22,7 +21,7 @@ if __name__ == "__main__":
     knowledge = Knowledge('mine')
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
         method = Elmo(100)
-        with open('random_payments_preferred_receiver_100' + '_{}'.format(i) + '.pickle', 'rb') as pickled_file_preferred_receiver:
+        with open('random_payments_preferred_receiver_1000' + '_{}'.format(i) + '.pickle', 'rb') as pickled_file_preferred_receiver:
             payments_preferred_receiver = pickle.load(pickled_file_preferred_receiver)
         print("Number payments: ", len(payments_preferred_receiver))
         sim = Simulation(payments_preferred_receiver, method, knowledge, utility)
