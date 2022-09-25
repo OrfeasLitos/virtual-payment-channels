@@ -13,7 +13,7 @@ def all_random_payments_preferred_receiver():
         for num_payments in [100000]:
             for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
                 payments = random_payments(parties, 'preferred-receiver', num_payments)
-                with open('random_payments_preferred_receiver' + '_{}_'.format(parties) + '{}'.format(i) + '.pickle', 'wb') as file:
+                with open('random_payments_preferred_receiver' + '_1000_' + '{}'.format(i) + '.pickle', 'wb') as file:
                     pickle.dump(payments, file)
 
 
