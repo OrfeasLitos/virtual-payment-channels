@@ -34,7 +34,9 @@ A number of attacks have been identified against LN. The wormhole
   setting up, but suffers from increased latency and communication when payments
   are performed, as intermediaries have to actively participate in multi-hop
   payments. It also suffers in terms of privacy, as intermediaries learn the
-  exact time and value of each payment.
+  exact time and value of each payment. On a related note, the payment logic of
+  Elmo could also be designed based on the eltoo mechanism instead of the
+  currently leveraged LN techniques.
 
   Bolt~\cite{10.1145/3133956.3134093} constructs privacy-preserving payment
   channels enabling both direct payments and payments with a single untrusted
