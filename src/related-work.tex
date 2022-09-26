@@ -29,7 +29,13 @@ A number of attacks have been identified against LN. The wormhole
   of Lightning is eltoo~\cite{eltoo}. It has a conceptually simpler
   construction, smaller on-chain footprint and a more forgiving attitude towards
   submitting an old channel state than Lightning, but it needs the
-  \texttt{ANYPREVOUT} sighash flag to be added to Bitcoin.
+  \texttt{ANYPREVOUT} sighash flag to be added to Bitcoin. In comparison to
+  Elmo, eltoo is more lightweight in terms of storage and communication when
+  setting up, but suffers from increased latency and communication when payments
+  are performed, as intermediaries have to actively participate in multi-hop
+  payments. It also suffers in terms of privacy, as intermediaries learn the
+  exact time and value of each payment.
+
   Bolt~\cite{10.1145/3133956.3134093} constructs privacy-preserving payment
   channels enabling both direct payments and payments with a single untrusted
   intermediary. Sprites~\cite{sprites} leverages the scripting language of
@@ -54,7 +60,15 @@ A number of attacks have been identified against LN. The wormhole
   Hydra channels can accommodate any script that is compatible with the
   underlying blockchain.
 
-  BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be   funded with no on-chain transactions by allowing parties to form groups that   can pool their funds together off-chain and then use those funds to open   channels. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic   payments with reduced collateral, enabling new applications such as   crowdfunding conditional on reaching a funding target.
+  BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be
+  funded with no on-chain transactions by allowing parties to form groups that
+  can pool their funds together off-chain and then use those funds to open
+  channels. Such proposals are complementary to virtual channels and, depending
+  on the usecase, could be more efficient. In comparison to Elmo, BDW is
+  flexible: any coins in a BDW pool can only be exchanged with members of that
+  pool. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic
+  payments with reduced collateral, enabling new applications such as
+  crowdfunding conditional on reaching a funding target.
 
   TEE-based~\cite{zhao2019sok}
 solutions~\cite{teechan,10.1145/3341301.3359627,liao2021speedster,lee2020routee}
