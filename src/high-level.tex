@@ -11,29 +11,34 @@
   channel, all parties $P_i$ on the
   path follow our novel protocol, setting aside funds in their channels as
   collateral for the new virtual channel that is being opened; this is done
-  by creating so-called ``virtual'' transactions that essentially tie the
-  spending of two adjacent base channels into a single atomic action. Once all
-  intermediaries are done, $P_1$ and $P_n$ finally create (and keep
-  off-chain) their initial ``commitment'' transaction, following a logic similar
-  to Lightning: their channel is now open.
+  by creating so-called ``virtual'' transactions that essentially
+  tie the spending of two adjacent base channels into a single atomic action.
+  Once all intermediaries are done, a special ``funding'' output has been
+  created off-chain which carries the sum of $P_1$ and $P_n$'s channel
+  balance and which either one can at any time put on-chain. LN demands that the
+  funding output is on-chain, but we lift this requirement. $P_1$ and $P_n$
+  finally create their channel, applying a logic similar to LN on top of
+  the funding output: their channel is now open.
 
   A payment over an established channel follows a procedure heavily inspired by
-  LN, but without the use of HTLCs. To be completed, a payment needs three
-  messages to be exchanged by the two parties.
+  LN as well. To be completed, a payment needs three messages to be exchanged by
+  the two parties.
 
-  A virtual channel can be optimistically closed completely off-chain. Put
-  simply, the parties that control the base channels revoke their virtual
-  transactions and the related commitment transactions, effectively peeling one
-  layer of virtualisation. Balances are redistributed so that intermediaries
-  ``break even'', while $P_1$ and $P_n$ get their rightful coins as reflected in
-  the last state of their virtual channel.
+  A virtual channel can be optimistically closed completely off-chain. At a high
+  level, the parties that control the base channels ``revoke'' their virtual
+  transactions and the related commitment transactions. Revoked transactions
+  cannot be used anymore. This effectively peels one layer of virtualisation.
+  Balances are redistributed so that intermediaries ``break even'', while $P_1$
+  and $P_n$ each gets its rightful coins (as reflected in the last state of the
+  virtual channel) in its base channel ($(P_1, P_2)$ and $(P_{n-1}, P_n)$
+  respectively).
 
   Finally, the unilateral closing procedure of a channel $C$ does not need
   cooperation and consists of signing and publishing a number of transactions
   on-chain. As
   we will discuss later, the exact transactions that a party will publish vary
-  depending on the actions of the parties controlling the channels that form the
-  base of $C$ and the channels that are based on $C$.
+  depending on the actions of the parties that control the channels which form
+  the base of $C$, as well as the channels that are based on $C$.
 
   In a nutshell, a virtual channel is built on top of two or more ``base''
   channels, which, due to the recursive property, may themselves be simple or
@@ -42,19 +47,20 @@
   virtual channel is ensured by the variadic property.
 
   In more detail, to open a channel (c.f.\ Figure~\ref{code:ln:open}) the two
-  counterparties (a.k.a.\ ``endpoints'') first create new keypairs and exchange
-  the resulting public keys ($2$ messages), then prepare the underlying base
-  channels if the new channel is virtual ($12 \cdot (n-1)$ total messages, i.e.\
-  $6$ outgoing messages per endpoint and $12$ outgoing messages per
-  intermediary, for $n-2$ intermediaries), next they exchange signatures for
-  their respective initial commitment transactions ($2$ messages) and lastly, if
-  the channel is to be opened directly on-chain, the ``funder'' signs and publishes
-  the ``funding'' transaction to the ledger. As we alluded to earlier, a channel
-  with its funding transaction on-chain is called ``simple''. A channel is
-  either simple or virtual, not both. We here note that like LN, only one of the
-  two parties, the funder, provides coins for a new channel. This limitation
-  simplifies the execution model and the analysis, but can be lifted at the cost
-  of additional protocol complexity.
+  counterparties (a.k.a.\ ``endpoints'') (i) create new keypairs and exchange
+  the resulting public keys ($2$ messages), then (ii) prepare the underlying
+  base channels if the new channel is virtual ($12 \cdot (n-1)$ total messages,
+  i.e.\ $6$ outgoing messages per endpoint and $12$ outgoing messages per
+  intermediary, for $n-2$ intermediaries), next (iii) they exchange signatures
+  for their respective initial commitment transactions ($2$ messages) and
+  lastly, (iv) if the channel is to be opened directly on-chain (i.e.\ is
+  simple), the ``funder'' signs and publishes the ``funding'' transaction to the
+  ledger. As we alluded to earlier, a channel with its funding transaction
+  on-chain is called ``simple''. A channel is either simple or virtual, not
+  both. We here note that like LN, only one of the two parties, the funder,
+  provides coins for a new channel. This limitation simplifies the execution
+  model and the analysis, but can be lifted at the cost of additional protocol
+  complexity.
 
   Let us now introduce some notation used in figures with transactions.
   Reflecting the UTXO model, each transaction is represented by a circular,
@@ -131,7 +137,9 @@
   be completed, the endpoints must exchange the signatures for the revocation
   txs that spend the commitment txs that just became obsolete.
 
-  Observe that the above logic is essentially a simplification of LN.
+  Observe that the above logic is essentially a simplification of LN. In
+  particular, Elmo does not use Hashed TimeLocked Contracts (HTLCs), which
+  enable multi-hop payments in LN.
 
 \subsection{Virtual Channels}
   In order to gain intuition on how virtual channels work, consider $n-1$
@@ -158,9 +166,8 @@
   If the initiator transaction ends up on-chain honestly, the latter output
   carries coins that will directly or indirectly fund the funding output of the
   virtual channel. This virtual funding output can in turn be spent by a
-  commitment transaction that is negotiated and updated with direct
-  communication between the two endpoints in exactly the same manner as the
-  payments of simple channels.
+  commitment transaction that functions exactly in the same manner as in a
+  simple channel.
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint.tex}
@@ -180,7 +187,8 @@
   intermediary coins equal to the total value in the virtual channel, and one
   ``virtual output'', which carries coins that can potentially fund the virtual
   channel. If both funding outputs are still unspent, publishing its initiator
-  tx is the only way for an honest intermediary to close either of its channels.
+  tx is the only way for an honest intermediary to close either of its channels
+  and retrieve its collateral.
 
   \begin{figure}
     \subimport{./figures/manual-tikz/}{intermediary-initiator.tex}
@@ -213,10 +221,11 @@
 
   Furthermore, each intermediary has $O(n)$ extend-interval transactions.
   Being an intermediary, the party is involved in two base channels, each having
-  its own funding output. In case exactly one of these two outputs has been spent
-  honestly and the other is still unspent,
+  its own funding output. In case exactly one of these two funding outputs has
+  been spent honestly and the other is still unspent,
   publishing an extend-interval transaction is the only way for the party to
-  close the base channel corresponding to the unspent output and take its funds.
+  close the base channel corresponding to the unspent output and retrieve its
+  collateral.
   Such a transaction consumes two outputs: the only
   available funding output and a suitable virtual output, as discussed below. An
   extend-interval tx has three outputs: A funding output replacing the one just
@@ -224,14 +233,15 @@
   value of the virtual channel, and one virtual output.
 
   Last, each intermediary has $O(n^2)$ merge-intervals transactions. If both
-  base channels' funding outputs of the party have been spent honestly, publishing a merge-intervals
-  transaction is the only way for the party to close either base channel. Such a
+  base channels' funding outputs of the party have been spent honestly,
+  publishing a merge-intervals
+  transaction is the only way for the party to retrieve its collateral. Such a
   transaction consumes two suitable virtual outputs, as discussed below. It has
   two outputs: One that directly pays the intermediary coins equal to the total
   value of the virtual channel, and one virtual output.
 
   Note that each output of a virtual transaction has a ``revocation'' spending
-  method that needs a signature from every party that may end up owning the
+  method which needs a signature from every party that could end up owning the
   output coins: each funding output is signed by the two parties of the
   corresponding channel, each refund output is signed by the transaction owner
   and the party to the left (giving $c_{\mathrm{virt}}$ coins to the left party
@@ -260,21 +270,23 @@
   its funding output(s) remain(s) unspent and publishes its initiator
   transaction. First, this allows $P_i$ to use its commitment transaction to
   close the base channel. Second, in case $P_i$ is an intermediary, it directly
-  regains the coins it has locked for the virtual channel. Third, it produces a
+  regains the coins it has locked for the virtual channel as collateral. Third,
+  it produces a
   virtual output that can only be consumed by $P_{i-1}$ and $P_{i+1}$, the
   parties adjacent to $P_i$ (if any) with specific extend-interval transactions.
   The virtual output of this extend-interval transaction can in turn be spent by
   specific extend-interval transactions of $P_{i-2}$ or $P_{i+2}$ that have not
-  published a virtual transaction yet (if any) and so on for the next neighbours. The
+  published a virtual transaction yet (if any) and so on for the next
+  neighbours. The
   idea is that each party only needs to publish a single virtual transaction to
   ``collapse'' the virtual layer and each virtual output uniquely defines the
   continuous interval of parties that have already published a virtual
   transaction and only allows parties at the edges of this interval to extend it.
-  This prevents malicious parties from indefinitely replacing a virtual output
-  with a new one. As the name suggests, merge-intervals transactions are
-  published by parties that are adjacent to two parties that have already
-  published their virtual transactions and in effect joins the two intervals into
-  one.
+  This extension rule prevents malicious parties from indefinitely replacing a
+  virtual output with a new one. As the name suggests, merge-intervals
+  transactions are published by parties that are adjacent to two parties that
+  have already published their virtual transactions and in effect joins the two
+  intervals into one.
 
   Each virtual output can also be used to fund the virtual
   channel after a timelock, to protect from unresponsive parties blocking the
@@ -283,7 +295,9 @@
   suitable virtual transaction before the timelock expires to avoid losing
   funds. What is more, all virtual outputs need the signature of all parties to
   be spent before the timelock (i.e.\ they have an $n$-of-$n$ multisig) in order
-  to prevent colluding parties from faking the intervals progression. To ensure
+  to prevent colluding parties from faking the intervals progression. Thanks to
+  Schnorr signatures however, the on-chain footprint of the $n$ signatures is
+  reduced to that of a single signature. To ensure
   that parties have an opportunity to react, the timelock of a virtual output is
   the maximum of the required timelocks of the intermediaries that can spend it.
   Let $p$ be a global constant representing the maximum number of blocks a party
@@ -301,7 +315,8 @@
   be further extended, therefore one spending method and the timelock are
   dropped.
 
-  A typical extend-interval and merge-intervals transaction has to be able to
+  We here note that a typical extend-interval and merge-intervals transaction
+  has to be able to
   spend different outputs, depending on the order other base parties publish
   their virtual transactions. For example, $P_3$'s extend-interval tx that
   extends the interval $\{P_1, P_2\}$ to $\{P_1, P_2, P_3\}$ must be able to
@@ -352,8 +367,9 @@
   new commitment txs, which once again spend the funding outputs that the
   virtual txs spent before, just like prior to opening the virtual channel. The
   funder sends
-  their signatures to the first intermediary; the latter signs and sends the
-  same to the second intermediary and so on until the fundee. The fundee
+  their signatures to the first intermediary; the latter similarly builds, signs
+  and sends new commitment txs to the second intermediary and so on until the
+  fundee. The fundee
   responds with its own commitment tx signatures, along with signatures revoking
   the previous commitment tx and virtual txs. This is repeated backwards until
   revocations reach the funder. Finally the funder sends its revocation to its
@@ -379,17 +395,18 @@
   extend-interval transaction, thus producing an interval with all players.
   No more virtual transactions can be published. Now $A$ can spend the virtual
   output of the last extend-interval transaction with the relevant bridge
-  transaction, which can then be spent by the latest commitment transaction.
-  Note that if any of $B$, $C$ or $D$ does not act within the timelock
-  prescribed in their consumed virtual output, then $A$ or $E$ can spend the
-  virtual output with the relevant bridge transaction and this with the latest
-  commitment transaction, thus eventually $A$ can close its virtual channel in
-  all cases.
+  transaction, which can then be spent by $A$'s or $E$'s latest commitment
+  transaction. Note that if any of $B$, $C$ or $D$ does not act within the
+  timelock prescribed in their consumed virtual output, then $A$ or $E$ can
+  spend the virtual output with the relevant bridge transaction and this with
+  the latest commitment transaction, thus eventually $A$ can close its virtual
+  channel in all cases.
 
   \begin{figure*}
     \subimport{./figures/manual-tikz/}{example-start-end.tex}
-    \caption{$4$ simple channels supporting a virtual. $A$ initiates the closing
-    procedure and no party is negligent. Virtual outputs are marked with their
-    interval.}
+    \caption{$4$ simple channels supporting a virtual. $A$ starts the closing
+    procedure by publishing its initiator tx, then parties $B$-$D$ each
+    publishes its extend-interval tx with the relevant interval. No party is
+    negligent. Virtual outputs are marked with their interval.}
     \label{figure:example-start-end}
   \end{figure*}
