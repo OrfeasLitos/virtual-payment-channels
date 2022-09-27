@@ -1,4 +1,5 @@
 import pickle
+import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from simulation import ROUNDS_RANDOM_PAYMENTS
@@ -217,25 +218,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     print("Fees Ln:", sum_fees_ln)
     print("Delays Ln: ", sum_delays_ln)
 
-
-
-    x_coords_success = [0,1,2,3]
-    payments_bar = [
-        num_successful_payments_elmo,
-        num_successful_payments_donner,
-        num_successful_payments_lvpc,
-        num_successful_payments_ln
-    ]
-    labels_success = [
-        'Elmo', 'Donner', 'LVPC', 'Ln']
-
-    plt.bar(
-        x_coords_success, payments_bar, tick_label = labels_success, width = 0.8,
-        color = ['blue']
-    )
-    plt.ylabel("Number of successful payments")
-    plt.show()
-
+    color = ['blue']
     x_coords_cost = [0, 1, 2, 3]
     labels_cost = ['Elmo', 'Donner', 'LVPC', 'Ln']
 
@@ -244,8 +227,10 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
         sum_fees_lvpc, sum_fees_ln
     ]
 
-    plt.bar(x_coords_cost, cost_bar, tick_label = labels_cost, width=0.5)
+    plt.bar(x_coords_cost, cost_bar, tick_label = labels_cost, width=0.5, color=color)
     plt.ylabel("Cost")
+    plt.title("Aggregated Fees")
+    plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.25)
     plt.show()
 
     x_coords_delay = [0, 1, 2, 3]
@@ -256,6 +241,8 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
         sum_delays_lvpc, sum_delays_ln
     ]
 
-    plt.bar(x_coords_delay, delay_bar, tick_label = labels_delay, width=0.5)
+    plt.bar(x_coords_delay, delay_bar, tick_label = labels_delay, width=0.5, color=color)
     plt.ylabel("Delay")
+    plt.title("Aggregated Delays")
+    plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.5)
     plt.show()
