@@ -8,8 +8,10 @@ from simulation import ROUNDS_RANDOM_PAYMENTS
 
 for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
 
+
     # power law
     num_successful_payments_elmo = 0
+    num_payments_elmo = 0
     num_failures_elmo = 0
     sum_fees_elmo = 0
     sum_delays_elmo = 0
@@ -19,6 +21,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     num_pay_elmo = 0
 
     num_successful_payments_donner = 0
+    num_payments_donner = 0
     num_failures_donner = 0
     sum_fees_donner = 0
     sum_delays_donner = 0
@@ -28,6 +31,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     num_pay_donner = 0
 
     num_successful_payments_lvpc = 0
+    num_payments_lvpc = 0
     num_failures_lvpc = 0
     sum_fees_lvpc = 0
     sum_delays_lvpc = 0
@@ -37,6 +41,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     num_pay_lvpc = 0
 
     num_successful_payments_ln = 0
+    num_payments_ln = 0
     num_failures_ln = 0
     sum_fees_ln = 0
     sum_delays_ln = 0
@@ -48,6 +53,8 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
 
         with open("results_" + distribution + "Elmo_" + "{}".format(i) + ".pickle", 'rb') as pickled_file_elmo:
             payments_elmo = pickle.load(pickled_file_elmo)
+        
+        num_payments_elmo += len(payments_elmo)
         num_successful_payments_elmo_round = 0
         sum_fees_elmo_round = 0
         sum_delays_elmo_round = 0
@@ -86,6 +93,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
 
         with open("results_" + distribution + "Donner_" + "{}".format(i) + ".pickle", 'rb') as pickled_file_donner:
             payments_donner = pickle.load(pickled_file_donner)
+        num_payments_donner += len(payments_donner)
         num_successful_payments_donner_round = 0
         sum_fees_donner_round = 0
         sum_delays_donner_round = 0
@@ -123,6 +131,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
 
         with open("results_" + distribution + "LVPC_" + "{}".format(i) + ".pickle", 'rb') as pickled_file_lvpc:
             payments_lvpc = pickle.load(pickled_file_lvpc)
+        num_payments_lvpc += len(payments_lvpc)
         num_successful_payments_lvpc_round = 0
         sum_fees_lvpc_round = 0
         sum_delays_lvpc_round = 0
@@ -160,6 +169,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
 
         with open("results_" + distribution + "ln_" + "{}".format(i) + ".pickle", 'rb') as pickled_file_ln:
             payments_ln = pickle.load(pickled_file_ln)
+        num_payments_ln += len(payments_ln)
         num_successful_payments_ln_round = 0
         sum_fees_ln_round = 0
         sum_delays_ln_round = 0
@@ -219,30 +229,43 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     print("Delays Ln: ", sum_delays_ln)
 
     color = ['blue']
-    x_coords_cost = [0, 1, 2, 3]
-    labels_cost = ['Elmo', 'Donner', 'LVPC', 'Ln']
 
+    x_coords_cost = [0, 1, 2]
+    labels_cost = ['Elmo', 'Donner', 'LVPC']
+
+    assert num_payments_elmo == num_payments_donner == num_payments_lvpc
+
+    cutoff_fee = 10**8
+    num_payments = num_payments_lvpc
     cost_bar = [
-        sum_fees_elmo, sum_fees_donner,
-        sum_fees_lvpc, sum_fees_ln
+        sum_fees_elmo / num_payments - cutoff_fee, sum_fees_donner / num_payments - cutoff_fee,
+        sum_fees_lvpc / num_payments - cutoff_fee
     ]
 
-    plt.bar(x_coords_cost, cost_bar, tick_label = labels_cost, width=0.5, color=color)
+    plt.bar(
+        x_coords_cost, cost_bar, tick_label = labels_cost,
+        width=0.5, color=color, bottom=cutoff_fee
+    )
     plt.ylabel("Cost")
-    plt.title("Aggregated Fees")
+    plt.title("Average Fees")
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.25)
     plt.show()
 
-    x_coords_delay = [0, 1, 2, 3]
-    labels_delay = ['Elmo', 'Donner', 'LVPC', 'Ln']
+    x_coords_delay = [0, 1, 2]
+    labels_delay = ['Elmo', 'Donner', 'LVPC']
 
+    cutoff_delay = 2500
     delay_bar = [
-        sum_delays_elmo, sum_delays_donner,
-        sum_delays_lvpc, sum_delays_ln
+        sum_delays_elmo / num_payments - cutoff_delay,
+        sum_delays_donner / num_payments - cutoff_delay,
+        sum_delays_lvpc / num_payments - cutoff_delay
     ]
 
-    plt.bar(x_coords_delay, delay_bar, tick_label = labels_delay, width=0.5, color=color)
+    plt.bar(
+        x_coords_delay, delay_bar, tick_label = labels_delay,
+        width=0.5, color=color, bottom=cutoff_delay
+    )
     plt.ylabel("Delay")
-    plt.title("Aggregated Delays")
+    plt.title("Average Delays")
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.5)
     plt.show()
