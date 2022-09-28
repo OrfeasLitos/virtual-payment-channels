@@ -338,8 +338,10 @@
   different sequences. Without \texttt{ANYPREVOUT}, the $(k+1)$-th party needs
   a different transaction to interact with the outcome of each sequence, hence
   blowing up its local storage. The formalization of this argument is outside
-  the scope of the present work.} We hope this work provides additional
-  motivation for this flag to be included in the future.
+  the scope of the present work.}
+  % TODO: properly prove need for ANYPREVOUT
+  We hope this work provides additional motivation for this flag to be included
+  in the future.
 
   Note also that the newly established virtual channel can itself act as a base
   for further virtual channels, as its funding output can be unilaterally put
