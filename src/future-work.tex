@@ -64,21 +64,14 @@
   the construction, our protocol does not exploit a number of possible
   optimisations. These include a number of techniques employed in Lightning that
   drastically reduce storage requirements, along with a variety of possible
-  improvements to our novel virtual subprotocol. Most notably, the
-  Taproot~\cite{taproot} feature that has been recently added to Bitcoin will
-  allow for a
-  drastic reduction in the size of transactions, as in the optimistic case only
-  the hash of the Script has to be added to the blockchain and the $n$
-  signatures needed to spend a virtual output can be replaced with their
-  aggregate, resulting in constant size storage. As this work is mainly a proof of
-  feasibility, we leave these optimisations as future work.
+  improvements to our novel virtual subprotocol.
 
   Additionally, our protocol does not feature one-off multi-hop payments like
   those possible in Lightning. This however is a useful feature in case two
   parties know that they will only transact once, as opening a virtual channel
   needs substantially more network communication than performing an one-off
   multi-hop payment. It would be therefore fruitful to also enable the multi-hop
-  payment technique used in Lightning and allow human users to choose which
+  payment technique and allow human users to choose which
   method to use in each case. Likewise, optimistic cooperative on-chain closing
   of simple channels could be done just like in Lightning, obviating the need to
   wait for the revocation timelock to expire and reducing on-chain costs if the
