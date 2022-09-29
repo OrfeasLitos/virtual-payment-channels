@@ -4,11 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from simulation import ROUNDS_RANDOM_PAYMENTS
 
-
-
 for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
-
-
     # power law
     num_successful_payments_elmo = 0
     num_payments_elmo = 0
@@ -50,10 +46,9 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     num_pay_ln = 0
 
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
-
         with open("results_" + distribution + "Elmo_" + "{}".format(i) + ".pickle", 'rb') as pickled_file_elmo:
             payments_elmo = pickle.load(pickled_file_elmo)
-        
+
         num_payments_elmo += len(payments_elmo)
         num_successful_payments_elmo_round = 0
         sum_fees_elmo_round = 0
@@ -249,7 +244,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     plt.ylabel("Cost")
     plt.title("Average Fees")
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.25)
-    plt.show()
+    plt.savefig("Fees_" + distribution + ".png")
 
     x_coords_delay = [0, 1, 2]
     labels_delay = ['Elmo', 'Donner', 'LVPC']
@@ -266,6 +261,6 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
         width=0.5, color=color, bottom=cutoff_delay
     )
     plt.ylabel("Delay")
-    plt.title("Average Delays")
+    plt.title(distribution.replace('_', ' ').title())
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.5)
-    plt.show()
+    plt.savefig("Delays_" + distribution + ".png")
