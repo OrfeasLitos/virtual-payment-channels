@@ -1,17 +1,24 @@
-\section{Efficiency Evaluation}
+\section{Efficiency Evaluation \& Simulations}
   \label{section:comparison}
-  We offer here a cost comparison of this work with
+  We offer here a cost and efficiency comparison of this work with
   LVPC~\cite{10.1007/978-3-030-65411-5_18} and Donner~\cite{donner}. We focus on
-  these protocols because they are the only ones that enable
+  these because they are the only ones that enable
   virtual channels over any number of base channels. We remind that LVPC
   achieves this via its recursive property, while Donner
   because it is variadic (c.f.\ Table~\ref{table:comparison-features}).
 
-  We consider the general $n$-party case: $1$ funder ($P_1$), $1$ fundee ($P_n$)
-  and $n-2$ intermediaries ($P_2, \dots, P_{n-1}$) where each party has one base
-  channel with each adjacent party. Our comparison regards the off-chain cost of
-  opening (Table~\ref{table:comparison:overhead:n-parties:open}) and the
-  on-chain cost of unilaterally closing
+  We first count the communication, storage and on-chain cost of a virtual
+  channel under each protocol. We then simulate the execution of a large number
+  of payments among many parties and derive payment latency and fees. We thus
+  obtain an end-to-end understanding of both the requirements and the benefits
+  each protocol provides.
+
+  \paragraph{Cost calculation} We consider the general $n$-party case: $1$
+  funder ($P_1$), $1$ fundee ($P_n$) and $n-2$ intermediaries ($P_2, \dots,
+  P_{n-1}$) where each party has one base channel with each adjacent party. Our
+  comparison regards the off-chain cost of opening
+  (Table~\ref{table:comparison:overhead:n-parties:open}) and the on-chain cost
+  of unilaterally closing
   (Table~\ref{table:comparison:overhead:n-parties:close}).
 
   Regarding channel opening, in
