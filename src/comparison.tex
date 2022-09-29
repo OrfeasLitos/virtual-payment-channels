@@ -207,3 +207,61 @@
   funder's transaction $\tx^{\mathtt{vc}}$. Likewise LVPC cannot gain a linear
   improvement with this optimisation, since each of its relevant transactions
   (``split'', ``merge'' and ``refund'') needs constant signatures.
+
+  \paragraph{Payment simulations} We implemented a simulation
+  framework\footnote{\url{https://gitlab.com/anonymised-submission-TODO/virtual-payment-channels-simulations/}}
+  in which a list of randomly generated payments between parties are carried
+  out. For each payment, the payer chooses whether to pay on-chain,
+  open a new channel or use an existing one, using suitable heuristics.
+
+  A single simulation is parametrised by a list of payments (sender, receiver,
+  value triples), the protocol (one of Elmo, Donner, LVPC, LN, on-chain only),
+  which future payments each payer knows and the utility function it maximises
+  when choosing a payment method. The knowledge function defines which future
+  payments inform each decision of each payer. Several knowledge functions are
+  provided, such as full knowledge of all future payments and knowledge of the
+  next $m$ outgoing payments of the payer. The utility function takes primarily
+  into account payment latency and fees, but also how the payer's network
+  centrality and ability to conduct future payments is affected.
+
+  The simulation provides crucial intuition on how each protocol behaves with
+  respect to the two performance metrics payment channels aim to improve, namely
+  payment latency and fees.
+
+  Our simulation framework is of independent interest, as it is built to be
+  flexible and reuseable for a variety of payment network protocol evaluations.
+
+  We provide three different workloads: First, in an attempt to emulate
+  real-world scenarios, the number of incoming payments of each player and the
+  value of each payment are drawn from zipf \TODO{reference} distibutions.
+  Second, each party has a preferred receiver, chosen uniformly at the
+  beginning, which it pays half the time, the other half choosing the payee at
+  random. Each payment value is chosen uniformly at random from the $[0,
+  \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}]$
+  range. Third, all random choices are drawn from the uniform distribution. For
+  all scenarios no channels exist initially, the payer of each payment is chosen
+  uniformly at random and all parties initially own the same number of coins
+  on-chain.
+
+  To ensure our results do not bias against any protocol, we simulate each
+  protocol with the same payment list. For each scenario we simulate with $20$
+  distinct sets of payments and average the results.
+
+  \begin{figure}
+  \begin{subfigure}{.3293\textwidth}
+  \includegraphics[width=\textwidth]{../simulation/Delays_power_law.png}
+  \caption{todo}
+  \label{graph:power-law:delays}
+  \end{subfigure}
+  \begin{subfigure}{.3293\textwidth}
+  \includegraphics[width=\textwidth]{../simulation/Delays_preferred_receiver.png}
+  \caption{todo}
+  \label{graph:power-law:delays}
+  \end{subfigure}
+  \begin{subfigure}{.3293\textwidth}
+  \includegraphics[width=\textwidth]{../simulation/Delays_uniform.png}
+  \caption{todo}
+  \label{graph:power-law:delays}
+  \end{subfigure}
+  \caption{Average payment delay in seconds}
+  \end{figure}
