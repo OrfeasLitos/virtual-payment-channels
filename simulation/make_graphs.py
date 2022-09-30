@@ -244,7 +244,9 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     plt.ylabel("Cost")
     plt.title(distribution.replace('_', ' ').title())
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.25)
-    plt.savefig("Fees_" + distribution + ".png")
+    plt.savefig("Fees_" + distribution + ".png", bbox_inches="tight")
+
+    plt.close()
 
     x_coords_delay = [0, 1, 2]
     labels_delay = ['Elmo', 'Donner', 'LVPC']
@@ -264,3 +266,6 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     plt.title(distribution.replace('_', ' ').title())
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.5)
     plt.savefig("Delays_" + distribution + ".png")
+
+    plt.close()
+    
