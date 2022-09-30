@@ -242,7 +242,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
         width=0.5, color=color, bottom=cutoff_fee
     )
     plt.ylabel("Cost")
-    plt.title("Average Fees")
+    plt.title(distribution.replace('_', ' ').title())
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.25)
     plt.savefig("Fees_" + distribution + ".png")
 
