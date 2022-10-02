@@ -241,7 +241,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
         x_coords_cost, cost_bar, tick_label = labels_cost,
         width=0.5, color=color, bottom=cutoff_fee
     )
-    plt.ylabel("Cost")
+    plt.ylabel("Fee (satoshis)")
     plt.title(distribution.replace('_', ' ').title())
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.25)
     plt.savefig("Fees_" + distribution + ".png", bbox_inches="tight")
@@ -262,7 +262,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
         x_coords_delay, delay_bar, tick_label = labels_delay,
         width=0.5, color=color, bottom=cutoff_delay
     )
-    plt.ylabel("Delay")
+    plt.ylabel("Delay (secs)")
     plt.title(distribution.replace('_', ' ').title())
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.5)
     plt.savefig("Delays_" + distribution + ".png")
