@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     utility = Utility(
         'sum_of_inverses', personalization = ("50-50", 500),
-        parameters = [(1, 100000000, 1000, 0.001, 0.1), (1, 1000000, 10000, 0.001, 0.1)]
+        parameters = [(1, 1000000, 1000, 0.02, 1), (1, 10000, 10000, 0.02, 1)]
     )
     knowledge = Knowledge('10-next-mine')
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
