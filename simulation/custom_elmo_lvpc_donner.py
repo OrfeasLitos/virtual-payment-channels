@@ -13,8 +13,8 @@ AVAILABILITY_FACTOR = 4
 class Custom_Elmo_LVPC_Donner(Payment_Network):
     def __init__(
         self, method_name, nr_players, opening_transaction_size,
-        bitcoin_fee = 1000000, bitcoin_delay = 3600,
-        coins_for_parties = "max_value", base_fee = 20000, fee_rate = 0.0004,
+        bitcoin_fee = 1000, bitcoin_delay = 3600,
+        coins_for_parties = "max_value", base_fee = 1000, fee_rate = 0.0004,
     ):
         super().__init__(nr_players, bitcoin_fee, bitcoin_delay, coins_for_parties)
         self.method_name = method_name

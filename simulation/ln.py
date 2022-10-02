@@ -12,7 +12,7 @@ from network import Network
 
 class LN(Payment_Network):
     def __init__(
-        self, nr_players, bitcoin_fee = 1000000, bitcoin_delay = 3600, ln_fee = 0.00002,
+        self, nr_players, bitcoin_fee = 1000, bitcoin_delay = 3600, ln_fee = 0.00002,
         opening_transaction_size = 121.5, base_fee = 1000, coins_for_parties = "max_value"
     ):
         super().__init__(nr_players, bitcoin_fee, bitcoin_delay, coins_for_parties)
