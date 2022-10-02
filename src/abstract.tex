@@ -18,5 +18,10 @@ have three natural desiderata.
 A virtual channel constructor is {\em recursive} if it can also be applied on pre-existing virtual channels, {\em variadic} if it can be applied on any number of pre-existing channels and {\em symmetric} if it encumbers in an egalitarian fashion all channel participants both in optimistic and pessimistic execution paths. 
 We put forth the first Bitcoin-suitable recursive variadic virtual channel
 construction. Furthermore our virtual channel constructor is symmetric and
-offers optimal round complexity for payments, optimistic closing and unilateral closing. We express and prove the security of our construction in the universal composition setting. 
+offers optimal round complexity for payments, optimistic closing and unilateral
+closing. We express and prove the security of our construction in the universal
+composition setting, using a novel induction-based proof technique of
+independent interest. As an additional contribution, we implement a flexible
+simulation framework for on- and off-chain payments and compare the efficiency
+of various virtual channel constructors.
 \end{abstract}
