@@ -17,11 +17,11 @@ if __name__ == "__main__":
 
     utility = Utility(
         'sum_of_inverses', personalization = ("50-50", 50),
-        parameters = [(1, 100000000, 1000, 0.001, 0.1), (1, 1000000, 10000, 0.001, 0.1)]
+        parameters = [(1, 1000000, 1000, 0.02, 1), (1, 10000, 10000, 0.02, 1)]
     )
     knowledge = Knowledge('10-next-mine')
-    method = Donner(50)
     for i in tqdm(range(ROUNDS_RANDOM_PAYMENTS)):
+        method = Donner(50)
         with open('random_payments_zipf_50_' + '_{}_'.format(i) + '.pickle', 'rb') as pickled_file_zipf:
             payments_zipf = pickle.load(pickled_file_zipf)
         print("Number payments: ", len(payments_zipf))
@@ -30,5 +30,5 @@ if __name__ == "__main__":
         results = sim.run()
         end = time.time()
         print("Time one round: ", end - start)
-        with open("results_power_law_50_parties" + method.method_name + "_{}".format(i) + ".pickle", 'wb') as file:
+        with open("results_power_law_50_parties_changed_fees" + method.method_name + "_{}".format(i) + ".pickle", 'wb') as file:
             pickle.dump(results, file)
