@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from simulation import ROUNDS_RANDOM_PAYMENTS
 
+
 for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     # power law
     num_successful_payments_elmo = 0
@@ -230,18 +231,21 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
 
     assert num_payments_elmo == num_payments_donner == num_payments_lvpc
 
-    cutoff_fee = 10**8
+    cutoff_fee = 0.75
     num_payments = num_payments_lvpc
+    max_fee = max(
+        sum_fees_elmo, sum_fees_donner, sum_fees_lvpc
+    )
     cost_bar = [
-        sum_fees_elmo / num_payments - cutoff_fee, sum_fees_donner / num_payments - cutoff_fee,
-        sum_fees_lvpc / num_payments - cutoff_fee
+        sum_fees_elmo / max_fee - cutoff_fee, sum_fees_donner / max_fee - cutoff_fee,
+        sum_fees_lvpc / max_fee - cutoff_fee
     ]
 
     plt.bar(
         x_coords_cost, cost_bar, tick_label = labels_cost,
         width=0.5, color=color, bottom=cutoff_fee
     )
-    plt.ylabel("Fee (satoshis)")
+    plt.ylabel("Fee")
     plt.title(distribution.replace('_', ' ').title())
     plt.grid(color='grey', linestyle='--', linewidth=1, axis='y', alpha=0.25)
     plt.savefig("Fees_" + distribution + ".png", bbox_inches="tight")
@@ -251,7 +255,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
     x_coords_delay = [0, 1, 2]
     labels_delay = ['Elmo', 'Donner', 'LVPC']
 
-    cutoff_delay = 2500
+    cutoff_delay = 2000
     delay_bar = [
         sum_delays_elmo / num_payments - cutoff_delay,
         sum_delays_donner / num_payments - cutoff_delay,
