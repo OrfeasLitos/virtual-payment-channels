@@ -209,47 +209,49 @@
   (``split'', ``merge'' and ``refund'') needs constant signatures.
 
   \paragraph{Payment simulations} We implemented a simulation
-  framework\footnote{\url{https://gitlab.com/anonymised-submission-8778e084/virtual-channels-simulation}}
+  framework\footnote{\url{gitlab.com/anonymised-submission-8778e084/virtual-channels-simulation}}
   in which a list of randomly generated payments between parties are carried
   out. For each payment, the payer chooses whether to pay on-chain,
   open a new channel or use an existing one, using suitable heuristics.
 
-  A single simulation is parametrised by a list of payments (sender, receiver,
-  value triples), the protocol (one of Elmo, Donner, LVPC, LN, on-chain only),
-  which future payments each payer knows and the utility function it maximises
-  when choosing a payment method. The knowledge function defines which future
-  payments inform each decision of each payer. Several knowledge functions are
-  provided, such as full knowledge of all future payments and knowledge of the
-  next $m$ outgoing payments of the payer. The utility function takes primarily
-  into account payment latency and fees, but also how the payer's network
-  centrality and ability to conduct future payments is affected.
+  A single simulation is parametrised by a list of payments
+  (sender/receiver/value triples), the protocol (Elmo, Donner, LVPC, LN or
+  on-chain only), which future payments each payer knows and the utility
+  function it maximises. The knowledge function defines which future payments
+  inform each decision. Several knowledge functions are provided, such as full
+  knowledge of all future payments and knowledge of the next $m$ outgoing
+  payments of the payer. The utility function takes into account payment
+  latency and fees, as well as the impact of the payment to the payer's
+  network centrality and its distance from other parties.
 
-  The simulation provides crucial intuition on how each protocol behaves with
-  respect to the two performance metrics payment channels aim to improve, namely
-  payment latency and fees.
-
-  Our simulation framework is of independent interest, as it is built to be
-  flexible and reuseable for a variety of payment network protocol evaluations.
+  The simulation outputs extensive data on the progress of each run. Our
+  simulation framework is of independent interest, as it is built to be flexible
+  and reuseable for a variety of payment network protocol evaluations. We here
+  show the performance of the $3$ protocols with respect to the metrics payment
+  channels aim to improve, namely payment latency and fees.
 
   We provide three different workloads: First, in an attempt to emulate
   real-world scenarios, the number of incoming payments of each player and the
   value of each payment are drawn from zipf~\cite{powers-1998-applications}
-  distibutions.
-  Second, each party has a preferred receiver, chosen uniformly at the
-  beginning, which it pays half the time, the other half choosing the payee at
-  random. Each payment value is chosen uniformly at random from the $[0,
+  distibutions. Second, each party has a preferred receiver, chosen uniformly at
+  the beginning, which it pays half the time, the other half choosing the payee
+  at random. Each payment value is chosen uniformly at random from the $[0,
   \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}]$
-  range. Third, all random choices are drawn from the uniform distribution. For
-  all scenarios no channels exist initially, the payer of each payment is chosen
-  uniformly at random and all parties initially own the same number of coins
-  on-chain.
+  range. Third, all random choices are drawn from the uniform distribution. Each
+  party knows its next $10$, $100$, $10$ payments respectively in each workload.
+  For all scenarios no channels exist initially, the payer of each payment is
+  chosen uniformly at random and all parties initially own the same number of
+  coins on-chain.
 
   To ensure our results do not bias against any protocol, we simulate each
   protocol with the same payment list. For each scenario we simulate with $20$
-  distinct sets of payments and average the results.
-
-  Many payments take place on-chain with latency $3600$s and fee $109.5$
-  satoshis, thus the high delay and fee values.
+  distinct sets of payments and average the results. Figs.~\ref{graph:delays}
+  and~\ref{graph:fees} show the average per-payment latency and fee
+  respectively. Average latency is high, as payments include slow on-chain
+  payments and channel openings. Regarding fees, none of the $3$ protocols
+  provide fee recommendations, so we used the same fees for all $3$ to avoid
+  bias. These fees are not systematically chosen, therefore
+  Fig.~\ref{graph:fees} provides relative, not absolute, fees.
 
   \addtolength{\intextsep}{-15pt}
   \begin{figure}
@@ -263,6 +265,7 @@
   \includegraphics[width=\textwidth]{../simulation/Delays_uniform.png}
   \end{subfigure}
   \caption{Average per-payment delay in seconds. Less is better.}
+  \label{graph:delays}
   \end{figure}
   \begin{figure}
   \begin{subfigure}{.3293\textwidth}
@@ -274,6 +277,7 @@
   \begin{subfigure}{.3293\textwidth}
   \includegraphics[width=\textwidth]{../simulation/Fees_uniform.png}
   \end{subfigure}
-  \caption{Average per-payment fee in satoshis. Less is better.}
+  \caption{Average per-payment relative fee. Less is better.}
+  \label{graph:fees}
   \end{figure}
   \addtolength{\intextsep}{15pt}
