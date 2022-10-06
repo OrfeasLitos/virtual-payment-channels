@@ -51,7 +51,7 @@ channels'', suggest the more attractive approach of putting a one-time off-chain
 initialization step to set up a virtual payment channel, which subsequently can
 be used for direct payments with complexity ---in the optimistic case---
 independent of the length of the path. When the virtual channel has exhausted
-its usefulness, it can be closed off-chain if involved parties cooperate. Such a
+its usefulness, it can be closed off-chain if the involved parties cooperate. Such a
 protocol can be very attractive for parties that need to send money to each
 other often.
 Initial constructions for virtual channels essentially capitalized on the extended functionality of Ethereum, e.g.,
@@ -78,10 +78,10 @@ managing and closing multiple virtual channels only to use the one at the
 ``top'' of the recursion.
 \item Symmetric. A symmetric virtual channel constructor offers setup and
 closing operations that are symmetric in terms of cost between the two
-``endpoints'' or the ``intermediaries'' (but not a mix of both) for the optimistic and pessimistic execution paths. This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
+``endpoints'' or the ``intermediaries'' (but not necessarily a mix of both) for the optimistic and pessimistic execution paths. This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
 \end{itemize}
 
-Endpoints are the two parties that share the virtual channel, intermediaries are
+Note that the endpoints are the two parties that share the virtual channel, while intermediaries are
 the parties that take part in any of underlying channels.
 
 We note that recursiveness, while identified already as an important design
