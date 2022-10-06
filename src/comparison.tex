@@ -247,11 +247,13 @@
   protocol with the same payment list. For each scenario we simulate with $20$
   distinct sets of payments and average the results. Figs.~\ref{graph:delays}
   and~\ref{graph:fees} show the average per-payment latency and fee
-  respectively. Average latency is high, as payments include slow on-chain
-  payments and channel openings. Regarding fees, none of the $3$ protocols
-  provide fee recommendations, so we used the same fees for all $3$ to avoid
-  bias. These fees are not systematically chosen, therefore
-  Fig.~\ref{graph:fees} provides relative, not absolute, fees.
+  respectively. Scale does not begin at zero for better visibility. Average
+  latency is high, as payments include slow on-chain payments and channel
+  openings. Regarding fees, none of the $3$ protocols provide fee
+  recommendations, so we used the same fees for all $3$ to avoid bias. These
+  fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
+  relative, not absolute, fees. As can be seen, Elmo is the best or on par with
+  the best protocol in every case.
 
   \addtolength{\intextsep}{-15pt}
   \begin{figure}
