@@ -247,7 +247,7 @@
   a backwards sequence of messages begins, in which each party that previously
   did verification now provides a signature for the new commitment tx, along
   with a revocation signature for the old commitment tx and a new revocation
-  public key for the next update. Eacch receiver verifies the signatures and
+  public key for the next update. Each receiver verifies the signatures and
   ``passes the baton'' to its kindred party closer to the funder. When the
   funder is reached, the last series of messages begins. Now each party that has
   not yet sent a revocation does so. Once the chain of messages reaches the
