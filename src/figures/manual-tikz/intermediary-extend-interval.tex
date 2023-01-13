@@ -5,7 +5,7 @@
   \node (virtual) at (105.69bp,49.714bp) [draw,ellipse] {$V$};
   \coordinate (virtual_out_1) at (240.68bp,83.714bp);
   \coordinate (virtual_out_2) at (240.68bp,49.714bp);
-  \coordinate (virtual_out_3) at (240.68bp,1.286bp);
+  \coordinate (virtual_out_3) at (240.68bp,-13.286bp);
   \draw [->] (virtual_in_1) .. controls (97bp,70bp) .. (virtual);
   \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
   \pgfsetstrokecolor{strokecol}
@@ -20,12 +20,13 @@
   2/\{\pk{A, R}, \pk{B, R}\}$};
   \draw [->] (virtual) -- (virtual_out_2);
   \draw (174.19bp,54.214bp) node {$c_{\mathrm{virt}}$};
-  \draw (215.19bp,38.214bp) node {$n/\{\pk{\{A, B\}, j}\}_{j \in [n]} \vee
-  (4/\{\pk{A, V}, \pk{B, V}, \pk{C, V}, \pk{E, V}\}$};
-  \draw (191.19bp,24.214bp) node {$+ t) \vee 4/\{\pk{A, R}, \pk{B, R}, \pk{C, R}, \pk{E, R}\}$};
-  \draw [->] (virtual) .. controls (105bp,1bp) .. (virtual_out_3);
-  \draw (174.19bp,7.214bp) node {$c_B + c_C - c_{\mathrm{virt}}$};
-  \draw (191.19bp,-8.214bp) node {$2/\{\pk{B_r, F'}, \pk{C_l, F'}\} \vee
+  \draw (195.19bp,38.214bp) node {$n/\{\pk{\{A, B\}, j}\}_{j \in [n]}$};
+  \draw (195.19bp,24.214bp) node {$\vee (4/\{\pk{A, V}, \pk{B, V}, \pk{C, V},
+  \pk{E, V}\}+ t)$};
+  \draw (195.19bp,10.214bp) node {$\vee 4/\{\pk{A, R}, \pk{B, R}, \pk{C, R}, \pk{E, R}\}$};
+  \draw [->] (virtual) .. controls (105bp,-13bp) .. (virtual_out_3);
+  \draw (174.19bp,-7.214bp) node {$c_B + c_C - c_{\mathrm{virt}}$};
+  \draw (191.19bp,-22.214bp) node {$2/\{\pk{B_r, F'}, \pk{C_l, F'}\} \vee
   2/\{\pk{B_r, R}, \pk{C_l, R}\}$};
 \end{tikzpicture}
 \end{center}

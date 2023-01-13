@@ -63,8 +63,9 @@
   calculated for Elmo are exact for $n \geq 4$ parties, whereas for $n = 3$ they
   slightly overestimate.
 
-  \addtolength{\intextsep}{-15pt}
-  \begin{table}[h!]
+  % splncs
+  %\addtolength{\intextsep}{-30pt}
+  \begin{table*}[h!]
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|c|}
     \hline
@@ -134,8 +135,9 @@
     \caption{Open efficiency comparison of virtual channel protocols with $n$
     parties and $k$ payments}
     \label{table:comparison:overhead:n-parties:open}
-  \end{table}
-  \addtolength{\intextsep}{15pt}
+  \end{table*}
+  % splncs
+  %\addtolength{\intextsep}{30pt}
 
   Regarding closing, in Table~\ref{table:comparison:overhead:n-parties:close} we
   measure for each of the three protocols the worst-case on-chain cost a party
@@ -168,8 +170,9 @@
   channel ($n-2$ in total), plus a single ``refund'' transaction for the virtual
   channel, for a total of $2n-2$ transactions.
 
-  \addtolength{\intextsep}{-15pt}
-  \begin{table}[h!]
+  % splncs
+  %\addtolength{\intextsep}{-30pt}
+  \begin{table*}[h!]
     \begin{minipage}{\textwidth}
     \centering
     \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
@@ -196,8 +199,9 @@
     \caption{On-chain worst-case closing efficiency comparison of virtual
     channel protocols with $n$ parties}
     \label{table:comparison:overhead:n-parties:close}
-  \end{table}
-  \addtolength{\intextsep}{15pt}
+  \end{table*}
+  % splncs
+  %\addtolength{\intextsep}{30pt}
 
   We note that Elmo takes advantage of Schorr signatures to reduce both its
   on-chain and storage footprint. In particular, the $n$ signatures that are
