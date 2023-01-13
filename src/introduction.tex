@@ -51,9 +51,7 @@ channels'', suggest the more attractive approach of putting a one-time off-chain
 initialization step to set up a virtual payment channel, which subsequently can
 be used for direct payments with complexity ---in the optimistic case---
 independent of the length of the path. When the virtual channel has exhausted
-its usefulness, it can be closed off-chain if the involved parties cooperate. Such a
-protocol can be very attractive for parties that need to send money to each
-other often.
+its usefulness, it can be closed off-chain if the involved parties cooperate.
 Initial constructions for virtual channels essentially capitalized on the extended functionality of Ethereum, e.g.,
 Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more
 recent work~\cite{9519487} brought them closer to
@@ -78,23 +76,23 @@ managing and closing multiple virtual channels only to use the one at the
 ``top'' of the recursion.
 \item Symmetric. A symmetric virtual channel constructor offers setup and
 closing operations that are symmetric in terms of cost between the two
-``endpoints'' or the ``intermediaries'' (but not necessarily a mix of both) for the optimistic and pessimistic execution paths. This is important in the context of PCNs since it ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
+``endpoints'' or the ``intermediaries'' (but not a mix of both) for the
+optimistic and pessimistic execution paths. Importantly, this ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
 \end{itemize}
 
-Note that the endpoints are the two parties that share the virtual channel, while intermediaries are
-the parties that take part in any of underlying channels.
+The endpoints are the two parties that share the channel, while intermediaries are
+the parties of any of the underlying channels.
 
 We note that recursiveness, while identified already as an important design
-property (e.g., see~\cite{DBLP:conf/ccs/DziembowskiFH18}), has not been achieved in the context of Bitcoin-compatible channels 
+property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has not been achieved for Bitcoin-compatible channels
 (it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{9519487}).
-The reason behind this are the severe limitations imposed to the design by the scripting language of Bitcoin-compatible systems. 
-%
+The reason behind this are the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
 With respect to the other two properties, observe that successive applications
 of a recursive {\em binary} virtual channel operator to make it variadic will
 break symmetry (since the sequence of operator applications will impact the
 participants' functions with respect to the resulting channel). This is of
 particular concern since most previous virtual channel constructors proposed are
-binary, c.f.~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
+binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
 
 \paragraph{Our Contributions.} We present the first Bitcoin-suitable
 recursive virtual channel constructor that supports channels
@@ -115,8 +113,8 @@ We achieve the above by leveraging a sophisticated virtual channel setup
 protocol which, on the one hand, enables endpoints to use an interface that is
 invariant between on-chain and off-chain (i.e.\ virtual) channels,
 while on the other, parties can securely close the channel cooperatively
-off-chain, or instead opt for unilateral on-chain closing, following any arbitrary
-activation sequence. The latter is achieved by making it feasible for anyone to
+off-chain, or instead opt for unilateral on-chain closing, following an arbitrary
+activation sequence. The latter is achieved by enabling anyone to
 become an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
 
   We formally prove the security of the constructor protocol in the Universally

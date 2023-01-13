@@ -1,30 +1,28 @@
 \paragraph{Related work}
- The first proposal for PCNs was due to~\cite{spilman} which only enabled
+ The first proposal for PCNs~\cite{spilman} only enabled
  unidirectional payment channels. As mentioned previously, DMCs~\cite{decker}
  with their decrementing timelocks have the shortcoming of limited channel
- lifetime. This was ameliorated by LN~\cite{lightning} which has become the dominant paradigm for designing PCNs for Bitcoin-compatible systems. 
+ lifetime. This was ameliorated by LN~\cite{lightning} which has become the dominant paradigm for designing Bitcoin-compatible PCNs.
  LN is currently implemented and operational for
-  Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, where
-  it is known as the Raiden Network.
+  Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, named Raiden Network.
 
-A number of attacks have been identified against LN. The wormhole
+Various attacks have been identified against LN. The wormhole
   attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against LN allows
   colluding parties in a multi-hop payment to steal the fees of the
   intermediaries between them and Flood \& Loot attacks~\cite{10.1145/3419614.3423248}
-  analyses the feasibility of an attack in which too many channels are forced to
-  close in a short amount of time, reducing the blockchain liveness and enabling
+  analyses an attack in which too many channels are forced to
+  close in a short amount of time, harming blockchain liveness and enabling
   a malicious party to steal off-chain funds.
 
   To the best of our knowledge, no formal treatment of the privacy of LN exists.
   Nevertheless, it intuitively improves upon the privacy of on-chain Bitcoin
   transactions, as LN payments do not leave a permanent record: only
   intermediaries of each payment are informed. It can be argued that Elmo
-  further improves privacy, as individual payments are completely hidden from
+  further improves privacy, as payments are hidden from
   the intermediaries of a virtual channel.
 
-  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve the network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
-  further increase network efficiency by preventing routes from becoming   unavailable due to lack of well-balanced funds.
-
+  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
+  further increase network efficiency by reducing unavailable routes due to lack of well-balanced funds.
   An alternantive payment channel construction that aspires to be the successor
   of Lightning is eltoo~\cite{eltoo}. It has a conceptually simpler
   construction, smaller on-chain footprint and a more forgiving attitude towards
