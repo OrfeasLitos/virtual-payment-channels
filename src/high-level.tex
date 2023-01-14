@@ -296,8 +296,10 @@
   funds. What is more, all virtual outputs need the signature of all parties to
   be spent before the timelock (i.e.\ they have an $n$-of-$n$ multisig) in order
   to prevent colluding parties from faking the intervals progression. Thanks to
-  Schnorr signatures however, the on-chain footprint of the $n$ signatures is
-  reduced to that of a single signature. To ensure
+  Schnorr signatures and the ability to aggregate
+  them~\cite{DBLP:journals/dcc/MaxwellPSW19,DBLP:conf/crypto/NickRS21} however,
+  the on-chain footprint of
+  the $n$ signatures is reduced to that of a single signature. To ensure
   that parties have an opportunity to react, the timelock of a virtual output is
   the maximum of the required timelocks of the intermediaries that can spend it.
   Let $p$ be a global constant representing the maximum number of blocks a party
