@@ -16,9 +16,8 @@ The key primitive of PCN protocols is a payment channel. Two parties initiate
 the channel by locking some funds on-chain and subsequently exchange direct
 messages to update the state of the channel. The key feature is that state
 updates are not posted on-chain and hence they remain unencumbered by the
-performance limitations of the underlying blockchain protocol. Given this
-primitive, multiple overlapping payment channels can be combined and form the
-PCN.
+performance limitations of the underlying blockchain protocol. Multiple
+overlapping payment channels can be combined and form the PCN.
 
 Closing a channel is an operation that involves posting the state of the channel
 on-chain. Closing should be efficient, i.e.\ needing $O(1)$ on-chain
@@ -119,13 +118,13 @@ become an initiator towards closing the channel, while subsequent respondents, f
 
   We formally prove the security of the constructor protocol in the Universally
   Composable security (UC)~\cite{uc} setting; our ideal functionality is global,
-  according to the definition of~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The
+  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The
   construction relies on the \texttt{ANYPREVOUT} signature type (slated for
   inclusion in the next Bitcoin update\footnote{\url{https://anyprevout.xyz/}}), which does not sign the hash of the
-  transaction it spends, therefore allowing for a single pre-signed transaction
+  transaction it spends, thus allowing for a single pre-signed transaction
   to spend any output with a suitable script. We conjecture that, if
   \texttt{ANYPREVOUT} is unavailable, no efficient virtual channel constructor
-  protocol over Bitcoin can be built. More specifically, if any such protocol
+  over Bitcoin can be built. More specifically, if any such protocol
   (i) offers an efficient closing operation (i.e.\ with $O(1)$ on-chain
   transactions) and (ii) has parties store the channel state as transactions and
   signatures in their local storage, then each party will need exponentially
