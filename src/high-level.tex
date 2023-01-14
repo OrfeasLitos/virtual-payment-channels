@@ -327,9 +327,12 @@
   In order for the received signatures for virtual and commitment txs to be
   valid for multiple previous outputs, the previously proposed
   \texttt{ANYPREVOUT} sighash flag~\cite{anyprevout} is needed to be added to
-  Bitcoin. We conjecture that variadic recursive virtual channels with $O(1)$
-  on-chain and subexponential number of off-chain transactions of size $O(1)$
-  for each party cannot be constructed in Bitcoin without this flag.\footnote{To
+  Bitcoin. We conjecture that, if this flag is not available, then it is
+  impossible to build variadic recursive virtual channels for which each party
+  only needs to (i) publish $O(1)$ on-chain transactions to open or close a
+  channel and (ii) store a subexponential (in the number of intermediaries,
+  payments and recursion layers) number of $O(1)$-sized transactions
+  off-chain.\footnote{To
   see why, consider a virtual channel over $k+1$ players who close the channel
   non-cooperatively via on-chain interaction. Assuming the $(k+1)$-th party goes
   last, the protocol should be able to accommodate any possible activation
