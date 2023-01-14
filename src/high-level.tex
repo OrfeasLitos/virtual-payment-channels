@@ -74,7 +74,7 @@
   $\sigma_K$ is a signature on the transaction by $\sk{K}$; in all cases, signatures
   are carried by inputs. An output marked
   with $\pk{K}$ needs a signature by $\sk{K}$ to be spent. $m/\{\pk{1}, \dots,
-  \pk{n}\}$ is an $m$-of-$n$ multisig ($m \leq n$) that needs signatures from
+  \pk{n}\}$ is an $m$-of-$n$ multisig ($m \leq n$), i.e.\ a spending condition that needs signatures from
   $m$ distinct keys among $\sk{1}, \dots, \sk{n}$. If $k$ is a spending
   condition, then $k + t$ is the same spending condition but with a relative timelock
   of $t$. Spending conditions or data can be combined with logical ``AND''
