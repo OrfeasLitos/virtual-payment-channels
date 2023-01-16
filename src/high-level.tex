@@ -5,19 +5,20 @@
   may be opened directly on-chain, in which case the two parties follow an
   opening procedure similar to that of LN; such a channel is called ``simple''.
   Otherwise it can be opened on top of a path
-  of preexisting ``base'' channels $(P_1, P_2)$, $(P_2, P_3)$, $\dots$, $(P_{n-2},
-  P_{n-1})$, $(P_{n-1}, P_{n})$, in which case $(P_1, P_n)$ is a ``virtual''
-  channel (each base channel may itself be simple or virtual). For a virtual
+  of preexisting ``base'' channels $(P_1, P_2)$, $(P_2, P_3)$, $\dots$,
+  $(P_{n-1}, P_{n})$, in which case $(P_1, P_n)$ is a ``virtual''
+  channel (each base channel may itself be simple or
+  virtual). For a virtual
   channel, all parties $P_i$ on the
   path follow our novel protocol, setting aside funds in their channels as
-  collateral for the new virtual channel that is being opened; this is done
+  collateral for the new virtual channel; this is done
   by creating so-called ``virtual'' transactions that essentially
   tie the spending of two adjacent base channels into a single atomic action.
-  Once all intermediaries are done, a special ``funding'' output has been
+  Once intermediaries are done, a special ``funding'' output has been
   created off-chain which carries the sum of $P_1$ and $P_n$'s channel
   balance and which either one can at any time put on-chain. LN demands that the
   funding output is on-chain, but we lift this requirement. $P_1$ and $P_n$
-  finally create their channel, applying a logic similar to LN on top of
+  finally create the channel, applying a logic similar to LN on top of
   the funding output: their channel is now open.
 
   A payment over an established channel follows a procedure heavily inspired by
@@ -43,7 +44,7 @@
   In a nutshell, a virtual channel is built on top of two or more ``base''
   channels, which, due to the recursive property, may themselves be simple or
   virtual. The parties that control the base channels are called ``base
-  parties''. The fact that more than two base channels can be used by a single
+  parties''. The fact that more than two base channels can be used by a 
   virtual channel is ensured by the variadic property.
 
   In more detail, to open a channel (c.f.\ Figure~\ref{code:ln:open}) the two
@@ -57,20 +58,21 @@
   simple), the ``funder'' signs and publishes the ``funding'' transaction to the
   ledger. As we alluded to earlier, a channel with its funding transaction
   on-chain is called ``simple''. A channel is either simple or virtual, not
-  both. We here note that like LN, only one of the two parties, the funder,
+  both. We note that like LN, only one of the two parties, the funder,
   provides coins for a new channel. This limitation simplifies the execution
-  model and the analysis, but can be lifted at the cost of additional protocol
+  model and analysis, but can be lifted at the cost of additional protocol
   complexity.
 
-  Let us now introduce some notation used in figures with transactions.
+  Let us now introduce some notation and concepts used, among others, in figures
+  with transactions.
   Reflecting the UTXO model, each transaction is represented by a circular,
   named node with one incoming edge per input and one outgoing edge per output.
   Each output can be connected with at most one input of another transaction;
   cycles are not allowed. Above an input or an output edge we note the number of
   coins it carries. In some figures the coins are omitted. Below an input we
-  place the data carried and below an output its spending conditions (a.k.a\
+  place the data carried and below an output its spending conditions (a.k.a.\
   script). For
-  a connected input-output pair, we omit the data carried by the input.
+  a connected input-output pair, we omit the data of the input.
   $\sigma_K$ is a signature on the transaction by $\sk{K}$; in all cases, signatures
   are carried by inputs. An output marked
   with $\pk{K}$ needs a signature by $\sk{K}$ to be spent. $m/\{\pk{1}, \dots,
@@ -108,13 +110,13 @@
   + c_B$ coins (originally belonging to the funder), with a single output that is encumbered with a
   $2/\{\pk{A, F}, \pk{B, F}\}$ multisig and carries $c_A + c_B$ coins.
 
-  Next, there are two commitment transactions, one for each party, each of which can spend the
+  Next, there are two commitment transactions, one per party, each of which can spend the
   funding tx and produce two outputs with $c_A$ and $c_B$ coins each. The two
   txs differ in the outputs' spending conditions: The $c_A$ output in \alice's
   commitment tx can be spent either by \alice after it has been on-chain for a
   pre-agreed period (i.e.\ it is encumbered with a ``timelock''), or by a
   ``revocation'' transaction (discussed below) via a $2$-of-$2$ multisig between
-  the counterparties, whereas the $c_B$ output can be spent only by \bob without
+  the counterparties. The $c_B$ output can be spent only by \bob without
   a timelock. \bob's commitment tx is symmetric: the $c_A$ output can be spent
   only by \alice without timelock and the $c_B$ output can be spent either by
   \bob after the timelock expiration or by a revocation tx. When a new pair of
