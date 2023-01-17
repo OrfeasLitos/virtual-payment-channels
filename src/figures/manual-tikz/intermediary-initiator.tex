@@ -10,13 +10,13 @@
   \draw [->] (virtual_in_1) .. controls (97bp,70bp) .. (virtual);
   \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
   \pgfsetstrokecolor{strokecol}
-  \draw (73.19bp,81.714bp) node {$c_A + c_B$};
+  \draw (73.19bp,81.714bp) node {$c_A + c_B^1$};
   \draw (73.19bp,62.714bp) node {$\sigma_{A, F} \wedge \sigma_{B, F}$};
   \draw [->] (virtual_in_2) .. controls (97bp,28bp) .. (virtual);
-  \draw (73.19bp,32.714bp) node {$c_B + c_C$};
+  \draw (73.19bp,32.714bp) node {$c_B^2 + c_C$};
   \draw (73.19bp,16.714bp) node {$\sigma_{B, F} \wedge \sigma_{C, F}$};
   \draw [->] (virtual) .. controls (105bp,100bp) .. (virtual_out_1);
-  \draw (179.19bp,108.714bp) node {$c_A + c_B - c_{\mathrm{virt}}$};
+  \draw (179.19bp,108.714bp) node {$c_A + c_B^1 - c_{\mathrm{virt}}$};
   \draw (204.19bp,88.714bp) node {$2/\{\pk{A, F'}, \pk{B_l, F'}\} \vee
   2/\{\pk{A, R}, \pk{B_l, R}\}$};
   \draw [->] (virtual) .. controls (120bp,64bp) .. (virtual_out_2);
@@ -31,7 +31,7 @@
   \draw (185.19bp,0.214bp) node {$\vee 4/\{\pk{A, R}, \pk{B, R}, \pk{C, R},
   \pk{E, R}\}$};
   \draw [->] (virtual) .. controls (105bp,-22bp) .. (virtual_out_4);
-  \draw (174.19bp,-16.214bp) node {$c_B + c_C - c_{\mathrm{virt}}$};
+  \draw (174.19bp,-16.214bp) node {$c_B^2 + c_C - c_{\mathrm{virt}}$};
   \draw (206.19bp,-31.214bp) node {$2/\{\pk{B_r, F'}, \pk{C_l, F'}\} \vee
   2/\{\pk{B_r, R}, \pk{C_l, R}\}$};
 \end{tikzpicture}

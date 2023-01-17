@@ -38,7 +38,9 @@
   message arbitrarily long. The protocol is robust against such delays, as an
   honest party can unilaterally prevent loss of funds even if some of its
   incoming and outgoing network messages are dropped by \adversary, as long as
-  the party has input-output communication with the ledger. We also note that,
+  the party has input-output communication with the ledger. In other words, no
+  extra synchrony assumptions to those required by the ledger are needed. We
+  also note that,
   following the conventions of single-threaded UC execution model, the duration of local
   computation is not taken into account in any way (as long as it does not
   exceed its polynomial bound).

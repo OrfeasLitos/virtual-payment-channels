@@ -226,7 +226,9 @@
   knowledge of all future payments and knowledge of the next $m$ outgoing
   payments of the payer. The utility function takes into account payment
   latency and fees, as well as the impact of the payment to the payer's
-  network centrality and its distance from other parties.
+  network centrality and its distance from other parties and uses a heuristic to
+  choose how to perform a payment: simply on-chain, open a new channel, or use
+  existing chanels.
 
   The simulation outputs extensive data on the progress of each run. Our
   simulation framework is of independent interest, as it is built to be flexible
@@ -234,7 +236,7 @@
   show the performance of the $3$ protocols with respect to the metrics payment
   channels aim to improve, namely payment latency and fees.
 
-  We provide three different workloads: First, in an attempt to emulate
+  We provide three different topologies: First, in an attempt to emulate
   real-world scenarios, the number of incoming payments of each player and the
   value of each payment are drawn from zipf~\cite{powers-1998-applications}
   distibutions. Second, each party has a preferred receiver, chosen uniformly at
@@ -251,9 +253,11 @@
   distinct sets of payments and average the results. Figs.~\ref{graph:delays}
   and~\ref{graph:fees} show the average per-payment latency and fee
   respectively. Scale does not begin at zero for better visibility. Average
-  latency is high, as payments include slow on-chain payments and channel
-  openings. Regarding fees, none of the $3$ protocols provide fee
-  recommendations, so we used the same fees for all $3$ to avoid bias. These
+  latency is high as it describes the whole run, including slow on-chain
+  payments and channel openings. Total fees were calculated by summing the fee
+  of each ``basic'' event (e.g.\ paying an intermediary for its service). None
+  of the $3$ protocols provide fee recommendations, so we used the same baseline
+  fees for the same events in all $3$ to avoid bias. These
   fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
   relative, not absolute, fees. As can be seen, Elmo is the best or on par with
   the best protocol in every case.

@@ -63,8 +63,11 @@
   In order to increase readability and to keep focus on the salient points of
   the construction, our protocol does not exploit a number of possible
   optimisations. These include a number of techniques employed in Lightning that
-  drastically reduce storage requirements, along with a variety of possible
-  improvements to our novel virtual subprotocol.
+  drastically reduce storage requirements, such as storage of per-update secrets
+  in $O(\log n)$
+  space\footnote{\url{https://github.com/lightning/bolts/blob/master/03-transactions.md\#efficient-per-commitment-secret-storage}},
+  along with a variety of possible improvements to our novel virtual
+  subprotocol.
 
   Additionally, our protocol does not feature one-off multi-hop payments like
   those possible in Lightning. This however is a useful feature in case two
