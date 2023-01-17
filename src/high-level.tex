@@ -252,7 +252,12 @@
   owner acts maliciously, $c_{\mathrm{virt}}$ are given to the right party. The
   virtual channel parties have to sign as well since this output may end up
   funding their channel -- lack of such signatures would allow two colluding
-  intermediaries to claim the virtual output for themselves.
+  intermediaries to claim the virtual output for themselves. The revocation
+  spending conditions take precedence over others because (i) they do not have a
+  timelock and (ii) any other spending condition without a timelock (e.g.\ the
+  $n$-of-$n$ multisig of an initiator transaction) is transitively spendable by
+  a transaction in which the only non-timelocked spending condition is the
+  revocation.
 
   Each virtual transaction is accompanied by a ``bridge'' transaction. Any
   virtual output may end up funding the virtual channel, but the various virtual
