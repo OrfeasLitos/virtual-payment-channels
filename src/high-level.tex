@@ -47,7 +47,7 @@
   parties''. The fact that more than two base channels can be used by a 
   virtual channel is ensured by the variadic property.
 
-  In more detail, to open a channel (c.f.\ Figure~\ref{code:ln:open}) the two
+  In a bit more detail, to open a channel (c.f.\ Figure~\ref{code:ln:open}) the two
   counterparties (a.k.a.\ ``endpoints'') (i) create new keypairs and exchange
   the resulting public keys ($2$ messages), then (ii) prepare the underlying
   base channels if the new channel is virtual ($12 \cdot (n-1)$ total messages,
@@ -92,7 +92,9 @@
   as checking the ledger periodically and being ready to take action if
   misbehaviour is detected. Let us first consider a simple channel that has been
   established between \alice and \bob where the former owns $c_A$ and the latter
-  $c_B$ coins. There are three sets of transactions at play: A ``funding''
+  $c_B$ coins -- we refer the reader to Section~\ref{sec:pseudocode} for an
+  overview of the opening procedure. There are
+  three sets of transactions at play: A ``funding''
   transaction that is put on-chain, ``commitment'' transactions that are stored
   off-chain and
   spend the funding output on channel closure and off-chain ``revocation''
@@ -144,14 +146,17 @@
   enable multi-hop payments in LN.
 
 \subsection{Virtual Channels}
-  In order to gain intuition on how virtual channels work, consider $n-1$
+  In order to gain intuition on how virtual channels work, we will first
+  go in depth over the data each party stores locally while the channel is open.
+  Consider $n-1$
   simple channels between $n$ honest parties as before. $P_1$, the
   funder, and $P_n$, the fundee, want to open a virtual channel over these base
   channels.
   Before opening the virtual, each base channel is entirely independent, having
   different unique keys, separate on-chain funding outputs, a possibly different
   balance and number of updates. After the $n$ parties follow our novel virtual
-  channel opening protocol, they will all hold off-chain a number of new,
+  channel opening protocol (c.f.\ Section~\ref{sec:pseudocode}), they will all
+  hold off-chain a number of new,
   ``virtual'' transactions that spend their respective funding transactions. The
   ``virtual'' transactions can be spent by ``bridge'' transactions which in turn
   are spendable by new commitment transactions in a manner that ensures fair
