@@ -241,6 +241,7 @@ for distribution in tqdm(["power_law", "preferred_receiver", "uniform"]):
         sum_fees_lvpc / max_fee - cutoff_fee
     ]
 
+    plt.rc('font', size=20)
     plt.bar(
         x_coords_cost, cost_bar, tick_label = labels_cost,
         width=0.5, color=color, bottom=cutoff_fee
