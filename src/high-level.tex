@@ -374,16 +374,27 @@
   and~\ref{code:virtual-layer:coop-close-intermediary}). It can be initiated by
   any party, one and a half communication rounds are needed. The funder builds
   new commitment txs, which once again spend the funding outputs that the
-  virtual txs spent before, just like prior to opening the virtual channel. The
+  virtual txs spent before, just like prior to opening the virtual channel. In
+  particular, these new txs make the base channels independent once more. The
   funder sends
-  their signatures to the first intermediary; the latter similarly builds, signs
-  and sends new commitment txs to the second intermediary and so on until the
-  fundee. The fundee
+  its signature on the new commitment tx the to the first intermediary; the
+  latter similarly builds, signs and sends a new commitment tx signature to the
+  second intermediary and so on until the fundee. The fundee
   responds with its own commitment tx signatures, along with signatures revoking
   the previous commitment tx and virtual txs. This is repeated backwards until
   revocations reach the funder. Finally the funder sends its revocation to its
   neighbour and it to the next, until the revocations reach the fundee. The
   channel has now closed cooperatively.
+
+  At a high level, this procedure works without risk for the same reasons that a
+  channel update does: Each party signs a new commitment transaction that
+  guarantees it the same amount of funds as the last state before cooperatively
+  closing did. It then revokes the state it had before closing only after
+  receiving signatures for all relevant new commitment transactions.
+  Furthermore, it only considers the closing complete if it receives revocations
+  for all states before closing. If anything goes wrong in the process, the
+  party can always unilaterally close, either in the last state before closing,
+  or using the new commitment txs.
 
   As for the unilateral closing, let us now turn to an example in order to
   better grasp how our construction plays out on-chain in practice
