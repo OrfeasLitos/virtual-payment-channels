@@ -181,7 +181,7 @@
 
   The simulation outputs extensive data on the progress of each run. Our
   simulation framework is of independent interest, as it is built to be flexible
-  and reuseable for a variety of payment network protocol evaluations. We here
+  and reusable for a variety of payment network protocol evaluations. We here
   show the performance of the $3$ protocols with respect to the metrics payment
   channels aim to improve, namely payment latency and fees.
 
@@ -203,9 +203,9 @@
   and~\ref{graph:fees} show the average per-payment latency and fee
   respectively. Scale does not begin at zero for better visibility. Average
   latency is high as it describes the whole run, including slow on-chain
-  payments and channel openings. Total fees were calculated by summing the fee
+  payments and channel openings. Total fees are calculated by summing the fee
   of each ``basic'' event (e.g.\ paying an intermediary for its service). None
-  of the $3$ protocols provide fee recommendations, so we used the same baseline
+  of the $3$ protocols provide fee recommendations, so we use the same baseline
   fees for the same events in all $3$ to avoid bias. These
   fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
   relative, not absolute, fees. As can be seen, Elmo is the best or on par with
