@@ -192,7 +192,7 @@
   initiator tx, which spends the party's two funding outputs and produces four:
   one funding output for each base channel, one output that directly pays the
   intermediary coins equal to the total value in the virtual channel, and one
-  ``virtual output'', which carries coins that can potentially fund the virtual
+  ``virtual output'', with coins that can potentially fund the virtual
   channel. If both funding outputs are still unspent, publishing its initiator
   tx is the only way for an honest intermediary to close either of its channels
   and retrieve its collateral.
@@ -219,10 +219,8 @@
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
     transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
-    transactions. Can be used if both $A$ and $C$ have already published their
-    initiator transactions. Notice that the interval of $C$'s virtual output
-    only contains $C$, which can only happen if $C$ has published its initiator
-    and not any other of its virtual transactions.}
+    transactions. Usable if both $A$ and $C$ have already published their
+    initiator transactions.}
     \label{figure:virtual-layer-merge-intervals}
   \end{figure}
 
@@ -434,8 +432,8 @@
 
   \begin{figure*}
     \subimport{./figures/manual-tikz/}{example-start-end.tex}
-    \caption{$4$ simple channels supporting a virtual. $A$ starts the closing
-    procedure by publishing its initiator tx, then parties $B$--$D$ each
+    \caption{$4$ simple channels supporting a virtual. $A$ starts closing
+    by publishing its initiator tx, then parties $B$--$D$ each
     publishes its extend-interval tx with the relevant interval. No party is
     negligent. Virtual outputs are marked with their interval.}
     \label{figure:example-start-end}

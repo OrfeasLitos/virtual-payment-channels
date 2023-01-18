@@ -1,67 +1,57 @@
 \section{Security}
   \label{section:security}
-  The first step to formally arguing about the security of Elmo is to
-  clearly delineate the exact security guarantees it provides. To that end, we
-  first prove two similar claims regarding the conservation of funds in the real
+  We first delineate the security guarantees Elmo provides by proving two
+  similar claims regarding the conservation of funds in the real
   and ideal world, Lemmas~\ref{lemma:real-balance-security-informal}
-  and~\ref{lemma:ideal-balance-informal} respectively. Informally, the first
+  and~\ref{lemma:ideal-balance-informal} respectively. The formal statements
+  (\ref{lemma:real-balance-security} and~\ref{lemma:ideal-balance}) along with
+  all proofs are deferred
+  to Appendix~\ref{sec:proofs}. Informally, the first
   establishes that if an honest, non-negligent party was implicated in a channel
-  on which a number of payments took place and has now been unilaterally closed,
+  that has now been unilaterally closed,
   then the party will have at least the expected funds on-chain.
 
 \begin{lemma}[Real world balance security (informal)]
 \label{lemma:real-balance-security-informal}
-  Consider a real world execution with $P \in \{\alice, \bob\}$ honest
-  \textsc{ln} ITI. Assume that all of the following are true:
+  Consider a real world execution with $P \in \{\alice, \bob\}$ honest,
+  non-negligent \textsc{ln} ITI. Assume that all of the following are true:
   \begin{itemize}
-    \item $P$ is not negligent,
-    \item $P$ successfully opened the channel, with initial balance $c$ ($c = 0$
-    if $P$ is a fundee)
-    \item $P$ is the host of $n$ channels, where the $i$-th channel is funded
-    with $f_i$ coins,
+    \item $P$ opened the channel, with initial balance $c$,
+    \item $P$ is the host of $n$ channels, each funded with $f_i$ coins,
     \item $P$ has cooperatively closed $k$ channels, where the $i$-th channel
     transferred $r_i$ coins from the hosted virtual channel to $P$,
-    \item $P$ has successfully sent $m$ payments, where the $i$-th payment
-    involved $d_i$ coins,
-    \item $P$ has successfully received $l$ payments, where the $i$-th payment
-    involved $c_i$ coins.
+    \item $P$ has sent $m$ payments, each involving $d_i$ coins,
+    \item $P$ has received $l$ payments, each involving $c_i$ coins.
   \end{itemize}
-  If $P$ unilaterally closes its channel, eventually its view of \ledger will contain $h$
-  outputs spendable only by $P$ or another kindred party, each of value $c_i$,
-  such that
+  If $P$ closes unilaterally, eventually there will be $h$ outputs on-chain
+  spendable only by $P$ or a kindred party, each of value $c_i$, such that
   \begin{equation}
     \sum\limits_{i=1}^h c_i \geq c - \sum\limits_{i=1}^n f_i -
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i
     \enspace.
   \end{equation}
 \end{lemma}
-The formal statement, Lemma~\ref{lemma:real-balance-security}, is deferred to
-the Appendix.
 
-  The second lemma states that for an ideal party in a
-  similar situation, the balance that \fchan has stored for it is at least equal
-  to the expected funds.
+  Lemma~\ref{lemma:ideal-balance-informal} states that for an ideal party in a
+  similar situation, the relevant balance stored in \fchan equals the expected
+  funds.
 
 \begin{lemma}[Ideal world balance (informal)]
 \label{lemma:ideal-balance-informal}
-  Consider an ideal world execution with functionality \fchan and simulator
-  \simulator. Let $P \in \{\alice, \bob\}$ one of the two parties of \fchan.
-  Assume that all of the following are true:
+  Consider an ideal world execution with functionality \fchan. Let $P \in
+  \{\alice, \bob\}$ one of the two parties of \fchan.
+  Assume that all of the following hold:
   \begin{itemize}
     \item $P$ is not corrupted or negligent, nor any member of the
     transitive closure of its hosts has published a revocation transaction,
-    \item $P$ successfully opened the channel, with initial balance $c$ ($c = 0$
-    if $P$ is a fundee)
-    \item $P$ is the host of $n$ channels, where the $i$-th channel is funded
-    with $f_i$ coins,
+    \item $P$ opened the channel, with initial balance $c$,
+    \item $P$ is the host of $n$ channels, each funded with $f_i$ coins,
     \item $P$ has cooperatively closed $k$ channels, where the $i$-th channel
     transferred $r_i$ coins from the hosted virtual channel to $P$,
-    \item $P$ has successfully sent $m$ payments, where the $i$-th payment
-    involved $d_i$ coins,
-    \item $P$ has successfully received $l$ payments, where the $i$-th payment
-    involved $c_i$ coins.
+    \item $P$ has sent $m$ payments, each involving $d_i$ coins,
+    \item $P$ has received $l$ payments, involving $c_i$ coins.
   \end{itemize}
-  Let $\texttt{balance}_P$ be the balance that \fchan stores internally for $P$.
+  Let $\texttt{balance}_P$ be the balance that \fchan stores for $P$.
   If the channel is closed (either unilaterally or cooperatively), then the
   following holds with overwhelming probability on the security parameter:
   \begin{equation}
@@ -70,8 +60,6 @@ the Appendix.
     \enspace.
   \end{equation}
 \end{lemma}
-The formal statement, Lemma~\ref{lemma:ideal-balance}, is deferred to the
-Appendix.
 
   In both cases the expected funds are [initial balance - funds for hosted
   virtuals + funds returned from hosted virtuals - outbound payments + inbound
@@ -79,17 +67,17 @@ Appendix.
   used by the funder of the virtual channel, not the rest of the base parties.
 
   Both proofs follow all possible execution paths, keeping track of the
-  resulting balance in each case and coming to the conclusion that balance is
-  secure in all cases, except if signatures are forged.
+  resulting balance in each case.
+  %and coming to the conclusion that balance is
+  %secure in all cases, except if signatures are forged.
 
-  It is important to note that in fact \pchan provides a stronger guarantee,
-  namely that an honest, non-negligent party with an open channel can
-  unilaterally close it and obtain the expected funds on-chain within a known
-  number of blocks, given that \environment sends the necessary ``daemon'' messages.
+  It is important to note that in fact \pchan provides a stronger guarantee:
+  a party can always unilaterally close its channel
+  and obtain the expected funds on-chain within a known number of blocks.
   This stronger guarantee is sufficient to make Elmo reliable
-  enough for real-world applications. However a corresponding ideal world
-  functionality with such guarantees would have to be aware of the specific
-  transactions and signatures, therefore it would be essentially as complicated
+  enough for real-world applications. However an ideal world
+  functionality with such guarantees would have to be aware of specific
+  txs and signatures, making it as complicated
   as the protocol, thus violating the spirit of the simulation-based security
   paradigm.
 
@@ -106,37 +94,31 @@ Appendix.
   is executed negligibly often).
 \end{lemma}
 
-  This is proven by first arguing that if
-  the conditions of Lemma~\ref{lemma:ideal-balance} for the ideal world hold,
-  then the conditions of Lemma~\ref{lemma:real-balance-security} also hold for
-  the equivalent real world execution, therefore in this case \fchan does not
-  halt. We then argue that also in case the conditions of
-  Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
-  therefore concluding the proof.
-  The formal proofs are deferred to Appendix~\ref{sec:proofs}.
+  %This is proven by first arguing that if
+  %the conditions of Lemma~\ref{lemma:ideal-balance} for the ideal world hold,
+  %then the conditions of Lemma~\ref{lemma:real-balance-security} also hold for
+  %the equivalent real world execution, therefore in this case \fchan does not
+  %halt. We then argue that also in case the conditions of
+  %Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
+  %therefore concluding the proof.
 
-  A salient observation regarding an instance $s$ of \pchan is that, in order to
-  open a virtual channel, it passes inputs to another \pchan instance $s'$ that
-  belongs to a different extended session. This means that $s$ (and therefore
-  \pchan) is not \emph{subroutine respecting}, as defined in~\cite{uc}. To
-  address this issue, we first annotate \pchan with a numeric superscript, i.e.\
-  $\pchansup{n}$. $\pchansup{1}$ is always a simple (i.e.\ on-chain) channel. To
-  achieve this, \pchan undergoes a modification under which it ignores all
-  (\textsc{open}, $x$, $\texttt{hops} \neq$ ``\texttt{ledger}'', $\dots$)
-  messages. Likewise we define $\fchansup{1}$ as a version of \fchan that
-  ignores (\textsc{open}, $x$, $\texttt{hops} \neq$ ``\texttt{ledger}'',
-  $\dots$) messages. As for the rest of the superscripts, $\forall n \in
-  \mathbb{N}^*, \pchansup{n+1}$ is a virtual channel protocol \pchan of which
-  the base channels have a maximum superscript $n$. It then holds that $\forall
+  A salient observation regarding \pchan is that, in order to
+  open a virtual channel, it passes inputs to another \pchan instance that
+  belongs to a different extended session. This means that \pchan is not
+  \emph{subroutine respecting}, as defined in~\cite{uc}. To
+  address this issue, we first add a superscript to \pchan, i.e.\
+  $\pchansup{n}$. $\pchansup{1}$ is always a simple channel.
+  This is done by ignoring instructions to \textsc{open} on top of other
+  channels. As for higher superscripts, $\forall n \in
+  \mathbb{N}^*, \pchansup{n+1}$ is the same as \pchan but with
+  base channels of a maximum superscript $n$. It then holds that $\forall
   n \in \mathbb{N}^*, \pchansup{n}$ is $(\ledger, \pchansup{1}, \dots,
   \pchansup{n-1})$-subroutine respecting, as defined
-  in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. Likewise, $\fchansup{n+1}$ is a
-  virtual channel functionality \fchan of which the base channels have a maximum
-  superscript $n$. It then holds that $\forall n \in \mathbb{N}^*, \fchansup{n}$
-  is $(\ledger, \fchansup{1}, \dots, \fchansup{n-1})$-subroutine respecting. To
+  in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The same superscript trick is done
+  to \fchan. To
   the best of the authors' knowledge, this recursion-based proof technique for
   UC security is novel. It is of independent interest and can be reused to prove
-  UC security in protocols that may use as subroutines copies of themselves.
+  UC security in protocols that may use copies of themselves as subroutines.
 
   Theorem~\ref{theorem:security:simple} states
   that $\pchansup{1}$ UC-realises $\fchansup{1}$.
@@ -156,12 +138,11 @@ Appendix.
 
   The corresponding proof stems from
   Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
-  \simulator faithfully simulates \pchan.
-
-  Lastly we prove that $\forall$ integers $n \geq 2, \pchansup{n}$ UC-realises
-  $\fchansup{n}$ in the presence of $\fchansup{1}, \dots, \fchansup{n-1}$
-  (leveraging the relevant definition
-  from~\cite{DBLP:conf/tcc/BadertscherCHTZ20}).
+  \simulator faithfully simulates \pchan. Lastly we prove that $\forall$
+  integers $n \geq 2, \pchansup{n}$ UC-realises $\fchansup{n}$.
+  %in the presence of $\fchansup{1}, \dots, \fchansup{n-1}$
+  %(leveraging the relevant definition
+  %from~\cite{DBLP:conf/tcc/BadertscherCHTZ20}).
 
 \begin{theorem}[Recursive Virtual Payment Channel Security]
   \label{theorem:security:virtual}

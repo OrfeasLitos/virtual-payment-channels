@@ -46,10 +46,11 @@
   along with a variety of possible improvements to our novel virtual
   subprotocol.
 
-  Moreover, our need for \texttt{ANYPREVOUT} prevents our protocol from being
-  deployable on Bitcoin today. Though it is a prime contender for inclusion
-  in the next update, there is a slight chance it will never make it.
-  Nevertheless, as mentioned before, we conjecture that a variadic virtual
+  %Moreover, our need for \texttt{ANYPREVOUT} prevents our protocol from being
+  %deployable on Bitcoin today. Though it is a prime contender for inclusion
+  %in the next update, there is a slight chance it will never make it.
+  %Nevertheless,
+  As mentioned before, we conjecture that a variadic virtual
   channel protocol with unlimited lifetime needs each party to store an
   exponential number of signatures if \texttt{ANYPREVOUT} is not available. We
   leave proof of this as future work.
@@ -58,7 +59,7 @@
   protocol, as it does not employ onion packets~\cite{sphinx} like Lightning.
   Furthermore, \fchan leaks all messages to the ideal adversary therefore
   theoretically no privacy is offered at all. Nevertheless, onion packets can be
-  incorporated in the current construction and intuitively our construction
+  incorporated in the current construction. Intuitively our construction
   leaks less data than Lightning for the same multi-hop payments, as
   intermediaries in our case are not notified on each payment, contrary to
   multi-hop payments in Lightning. Therefore a future extension can improve the

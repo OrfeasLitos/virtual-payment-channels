@@ -13,18 +13,18 @@
   obtain an end-to-end understanding of both the requirements and the benefits
   each protocol provides.
 
-  \paragraph{Cost calculation.} We consider the general $n$-party case: $1$
+  \paragraph{Cost calculation.} Consider the setting of $1$
   funder ($P_1$), $1$ fundee ($P_n$) and $n-2$ intermediaries ($P_2, \dots,
-  P_{n-1}$) where each party has one base channel with each adjacent party. Our
-  comparison regards the off-chain cost of opening
+  P_{n-1}$) where $P_i$ has a base channel with each of $P_{i-1}$,
+  $P_{i+1}$. We compare the off-chain cost of opening
   (Table~\ref{table:comparison:overhead:n-parties:open}) and the on-chain cost
   of unilaterally closing
   (Table~\ref{table:comparison:overhead:n-parties:close}).
 
-  Regarding channel opening, in
+  Regarding opening, in
   Table~\ref{table:comparison:overhead:n-parties:open} we measure for each of
-  the three protocols the number of communication rounds required, the total
-  size of the outgoing messages as well as the amount of space for storing
+  the $3$ protocols the number of communication rounds required, the total
+  size of outgoing messages as well as the amount of space for storing
   channel data. We measure from the perspective of the funder, the fundee
   and an intermediary, along with the aggregate for all parties.
 
@@ -152,32 +152,31 @@
   % splncs
   %\addtolength{\intextsep}{30pt}
 
-  We note that Elmo takes advantage of Schorr signatures to reduce both its
-  on-chain and storage footprint. In particular, the $n$ signatures that are
-  needed to spend each virtual and bridge output can be reduced to a single
-  aggregate signature without compromising security. The same cannot be said for
-  Donner, since Schnorr signatures cannot optimise away the $n$ outputs of the
+  We note that Elmo exploits
+  MuSig~\cite{DBLP:journals/dcc/MaxwellPSW19,DBLP:conf/crypto/NickRS21} to
+  reduce both its
+  on-chain and storage footprint: the $n$ signatures that are needed to spend
+  each virtual and bridge output can be securely reduced to a single aggregate
+  signature. The same cannot be said for
+  Donner, since this technique cannot optimise away the $n$ outputs of the
   funder's transaction $\tx^{\mathtt{vc}}$. Likewise LVPC cannot gain a linear
   improvement with this optimisation, since each of its relevant transactions
   (``split'', ``merge'' and ``refund'') needs constant signatures.
 
   \paragraph{Payment simulations.} We implemented a simulation
   framework\footnote{\url{gitlab.com/anonymised-submission-8778e084/virtual-channels-simulation}}
-  in which a list of randomly generated payments between parties are carried
-  out. For each payment, the payer chooses whether to pay on-chain,
-  open a new channel or use an existing one, using suitable heuristics.
-
+  in which a list of randomly generated payments are carried out.
   A single simulation is parametrised by a list of payments
   (sender, receiver, value triples), the protocol (Elmo, Donner, LVPC, LN or
   on-chain only), which future payments each payer knows and the utility
   function it maximises. The knowledge function defines which future payments
   inform each decision. Several knowledge functions are provided, such as full
-  knowledge of all future payments and knowledge of the next $m$ outgoing
-  payments of the payer. The utility function takes into account payment
+  knowledge of all future payments and knowledge of the payer's next $m$
+  payments. The utility function takes into account payment
   latency and fees, as well as the impact of the payment to the payer's
-  network centrality and its distance from other parties and uses a heuristic to
-  choose how to perform a payment: simply on-chain, open a new channel, or use
-  existing chanels.
+  network centrality and distance from other parties. It then
+  heuristically chooses how to pay: simply on-chain, open a new
+  channel, or use existing channels.
 
   The simulation outputs extensive data on the progress of each run. Our
   simulation framework is of independent interest, as it is built to be flexible
@@ -186,21 +185,20 @@
   channels aim to improve, namely payment latency and fees.
 
   We provide three different topologies: First, in an attempt to emulate
-  real-world scenarios, the number of incoming payments of each player and the
-  value of each payment are drawn from zipf~\cite{powers-1998-applications}
+  real-world scenarios, the value and number of incoming payments of each player
+  are drawn from zipf~\cite{powers-1998-applications}
   distibutions. Second, each party has a preferred receiver, chosen uniformly at
   the beginning, which it pays half the time, the other half choosing the payee
-  at random. Each payment value is chosen uniformly at random from the $[0,
-  \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}]$
-  range. Third, all random choices are drawn from the uniform distribution.
-  For all scenarios no channels exist initially, the payer of each payment is
-  chosen uniformly at random and all parties initially own the same number of
-  coins on-chain.
+  uniformly at random. Each payment value is chosen uniformly at random from the
+  $[0, \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}]$
+  range. Third, all choices are made uniformly at random. For all scenarios the
+  payer of each payment is chosen uniformly at random, no channels exist
+  initially and all parties initially own the same number of coins on-chain.
 
-  To ensure our results do not bias against any protocol, we simulate each
-  protocol with the same payment list. For each scenario we simulate with $20$
-  distinct sets of payments and average the results. Figs.~\ref{graph:delays}
-  and~\ref{graph:fees} show the average per-payment latency and fee
+  In order to avoid bias, we simulate each
+  protocol with the same payments. We simulate each scenario with $20$
+  distinct sets of payments and keep the average. Figs.~\ref{graph:delays}
+  and~\ref{graph:fees} show the per-payment latency and fee
   respectively. Scale does not begin at zero for better visibility. Average
   latency is high as it describes the whole run, including slow on-chain
   payments and channel openings. Total fees are calculated by summing the fee
@@ -213,7 +211,7 @@
   contains additional details.
 
   \addtolength{\intextsep}{-15pt}
-  \begin{figure}
+  \begin{figure*}
   \begin{subfigure}{.3293\textwidth}
   \includegraphics[width=\textwidth]{../simulation/Delays_power_law.png}
   \end{subfigure}
@@ -225,8 +223,8 @@
   \end{subfigure}
   \caption{Average per-payment delay in seconds. Less is better.}
   \label{graph:delays}
-  \end{figure}
-  \begin{figure}
+  \end{figure*}
+  \begin{figure*}
   \begin{subfigure}{.3293\textwidth}
   \includegraphics[width=\textwidth]{../simulation/Fees_power_law.png}
   \end{subfigure}
@@ -238,5 +236,5 @@
   \end{subfigure}
   \caption{Average per-payment relative fee. Less is better.}
   \label{graph:fees}
-  \end{figure}
+  \end{figure*}
   \addtolength{\intextsep}{15pt}

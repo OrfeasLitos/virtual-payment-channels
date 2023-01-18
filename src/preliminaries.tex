@@ -5,10 +5,10 @@
   together with its global subroutines extension,
   UCGS~\cite{DBLP:conf/tcc/BadertscherCHTZ20}, to
   model parties, network interactions, adversarial influence and corruptions, as
-  well as formalise and prove security. We choose to model the Bitcoin ledger
+  well as formalise and prove security. We model the Bitcoin ledger
   with the \ledger
-  functionality as defined in~\cite{BMTZ17} and further refined
-  in~\cite{genesis}. \ledger formalizes an ideal data structure that is
+  functionality as defined in~\cite{BMTZ17,genesis}. \ledger formalizes an ideal
+  data structure that is
   distributed and append-only, akin to a blockchain. Participants can read from
   \ledger, which returns an ordered list of transactions. Additionally a party
   can submit a new transaction which, if valid, will eventually be added to the
@@ -20,27 +20,26 @@
 
   Moreover, \ledger needs the \Fclock
   functionality~\cite{DBLP:conf/tcc/KatzMTZ13}, which models the notion of time.
-  Any \Fclock participant can request to read the current time (which is
-  initially 0) and inform \Fclock that her round is over. \Fclock increments the
-  time by one once all parties have declared the end of their round. We further note that both
+  Any \Fclock participant can request to read the current time and inform \Fclock that her round is over. \Fclock increments the
+  time by one once all parties have declared the end of their round. Both
   \ledger and \Fclock are global
   functionalities~\cite{DBLP:conf/tcc/BadertscherCHTZ20} and therefore can be
   accessed directly by the environment.
 
   \subsection{Modelling time}
   The protocol and functionality defined in this work do not use \Fclock
-  directly. Indeed, the only notion of time in our work is provided by the
-  blockchain height, as reported by \ledger. We therefore omit it in the
+  directly. Indeed, the only notion of time is provided by the
+  blockchain height, as reported by \ledger. We thus omit it in the
   statement of our lemmas and theorems for simplicity of notation; it should
   normally appear as a hybrid together with \ledger.
 
   Our protocol is fully asynchronous, i.e., the adversary can delay any network
   message arbitrarily long. The protocol is robust against such delays, as an
   honest party can unilaterally prevent loss of funds even if some of its
-  incoming and outgoing network messages are dropped by \adversary, as long as
-  the party has input-output communication with the ledger. In other words, no
-  extra synchrony assumptions to those required by the ledger are needed. We
+  messages are dropped by \adversary, given that
+  the party can communicate with \ledger. In other words, no
+  extra synchrony assumptions to those required by \ledger are needed. We
   also note that,
   following the conventions of single-threaded UC execution model, the duration of local
-  computation is not taken into account in any way (as long as it does not
+  computation is not taken into account (as long as it does not
   exceed its polynomial bound).

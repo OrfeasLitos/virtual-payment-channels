@@ -1,23 +1,21 @@
 \section{Conclusion}
 
-  In this work we presented Recursive Virtual Payment Channels for Bitcoin, a
-  construction which enables the establishment and optimistic teardown of
-  pairwise payment channels without the need for posting on-chain transactions.
-  Such a channel can be opened over a path of consecutive base channels of
-  arbitrary length, i.e., the virtual channel constructor is variadic.
+  In this work we presented Elmo, a
+  construction for the establishment and optimistic teardown of
+  payment channels without posting transactions on-chain.
+  Such a virtual channel can be opened over a path of base channels of
+  any length, i.e., the constructor is \emph{variadic}.
 
-  The base channels themselves can be virtual, therefore the novel recursive
-  nature of the construction. A key performance characteristic of our
-  construction is that it has optimal round complexity for on-chain channel
-  closing: a single transaction is required by any participant to turn the
+  The base channels themselves can be virtual, therefore our construction is
+  \emph{recursive}. A key performance characteristic of our
+  construction is its optimal round complexity for on-chain channel
+  closing: one transaction is required by any party to turn the
   virtual channel into a simple one and one more transaction is needed to close
-  it, be it an end-point or an intermediary. The two transactions can be
-  submitted simultaneously.
+  it.
 
-  We formally described the protocol in the UC setting, provided a corresponding
-  ideal functionality and simulator and finally proved the indistinguishability
+  We formally described the protocol in the UC setting, provided a suitable
+  ideal functionality and finally proved the indistinguishability
   of the protocol and functionality, along with the balance security properties
-  that ensure no loss of funds for honest, non-negligent parties. This is
+  that ensure no loss of funds. This is
   achieved through the use of the \texttt{ANYPREVOUT} sighash flag, which is a
-  feature that will in all likelihood be added in the next Bitcoin update and is
-  also required by the eltoo improvement to lightning~\cite{eltoo}.
+  feature that will in all likelihood be added in the next Bitcoin update.
