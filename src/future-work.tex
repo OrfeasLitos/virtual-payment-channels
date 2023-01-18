@@ -25,30 +25,7 @@
   due to the separation of intermediate layers with the payment layer in our
   pseudocode implementation (i.e.\ the distinction
   between the \textsc{ln} and the \textsc{virt} protocols), this change
-  in principle needs only limited changes to the protocol.
-
-  As it currently stands, the timelocks calculated for the virtual channels are
-  based on $p$ (Figure~\ref{code:ln:init}) and $s$
-  (Figure~\ref{code:ln:exchange-open-sigs}),
-  which are global constants that are immutable and common to all parties. The 
-  parameter $s$
-  stems from the liveness guarantees of Bitcoin, as discussed in
-  Proposition~\ref{prop:liveness} and therefore cannot be tweaked. However, $p$
-  represents the maximum time (in blocks) between two activations of a non-negligent party,
-  so in principle it is possible for the parties to explicitly negotiate this
-  value when opening a new channel and even renegotiate it after the channel has
-  been opened if the counterparties agree. We leave this usability-augmenting
-  protocol feature as future work.
-
-  Our protocol is not designed to ``gracefully'' recover
-  from a situation in which halfway through a subprotocol, one of the
-  counterparties starts misbehaving. Currently the only solution is to
-  unilaterally close the channel. This however means that DoS attacks (that
-  still do not lead to channel fund losses) are possible. A practical
-  implementation of our protocol would need to expand the available actions and
-  states to be able to transparently and gracefully recover from such problems,
-  avoiding closing the channel where possible, especially when the problem stems
-  from network issues and not from malicious behaviour.
+  in principle needs only limited changes to our protocol.
 
   Furthermore, any deployment of the protocol has to explicitly handle the issue
   of transaction fees. These include miner fees for on-chain transactions and
@@ -69,17 +46,6 @@
   along with a variety of possible improvements to our novel virtual
   subprotocol.
 
-  Additionally, our protocol does not feature one-off multi-hop payments like
-  those possible in Lightning. This however is a useful feature in case two
-  parties know that they will only transact once, as opening a virtual channel
-  needs substantially more network communication than performing an one-off
-  multi-hop payment. It would be therefore fruitful to also enable the multi-hop
-  payment technique and allow human users to choose which
-  method to use in each case. Likewise, optimistic cooperative on-chain closing
-  of simple channels could be done just like in Lightning, obviating the need to
-  wait for the revocation timelock to expire and reducing on-chain costs if the
-  counterparty is cooperative.
-
   Moreover, our need for \texttt{ANYPREVOUT} prevents our protocol from being
   deployable on Bitcoin today. Though it is a prime contender for inclusion
   in the next update, there is a slight chance it will never make it.
@@ -97,3 +63,6 @@
   intermediaries in our case are not notified on each payment, contrary to
   multi-hop payments in Lightning. Therefore a future extension can improve the
   privacy of the construction and formally demonstrate exact privacy guarantees.
+
+  Several possible usability upgrades are discussed in
+  Appendix~\ref{sec:further-future-work}.
