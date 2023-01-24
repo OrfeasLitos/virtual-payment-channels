@@ -37,4 +37,4 @@ else
 endif
 
 clean:
-	rm -rf *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.pdf src/figures/auto-tikz/*.tex
+	rm -rf *.aux *.log *.out *.toc *.lof *.lot *.bbl *.blg *.pdf src/figures/auto-tikz/
