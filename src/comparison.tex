@@ -13,7 +13,13 @@
   obtain an end-to-end understanding of both the requirements and the benefits
   each protocol provides.
 
-  \paragraph{Cost calculation.} Consider the setting of $1$
+
+  \makeatletter%
+  \@ifclassloaded{IEEEtran}%
+    {\paragraph{Cost calculation}}%
+    {\paragraph{Cost calculation.}}%
+  \makeatother%
+  Consider the setting of $1$
   funder ($P_1$), $1$ fundee ($P_n$) and $n-2$ intermediaries ($P_2, \dots,
   P_{n-1}$) where $P_i$ has a base channel with each of $P_{i-1}$,
   $P_{i+1}$. We compare the off-chain cost of opening
@@ -163,7 +169,12 @@
   improvement with this optimisation, since each of its relevant transactions
   (``split'', ``merge'' and ``refund'') needs constant signatures.
 
-  \paragraph{Payment simulations.} We implemented a simulation
+  \makeatletter%
+  \@ifclassloaded{IEEEtran}%
+    {\paragraph{Payment simulations}}%
+    {\paragraph{Payment simulations.}}%
+  \makeatother%
+  We implemented a simulation
   framework\footnote{\url{gitlab.com/anonymised-submission-8778e084/virtual-channels-simulation}}
   in which a list of randomly generated payments are carried out.
   A single simulation is parametrised by a list of payments

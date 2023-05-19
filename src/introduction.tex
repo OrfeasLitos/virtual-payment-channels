@@ -93,7 +93,12 @@ participants' functions with respect to the resulting channel). This is of
 particular concern since most previous virtual channel constructors proposed are
 binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
 
-\paragraph{Our Contributions.} We present the first Bitcoin-suitable
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+  {\paragraph{Our Contributions}}%
+  {\paragraph{Our Contributions.}}%
+\makeatother%
+ We present the first Bitcoin-suitable
 recursive virtual channel constructor that supports channels
 with an indefinite lifetime. In addition, our constructor, Elmo (named after St.
 Elmo's fire), is variadic and symmetric. In our constructor, both optimistic and
