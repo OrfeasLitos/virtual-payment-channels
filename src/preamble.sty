@@ -1,12 +1,17 @@
 \ProvidesPackage{preamble}
 
-\usepackage{enumitem}
+% comment out for IEEE
+\usepackage[shortlabels]{enumitem}
+
 \usepackage{graphicx}
 \usepackage{algpseudocode}
 \algrenewcommand\textproc{\texttt}
 \usepackage[english]{babel}
 \usepackage{amsmath}
-%\usepackage{amssymb}
+
+% uncomment for IEEE
+\usepackage{amssymb}
+
 \usepackage{mathtools}
 \usepackage{multirow}
 \usepackage[T1]{fontenc}
@@ -24,12 +29,17 @@
 \usepackage{macros}
 \usepackage{float}
 \usepackage{capt-of}
-\usepackage{appendix}
+
+% comment out for IEEE
+%\usepackage{appendix}
+
 \usepackage{pifont}
 \usepackage{newunicodechar}
 \usepackage{wasysym}
 \usepackage{subcaption}
-\usepackage[subtle]{savetrees}
+
+% comment out for IEEE
+%\usepackage[subtle]{savetrees}
 
 \usepackage{pstricks,pst-node}
 \usepackage{auto-pst-pdf}
@@ -48,7 +58,7 @@
 % PG: Margin comments were placed oddly for me, and this saved the day (taken from
 % http://mirror.hmc.edu/ctan/macros/latex/contrib/todonotes/todonotes.pdf)
 %\setlength{\marginparwidth}{2cm}
-
+%
 % Define a "math hyphen"
 \mathchardef\mhyphen="2D
 
@@ -211,3 +221,8 @@
 
 % C-like /* comment */
 \algnewcommand{\StarComment}[1]{\textcolor{gray}{/*#1*/}}
+
+% uncomment for IEEE
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}

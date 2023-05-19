@@ -1,16 +1,29 @@
-\documentclass[sigconf]{acmart}
 %\documentclass{llncs}
+%\documentclass[sigconf]{acmart}
+\documentclass[conference]{IEEEtran}
 \usepackage{preamble}
 
-\begin{document}
-\pagestyle{plain}
-
-\import{./src/}{title.tex}
 % splncs
+%\begin{document}
+%\pagestyle{plain}
+%\import{./src/}{splncs-title.tex}
 %\maketitle
-\import{./src/}{abstract.tex}
+%\import{./src/}{abstract.tex}
+
 % acmart
+%\begin{document}
+%\pagestyle{plain}
+%\import{./src/}{acmart-title.tex}
+%\import{./src/}{abstract.tex}
+%\maketitle
+
+% IEEE
+\pagestyle{plain}
+\begin{document}
+\import{./src/}{ieee-title.tex}
 \maketitle
+\import{./src/}{abstract.tex}
+
 \import{./src/}{introduction.tex}
 \import{./src/}{related-work.tex}
 \import{./src/}{high-level.tex}
