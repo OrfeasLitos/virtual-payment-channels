@@ -446,5 +446,9 @@
 \makeatother%
    In order to support a virtual channel, base parties have
   to lock collateral for a potentially long time. A fee structure that takes
-  this opportunity cost into consideration would bolster participation, but is
-  outside the scope of this work.
+  this opportunity cost into consideration would bolster participation. A
+  straightforward mechanism is for parties to agree when opening the virtual
+  channel on a time-based fee schedule and periodically update their base
+  channels to reflect contingent payments by the endpoints. In case of lack of
+  cooperation for an update, a party can simply close its base channel. The
+  details of such a scheme are outside the scope of this work.
