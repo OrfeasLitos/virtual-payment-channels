@@ -50,8 +50,10 @@ Various attacks have been identified against LN. The wormhole
   blockchain, not just payments. Generalized Bitcoin-Compatible
   Channels~\cite{DBLP:journals/iacr/AumayrEEFHMMR20} enable the creation of
   state channels on Bitcoin, extending channel functionality from simple
-  payments to arbitrary Bitcoin scripts. State channels can also be extended to
-  more than two
+  payments to arbitrary Bitcoin scripts. Since Elmo only pertains to payment,
+  not state, channels, we choose not to build it on top
+  of~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}. State channels can also be
+  extended to more than two
   parties~\cite{DBLP:conf/asiaccs/LiaoZSS22,DBLP:conf/eurocrypt/DziembowskiEFHH19}.
 
   Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
