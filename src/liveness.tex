@@ -10,4 +10,22 @@
   (\maxTime + \frac{\vdelay}{2})/ \minTime \rceil$.
 \end{proposition}
 
-The proof can be found in~\cite{DBLP:conf/csfw/KiayiasL20}.
+\begin{proof}
+  Consider $\tau^{\stkh}_h$ to be the round that a party $\stkh$ becomes aware
+  of the $h$-th block in the $\texttt{state}$. It follows that $\tau_h \leq
+  \tau^{\stkh}_h$ where $\tau_h$ is the round block $h$ enters $\texttt{state}$. Note
+  that by time $\tau_h + \maxTime$ another $\windowSize$ blocks are added to
+  $\texttt{state}$ and thus $\tau^{\stkh}_h \leq \tau_h + \maxTime$.
+
+  Suppose $\stkh$ submits the transaction $\tx$ to the ledger at time
+  $\tau^{\stkh}_h$. Observe that as long as $\tau_h + \maxTime$ is $\vdelay/2$
+  before the time that block with index $h + t - 2\windowSize$ enters $\texttt{state}$,
+  then $\tx$ is guaranteed to enter the $\texttt{state}$ in a block with index up to $h
+  + t$ where since $\advBlocksinWindowSize < \windowSize$. It follows we need
+  $\tau_h + \maxTime < \tau_{h + t - 2\windowSize} - \frac{\vdelay}{2}$. Let $r
+  = \lceil (\maxTime + \frac{\vdelay}{2})/ \minTime \rceil$. Recall that in a
+  period of $\minTime$ rounds at most $\windowSize$ blocks enter $\texttt{state}$. As a
+  result $r \cdot \windowSize$ blocks require at least $r \cdot \minTime \geq
+  \maxTime + \frac{\vdelay}{2}$ rounds. We deduce that if $t \geq (2 +
+  r)\windowSize$ the inequality follows.
+\end{proof}
