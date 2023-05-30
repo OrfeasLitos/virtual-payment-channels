@@ -1,0 +1,227 @@
+\section{The Ledger, Clock and Network Functionality}
+  \label{sec:ledger}
+  We next provide the complete description of the ledger functionality as well as the clock and network functionalities  that are
+drawn from the   UC formalisation of~\cite{BMTZ17,genesis}.
+
+  The key characteristics of the functionality are as follows. The variable
+  \texttt{state} maintains the current immutable state of the ledger. An honest,
+  synchronised party considers finalised a prefix of \texttt{state} (specified by a
+  pointer position $\pt_{i}$ for party $\stkh_i$ below). The functionality has a
+  parameter \windowSize such that no finalised prefix of any player will be
+  shorter than $|\texttt{state}| - \windowSize$. On any input originating from an honest
+  party the functionality will run the \LFextend function that ensures that a
+  suitable sequence of transactions will be ``blockified'' and added to \texttt{state}.
+  Honest parties may also find themselves in a desynchronised state: this is
+  when honest parties lose access to some of their resources. The resources that
+  are necessary for proper ledger maintenance and that the functionality keeps
+  track of are the global random oracle \Foracle and the clock \Fclock. If an honest party maintains registration with all the resources
+  then after \vdelay clock ticks it necessarily becomes synchronised.
+
+  The progress of the \texttt{state} variable is guaranteed via the \LFextend function
+  that is executed when honest parties submit inputs to the functionality. While
+  we do not specify \LFextend in our paper (we refer to the citations above for
+  the full specification) it is sufficient to note that \LFextend guarantees the
+  following properties:
+  \begin{enumerate}
+    \item in a period of time equal to \maxTime, a number of blocks at least
+    \windowSize are
+    added to \texttt{state}.
+    \item in a period of time equal to $\minTime$, no more blocks may be added to $\texttt{state}$ if $\windowSize$ blocks have been already added. 
+    \item each window of \windowSize blocks has at most \advBlocksinWindowSize\/
+    adversarial blocks included in it.
+    \item any transaction that (i) is submitted by an honest party earlier than
+    $\frac{\vdelay}{2}$ rounds before the time that the block that is
+    \windowSize positions before the head of the \texttt{state} was included, 
+    and (ii) is valid with respect to an honest block that extends $\texttt{state}$,
+    then it must be included in such block. 
+  \end{enumerate}
+
+  Given a synchronised honest party, we say that a transaction \tx is
+  finalised when it becomes a part of \texttt{state} in its view.
+
+  \begin{systembox}{$\Fledger$}\vspace{1ex}
+    \small
+    {\bf General:}
+    The functionality is parameterized by four algorithms, \LFvalidate,
+    \LFextend, \LFblockify, and \vsync, along with three parameters:
+    $\windowSize, \vdelay\in\mathbb{N}$, and $\StakeHolderSet :=
+    \{(\stkh_{1},\stake_{1}),\ldots,(\stkh_{n},\stake_{n})\}$.
+    %
+    The functionality manages variables $\texttt{state}$ (the immutable state of the
+    ledger), $\cbuffer$ (a list of transaction identifiers to be added to the
+    ledger), \buffer (the set of pending transactions), $\LFtau$ (the rules
+    under which the state is extended), and \tlast (the time sequence where all
+    immutable blocks where added). The variables are initialized as follows:
+    $\texttt{state}:=\tlast:= \cbuffer:= \varepsilon$, $\buffer:=\emptyset$, $\LFtau=0$.
+  %
+    For each party $\party\in\PS$ the functionality maintains a pointer $\pt_i$
+    (initially set to 1) and a current-state view $\texttt{state}_p:=\varepsilon$
+    (initially set to empty). The functionality also keeps track of the  timed
+    honest-input sequence in a vector $\TIH$ (initially $\TIH:=\varepsilon$).
+    \medskip
+
+    {\bf Party Management:}
+    The functionality maintains the set of registered parties $\PS$, the
+    (sub-)set of honest parties $\HO \subseteq \PS$, and the (sub-set) of
+    de-synchronized honest parties $\DSyncPS\subset\HO$ (as discussed below).
+    The sets $\PS, \HS, \DSyncPS$ are all initially set to $\emptyset$. When a
+    (currently unregistered) honest party is registered at the ledger, {\em if
+    it is registered with the clock and the global RO already,} then it is added
+    to the party sets $\HS$ and $\PS$ and the current time of registration is
+    also recorded; if the current time is $\LFtau > 0$, it is also added to
+    $\DSyncPS$. Similarly, when a party is deregistered, it is removed from both
+    $\PS$ (and therefore also from $\DSyncPS$ or $\HS$). The ledger maintains
+    the invariant that it is registered (as a functionality) to the clock
+    whenever $\HS \neq \emptyset$.
+
+    \medskip
+
+    {\bf Handling initial stakeholders:}
+    If during round $\tau = 0$, the ledger did not received a registration from
+    each initial stakeholder, i.e., $\party \in \StakeHolderSet$, the
+    functionality halts.
+
+    \medskip
+    \hrule
+    \medskip
+
+    %\emph{To be executed upon any activation:}
+    {\bf Upon receiving any input $I$} from any party or from the adversary,
+    send $(\ClockRead, \sidClock)$ to \Fclock and upon receiving response
+    $(\ClockRead, \sidClock, \current)$ set $\LFtau:=\current$ and do the
+    following if $\current > 0$ (otherwise, ignore input):
+
+    \begin{enumerate}\setlength\itemsep{1.5ex}
+      \item Updating synchronized/desynchronized party set:
+      \begin{enumerate}
+        \item Let $\hat{\PS}\subseteq\DSyncPS$  denote the set of desynchronized
+        honest parties that have been registered (continuously) to the ledger,
+        the clock, and the GRO since time $\tau' < \LFtau-\vdelay$. Set
+        $\DSyncPS:=\DSyncPS\setminus\hat{\PS}$.
+        \item For any synchronized party $\party\in\HO\setminus\DSyncPS$, if
+        $\party$ is not registered to the clock, then consider it
+        desynchronized, i.e., set $\DSyncPS\cup\{\party\}$.
+      \end{enumerate}
+      \item If $I$ was received from an honest party $\party\in\PS$:\\[1ex]
+      \begin{enumerate}\setlength\itemsep{1ex}
+        \item Set $\TIH:=\TIH||(I,\party,\LFtau)$;
+        \item Compute
+        $\vec{N}=(\vec{N}_1,\ldots,\vec{N}_\ell):=\LFextend(\TIH,\texttt{state},\cbuffer,\buffer,\tlast)$
+        and if $\vec{N}\neq\varepsilon$ set
+        $\texttt{state}:=\texttt{state}||\LFblockify(\vec{N}_1)||\ldots||\LFblockify(\vec{N}_\ell)$
+        and $ \tlast:=\tlast||\LFtau^\ell$, where
+        $\LFtau^\ell=\LFtau||\ldots,||\LFtau$.
+        \item For each $\BTX\in\buffer$: if $\LFvalidate(\BTX,\texttt{state},\buffer)=0$
+        then delete  $\BTX$ from $\buffer$. Also, reset $\cbuffer:=
+        \varepsilon$.
+        \item If there exists $\stkh_{j}\in\HS\setminus\DSyncPS$ such that
+        $|\texttt{state}| -\pt_{j} > \windowSize$ or $\pt_{j} < |\texttt{state}_{j}|$, then set
+        $\pt_{k}:=|\texttt{state}|$ for all $\stkh_{k}\in\HS\setminus\DSyncPS$.
+      \end{enumerate}
+
+      \item If the calling party $\party$ is \emph{stalled or time-unaware}
+      (according to the defined party classification), then no further actions
+      are taken. Otherwise, depending on the above input $I$ and its sender's
+      ID, $\Fledger$ executes the corresponding code from the following list:
+      \begin{itemize}
+        \let\labelitemi\labelitemii
+        \item \emph{Submitting a transaction:}\\
+        If $I=(\LFsubmit, \sid,\tx)$ and is received from a party $\party \in
+        \PS$ or from \Adv (on behalf of a corrupted party $\party$) do the
+        following%\\[0.5ex]
+        \begin{enumerate}\setlength\itemsep{1ex}
+          \item Choose a unique transaction ID $\txid$ and set
+          $\BTX:=(\tx,\txid,\LFtau,\party)$
+          \item If $\LFvalidate(\BTX,\texttt{state},\buffer)=1$, then
+          $\buffer:=\buffer\cup\{\BTX\}$.
+          \item Send $(\LFsubmit, \BTX)$ to \Adv.%\\[2ex]
+        \end{enumerate}
+
+        \item \emph{Reading the state:}\\ If $I=(\LFread, \sid)$ is received
+        from a party $\party \in \PS$ then set $\texttt{state}_p:=
+        \texttt{state}|_{\min\{\pt_p,|\texttt{state}|\}}$ and return $(\LFread, \sid, \texttt{state}_p)$
+        to the requester. If the requester is \Adv then send
+        $(\texttt{state},\buffer,\TIH)$ to~\Adv.%\\[2ex]
+
+        \item \emph{Maintaining the ledger state:}\\
+        If $I=(\LFmine,\sid, \minerID)$ is received by an honest party
+        $\party\in\PS$ and  (after updating \TIH  as above)
+        $\vsync(\TIH)=\hat{\tau}>\LFtau$ then send $(\ClockUp, \sidClock)$ to
+        \Fclock. Else send $I$ to \Adv.%\\[2ex]
+
+
+        \item \emph{The adversary proposing the next block:} \\
+        If $I=(\LFmkcore, \honestyFlag, (\txid_1,\ldots,\txid_\ell))$ is sent
+        from the adversary, update \cbuffer as follows:%\\[1ex]
+        \begin{enumerate}\setlength\itemsep{1ex}
+          \item Set $\mathrm{listOfTxid} \gets \epsilon$
+          \item For $i=1,\ldots, \ell$ do: if there exists
+          $\BTX:=(x,\txid,\minerID,\LFtau,\stkh_j)\in\buffer$ with ID
+          $\txid=\txid_i$ then set
+          $\mathrm{listOfTxid}:=\mathrm{listOfTxid}||\txid_i$.
+          \item Finally, set $\cbuffer:= \cbuffer
+          ||(\honestyFlag,\mathrm{listOfTxid})$ and output $(\LFmkcore, ok)$ to
+          \Adv.%\\[2ex]
+        \end{enumerate}
+        \item \emph{The adversary setting state-slackness:}\\
+        If $I=(\LFslack,(\stkh_{i_1},\hat{\pt}_{i_1}),\ldots,
+        (\stkh_{i_\ell},\hat{\pt}_{i_\ell})),$ with
+        $\{\party_{i_1},\ldots,\party_{i_\ell}\}\subseteq\HS\setminus\DSyncPS$
+        is received from the adversary \Adv do the following:%\\[1ex]
+        \begin{enumerate}\setlength\itemsep{1ex}
+          \item If for all $j\in[\ell]:$  $|\texttt{state}|
+          -\hat{\pt}_{i_j}\leq\windowSize$ and $\hat{\pt}_{i_j}\geq
+          |\texttt{state}_{i_j}|$, set $\pt_{i_1}:=\hat{\pt}_{i_1}$ for every
+          $j\in[\ell]$ and return $(\LFslack,ok)$ to \Adv.
+          \item Otherwise set $\pt_{i_j}:=|\texttt{state}|$ for all $j\in[\ell]$.
+        \end{enumerate}
+        \item \emph{The adversary setting the state for desychronized
+        parties:}\\
+        If $I=(\LFdsstate,(\stkh_{i_1},\texttt{state}_{i_1}'),\ldots,
+        (\stkh_{i_\ell},\texttt{state}_{i_\ell}')),$ with
+        $\{\stkh_{i_1},\ldots,\stkh_{i_\ell}\}\subseteq\DSyncPS$ is received
+        from the adversary \Adv, set $\texttt{state}_{i_j}:=\texttt{state}_{i_j}'$ for each
+        $j\in[\ell]$ and return $(\LFdsstate,ok)$ to \Adv.
+      \end{itemize}
+    \end{enumerate}
+  \end{systembox}
+
+  \begin{systembox}{Functionality $\Fclock$}
+    The functionality manages the set $\PS$ of registered identities, i.e.,
+    parties $\party = (\pid,\sid)$. It also manages the set $F$ of
+    functionalities (together with their session identifier). Initially,
+    $\PS:=\emptyset$ and $F := \emptyset$.
+
+    \smallskip
+    For each session $\sid$ the clock maintains a variable $\current_\sid$. For
+    each identity $\party := (\pid,\sid) \in \PS$ it manages variable
+    $d_\party$. For each pair $(\Func,\sid) \in F$ it manages variable
+    $d_{(\Func,\sid)}$ (all integer variables are initially $0$).
+
+    \medskip
+
+    \emph{Synchronization:}
+    \begin{itemize}
+      \item Upon receiving $(\ClockUp, \sidClock)$ from some party $\party \in
+      \PS$ set $d_{\party}:=1$; execute \emph{Round-Update} and forward
+      $(\ClockUp, \sidClock, \party)$  to $\Adv$.
+
+      \item Upon receiving $(\ClockUp, \sidClock)$ from some functionality
+      $\Func$ in a session $\sid$ such that $(\Func,\sid) \in F$ set
+      $d_{(\Func,\sid)}:=1$, execute \emph{Round-Update} and return $(\ClockUp,
+      \sidClock,\Func)$ to this instance of $\Func$.
+
+      \item Upon receiving $(\ClockRead, \sidClock)$ from any participant
+      (including the environment on behalf of a party, the adversary, or any
+      ideal---shared or local---functionality) return $(\ClockRead,
+      \sid,\current_\sid)$ to the requestor (where $\sid$ is the sid of the
+      calling instance).
+    \end{itemize}
+
+    \emph{Procedure Round-Update:}
+    For each session $\sid$ do:
+    If $d_{(\Func,\sid)}:=1$ for all $\Func \in F$ and $d_{\party}=1$ for all
+    honest parties $\party=(\cdot,\sid) \in \PS$, then set
+    $\current_\sid:=\current_\sid+1$  and reset $d_{(\Func,\sid)}:=0$ and
+    $d_{\party}:=0$ for all parties $\party=(\cdot,\sid) \in \PS$.
+  \end{systembox}
