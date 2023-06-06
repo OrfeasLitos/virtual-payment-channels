@@ -31,7 +31,7 @@ Various attacks have been identified against LN. The wormhole
   An alternantive payment channel construction for Bitcoin that aspires to be
   the successor of Lightning is eltoo~\cite{eltoo}. It is conceptually simpler,
   has smaller on-chain footprint and a more forgiving attitude towards
-  submitting an old channel state than Lightning, but it needs
+  submitting an old channel state than Lightning (as the old state is superseded without punishment), but it needs
   \texttt{ANYPREVOUT}. Compared to Elmo, eltoo is more lightweight in terms of
   storage and communication when setting up, but suffers from increased latency
   and communication for payments, as intermediaries have to actively participate
