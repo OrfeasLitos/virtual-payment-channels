@@ -79,13 +79,13 @@ closing operations that are symmetric in terms of cost between the two
 optimistic and pessimistic execution paths. Importantly, this ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel. 
 \end{itemize}
 
-The endpoints are the two parties that share the channel, while intermediaries are
+Endpoints are the two parties that share the channel and intermediaries are
 the parties of any of the underlying channels.
 
 We note that recursiveness, while identified already as an important design
 property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has not been achieved for Bitcoin-compatible channels
 (it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{9519487}).
-The reason behind this are the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
+This is because of the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
 With respect to the other two properties, observe that successive applications
 of a recursive {\em binary} virtual channel operator to make it variadic will
 break symmetry (since the sequence of operator applications will impact the
@@ -134,15 +134,15 @@ off-chain, or instead opt for unilateral on-chain closing, following an arbitrar
 activation sequence. The latter is achieved by enabling anyone to
 become an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
 
-  We formally prove the security of the constructor protocol in the Universally
-  Composable security (UC)~\cite{uc} setting; our ideal functionality is global,
+  We formally prove the security of the constructor protocol in the Universal
+  Composition (UC)~\cite{uc} setting; our ideal functionality is global,
   as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The
-  construction relies on the \texttt{ANYPREVOUT} signature type (slated for
+  protocol requires the \texttt{ANYPREVOUT} signature type (slated for
   inclusion in the next Bitcoin update\footnote{\url{https://anyprevout.xyz/}}), which does not sign the hash of the
-  transaction it spends, thus allowing for a single pre-signed transaction
-  to spend any output with a suitable script. We conjecture that, if
-  \texttt{ANYPREVOUT} is unavailable, no efficient virtual channel constructor
-  over Bitcoin can be built. More specifically, if any such protocol
+  transaction it spends, thus enabling a single pre-signed transaction
+  to spend any output with a suitable script. We conjecture that without
+  \texttt{ANYPREVOUT} no efficient off-chain virtual channel constructor
+  over Bitcoin can be built. In particular, if any such protocol
   (i) offers an efficient closing operation (i.e.\ with $O(1)$ on-chain
   transactions), (ii) has parties store the channel state as transactions and
   signatures in their local storage and (iii) does not require locking on-chain
