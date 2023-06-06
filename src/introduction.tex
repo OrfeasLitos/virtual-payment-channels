@@ -74,7 +74,7 @@ virtual channels of arbitrary length, without the undue overhead of opening,
 managing and closing multiple virtual channels only to use the one at the
 ``top'' of the recursion.
 \item Symmetric. A symmetric virtual channel constructor offers setup and
-closing operations that are symmetric in terms of cost between the two
+closing operations that are symmetric in terms of computation, network and storage cost between the two
 ``endpoints'' or the ``intermediaries'' (but not a mix of both) for the
 optimistic and pessimistic execution paths. Importantly, this ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel.
 \end{itemize}
