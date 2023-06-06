@@ -68,7 +68,7 @@ operator. This is important in the context of PCNs since it allows building
 virtual channels on top of pre-existing virtual channels, allowing the channel
 structure to evolve dynamically.
 \item Variadic. A variadic virtual channel constructor can virtualize any number
-of input state channels directly, i.e.\ without leveraging recursion. This is
+of input state channels directly, i.e., without leveraging recursion, contrary to a \emph{binary} constructor. This is
 important in the context of PCNs since it enables applying the operator to build
 virtual channels of arbitrary length, without the undue overhead of opening,
 managing and closing multiple virtual channels only to use the one at the
@@ -87,7 +87,7 @@ property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has not been achieved for Bitcoin
 (it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{9519487}).
 This is because of the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
 With respect to the other two properties, observe that successive applications
-of a recursive {\em binary} virtual channel operator to make it variadic will
+of a recursive binary virtual channel operator to connect distant endpoints will
 break symmetry (since the sequence of operator applications will impact the
 participants' functions with respect to the resulting channel). This is of
 particular concern since most previous virtual channel constructors proposed are
