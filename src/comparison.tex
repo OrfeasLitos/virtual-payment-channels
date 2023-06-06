@@ -31,8 +31,12 @@
   the $3$ protocols the number of communication rounds required, the total
   size of outgoing messages as well as the amount of space for storing
   channel data. We measure from the perspective of the funder, the fundee
-  and an intermediary, along with the aggregate for all parties.
+  and an intermediary, along with the aggregate for all parties. All
+  measurements have been carried out by manually translating the storage,
+  communication and on-chain footprints of the various protocols into concrete
+  numbers.
 
+  % TODO: understand why number of payments k plays a role in Donner
   % splncs
   %\addtolength{\intextsep}{-30pt}
   \begin{table*}[h!]
@@ -194,14 +198,20 @@
   show the performance of the $3$ protocols with respect to the metrics payment
   channels aim to improve, namely payment latency and fees.
 
-  We provide three different topologies: First, in an attempt to emulate
-  real-world scenarios, the value and number of incoming payments of each player
-  are drawn from zipf~\cite{powers-1998-applications}
-  distibutions. Second, each party has a preferred receiver, chosen uniformly at
+  Due to the privacy guarantees of LN, we are unable to obtain real-world
+  off-chain payment data. We therefore generate payments randomly. More
+  specifically, we
+  provide three different payment topologies to mimic different usage
+  schemes: First, in an attempt to emulate real-world scenarios, the value and
+  number of incoming payments of each player are drawn from
+  zipf~\cite{powers-1998-applications} distibutions. Second, each party has a
+  preferred receiver, chosen uniformly at
   the beginning, which it pays half the time, the other half choosing the payee
   uniformly at random. Each payment value is chosen uniformly at random from the
   $[0, \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}]$
-  range. Third, all choices are made uniformly at random. For all scenarios the
+  range. This scenario occurs when new users are onboarded with the intent to
+  primarily pay a single counterparty, but sporadically pay others as well.
+  Third, all choices are made uniformly at random. For all scenarios the
   payer of each payment is chosen uniformly at random, no channels exist
   initially and all parties initially own the same number of coins on-chain.
 
@@ -212,7 +222,7 @@
   respectively. Scale does not begin at zero for better visibility. Average
   latency is high as it describes the whole run, including slow on-chain
   payments and channel openings. Total fees are calculated by summing the fee
-  of each ``basic'' event (e.g.\ paying an intermediary for its service). None
+  of each ``basic'' event (e.g., paying an intermediary for its service). None
   of the $3$ protocols provide fee recommendations, so we use the same baseline
   fees for the same events in all $3$ to avoid bias. These
   fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
@@ -231,7 +241,8 @@
   \begin{subfigure}{.3293\textwidth}
   \includegraphics[width=\textwidth]{../simulation/Delays_uniform.png}
   \end{subfigure}
-  \caption{Average per-payment delay in seconds. Less is better.}
+  \caption{Average per-payment delay (including both on- and off-chain) in
+  seconds. Less is better.}
   \label{graph:delays}
   \end{figure*}
   \begin{figure*}
