@@ -16,10 +16,11 @@
   tie the spending of two adjacent base channels into a single atomic action.
   Once intermediaries are done, a special ``funding'' output has been
   created off-chain which carries the sum of $P_1$ and $P_n$'s channel
-  balance and which either one can at any time put on-chain. LN demands that the
-  funding output is on-chain, but we lift this requirement. $P_1$ and $P_n$
+  balance. $P_1$ and $P_n$
   finally create the channel, applying a logic similar to LN on top of
-  the funding output: their channel is now open.
+  the funding output: their channel is now open. LN demands that the funding
+  output is on-chain, but we lift this requirement. We instead guarantee that
+  either endpoint can put the funding output put on-chain unilaterally.
 
   A payment over an established channel follows a procedure heavily inspired by
   LN as well. To be completed, a payment needs three messages to be exchanged by
