@@ -35,12 +35,15 @@
   virtual channel) in its base channel ($(P_1, P_2)$ and $(P_{n-1}, P_n)$
   respectively).
 
-  Finally, the unilateral closing procedure of a channel $C$ does not need
-  cooperation and consists of signing and publishing a number of transactions
-  on-chain. As
-  we will discuss later, the exact transactions that a party will publish vary
-  depending on the actions of the parties that control the channels which form
-  the base of $C$, as well as the channels that are based on $C$.
+  Finally, the unilateral closing procedure of a virtual channel $(P_1, P_n)$
+  does not need cooperation and consists of signing and publishing a number of
+  transactions on-chain. In the simplest case, one of the two endpoints, say
+  $P_1$, publishes her virtual transaction. This prompts $P_2$ to publish her
+  virtual transaction as well and so on up to $P_{n-1}$, at which point the
+  funding output of $(P_1, P_n)$ is automatically on-chain and closing can
+  proceed as in LN. If instead any intermediary stays inactive, then a timelock
+  expires and a suitable output becomes the funding output for $(P_1, P_n)$, at
+  the expense of the inactive party.
 
   In a nutshell, a virtual channel is built on top of two or more ``base''
   channels, which, due to the recursive property, may themselves be simple or
