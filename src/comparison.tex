@@ -236,11 +236,20 @@
   function it maximises. The knowledge function defines which future payments
   inform each decision. Several knowledge functions are provided, such as full
   knowledge of all future payments and knowledge of the payer's next $m$
-  payments. The utility function takes into account payment
-  latency and fees, as well as the impact of the payment to the payer's
-  network centrality and distance from other parties. It then
-  heuristically chooses how to pay: simply on-chain, open a new
-  channel, or use existing channels.
+  payments. All simulations presented here were carried out with
+  each party knowing its next $m=10$ payments, as we decided
+  this is a realistic knowledge function.
+
+  The utility of a payment is high when its latency and fees are
+  low, it increases the payer's network centrality, and reduces
+  distance from other parties. We give more weight to low latency
+  and fees, then to small distance and lastly to high centrality.
+  Each payment is carried out by dry-running the three kinds of
+  payments (simply on-chain, opening a new channel, using existing
+  channels), comparing their utility and executing the best one.
+  Recognising the arbitrary nature of the concrete weights, we
+  chose them before running our simulations in order to minimise
+  bias.
 
   The simulation outputs extensive data on the progress of each run. Our
   simulation framework is of independent interest, as it is built to be flexible
@@ -250,20 +259,26 @@
 
   Due to the privacy guarantees of LN, we are unable to obtain real-world
   off-chain payment data. We therefore generate payments randomly. More
-  specifically, we
-  provide three different payment topologies to mimic different usage
-  schemes: First, in an attempt to emulate real-world scenarios, the value and
-  number of incoming payments of each player are drawn from
-  zipf~\cite{powers-1998-applications} distibutions. Second, each party has a
-  preferred receiver, chosen uniformly at
-  the beginning, which it pays half the time, the other half choosing the payee
-  uniformly at random. Each payment value is chosen uniformly at random from the
-  $[0, \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}]$
-  range. This scenario occurs when new users are onboarded with the intent to
-  primarily pay a single counterparty, but sporadically pay others as well.
-  Third, all choices are made uniformly at random. For all scenarios the
-  payer of each payment is chosen uniformly at random, no channels exist
-  initially and all parties initially own the same number of coins on-chain.
+  specifically, we provide three different payment topologies to mimic
+  different usage schemes: First, each party has a preferred receiver, chosen
+  uniformly at the beginning, which it pays half the time, the other half
+  choosing the payee uniformly at random. Each payment value is chosen
+  uniformly at random from the $[0, \max]$ range, for $\max =
+  \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}$. We
+  employ $1000$ parties. This scenario occurs when new users are onboarded with
+  the intent to primarily pay a single counterparty, but sporadically pay
+  others as well. Second, in an attempt to emulate real-world payment
+  distributions, the value and number of incoming payments of each player are
+  drawn from the zipf~\cite{powers-1998-applications} distibution with
+  parameter $2$. Each payment value is chosen according to the
+  zipf(2.16) distribution, moved to have a mean equal to $\frac{\max}{2}$. We
+  consider $500$ parties. Third, all choices are made uniformly at random, with
+  each payment chosen uniformly from $[0, \max]$, employing a total of $3000$
+  parties. For all scenarios the payer of each payment is chosen uniformly at
+  random, no channels exist initially, and all parties initially own the same
+  number of coins on-chain. The
+  number of parties is chosen to ensure the simulation completes within a
+  reasonable length of time.
 
   In order to avoid bias, we simulate each
   protocol with the same payments. We simulate each scenario with $20$
