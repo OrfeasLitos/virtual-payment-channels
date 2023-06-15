@@ -298,8 +298,20 @@
   of the $3$ protocols provide fee recommendations, so we use the same baseline
   fees for the same events in all $3$ to avoid bias. These
   fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
-  relative, not absolute, fees. As can be seen, Elmo is the best or on par with
-  the best protocol in every case.
+  relative, not absolute, fees.
+
+  As Fig.~\ref{graph:delays} shows, delays are primarily influenced by the
+  payment distribution and only secondarily by the protocol: The preferred
+  receiver is the fastest and the uniform is the slowest. This is reasonable:
+  In the preferred receiver scenario at least half of each party's payments can
+  be performed over a single channel, thus on-chain actions are reduced. On the
+  other hand, in the uniform scenario payments are spread over all parties
+  evenly, so channels are not as well utilised. As can be seen, Elmo is the
+  best or on par with the best protocol in every case. We attribute this to the
+  flexibility of Elmo, as it is both variadic and recursive and thus can open a
+  virtual channel over many base channels with low overhead. In particular,
+  Donner is consistently the most fee-heavy protocol and LVPC the slowest. Elmo
+  experiences similar delays to Donner and slightly higher fees than LVPC.
 
   \addtolength{\intextsep}{-15pt}
   \begin{figure*}
