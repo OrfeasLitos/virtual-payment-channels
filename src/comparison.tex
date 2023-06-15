@@ -277,7 +277,9 @@
   each payment chosen uniformly from $[0, \max]$, employing a total of $3000$
   parties. For all scenarios the payer of each payment is chosen uniformly at
   random, no channels exist initially, and all parties initially own the same
-  number of coins on-chain. The
+  amount of coins on-chain. A payer funds a new channel with the minimum of all
+  the on-chain funds of the payer and the sum of the known future payments to
+  the same payee plus $10$ times the current payment value. The
   number of parties is chosen to ensure the simulation completes within a
   reasonable length of time.
 
