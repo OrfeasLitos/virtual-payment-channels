@@ -236,9 +236,7 @@
   function it maximises. The knowledge function defines which future payments
   inform each decision. Several knowledge functions are provided, such as full
   knowledge of all future payments and knowledge of the payer's next $m$
-  payments. All simulations presented here were carried out with
-  each party knowing its next $m=10$ payments, as we decided
-  this is a realistic knowledge function.
+  payments.
 
   The utility of a payment is high when its latency and fees are
   low, it increases the payer's network centrality, and reduces
@@ -266,16 +264,20 @@
   choosing the payee uniformly at random. Each payment value is chosen
   uniformly at random from the $[0, \max]$ range, for $\max =
   \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}$. We
-  employ $1000$ parties. This scenario occurs when new users are onboarded with
+  employ $1000$ parties, with a knowledge function disclosing to each party its
+  next $m=100$ payments, as we decided this is a realistic knowledge function
+  for this case. This scenario occurs when new users are onboarded with
   the intent to primarily pay a single counterparty, but sporadically pay
   others as well. Second, in an attempt to emulate real-world payment
   distributions, the value and number of incoming payments of each player are
   drawn from the zipf~\cite{powers-1998-applications} distibution with
   parameter $2$. Each payment value is chosen according to the
   zipf(2.16) distribution, moved to have a mean equal to $\frac{\max}{2}$. We
-  consider $500$ parties. Third, all choices are made uniformly at random, with
-  each payment chosen uniformly from $[0, \max]$, employing a total of $3000$
-  parties. For all scenarios the payer of each payment is chosen uniformly at
+  consider $500$ parties, and a knowledge function with $m=10$, as this is more
+  aligned with real-world scenarios. Third, all choices are made uniformly at
+  random, with each payment chosen uniformly from $[0, \max]$, employing a
+  total of $3000$ parties, again with each knowing its next $m=10$ payments.
+  For all scenarios the payer of each payment is chosen uniformly at
   random, no channels exist initially, and all parties initially own the same
   amount of coins on-chain. A payer funds a new channel with the minimum of all
   the on-chain funds of the payer and the sum of the known future payments to
