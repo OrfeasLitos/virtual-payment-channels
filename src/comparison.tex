@@ -244,8 +244,9 @@
   low, it increases the payer's network centrality, and reduces
   distance from other parties. We give more weight to low latency
   and fees, then to small distance and lastly to high centrality.
-  Each payment is carried out by dry-running the three kinds of
-  payments (simply on-chain, opening a new channel, using existing
+  Each payment is carried out by dry-running all known future
+  payments with the three possible payment kinds (simply
+  on-chain, opening a new channel, using existing
   channels), comparing their utility and executing the best one.
   Recognising the arbitrary nature of the concrete weights, we
   chose them before running our simulations in order to minimise
