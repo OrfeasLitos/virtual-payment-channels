@@ -289,7 +289,9 @@
   protocol with the same payments. We simulate each scenario with $20$
   distinct sets of payments and keep the average. Figs.~\ref{graph:delays}
   and~\ref{graph:fees} show the per-payment latency and fee
-  respectively. Scale does not begin at zero for better visibility. Average
+  respectively. Scale does not begin at zero for better visibility. Payment
+  delays are calculated based on which protocol is used and how the payment is
+  performed. Average
   latency is high as it describes the whole run, including slow on-chain
   payments and channel openings. Total fees are calculated by summing the fee
   of each ``basic'' event (e.g., paying an intermediary for its service). None
