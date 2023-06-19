@@ -16,8 +16,9 @@ The key primitive of PCN protocols is a payment channel. Two parties initiate
 the channel by locking some funds on-chain and subsequently exchange direct
 messages to update the state of the channel. The key feature is that state
 updates are not posted on-chain and hence they remain unencumbered by the
-performance limitations of the underlying blockchain protocol. Multiple
-overlapping payment channels can be combined and form the PCN.
+performance limitations of the underlying blockchain protocol, making them a
+natural choice for parties that interact often. Multiple overlapping payment
+channels can be combined and form the PCN.
 
 Closing a channel is an operation that involves posting the state of the channel
 on-chain. Closing should be efficient, i.e.\ needing $O(1)$ on-chain
