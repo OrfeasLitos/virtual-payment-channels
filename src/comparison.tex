@@ -222,6 +222,20 @@
   improvement with this optimisation, since each of its relevant transactions
   (``split'', ``merge'' and ``refund'') needs constant signatures.
 
+  We also note that due to the fact that human connections form a
+  small world~\cite{smallworld}, we expect that in practice the
+  need for virtual channels with a very big number of
+  intermediaries will be exceedingly rare. This is corroborated by
+  the fact that LN only supports payments of up to $20$ hops
+  without impact to its usefulness. Therefore, the asymptotic
+  network and storage complexity are not as relevant as the
+  concrete costs for specific, low values of $n$. Under this
+  light, the overhead of Elmo is tolerable. For example, the
+  network requirements for a funder when opening an Elmo channel
+  of length $6$ are less than $3$ times those of Donner and
+  slightly cheaper than LVPC
+  (Table~\ref{table:comparison:overhead:n-parties:open}).
+
   \makeatletter%
   \@ifclassloaded{IEEEtran}%
     {\paragraph{Payment simulations}}%
