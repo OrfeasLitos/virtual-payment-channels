@@ -98,7 +98,7 @@ solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2
   Channels~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
   opened on top of two preexisting channels and uses a technique similar to DMC,
   unfortunately inheriting the fixed lifetime limitation.
-  Let ``simple channels'' be those built directly on-chain, i.e.\ channels that are not
+  Let \emph{simple channels} be those built directly on-chain, i.e.\ channels that are not
   virtual.
   Bitcoin-Compatible Virtual Channels~\cite{9519487} also enables
   virtual channels on top of two preexisting simple channels
@@ -115,7 +115,7 @@ solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2
   virtual channels without recursion nor features that are not yet
   available in Bitcoin. This is achieved by having the funder lock as
   collateral twice the amount of the desired channel funds: once on-chain with
-  funds that are external to the ``base channels'' (i.e., the channels that the
+  funds that are external to the \emph{base channels} (i.e., the channels that the
   virtual channel is based on) and once off-chain within its base channel. Thus
   the required collateral for the funder is double that of other protocols and
   a party lacking sufficient on-chain coins cannot fund a Donner channel;
@@ -123,7 +123,7 @@ solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2
   virtual channel designs that are not encumbered with limited lifetime. This
   design choice further means that Donner is not symmetric. Donner also uses
   placeholder outputs which, due to the minimum coins they need to carry to
-  exceed Bitcoin's ``dust limit'', may skew the incentives of rational players
+  exceed Bitcoin's \emph{dust limit}, may skew the incentives of rational players
   and adds to the
   opportunity cost of maintaining a channel. What is more, its design complicates
   future iterations that lift its current restriction that only one of the two
