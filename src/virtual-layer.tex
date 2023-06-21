@@ -1,5 +1,6 @@
 \begin{center} % \captionof hinders page break if not in an environment
   \begin{processbox}{\textsc{virt}}
+    \ \\
     \begin{algorithmic}[1]
       \State On every activation, before handling the message:
       \Indent
@@ -108,6 +109,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt}.\textsc{circulateKeysCoinsTimes}(\texttt{left\_data}):}
+    \ \\
     \begin{algorithmic}[1]
       \If{\texttt{left\_data} is given as argument} \Comment{we are not
       \texttt{host\_funder}}
@@ -222,6 +224,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt}}
+    \ \\
     \begin{algorithmic}[1]
       \State \textsc{getMidTXs}($i$, $n$, $c_{\mathrm{virt}}$, $c_{\mathrm{rem},
       \mathrm{left}}$, $c_{\mathrm{loc}, \mathrm{left}}$, $c_{\mathrm{loc},
@@ -629,6 +632,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt}}
+    \ \\
     \begin{algorithmic}[1]
       \State \Comment{left and right refer to the two counterparties, with left
       being the one closer to the funder. Note difference with left/right
@@ -707,6 +711,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt.siblingSigs}()}
+    \ \\
     \begin{algorithmic}[1]
       \State parse input as $\mathrm{sigs}_{\mathrm{byLeft}}$
       \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
@@ -869,6 +874,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt.intermediarySigs}()}
+    \ \\
     \begin{algorithmic}[1]
       \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
       \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
@@ -920,6 +926,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt.hostFundeeSigs}()}
+    \ \\
     \begin{algorithmic}[1]
       \State $\mathrm{TX}_{n, 1}, B_{n, 1} \gets$
       \textsc{virt}.\textsc{getEndpointTX}($n$, $n$, $c_{\mathrm{virt}}$,
@@ -986,6 +993,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt.hostFunderSigs}()}
+    \ \\
     \begin{algorithmic}[1]
       \State $\mathrm{sigs}_{\mathrm{toRight}} \gets \emptyset$
       \ForAll{$j \in [n-1] \setminus \{1\}$}
@@ -1064,6 +1072,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt.circulateVirtualSigs}($\mathrm{sigs}_{\mathrm{byLeft}}$)}
+    \ \\
     \begin{algorithmic}[1]
       \If{$1 < i < n$} \Comment{we are not \texttt{host\_funder} nor
       \texttt{host\_fundee}}
@@ -1084,6 +1093,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt.circulateFundingSigs}($\mathrm{sigs}_{\mathrm{byLeft}}$)}
+    \ \\
     \begin{algorithmic}[1]
       \If{$1 < i < n$} \Comment{we are not endpoint}
         \IfThenElse{$i = 2$}{$m \gets 1$}{$m \gets 2$}
@@ -1226,6 +1236,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt.circulateRevocations}(\texttt{revoc\_by\_prev})}
+    \ \\
     \begin{algorithmic}[1]
       \If{\texttt{revoc\_by\_prev} is given as argument} \Comment{we are not
       \texttt{host\_funder}}
@@ -1289,6 +1300,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt} -- poll}
+    \ \\
     \begin{algorithmic}[1]
       \State On input (\textsc{check for lateral close}) by $R \in$
       \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}:
@@ -1404,6 +1416,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt} -- On input (\textsc{forceClose}) by $R$:}
+    \ \\
     \begin{algorithmic}[1]
       \State \Comment{At most one of \texttt{funder}, \texttt{fundee} is
       defined}
@@ -1462,6 +1475,7 @@
 \begin{center}
   \begin{processbox}{\textsc{virt} -- On input (\textsc{check if closing}) by
   $R$:}
+    \ \\
     \begin{algorithmic}[1]
       \State ensure \textit{State} = \textsc{closing}
       \State ensure $R \in \{\texttt{guest}, \texttt{funder}, \texttt{fundee}\}$
@@ -2054,6 +2068,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{virt} -- punishment handling}
+    \ \\
     \begin{algorithmic}[1]
       \State On input (\textsc{used revocation}) by \texttt{guest}:
       \Comment{(\textsc{used revocation}) by \texttt{funder}/\texttt{fundee} is

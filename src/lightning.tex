@@ -3,6 +3,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- init}
+    \ \\
     \begin{algorithmic}[1]
       \State \Comment{When not specified, input comes from and output goes to
       \environment.}
@@ -80,6 +81,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- methods used by \textsc{virt}}
+    \ \\
     \begin{algorithmic}[1]
       \State \textsc{revokePrevious}():
       \label{code:ln:methods-for-virt:revoke-previous}
@@ -141,6 +143,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln.exchangeOpenKeys}()}
+    \ \\
     \begin{algorithmic}[1]
       \State $(\sk{A, F}, \pk{A, F}), (\sk{A, R, 1}, \pk{A, R, 1}), (\sk{A, R,
       2}, \pk{A, R, 2}) \gets \textsc{keyGen}()^3$
@@ -182,6 +185,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln.prepareBase}()}
+    \ \\
     \begin{algorithmic}[1]
       \If{\texttt{hops} = ``\texttt{ledger}''} \Comment{opening base channel}
         \State $F \gets$ TX \{input: $(c, \pk{A, \mathrm{chain}})$, output: $(c,
@@ -207,6 +211,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln.exchangeOpenSigs}()}
+    \ \\
     \begin{algorithmic}[1]
       \State \Comment{$s = (2 + q)\texttt{windowSize}$, where $q$ and
       \texttt{windowSize} are defined in Proposition~\ref{prop:liveness}}
@@ -268,6 +273,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln.commitBase}()}
+    \ \\
     \begin{algorithmic}[1]
       \State $\mathrm{sig}_F \gets \textsc{sign}(F, \sk{A, \mathrm{chain}})$
       \label{code:ln:base:sign-funding}
@@ -287,6 +293,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- external open messages for \bob}
+    \ \\
     \begin{algorithmic}[1]
       \State On output (\textsc{funded}, $\texttt{host}_P$,
       \texttt{funder\_layer}, $t_P$) by \texttt{hops}[-1].\texttt{right}:
@@ -331,6 +338,7 @@
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{open}, $c$, \texttt{hops},
   \texttt{fundee}):}
+    \ \\
     \begin{algorithmic}[1]
       \State \Comment{\texttt{fundee} is \bob}
       \label{code:ln:open:alice-open}
@@ -363,6 +371,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{updateForVirtual}()}
+    \ \\
     \begin{algorithmic}[1]
       \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, F}'$,
       $\pk{\bar{P}, F}'$, $\pk{\bar{P}, R, i+1}$ and $\pk{P, R, i+1}$ instead of
@@ -406,6 +415,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- virtualise start and end}
+    \ \\
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, \texttt{fundee}, \texttt{hops},
       $c_{\mathrm{virt}}$, $\pk{A, V}$, $\pk{B, V}$) by \texttt{funder}:
@@ -471,6 +481,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- virtualise hops}
+    \ \\
     \begin{algorithmic}[1]
       \State On (\textsc{virtualising}, $\texttt{host}_{\bar{P}}'$,
       $\pk{\bar{P}, F}'$, \texttt{hops}, \texttt{fundee}, $c_{\mathrm{virt}}$,
@@ -557,6 +568,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{signaturesRoundTrip}()}
+    \ \\
     \begin{algorithmic}[1]
       \State $C_{\bar{P}, i+1} \gets C_{\bar{P}, i}$ with $\pk{P, R, i+1}$ and
       $\pk{\bar{P}, R, i+1}$ instead of $\pk{P, R, i}$ and $\pk{\bar{P}, R, i}$
@@ -608,6 +620,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{revocationsTrip}()}
+    \ \\
     \begin{algorithmic}[1]
       \State ensure \textsc{verify}($C_{P, i+1}$, $\mathrm{sig}_{\bar{P}, C,
       i+1}$, $\pk{\bar{P}, F}$) = True
@@ -682,6 +695,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{pay}, $x$):}
+    \ \\
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_P \geq x$
       \If{$\texttt{host}_P \neq$ ``\texttt{ledger}'' $\wedge$ $P$ has a
@@ -702,6 +716,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{get paid}, $y$):}
+    \ \\
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open} \wedge c_{\bar{P}} \geq y$
       \If{$\texttt{host}_{P} \neq$ ``\texttt{ledger}'' $\wedge$ $P$ has a
@@ -721,6 +736,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{check for lateral close}):}
+    \ \\
     \begin{algorithmic}[1]
       \If{$\texttt{host}_P \neq$ ``\texttt{ledger}''}
         \State input (\textsc{check for lateral close}) to
@@ -734,6 +750,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{check chain for closed}):}
+    \ \\
     \begin{algorithmic}[1]
       \State ensure $\itistate \notin \{\bot, \textsc{init},
       \textsc{topped up}\}$ \Comment{channel open}
@@ -770,6 +787,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln}.\textsc{submitAndCheckRevocation}($j$)}
+    \ \\
     \begin{algorithmic}[1]
       \State $\mathrm{sig}_{P, R, j} \gets \textsc{sign}(R_{P, j}, \sk{P, R,
       j})$
@@ -792,6 +810,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{forceClose}):}
+    \ \\
     \begin{algorithmic}[1]
       \State ensure $\itistate \notin \{\bot, \textsc{init}, \textsc{topped up},
       \textsc{closed}, \textsc{base punished}\}$ \Comment{channel open}
@@ -834,6 +853,7 @@
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On output (\textsc{enabler used revocation})
   by $\texttt{host}_P$:}
+    \ \\
     \begin{algorithmic}[1]
       \State $\itistate \gets \textsc{base punished}$
     \end{algorithmic}
@@ -882,6 +902,7 @@
 
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{coopClosed}) by $R$:}
+    \ \\
     \begin{algorithmic}[1]
       \If{\texttt{hosting} = True} \Comment{we are intermediary}
         \State ensure $\itistate = \textsc{open}$
@@ -925,6 +946,7 @@
 \begin{center}
   \begin{processbox}{\textsc{ln} -- On (\textsc{coop close},
   $\texttt{sig\_bal}_{\bar{P}}$) by $\bar{P}$:}
+    \ \\
     \begin{algorithmic}[1]
       \State ensure we are \texttt{funder}
       \State ensure $\itistate = \textsc{open}$

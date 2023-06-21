@@ -54,6 +54,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
 
 \begin{center}
   \begin{systembox}{\fchan{} -- open state machine, $P \in \{\alice, \bob\}$}
+    \ \\
     \begin{algorithmic}[1]
       \State On first activation: \Comment{before handing the message}
       \label{code:functionality:open:boot}
@@ -159,6 +160,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
 
 \begin{center}
   \begin{systembox}{\fchan{} -- payment state machine, $P \in \{\alice, \bob\}$}
+    \ \\
     \begin{algorithmic}[1]
       \State On (\textsc{pay}, $x$) by $P$ when $\itistate_P =
       \textsc{open}$: \Comment{$P$ pays $\bar{P}$}
@@ -231,6 +233,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
 
 \begin{center}
   \begin{systembox}{\fchan{} -- funding state machine, $P \in \{\alice, \bob\}$}
+    \ \\
     \begin{algorithmic}[1]
       \State On input (\textsc{fund me}, $x$, $\dots$) by ITI $R \in \{\fchan,
       \textsc{ln}\}$ when $\itistate_P = \textsc{open}$:
@@ -320,6 +323,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
 \begin{center}
   \begin{systembox}{\fchan{} -- force close state machine, $P \in \{\alice,
   \bob\}$}
+    \ \\
     \begin{algorithmic}[1]
       \State On (\textsc{forceClose}) by $P$ when $\itistate_P =
       \textsc{open}$:
@@ -379,6 +383,7 @@ inputs and outputs, network messages may have a tampered ``sender field''.
 \begin{center}
   \begin{systembox}{\fchan{} -- cooperative close state machine, $P \in
   \{\alice, \bob\}$}
+    \ \\
     \begin{algorithmic}[1]
       \State On (\textsc{coop closing}, $P$, $x$) by \adversary when
       $\itistate_P = \textsc{open}$:
