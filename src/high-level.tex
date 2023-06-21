@@ -52,11 +52,12 @@
   parties}. The fact that more than two base channels can be used by a
   virtual channel is ensured by the variadic property.
 
-  In a bit more detail, to open a channel (c.f.\ Figure~\ref{code:ln:open}) the two
-  counterparties (a.k.a.\ \emph{endpoints}) (i) create new keypairs and exchange
-  the resulting public keys ($2$ messages), then (ii) prepare the underlying
-  base channels if the new channel is virtual ($12 \cdot (n-1)$ total messages,
-  i.e.\ $6$ outgoing messages per endpoint and $12$ outgoing messages per
+  In slightly more detail, to open a channel (c.f.\ Figure~\ref{code:ln:open})
+  the two counterparties (a.k.a.\ \emph{endpoints}) (i) create new keypairs and
+  exchange the resulting public keys ($2$ messages), then (ii) if the new
+  channel is virtual, prepare the underlying base channels ($12 \cdot (n-1)$
+  total messages,
+  i.e., $6$ outgoing messages per endpoint and $12$ outgoing messages per
   intermediary, for $n-2$ intermediaries), next (iii) they exchange signatures
   for their respective initial commitment transactions ($2$ messages) and
   lastly, (iv) if the channel is to be opened directly on-chain (i.e.\ is
