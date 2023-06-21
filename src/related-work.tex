@@ -135,6 +135,15 @@ solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2
   complexity, and boasts a simpler design, but has less room for optimisations
   and is not recursive.
 
+  Furthermore, currently Donner is insecure because any state update to a base
+  channel invalidates the corresponding $\mathsf{tx}^r$. There is a
+  straightforward fix, which however introduces an overhead to each payment over
+  any base channel: On every payment, the two base channel parties must update
+  their $\mathsf{tx}^r$ to spend the $\alpha$ output of the new state. Potential
+  intermediaries must consider this overhead and possibly increase the fees they
+  require from the endpoints. This per-payment overhead can be avoided by using
+  ANYPREVOUT in the $\alpha$ output.
+
   Table~\ref{table:comparison-features} contains a comparison of the
   features and limitations of virtual channel protocols, including the one put
   forth in this work.
