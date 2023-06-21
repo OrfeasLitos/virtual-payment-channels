@@ -71,7 +71,7 @@
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
     \caption{Funding, commitment and revocation transactions}
-    \label{figure:payment-layer}
+    \label{figure:payment-layer-simple}
   \end{figure}
 
   \begin{figure}
@@ -79,7 +79,7 @@
     \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
     funding output of the $A-B$ channel. Can be used if $B$ has not published
     a virtual transaction yet.}
-    \label{figure:virtual-layer-endpoint}
+    \label{figure:virtual-layer-endpoint-simple}
   \end{figure}
 
   \begin{figure}
@@ -87,7 +87,7 @@
     \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
     funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
     $A$ nor $C$ have published a virtual transaction yet.}
-    \label{figure:virtual-layer-initiator}
+    \label{figure:virtual-layer-initiator-simple}
   \end{figure}
 
   \begin{figure}
@@ -97,7 +97,7 @@
     initiator transaction and the funding output of the $B$-$C$ channel. Can be
     used if $A$ has already published its initiator transaction and $C$ has not
     published a virtual transaction yet.}
-    \label{figure:virtual-layer-extend-interval}
+    \label{figure:virtual-layer-extend-interval-simple}
   \end{figure}
 
   \begin{figure}
@@ -106,7 +106,7 @@
     transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
     transactions. Usable if both $A$ and $C$ have already published their
     initiator transactions.}
-    \label{figure:virtual-layer-merge-intervals}
+    \label{figure:virtual-layer-merge-intervals-simple}
   \end{figure}
 
   \begin{figure*}
@@ -115,6 +115,6 @@
     by publishing its initiator tx, then parties $B$--$D$ each
     publishes its extend-interval tx with the relevant interval. No party is
     negligent. Virtual outputs are marked with their interval.}
-    \label{figure:example-start-end}
+    \label{figure:example-start-end-simple}
   \end{figure*}
 
