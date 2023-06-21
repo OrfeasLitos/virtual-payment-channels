@@ -67,3 +67,54 @@
   This limitation simplifies the execution model and analysis, but can be lifted
   at the cost of additional protocol complexity.
 
+  \begin{figure}
+    \centering
+    \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
+    \caption{Funding, commitment and revocation transactions}
+    \label{figure:payment-layer}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
+    \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
+    funding output of the $A-B$ channel. Can be used if $B$ has not published
+    a virtual transaction yet.}
+    \label{figure:virtual-layer-endpoint}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
+    \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
+    funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
+    $A$ nor $C$ have published a virtual transaction yet.}
+    \label{figure:virtual-layer-initiator}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
+    \caption{$A-E$ virtual channel: One of $B$'s extend interval
+    transactions. $\sigma$ is the signature. Spends the virtual output of $A$'s
+    initiator transaction and the funding output of the $B$-$C$ channel. Can be
+    used if $A$ has already published its initiator transaction and $C$ has not
+    published a virtual transaction yet.}
+    \label{figure:virtual-layer-extend-interval}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
+    \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
+    transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
+    transactions. Usable if both $A$ and $C$ have already published their
+    initiator transactions.}
+    \label{figure:virtual-layer-merge-intervals}
+  \end{figure}
+
+  \begin{figure*}
+    \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
+    \caption{$4$ simple channels supporting a virtual. $A$ starts closing
+    by publishing its initiator tx, then parties $B$--$D$ each
+    publishes its extend-interval tx with the relevant interval. No party is
+    negligent. Virtual outputs are marked with their interval.}
+    \label{figure:example-start-end}
+  \end{figure*}
+
