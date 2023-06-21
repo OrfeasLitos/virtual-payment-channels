@@ -1548,9 +1548,11 @@
 \end{center} \ \\
 
 \begin{center}
-  \begin{processbox}{\textsc{virt} -- On (\textsc{coop close},
-  \texttt{sig\_bal}, \texttt{left\_comms\_revkeys}) by $\bar{P}$:}
+  \begin{processbox}{\textsc{virt} -- cooperative closing}
     \Comment{we are left intermediary or host of fundee}
+
+    On (\textsc{coop close}, \texttt{sig\_bal}, \texttt{left\_comms\_revkeys})
+    by $\bar{P}$:
     \begin{algorithmic}[1]
       \State ensure $\itistate = \textsc{open}$
       \State parse \texttt{sig\_bal} as $(c_1', c_2'), \mathrm{sig}_1,
