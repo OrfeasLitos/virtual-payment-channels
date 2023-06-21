@@ -8,7 +8,7 @@
   certain extent inherent~\cite{scaling}. To address these considerations a
   prominent approach is to optimistically handle payments via a \emph{Payment
   Channel Network} (PCN) (see, e.g.,~\cite{DBLP:conf/fc/GudgeonMRMG20} for a
-  survey). Payments over a PCN happen \emph{off-chain}, i.e.\ without adding any
+  survey). Payments over a PCN happen \emph{off-chain}, i.e., without adding any
   transactions to the underlying blockchain. They only use the blockchain as an
   arbiter in case of dispute.
 
@@ -21,10 +21,10 @@ natural choice for parties that interact often. Multiple overlapping payment
 channels can be combined and form the PCN.
 
 Closing a channel is an operation that involves posting the state of the channel
-on-chain. Closing should be efficient, i.e.\ needing $O(1)$ on-chain
+on-chain. Closing should be efficient, i.e., needing $O(1)$ on-chain
 transactions, independent of the number of payments that have occured off-chain.
 It is also essential that any party can unilaterally close a channel as
-otherwise a malicious counterparty (i.e.\ the other channel participant) could
+otherwise a malicious counterparty (i.e., the other channel participant) could
 prevent an honest party from accessing their funds. This functionality however
 raises an important design consideration: how to prevent malicious parties from
 posting old states of the channel.
@@ -129,7 +129,7 @@ Ethereum~\cite{wood2014ethereum}.
 
 We achieve the above by leveraging a sophisticated virtual channel setup
 protocol which, on the one hand, enables endpoints to use an interface that is
-invariant between on-chain and off-chain (i.e.\ virtual) channels,
+invariant between on-chain and off-chain (i.e., virtual) channels,
 while on the other, parties can securely close the channel cooperatively
 off-chain, or instead opt for unilateral on-chain closing, following an arbitrary
 activation sequence. The latter is achieved by enabling anyone to

@@ -60,7 +60,7 @@
   i.e., $6$ outgoing messages per endpoint and $12$ outgoing messages per
   intermediary, for $n-2$ intermediaries), next (iii) they exchange signatures
   for their respective initial commitment transactions ($2$ messages) and
-  lastly, (iv) if the channel is to be opened directly on-chain (i.e.\ is
+  lastly, (iv) if the channel is to be opened directly on-chain (i.e., is
   simple), the \emph{funder} signs and publishes the \emph{funding} transaction to the
   ledger. As we alluded to earlier, a channel with its funding transaction
   on-chain is called \emph{simple}. A channel is either simple or virtual, not
@@ -82,7 +82,7 @@
   $\sigma_K$ is a signature on the transaction by $\sk{K}$; in all cases, signatures
   are carried by inputs. An output marked
   with $\pk{K}$ needs a signature by $\sk{K}$ to be spent. $m/\{\pk{1}, \dots,
-  \pk{n}\}$ is an $m$-of-$n$ multisig ($m \leq n$), i.e.\ a spending condition that needs signatures from
+  \pk{n}\}$ is an $m$-of-$n$ multisig ($m \leq n$), i.e., a spending condition that needs signatures from
   $m$ distinct keys among $\sk{1}, \dots, \sk{n}$. If $k$ is a spending
   condition, then $k + t$ is the same spending condition but with a relative timelock
   of $t$. Spending conditions or data can be combined with logical AND
@@ -122,7 +122,7 @@
   funding tx and produce two outputs with $c_A$ and $c_B$ coins each. The two
   txs differ in the outputs' spending conditions: The $c_A$ output in \alice's
   commitment tx can be spent either by \alice after it has been on-chain for a
-  pre-agreed period (i.e.\ it is encumbered with a \emph{timelock}), or by a
+  pre-agreed period (i.e., it is encumbered with a \emph{timelock}), or by a
   \emph{revocation} transaction (discussed below) via a $2$-of-$2$ multisig between
   the counterparties. The $c_B$ output can be spent only by \bob without
   a timelock. \bob's commitment tx is symmetric: the $c_A$ output can be spent
@@ -170,7 +170,7 @@
   advantage of \texttt{ANYPREVOUT} to ensure that each of $P_1, P_n$ only needs
   to maintain a single commitment transaction.
 
-  In particular, apart from the transactions of simple channels (i.e.\
+  In particular, apart from the transactions of simple channels (i.e.,
   commitment and revocation txs), each of the two
   endpoints also has an \emph{initiator} transaction that spends the funding output
   of its only base channel and produces two outputs: one new funding output for
@@ -310,7 +310,7 @@
   observes either of its funding outputs being spent, it has to publish its
   suitable virtual transaction before the timelock expires to avoid losing
   funds. What is more, all virtual outputs need the signature of all parties to
-  be spent before the timelock (i.e.\ they have an $n$-of-$n$ multisig) in order
+  be spent before the timelock (i.e., they have an $n$-of-$n$ multisig) in order
   to prevent colluding parties from faking the intervals progression. Thanks to
   Schnorr signatures and the ability to aggregate
   them~\cite{DBLP:journals/dcc/MaxwellPSW19,DBLP:conf/crypto/NickRS21} however,

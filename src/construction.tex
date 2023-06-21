@@ -72,7 +72,7 @@
   Observe that a human user may participate in various channels, therefore it
   corresponds to more than one ITMs. This is the case for example for the funder
   of a virtual channel and the corresponding party of the first base channel.
-  Such parties are called \emph{kindred}. They communicate locally (i.e.\ via
+  Such parties are called \emph{kindred}. They communicate locally (i.e., via
   inputs and outputs, without using the adversarially controlled network) and
   balance guarantees concern their aggregate coins. Formally this communication
   is modelled by having a virtual channel using its base channels as global
@@ -196,7 +196,7 @@
   If the channel is virtual, each party also checks that its upcoming balance is
   lower than the balance of its sibling's counterparty and that the upcoming
   balance of the counterparty is higher than the balance of its own sibling,
-  otherwise it rejects the payment. This is to mitigate a ``griefing'' attack (i.e.\
+  otherwise it rejects the payment. This is to mitigate a ``griefing'' attack (i.e.,
   one that does not lead to financial gain) where a malicious counterparty
   uses an old commitment transaction to spend the base funding output, therefore
   blocking the honest party from using its initiator virtual transaction. This
@@ -234,7 +234,7 @@
   subprotocols. Any party can initiate it by asking the virtual channel fundee.
   The latter signs the last coin balance and sends it to the funder, who first
   ensures the fundee signed the correct balance, then signs it as well. Its
-  enabler (i.e.\ the kindred party that is a member of the $1$st base channel)
+  enabler (i.e., the kindred party that is a member of the $1$st base channel)
   generates and signs a new commitment tx in which it adds the funder's coins to
   its own and the fundee's coins to its counterparty's, while using the funding
   keys that were used before opening the virtual channel. It also generates a
@@ -318,7 +318,7 @@
   party.
   The third circuit concerns sharing signatures for the funding outputs
   (Figure~\ref{code:virtual-layer:funding-sigs}). Each party signs all
-  transactions that spend a funding output relevant to the party, i.e.\ the
+  transactions that spend a funding output relevant to the party, i.e., the
   initiator transaction and some of the extend-interval transactions of its
   neighbours. The two endpoints send $2$ signatures each when $n = 3$ and $n -
   2$ signatures each when $n > 3$, whereas each intermediary sends $2 + \chi_{i
@@ -346,7 +346,7 @@
   publishes the unique valid virtual transaction. It then repeatedly checks the
   chain to see if the transaction is included
   (Figure~\ref{code:virtual-layer:check-chain-close}). If it is included, the
-  virtual layer is closed and \textsc{virt} informs (i.e.\ outputs
+  virtual layer is closed and \textsc{virt} informs (i.e., outputs
   (\textsc{closed}) to) $R$. The instruction to close has to be received
   potentially many times, because a number of virtual transactions (the ones
   that spend the same output) are mutually exclusive and therefore if another
