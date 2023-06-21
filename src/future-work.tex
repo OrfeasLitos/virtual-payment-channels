@@ -1,4 +1,48 @@
 \section{Discussion and Future work}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+  {\paragraph{Domino attack}}%
+  {\paragraph{Domino attack.}}%
+\makeatother%
+In~\cite{donner} the Domino attack is presented. In a nutshell, it claims that a
+malicious party can force other channels to close. Applying this mechanism to
+the example of Figure~\ref{figure:example-start-end}, $A$ and $E$ open channels
+$(A, B)$, $(D, E)$ and $(A, E)$ only with the intent of forcing channels $(B,
+C)$ and $(C, D)$ closed. Observe however that honest base parties are only
+forced to publish a single virtual transaction each and that all virtual
+transactions have a funding output for the corresponding channel, therefore no
+base channel is closed. Thus the attack does not achieve base channel closure as
+it intended, just the publication of a single virtual transaction per base
+party. Unfortunately, the channel capacity is reduced by the collateral, which
+is paid directly to one of the two base channel parties. Since no coins are
+stolen in the process, the only cost to $B$, $C$ and $D$ is the on-chain fees
+for publishing a single transaction each. This is an inherent but small risk of
+recursive channels, which must be taken into account before allowing one's
+channel to be the base of another. This risk can be eliminated by imposing a
+unilateral closing fee equal to the on-chain fee of publishing one transaction
+per base party. This fee need not apply in case of cooperative closing nor
+during normal operation and can be reduced for reputable counterparties.
+Mechanisms for assigning inactivity blame (i.e., proving that honest parties
+attempted collaborative closing before closing unilaterally) can be designed but
+are beyond the scope of this work.
+
+One straightforward modification to Elmo eliminates the issue of base channel
+capacity reduction by a Domino attack, while independently reducing on-chain
+footprint: from each virtual transaction, we eliminate the output that directly
+pays a party (e.g., first output of
+Fig.~\ref{figure:virtual-layer-extend-interval-simple}) and move the
+corresponding coins into the funding output of this transaction. We further
+ensure at the protocol level that the base party that owns these coins never
+allows its channel balance to fall below the collateral, until the supported
+virtual channel closes. This improvement ensures that the collateral
+automatically becomes available to use in the base channel after the virtual one
+closes, effectively keeping more funds off-chain even after a Domino attack.
+
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+  {\paragraph{Future work}}%
+  {\paragraph{Future work.}}%
+\makeatother%
   A number of features can be added to our protocol for additional efficiency,
   usability and flexibility. First of all, in our current construction, each
   time a particular channel $C$ acts as a base
