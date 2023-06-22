@@ -67,6 +67,13 @@
   This limitation simplifies the execution model and analysis, but can be lifted
   at the cost of additional protocol complexity.
 
+  In order to build better intuition for Elmo, let us present examples of the
+  lifecycles of a simple and a virtual channel. Consider $5$ parties, $A, B,
+  \dots, E$ and $4$ channels, $(A, B)$, $\dots,(D, E)$, that will act as
+  the base of the virtual channel $(A, E)$. We first follow the operations of
+  the simple channel $(A, B)$ and then those of $(A, E)$. We simplify some parts
+  of the protocol to aid comprehension.
+
   \makeatletter%
   \@ifclassloaded{IEEEtran}%
     {\paragraph{Simple channel}}%
