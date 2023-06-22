@@ -136,7 +136,7 @@
   \begin{figure}
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
     \caption{$A-E$ virtual channel: One of $B$'s extend interval
-    transactions. $\sigma$ is the signature. Spends the virtual output of $A$'s
+    transactions. Spends the virtual output of $A$'s
     initiator transaction and the funding output of the $B$-$C$ channel. Can be
     used if $A$ has already published its initiator transaction and $C$ has not
     published a virtual transaction yet.}
@@ -148,16 +148,19 @@
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
     transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
     transactions. Usable if both $A$ and $C$ have already published their
-    initiator transactions.}
+    initiator or extend-interval transactions.}
     \label{figure:virtual-layer-merge-intervals-simple}
   \end{figure}
 
   \begin{figure*}
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
-    \caption{$4$ simple channels supporting a virtual. $A$ starts closing
-    by publishing its initiator tx, then parties $B$--$D$ each
-    publishes its extend-interval tx with the relevant interval. No party is
-    negligent. Virtual outputs are marked with their interval.}
+    \caption{$4$ simple channels supporting a virtual. $A$ starts closing by
+    publishing its initiator tx, then parties $B$--$D$ each publishes its
+    extend-interval tx with the relevant interval. No party stays inactive.
+    Virtual outputs are marked with their interval. \emph{Bridge} txs
+    (such as $b$) are needed to convert the various virtual outputs into the
+    same funding output, as \texttt{ANYPREVOUT} only works across identical
+    outputs.}
     \label{figure:example-start-end-simple}
   \end{figure*}
 
