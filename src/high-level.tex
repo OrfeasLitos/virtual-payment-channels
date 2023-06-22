@@ -67,6 +67,42 @@
   This limitation simplifies the execution model and analysis, but can be lifted
   at the cost of additional protocol complexity.
 
+  \makeatletter%
+  \@ifclassloaded{IEEEtran}%
+    {\paragraph{Simple channel}}%
+    {\paragraph{Simple channel.}}%
+  \makeatother%
+  First $A$ and $B$ generate keypairs and exchange the public keys. Each then
+  locally generates the \emph{funding} and the two \emph{commitment} txs
+  (Fig.~\ref{figure:payment-layer-simple}). The latter are signed and the
+  signatures are exchanged. $A$ then publishes the funding tx on-chain. Once it
+  is finalised, the channel is open.
+
+  The funding tx moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
+  output that needs signatures from both $A$ and $B$ to be spent. There is one
+  commitment tx per party, stored locally off-chain. The one held by $A$
+  ($C_{A,i}$ in Fig.~\ref{figure:payment-layer-simple}) spends the funding tx
+  and has one output for $A$ (initially with all coins) and one for $B$
+  (initially with $0$ coins). $A$'s output can be spent by either a multisig, or
+  by $A$ after a relative timelock of $t$. This is, as we will promptly see, so
+  that $B$ has some time to \emph{punish} $A$ if she cheats. $B$'s commitment tx
+  is symmetric.
+
+  When $A$ pays $B$, the parties create new commitment txs reflecting the new
+  balance, sign them and exchange the signatures. In order to ensure only one
+  set of commitment txs is valid at a time, they then revoke their previous
+  commitment txs. This is done by generating and signing the revocation txs of
+  the previous commitment txs. $B$'s revocation tx ($R_{B,i}$ in
+  Fig.~\ref{figure:payment-layer-simple}) gives to $B$ the coins that belonged
+  to $A$ in the previous commitment tx and vice versa. This way both parties are
+  disincentivised from publishing an old commitment tx under the threat of
+  losing all their channel coins.
+
+  Closing $(A, B)$ is now as simple as unilaterally publishing the latest
+  commitment tx on-chain and waiting for the timelock to expire. Since the last
+  commitment tx is not revoked, punishment is impossible. Observe that the
+  mechanics of simple channels are essentially a simplification of LN.
+
   \begin{figure}
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
