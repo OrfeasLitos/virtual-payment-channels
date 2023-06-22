@@ -110,6 +110,117 @@
   commitment tx is not revoked, punishment is impossible. Observe that the
   mechanics of simple channels are essentially a simplification of LN.
 
+  \makeatletter%
+  \@ifclassloaded{IEEEtran}%
+    {\paragraph{Virtual channel}}%
+    {\paragraph{Virtual channel.}}%
+  \makeatother%
+  Assume now that channels $(A, B)$, $\dots,(D, E)$, are open and the ``left''
+  party of each owns at least $c$ coins in it. These channels can be either
+  simple or virtual. In order for the virtual channel $(A, E)$ to open using
+  them as base channels, initially with $A$ having $c$ coins, the following
+  steps are taken. First, the $5$ parties generate and exchange keys. Then the
+  base parties are set up: each base channel is updated to contain $c$ less
+  coins, taken from the ``left'' party. The updated commitment txs also use new
+  keys for their input multisig, since, as we will see, so-called \emph{virtual}
+  txs will interject the funding and the commitment txs from now on, all
+  together forming the \emph{virtual layer}.
+
+  Next, these virtual txs are generated and signed. These txs sit at the core of
+  Elmo. Their logic is as follows: each intermediary is forced to spend both its
+  adjacent funding outputs at once if it wants to close either of its channels
+  -- the currently valid way of spending the funding output, the commitment tx,
+  will soon be revoked. Spending the two funding outputs is done by the
+  intermediary's \emph{initiator} virtual tx, which produces one new funding
+  output for each of the channels
+  (Fig.~\ref{figure:virtual-layer-initiator-simple}, top \& bottom outputs), one
+  output that refunds the collateral to the intermediary ($2$nd from top) and,
+  crucially, a so-called \emph{virtual} output ($3$rd from top). The latter
+  output can be spent by either of the two adjacent parties if they are
+  intermediaries, using an \emph{extend-interval} virtual tx. Such a tx also
+  spends the other, as-of-yet unspent, funding output of the intermediary that
+  publishes it (Fig.~\ref{figure:virtual-layer-extend-interval-simple}, bottom
+  input). It has $3$ outputs: one refunding the collateral to the publisher
+  (top), another virtual output (middle) and a funding output that replaces the
+  one just spent (bottom). This virtual output can in turn be spent by another
+  extend-interval tx, which produces yet another virtual output and so on until
+  all base funding outputs are spent and all intermediaries are refunded. The
+  last virtual output is finally the funding output of the virtual channel.
+
+  The virtual txs are designed around two axes: First, each intermediary can
+  only publish a single virtual tx, by which it is refunded its collateral
+  exactly once. Second, if the chain of virtual txs is at any point broken by,
+  e.g., an inactive intermediary that does not publish its virtual tx, the
+  virtual channel will still be funded correctly. This is achieved by turning
+  the unclaimed virtual output into the funding output of the virtual channel
+  after a timelock (see, e.g., $2$nd spending method of the $3$rd output of
+  Fig.~\ref{figure:virtual-layer-initiator-simple} and note that $P + t$ denotes
+  that spending method $P$ is only available after a \emph{relative} timelock
+  $t$, with relative meaning that the countdown starts at the moment of
+  publication). In this case, the inactive party loses its collateral.
+
+  A number of considerations remain before the security of the scheme is
+  ensured. Firstly, $A$ and $E$ need to be able to unilaterally initiate the
+  ``collapse'' of the virtual layer. This is achieved by equipping them with
+  special, single-input initiator txs
+  (Fig.~\ref{virtual-layer-endpoint-simple.tex}) -- these are the only virtual
+  txs needed by the $2$ endpoints. Secondly, intermediaries must be able to
+  regain their collateral even if both their funding outputs have been consumed.
+  This is ensured via \emph{merge-intervals} virtual txs (e.g.,
+  Fig.~\ref{figure:virtual-layer-merge-intervals-simple}) which spend both
+  lateral virtual outputs, refund the publisher and produce a new virtual
+  output. Thirdly, it must be ensured that no intermediary can publish more than
+  one virtual tx to protect the endpoints from an unbounded sequence of virtual
+  txs preventing them from accessing their funding output indefinitely -- note
+  that malicious parties can fabricate arbitrarily many virtual outputs using
+  their own, external to the protocol, coins, therefore if all virtual outputs
+  were identical, a perpetual stream of merge-intervals txs, spending one valid
+  and one fabricated virtual output, could be published. This is safeguarded by
+  specifying on each virtual output the exact sequence of parties that have
+  already published a virtual tx and only allowing the parties at the two edges
+  to extend it with their virtual tx. Virtual outputs that correspond to cases
+  in which all intermediaries have acted are not spendable by another virtual
+  transaction, ensuring that the endpoints will eventually obtain a funding
+  output. Preventing this attack means that intermediaries need to store
+  $O(n^3)$ virtual transactions for a virtual channel over $n$ parties. Lastly,
+  the exact values of timelocks have to be carefully selected to ensure that
+  enough time is given to each party to act. The timelocks increase linearly
+  with the depth of the recursion. The exact values are shown in
+  Sec.~\ref{sec:pseudocode} and Appx.~\ref{sec:protocol}.
+
+  After the virtual txs are set up, the parties revoke their previous commitment
+  txs. This is achieved by signing the corresponding revocation txs, just like
+  for a simple channel.
+
+  At last, the virtual layer has been set up: Both $A$ and $E$ can unilaterally
+  force the funding output of their virtual channel on-chain, irrespective of
+  the actions of the rest of the parties. Likewise, honest intermediaries' funds
+  are secure and unilaterally retrievable. $A$ and $E$ finally exchange
+  commitment transactions for their new channel, thus concluding its opening.
+
+  Payments over virtual channels are carried out exactly like those of simple
+  ones; we refer the reader to the relevant description above.
+
+  To enhance usability, our protocol allows the virtual channel to be closed
+  off-chain, given that all parties cooperate. To do this, the endpoints first
+  let the intermediaries know their final virtual channel balance. Then the
+  parties of each base channel create new commitment txs for their channels,
+  moving the collateral back into the channel: the ``left'' party gets $A$'s
+  coins and the ``right'' one gets $E$'s. Thus all intermediaries ``break even''
+  across their two channels. Once this is done, all virtual txs are revoked,
+  using a logic similar to the revocation procedure of simple channels but
+  scaled up to all parties. This is why all virtual tx outputs
+  (Figs.~\ref{figure:virtual-layer-endpoint-simple}-\ref{figure:virtual-layer-merge-intervals-simple})
+  have a spending method with $A_R \dots E_R$ keys.
+
+  What if one of the parties does not cooperate? Then unilateral, on-chain
+  closing must be used. Fig.~\ref{figure:example-start-end-simple} shows how
+  this would play out if $A$ initiated this procedure.
+
+  Our protocol is recursive because both simple and virtual channels are
+  ultimately represented by a funding output that either is or can be put
+  on-chain, therefore new virtual channels can be built on either.
+
   \begin{figure}
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
