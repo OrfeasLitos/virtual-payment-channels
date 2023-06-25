@@ -153,6 +153,7 @@
 \newcommand{\footTODO}[1]{\footnote{\TODO{#1}}}
 
 %----- Algorithm Environment ---------------------------------------------------
+\RequirePackage{algorithmicx}
 %Header for Algorithms/Functionalities
 \newcommand{\algoHead}[1]{\vspace{0.2em} \underline{\textbf{#1}} \vspace{0.3em}}
 \newcommand{\algoHeadExt}[2]{\vspace{0.2em} \underline{\textbf{#1} #2} \vspace{0.3em}}
@@ -173,6 +174,7 @@
 
 %----- Box Environment ---------------------------------------------------------
 \RequirePackage{mdframed}
+\RequirePackage{enumitem}
 
 %Basic box structure with title box
 \newenvironment{titlebox}[3]
