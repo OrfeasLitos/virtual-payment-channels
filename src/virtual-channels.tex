@@ -35,7 +35,11 @@
 \import{./src/}{conclusion.tex}
 \bibliography{src/references}
 \newpage
-\appendix
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+  {\appendices}%
+  {\appendix}%
+\makeatother%
 \import{./src/}{description.tex}
 \import{./src/}{uc.tex}
 \import{./src/}{extra-future-work.tex}
