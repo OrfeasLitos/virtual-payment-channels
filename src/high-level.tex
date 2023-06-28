@@ -267,8 +267,9 @@
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
     \caption{$4$ simple channels supporting a virtual. $A$ starts closing by
     publishing its initiator tx, then parties $B$--$D$ each publishes its
-    extend-interval tx with the relevant interval. No party stays inactive.
-    Virtual outputs are marked with their interval. \emph{Bridge} txs
+    suitable extend-interval. No party stays inactive.
+    Virtual outputs are marked with the set (interval) of parties that have
+    already published a tx. \emph{Bridge} txs
     (such as $b$) are needed to convert the various virtual outputs into the
     same funding output, as \texttt{ANYPREVOUT} only works across identical
     outputs.}
