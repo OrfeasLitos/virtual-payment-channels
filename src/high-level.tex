@@ -85,6 +85,13 @@
   signatures are exchanged. $A$ then publishes the funding tx on-chain. Once it
   is finalised, the channel is open.
 
+  \begin{figure}
+    \centering
+    \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
+    \caption{Funding, commitment and revocation transactions}
+    \label{figure:payment-layer-simple}
+  \end{figure}
+
   The funding tx moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
   output that needs signatures from both $A$ and $B$ to be spent. There is one
   commitment tx per party, stored locally off-chain. The one held by $A$
@@ -147,6 +154,24 @@
   all base funding outputs are spent and all intermediaries are refunded. The
   last virtual output is finally the funding output of the virtual channel.
 
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
+    \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
+    funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
+    $A$ nor $C$ have published a virtual transaction yet.}
+    \label{figure:virtual-layer-initiator-simple}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
+    \caption{$A-E$ virtual channel: One of $B$'s extend interval
+    transactions. Spends the virtual output of $A$'s
+    initiator transaction and the funding output of the $B$-$C$ channel. Can be
+    used if $A$ has already published its initiator transaction and $C$ has not
+    published a virtual transaction yet.}
+    \label{figure:virtual-layer-extend-interval-simple}
+  \end{figure}
+
   The virtual txs are designed around two axes: First, each intermediary can
   only publish a single virtual tx, by which it is refunded its collateral
   exactly once. Second, if the chain of virtual txs is at any point broken by,
@@ -188,6 +213,23 @@
   with the depth of the recursion. The exact values are shown in
   Sec.~\ref{sec:pseudocode} and Appx.~\ref{sec:protocol}.
 
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
+    \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
+    funding output of the $A-B$ channel. Can be used if $B$ has not published
+    a virtual transaction yet.}
+    \label{figure:virtual-layer-endpoint-simple}
+  \end{figure}
+
+  \begin{figure}
+    \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
+    \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
+    transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
+    transactions. Usable if both $A$ and $C$ have already published their
+    initiator or extend-interval transactions.}
+    \label{figure:virtual-layer-merge-intervals-simple}
+  \end{figure}
+
   After the virtual txs are set up, the parties revoke their previous commitment
   txs. This is achieved by signing the corresponding revocation txs, just like
   for a simple channel.
@@ -220,48 +262,6 @@
   Our protocol is recursive because both simple and virtual channels are
   ultimately represented by a funding output that either is or can be put
   on-chain, therefore new virtual channels can be built on either.
-
-  \begin{figure}
-    \centering
-    \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
-    \caption{Funding, commitment and revocation transactions}
-    \label{figure:payment-layer-simple}
-  \end{figure}
-
-  \begin{figure}
-    \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
-    \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
-    funding output of the $A-B$ channel. Can be used if $B$ has not published
-    a virtual transaction yet.}
-    \label{figure:virtual-layer-endpoint-simple}
-  \end{figure}
-
-  \begin{figure}
-    \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
-    \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
-    funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
-    $A$ nor $C$ have published a virtual transaction yet.}
-    \label{figure:virtual-layer-initiator-simple}
-  \end{figure}
-
-  \begin{figure}
-    \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
-    \caption{$A-E$ virtual channel: One of $B$'s extend interval
-    transactions. Spends the virtual output of $A$'s
-    initiator transaction and the funding output of the $B$-$C$ channel. Can be
-    used if $A$ has already published its initiator transaction and $C$ has not
-    published a virtual transaction yet.}
-    \label{figure:virtual-layer-extend-interval-simple}
-  \end{figure}
-
-  \begin{figure}
-    \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
-    \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
-    transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
-    transactions. Usable if both $A$ and $C$ have already published their
-    initiator or extend-interval transactions.}
-    \label{figure:virtual-layer-merge-intervals-simple}
-  \end{figure}
 
   \begin{figure*}
     \centering
