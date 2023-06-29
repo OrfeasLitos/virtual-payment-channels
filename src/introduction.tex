@@ -18,7 +18,7 @@ messages to update the state of the channel. The key feature is that state
 updates are not posted on-chain and hence they remain unencumbered by the
 performance limitations of the underlying blockchain protocol, making them a
 natural choice for parties that interact often. Multiple overlapping payment
-channels can be combined and form the PCN.
+channels can be combined and form a PCN.
 
 Closing a channel is an operation that involves posting the state of the channel
 on-chain. Closing should be efficient, i.e., needing $O(1)$ on-chain
@@ -76,7 +76,8 @@ managing and closing multiple virtual channels only to use the one at the
 ``top'' of the recursion.
 \item Symmetric. A symmetric virtual channel constructor offers setup and
 closing operations that are symmetric in terms of computation, network and storage cost between the two
-\emph{endpoints} or the \emph{intermediaries} (but not a mix of both) for the
+\emph{endpoints} or the \emph{intermediaries} (but not necessarily
+a mix of both) for the
 optimistic and pessimistic execution paths. Importantly, this ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel.
 \end{itemize}
 
@@ -103,9 +104,9 @@ congestion could become prohibitively expensive, and needs closing the entire
 channel even if only a few coins are needed. On the other hand, a recursive
 virtual channel allows using some of its coins with other parties by off-chain
 opening a new virtual channel on top, and even keeping the remaining coins in
-the initial channel. This flexibility may can more confidence in virtual
-channels, prompting users to transfer more coins off-chain and ultimately
-reducing on-chain congestion.
+the initial channel. This flexibility may inspire more confidence in virtual
+channels, prompting users to transfer more coins off-chain and 
+reduce further on-chain congestion.
 
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
