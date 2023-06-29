@@ -28,14 +28,14 @@ attempted collaborative closing before closing unilaterally) can be designed but
 are beyond the scope of this work.
 
 There is also a simple modification to Elmo that eliminates the issue of base channel capacity reduction under Domino attack, while it also reduces on-chain
-footprint: from each virtual transaction, we can
+footprint: from each virtual tx, we can
 eliminate the output that directly
-pays a party (e.g., first output of
+pays a party (e.g., $1$st output of
 Fig.~\ref{figure:virtual-layer-extend-interval-simple}) and move the
 corresponding coins into the funding output of this transaction. We further
 ensure at the protocol level that the base party that owns these coins never
 allows its channel balance to fall below the collateral, until the supported
-virtual channel closes. This modification ensures that the collateral
+virtual channel closes. This change ensures that the collateral
 automatically becomes available to use in the base channel after the virtual one
 closes, effectively keeping more funds off-chain even after a Domino attack.
 
@@ -54,7 +54,7 @@ closes, effectively keeping more funds off-chain even after a Domino attack.
   layers of its base channels. Both these issues can be alleviated by extending
   the opening and cooperative closing subprotocol with the ability to
   cooperatively open and close multiple virtual channels in the same layer,
-  either simultaneously or as an amendment to an existing virtualisation layer.
+  either simultaneously or by amending an existing virtualisation layer.
 
   Due to the possibility of a griefing attack
   (Appx.~\ref{construction:real-world}), the range of balances a virtual
@@ -110,5 +110,5 @@ closes, effectively keeping more funds off-chain even after a Domino attack.
   multi-hop payments in Lightning. Therefore a future extension can improve the
   privacy of the construction and formally demonstrate exact privacy guarantees.
 
-  Several possible usability upgrades are discussed in
+  We discuss several possible usability upgrades in
   Appx.~\ref{sec:further-future-work}.
