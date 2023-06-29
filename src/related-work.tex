@@ -111,8 +111,12 @@ solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2
   publish on-chain $k$ transactions in order to close the channel if all
   intermediaries actively monitor the blockchain.
 
-  Donner~\cite{donner} is the first work to achieve variadic
-  virtual channels without recursion nor features that are not yet
+  Donner~\cite{donner}
+    (released originally concurrently with the first technical report release of our work) 
+%  is the first work 
+%  to 
+achieves also variadic
+  virtual channels, but without recursion nor features that are not yet
   available in Bitcoin. This is achieved by having the funder lock as
   collateral twice the amount of the desired channel funds: once on-chain with
   funds that are external to the \emph{base channels} (i.e., the channels that the
@@ -125,24 +129,27 @@ solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2
   placeholder outputs which, due to the minimum coins they need to carry to
   exceed Bitcoin's \emph{dust limit}, may skew the incentives of rational players
   and adds to the
-  opportunity cost of maintaining a channel. What is more, its design complicates
+  opportunity cost of maintaining a channel. Further, its design complicates
   future iterations that lift its current restriction that only one of the two
   channel parties can fund the virtual channel. The aforementioned incentives
   together with its lack of recursiveness mean that if a party with coins in a
   Donner channel decides to use them with another party, it first has to close
-  its channel on-chain, with all the delays and fees this entails. Donner is
+  its channel on-chain, with all the delays and fees this entails.
+  On the positive side, Donner is
   more efficient than Elmo in terms of storage, computation and communication
-  complexity, and boasts a simpler design, but has less room for optimisations
-  and is not recursive. This work also introduces the \emph{Domino attack},
+  complexity, and boasts a simpler design. 
+  %, but has less room for optimisations and is not recursive. 
+  Their work also introduces the \emph{Domino attack},
   which we adress in detail in Section~\ref{sec:future-work}.
 
-  Furthermore, currently Donner is insecure because any state update to a base
+  Furthermore,  Donner as described in~\cite{donner}, 
+  is insecure because any state update to a base
   channel invalidates the corresponding $\mathsf{tx}^r$. There is a
   straightforward fix, which however introduces an overhead to each payment over
   any base channel: On every payment, the two base channel parties must update
   their $\mathsf{tx}^r$ to spend the $\alpha$ output of the new state. Potential
   intermediaries must consider this overhead and possibly increase the fees they
-  require from the endpoints. This per-payment overhead can be avoided by using
+  require from the endpoints. Note this per-payment overhead can be avoided by using
   ANYPREVOUT in the $\alpha$ output.
 
   Table~\ref{table:comparison-features} contains a comparison of the
