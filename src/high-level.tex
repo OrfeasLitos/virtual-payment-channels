@@ -88,7 +88,11 @@
   \begin{figure}
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
-    \caption{Funding, commitment and revocation transactions}
+    \caption{Funding, commitment and revocation transactions. $A \wedge B$ needs
+    a signature by both $A$ and $B$, $A_R$ is $A$'s revocation key. $A+t$
+    needs a signature by $A$ after relative timelock of $t$. The first
+    commitment output is spendable by either $A_R \wedge B_R$ or by $A + t$,
+    with the ``or'' denoted with $\vee$.}
     \label{figure:payment-layer-simple}
   \end{figure}
 
@@ -98,7 +102,8 @@
   ($C_{A,i}$ in Fig.~\ref{figure:payment-layer-simple}) spends the funding tx
   and has one output for $A$ (initially with all coins) and one for $B$
   (initially with $0$ coins). $A$'s output can be spent by either a multisig, or
-  by $A$ after a relative timelock of $t$. This is, as we will promptly see, so
+  by $A$ after a \emph{relative timelock} of $t$ (with relative meaning that the countdown starts at the moment of
+  publication). This is, as we will promptly see, so
   that $B$ has some time to \emph{punish} $A$ if she cheats. $B$'s commitment tx
   is symmetric.
 
@@ -158,7 +163,8 @@
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
     \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
     funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
-    $A$ nor $C$ have published a virtual transaction yet.}
+    $A$ nor $C$ have published a virtual transaction yet. $A_V$: $A$'s
+    ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
     \label{figure:virtual-layer-initiator-simple}
   \end{figure}
 
@@ -179,10 +185,7 @@
   virtual channel will still be funded correctly. This is achieved by turning
   the unclaimed virtual output into the funding output of the virtual channel
   after a timelock (see, e.g., $2$nd spending method of the $3$rd output of
-  Fig.~\ref{figure:virtual-layer-initiator-simple} and note that $P + t$ denotes
-  that spending method $P$ is only available after a \emph{relative} timelock
-  $t$, with relative meaning that the countdown starts at the moment of
-  publication). In this case, the inactive party loses its collateral.
+  Fig.~\ref{figure:virtual-layer-initiator-simple}). In this case, the inactive party loses its collateral.
 
   A number of considerations remain before the security of the scheme is
   ensured. Firstly, $A$ and $E$ need to be able to unilaterally initiate the
