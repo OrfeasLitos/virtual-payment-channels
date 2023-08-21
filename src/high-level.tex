@@ -44,7 +44,10 @@
   funding output of $(P_1, P_n)$ is automatically on-chain and closing can
   proceed as in LN. If instead any intermediary stays inactive, then a timelock
   expires and a suitable output becomes the funding output for $(P_1, P_n)$, at
-  the expense of the inactive party.
+  the expense of the inactive party. As we will see below, \texttt{ANYPREVOUT} is
+  used in the funding output to ensure that the channel needs only a
+  single commitment tx per endpoint, avoiding a state blowup that would be
+  exponential in the recursion depth and making off-chain payments efficient.
 
   In a nutshell, a virtual channel is built on top of two or more \emph{base
   channels}, which, due to the recursive property, may themselves be simple or
@@ -245,6 +248,16 @@
 
   Payments over virtual channels are carried out exactly like those of simple
   ones; we refer the reader to the relevant description above.
+
+  Note that all funding outputs use the \texttt{ANYPREVOUT} flag, thus ensuring
+  that a single pair of commitment txs can spend any of the funding outputs. If
+  \texttt{ANYPREVOUT} were not used, each virtual layer would need a copy of the
+  entire set of discussed txs for each possible funding output of its base
+  layer, resulting in exponential storage requirements. To make matters worse,
+  a payment over channel $C$ would need renegotiation of exponentially many
+  commitment txs, as well as recalculation of all their downstream txs, which
+  would in turn need interaction with intermediaries of all virtual channels
+  built over $C$, completely defeating the essence of payment channels.
 
   To enhance usability, our protocol allows the virtual channel to be closed
   off-chain, given that all parties cooperate. To do this, the endpoints first

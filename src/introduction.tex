@@ -142,7 +142,9 @@ become an initiator towards closing the channel, while subsequent respondents, f
   protocol requires the \texttt{ANYPREVOUT} signature type (slated for
   inclusion in the next Bitcoin update\footnote{\url{https://anyprevout.xyz/}}), which does not sign the hash of the
   transaction it spends, thus enabling a single pre-signed transaction
-  to spend any output with a suitable script. We conjecture that without
+  to spend any output with a suitable script. We leverage \texttt{ANYPREVOUT} to
+  avoid exponential storage and ensure off-chain payments of base channels are
+  practical. We further conjecture that without
   \texttt{ANYPREVOUT} no efficient off-chain virtual channel constructor
   over Bitcoin can be built. In particular, if any such protocol
   (i) offers an efficient closing operation (i.e., with $O(1)$ on-chain
