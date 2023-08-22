@@ -96,7 +96,8 @@ particular concern since most previous virtual channel constructors proposed are
 binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
 
 The primary motivation for recursive channels is offering more flexibility in
-moving off-chain coins quickly and at a low cost, even under consistently
+moving off-chain coins quickly, with minimal interaction and at a low cost, even
+under consistently
 congested ledger conditions. Without recursiveness and in the face of
 unresponsive channel parties, one would have to first
 close its virtual channel on-chain in order to then use some of its coins with
@@ -108,7 +109,8 @@ recursive
 virtual channel allows using some of its coins with other parties by
 opening off-chain a new virtual channel on top without involvement of the base parties of
 the original channel, and even keeping the remaining coins in
-the latter. This flexibility may inspire more confidence in virtual
+the latter. Importantly, users can decide to open a recursive virtual channel
+long after having established their underlying one. This flexibility may inspire more confidence in virtual
 channels, prompting users to transfer more coins off-chain and
 reduce further on-chain congestion.
 
