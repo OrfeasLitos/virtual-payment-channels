@@ -48,7 +48,8 @@ to each other as long as they can find a route of payment channels that connects
 them. The downside of this mechanism is that it requires the direct involvement
 of all the parties along the path for each payment. Instead, \emph{virtual payment
 channels} suggest the more attractive approach of putting an one-time off-chain
-initialization step to set up a virtual payment channel, which subsequently can
+initialization step to set up a virtual payment channel over the preexisting
+channels, which subsequently can
 be used for direct payments with complexity ---in the optimistic case---
 independent of the length of the path. When the virtual channel has exhausted
 its usefulness, it can be closed off-chain if the involved parties cooperate.
