@@ -91,11 +91,13 @@
   \begin{figure}
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
-    \caption{Funding, commitment and revocation transactions. $A \wedge B$ needs
-    a signature by both $A$ and $B$, $A_R$ is $A$'s revocation key. $A+t$
-    needs a signature by $A$ after relative timelock of $t$. The first
-    commitment output is spendable by either $A_R \wedge B_R$ or by $A + t$,
-    with the ``or'' denoted with $\vee$.}
+    \caption{Funding, $A$'s commitment and $B$'s revocation txs, left
+    to right respectively. Not shown here are the symmetric commitment and
+    revocation txs of $B$ and $A$ respectively. $A \wedge B$ needs a signature
+    by both $A$ and $B$, $A_R$ is $A$'s revocation key. $A+t$ needs a signature
+    by $A$ after relative timelock of $t$. The first commitment output is
+    spendable by either $A_R \wedge B_R$ or by $A + t$, with the ``or'' denoted
+    with $\vee$.}
     \label{figure:payment-layer-simple}
   \end{figure}
 
