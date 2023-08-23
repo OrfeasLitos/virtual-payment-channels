@@ -112,11 +112,13 @@
   that $B$ has some time to \emph{punish} $A$ if she cheats. $B$'s commitment tx
   is symmetric.
 
-  When $A$ pays $B$, the parties create new commitment txs reflecting the new
-  balance, sign them and exchange the signatures. In order to ensure only one
-  set of commitment txs is valid at a time, they then revoke their previous
-  commitment txs. This is done by generating and signing the revocation txs of
-  the previous commitment txs. $B$'s revocation tx ($R_{B,i}$ in
+  When $A$ pays $c$ coins to $B$, the parties create two new commitment txs.
+  They have the same outputs and scripts as their previous ones, save for the
+  coins: $A$'s outputs have $c$ coins less, $B$'s outputs have $c$ coins more.
+  They sign them and exchange the signatures. In order to ensure only one set of
+  commitment txs is valid at a time, they then revoke their previous ones. This
+  is done by generating and signing the revocation txs of the previous
+  commitment txs. $B$'s revocation tx ($R_B$ in
   Fig.~\ref{figure:payment-layer-simple}) gives to $B$ the coins that belonged
   to $A$ in the previous commitment tx and vice versa. This way both parties are
   disincentivised from publishing an old commitment tx under the threat of
