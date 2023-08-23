@@ -136,8 +136,11 @@
   \makeatother%
   Assume now that channels $(A, B)$, $\dots,(D, E)$, are open and the ``left''
   party of each owns at least $c$ coins in it. These channels can be either
-  simple or virtual. In order for the virtual channel $(A, E)$ to open using
-  them as base channels, initially with $A$ having $c$ coins, the following
+  simple or virtual -- in the latter case, the recursive property is leveraged.
+  Thanks to the similarity of all layers, the description below is identical in
+  either case. In order for the virtual channel $(A, E)$ to open using $(A, B)$,
+  $\dots,(D, E)$, as base channels, initially with $A$ having $c$ coins, the
+  following
   steps are taken. First, the $5$ parties generate and exchange keys. Then the
   base parties are set up: each base channel is updated to contain $c$ less
   coins, taken from the ``left'' party. The updated commitment txs also use new
