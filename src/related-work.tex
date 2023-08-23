@@ -10,23 +10,23 @@
  LN is currently implemented and operational for
   Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, named Raiden Network.
 
-Various attacks have been identified against LN. The wormhole
-  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against LN allows
-  colluding parties in a multi-hop payment to steal the fees of the
-  intermediaries between them and Flood \& Loot attacks~\cite{10.1145/3419614.3423248}
-  analyses an attack in which too many channels are forced to
-  close in a short amount of time, harming blockchain liveness and enabling
-  a malicious party to steal off-chain funds.
-
-  To the best of our knowledge, no formal treatment of the privacy of LN exists.
-  Nevertheless, it intuitively improves upon the privacy of on-chain Bitcoin
-  transactions, as LN payments do not leave a permanent record: only
-  intermediaries of each payment are informed. It can be argued that Elmo
-  further improves privacy, as payments are hidden from
-  the intermediaries of a virtual channel.
-
-  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
-  further increase network efficiency by reducing unavailable routes due to lack of well-balanced funds.
+%Various attacks have been identified against LN. The wormhole
+%  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against LN allows
+%  colluding parties in a multi-hop payment to steal the fees of the
+%  intermediaries between them and Flood \& Loot attacks~\cite{10.1145/3419614.3423248}
+%  analyses an attack in which too many channels are forced to
+%  close in a short amount of time, harming blockchain liveness and enabling
+%  a malicious party to steal off-chain funds.
+%
+%  To the best of our knowledge, no formal treatment of the privacy of LN exists.
+%  Nevertheless, it intuitively improves upon the privacy of on-chain Bitcoin
+%  transactions, as LN payments do not leave a permanent record: only
+%  intermediaries of each payment are informed. It can be argued that Elmo
+%  further improves privacy, as payments are hidden from
+%  the intermediaries of a virtual channel.
+%
+%  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
+%  further increase network efficiency by reducing unavailable routes due to lack of well-balanced funds.
 
   An alternantive payment channel construction for Bitcoin that aspires to be
   the successor of Lightning is eltoo~\cite{eltoo}. It is conceptually simpler,
@@ -40,21 +40,21 @@ Various attacks have been identified against LN. The wormhole
   logic of Elmo could also be designed based on the eltoo mechanism instead of
   the currently leveraged LN techniques.
 
-  Bolt~\cite{10.1145/3133956.3134093} constructs privacy-preserving payment
-  channels enabling both direct payments and payments with a single untrusted
-  intermediary. Sprites~\cite{sprites} leverages the scripting language of
-  E\-the\-re\-um to decrease the time collateral is locked compared to LN.
-
-  State channels are a generalisation of payment channels, which enable
-  off-chain execution of any smart contract supported by the underlying
-  blockchain, not just payments. Generalized Bitcoin-Compatible
-  Channels~\cite{DBLP:journals/iacr/AumayrEEFHMMR20} enable the creation of
-  state channels on Bitcoin, extending channel functionality from simple
-  payments to arbitrary Bitcoin scripts. Since Elmo only pertains to payment,
-  not state, channels, we choose not to build it on top
-  of~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}. State channels can also be
-  extended to more than two
-  parties~\cite{DBLP:conf/asiaccs/LiaoZSS22,DBLP:conf/eurocrypt/DziembowskiEFHH19}.
+%  Bolt~\cite{10.1145/3133956.3134093} constructs privacy-preserving payment
+%  channels enabling both direct payments and payments with a single untrusted
+%  intermediary. Sprites~\cite{sprites} leverages the scripting language of
+%  E\-the\-re\-um to decrease the time collateral is locked compared to LN.
+%
+%  State channels are a generalisation of payment channels, which enable
+%  off-chain execution of any smart contract supported by the underlying
+%  blockchain, not just payments. Generalized Bitcoin-Compatible
+%  Channels~\cite{DBLP:journals/iacr/AumayrEEFHMMR20} enable the creation of
+%  state channels on Bitcoin, extending channel functionality from simple
+%  payments to arbitrary Bitcoin scripts. Since Elmo only pertains to payment,
+%  not state, channels, we choose not to build it on top
+%  of~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}. State channels can also be
+%  extended to more than two
+%  parties~\cite{DBLP:conf/asiaccs/LiaoZSS22,DBLP:conf/eurocrypt/DziembowskiEFHH19}.
 
   Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
   Turing-complete scripting language of Ethereum to provide virtual state
@@ -73,25 +73,25 @@ Various attacks have been identified against LN. The wormhole
   funded with no on-chain transactions by allowing parties to form groups that
   can pool their funds together off-chain and then use those funds to open
   channels. Such proposals are complementary to virtual channels and, depending
-  on the usecase, could be more efficient. In comparison to Elmo, BDW is less
+  on the use case, could be more efficient. In comparison to Elmo, BDW is less
   flexible: coins in a BDW pool can only be exchanged with members of that
   pool. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic
   payments with reduced collateral, enabling new applications such as
   crowdfunding conditional on reaching a funding target.
 
-  TEE-based~\cite{zhao2019sok}
-solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2020routee}
-  improve the throughput and efficiency of PCNs by an order of magnitude or
-  more, at the cost of having to trust TEEs. Brick~\cite{avarikioti2020brick}
-  uses a partially trusted committee to extend PCNs to fully asynchronous
-  networks.
-
-  Solutions alternative to PCNs include side\-chains
-  (e.g.,~\cite{BCDF+14,sidechains,KiaZin18}), commit-chains
-  (e.g.,~\cite{plasma}), non-custo\-dial chains
-  (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lower-bounds}),
-  and partially centralised payment networks that entirely avoid using a
-  blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}.
+%  TEE-based~\cite{zhao2019sok}
+%solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2020routee}
+%  improve the throughput and efficiency of PCNs by an order of magnitude or
+%  more, at the cost of having to trust TEEs. Brick~\cite{avarikioti2020brick}
+%  uses a partially trusted committee to extend PCNs to fully asynchronous
+%  networks.
+%
+%  Solutions alternative to PCNs include side\-chains
+%  (e.g.,~\cite{BCDF+14,sidechains,KiaZin18}), commit-chains
+%  (e.g.,~\cite{plasma}), non-custo\-dial chains
+%  (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lower-bounds}),
+%  and partially centralised payment networks that entirely avoid using a
+%  blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}.
 
   Last but not least, a number of works propose virtual channel constructions
   for Bitcoin. Lightweight Virtual Payment
