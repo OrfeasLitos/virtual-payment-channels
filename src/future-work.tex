@@ -85,13 +85,13 @@ closes, effectively keeping more funds off-chain even after a Domino attack.
   the endpoints. We leave the relevant incentive analysis as future work.
 
   In order to increase readability and to keep focus on the salient points of
-  the construction, our protocol does not exploit a number of possible
-  optimisations. These include a number of techniques employed in Lightning that
+  the construction, our protocol does not exploit various possible
+  optimisations. These include allowing parties to stay offline for
+  longer~\cite{DBLP:conf/ccs/AumayrTMMM22}, and some techniques employed in Lightning that
   drastically reduce storage requirements, such as storage of per-update secrets
   in $O(\log n)$
   space\footnote{\url{https://github.com/lightning/bolts/blob/master/03-transactions.md\#efficient-per-commitment-secret-storage}},
-  allowing parties to stay offline for longer~\cite{DBLP:conf/ccs/AumayrTMMM22},
-  and other possible improvements to our novel virtual subprotocol.
+  and other improvements to our novel virtual subprotocol.
 
   %Moreover, our need for \texttt{ANYPREVOUT} prevents our protocol from being
   %deployable on Bitcoin today. Though it is a prime contender for inclusion

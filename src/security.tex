@@ -105,9 +105,9 @@
 
   A salient observation regarding \pchan is that, in order to
   open a virtual channel, it passes inputs to another \pchan instance that
-  belongs to a different extended session. This means that \pchan is not
+  belongs to a different extended session, therefore \pchan is not
   \emph{subroutine respecting}, as defined in~\cite{uc}. To
-  address this issue, we first add a superscript to \pchan, i.e.,
+  address this, we first add a superscript to \pchan, i.e.,
   $\pchansup{n}$. $\pchansup{1}$ is always a simple channel.
   This is done by ignoring instructions to \textsc{open} on top of other
   channels. As for higher superscripts, $\forall n \in

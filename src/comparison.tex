@@ -164,8 +164,8 @@
   %\addtolength{\intextsep}{30pt}
 
   Regarding closing, in Table~\ref{table:comparison:overhead:n-parties:close} we
-  measure for each of the three protocols the worst-case on-chain cost a party
-  would need to incur in order to unilaterally close its channel. The cost is
+  measure for each of the three protocols the worst-case on-chain cost for a party
+  in order to unilaterally close its channel. The cost is
   measured both in the number of transactions and in their total size.
 
   For the two endpoints (funder and fundee), the cost of unilaterally closing
@@ -254,8 +254,8 @@
 
   The utility of a payment is high when its latency and fees are
   low, it increases the payer's network centrality, and reduces
-  distance from other parties. We give more weight to low latency
-  and fees, then to small distance and lastly to high centrality.
+  distance from other parties. We weigh low latency
+  and fees most, then small distance and high centrality last.
   Each payment is carried out by dry-running all known future
   payments with the three possible payment kinds (simply
   on-chain, opening a new channel, using existing
