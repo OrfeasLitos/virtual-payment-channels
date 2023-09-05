@@ -56,6 +56,14 @@ closes, effectively keeping more funds off-chain even after a Domino attack.
   cooperatively open and close multiple virtual channels in the same layer,
   either simultaneously or by amending an existing virtualisation layer.
 
+  Further usability enhancements are possible: Firstly, the maximum time between
+  activations can be turned from the currently global constant into a
+  per-channel configurable parameter. Secondly, various non-malicious mishaps
+  such as dropped messages can be handled gracefully, without causing unilateral
+  channel closure. Lastly, LN features like one-off multi-hop payments and
+  cooperative on-chain closing of simple channels can be straightforwardly
+  incorporated. For more detail see Appx.~\ref{sec:further-future-work}.
+
   Due to the possibility of a griefing attack
   (Appx.~\ref{construction:real-world}), the range of balances a virtual
   channel can
@@ -111,6 +119,3 @@ closes, effectively keeping more funds off-chain even after a Domino attack.
   intermediaries in our case are not notified on each payment, contrary to
   multi-hop payments in Lightning. Therefore a future extension can improve the
   privacy of the construction and formally demonstrate exact privacy guarantees.
-
-  We discuss several possible usability upgrades in
-  Appx.~\ref{sec:further-future-work}.

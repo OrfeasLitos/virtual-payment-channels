@@ -8,7 +8,12 @@
  with their decrementing timelocks have the shortcoming of limited channel
  lifetime. This was ameliorated by LN~\cite{lightning} which has become the dominant paradigm for designing Bitcoin-compatible PCNs.
  LN is currently implemented and operational for
-  Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, named Raiden Network.
+  Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, named
+  Raiden Network. Compared to Elmo, LN is more lightweight in terms of
+  storage and communication when setting up, but suffers from increased latency
+  and communication for payments, as intermediaries have to actively participate
+  in multi-hop payments. It also suffers in terms of privacy, as intermediaries
+  learn the exact time and value of each payment.
 
 %Various attacks have been identified against LN. The wormhole
 %  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against LN allows
@@ -32,11 +37,8 @@
   the successor of Lightning is eltoo~\cite{eltoo}. It is conceptually simpler,
   has smaller on-chain footprint and a more forgiving attitude towards
   submitting an old channel state than Lightning (as the old state is superseded without punishment), but it needs
-  \texttt{ANYPREVOUT}. Compared to Elmo, eltoo is more lightweight in terms of
-  storage and communication when setting up, but suffers from increased latency
-  and communication for payments, as intermediaries have to actively participate
-  in multi-hop payments. It also suffers in terms of privacy, as intermediaries
-  learn the exact time and value of each payment. On a related note, the payment
+  \texttt{ANYPREVOUT}. Since eltoo and LN function similarly, the previous comparison of
+  Elmo with LN applies to eltoo as well. On a related note, the payment
   logic of Elmo could also be designed based on the eltoo mechanism instead of
   the currently leveraged LN techniques.
 
@@ -85,11 +87,20 @@
 %  more, at the cost of having to trust TEEs. Brick~\cite{avarikioti2020brick}
 %  uses a partially trusted committee to extend PCNs to fully asynchronous
 %  networks.
-%
-%  Solutions alternative to PCNs include side\-chains
-%  (e.g.,~\cite{BCDF+14,sidechains,KiaZin18}), commit-chains
-%  (e.g.,~\cite{plasma}), non-custo\-dial chains
-%  (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lower-bounds}),
+
+  Solutions alternative to PCNs include side\-chains
+  (e.g.,~\cite{BCDF+14,sidechains,KiaZin18}), commit-chains
+  (e.g.,~\cite{plasma}) and non-cu\-sto\-di\-al chains
+  (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lower-bounds}). These
+  approaches usually offer more efficient payment methods, at the cost of
+  requiring a distinguished mediator and a more cumbersome on- and off-boarding
+  process. Furthermore, they do not enable payments between different instances
+  of the same protocol. Due to their conceptual and interface differences as
+  well as differing levels of software maturity, dedicated user studies need to
+  be carried out in order to compare the usability and overall costs of each
+  approach under various usage patterns. Rollups~\cite{ZKRollup,Optimism} are
+  incompatible with Bitcoin, as rollups only optimise computation, not storage,
+  whereas Bitcoin has minimal computation requirements by design.
 %  and partially centralised payment networks that entirely avoid using a
 %  blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}.
 
