@@ -8,11 +8,11 @@
  with their decrementing timelocks have the shortcoming of limited channel
  lifetime. This was ameliorated by LN~\cite{lightning} which has become the dominant paradigm for designing Bitcoin-compatible PCNs.
  LN is currently implemented and operational for
-  Bitcoin. It has also been adapted for Ethereum~\cite{wood2014ethereum}, named
+  Bitcoin. It has also been adapted for Ethereum, named
   Raiden Network. Compared to Elmo, LN is more lightweight in terms of
   storage and communication when setting up, but suffers from increased latency
   and communication for payments, as intermediaries have to actively participate
-  in multi-hop payments. It also suffers in terms of privacy, as intermediaries
+  in multi-hop payments. Its privacy also suffers, as intermediaries
   learn the exact time and value of each payment.
 
 %Various attacks have been identified against LN. The wormhole
@@ -33,14 +33,14 @@
 %  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
 %  further increase network efficiency by reducing unavailable routes due to lack of well-balanced funds.
 
-  An alternantive payment channel construction for Bitcoin that aspires to be
-  the successor of Lightning is eltoo~\cite{eltoo}. It is conceptually simpler,
+  An alternantive payment channel system for Bitcoin that aspires to
+  succeed LN is eltoo~\cite{eltoo}. It is conceptually simpler,
   has smaller on-chain footprint and a more forgiving attitude towards
-  submitting an old channel state than Lightning (as the old state is superseded without punishment), but it needs
+  submitting an old channel state than LN (the old state is superseded without punishment), but it needs
   \texttt{ANYPREVOUT}. Since eltoo and LN function similarly, the previous comparison of
   Elmo with LN applies to eltoo as well. On a related note, the payment
   logic of Elmo could also be designed based on the eltoo mechanism instead of
-  the currently leveraged LN techniques.
+  the currently used LN.
 
 %  Bolt~\cite{10.1145/3133956.3134093} constructs privacy-preserving payment
 %  channels enabling both direct payments and payments with a single untrusted
@@ -60,16 +60,16 @@
 
   Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
   Turing-complete scripting language of Ethereum to provide virtual state
-  channels, i.e., state channels that can open without an on-chain transaction.
+  channels.
   % GSCN also uses a per-channel functionality and a similar recursive argument
   % as we use in our UC-security analysis. Their security argument is however
   % flawed, as they incorrectly argue that every level is subroutine respecting
   % with respect to the same environment and subroutines.
   We believe that, given the versatile scripting of Ethereum, GSCN could be
-  extended to support variadic channels in a straightforward manner. Similar
+  straightforwardly extended to support variadic channels. Similar
   features are provided by Celer~\cite{dong2018celer}.
-  Hydra~\cite{cryptoeprint:2020:299} provides state channels for the
-  Cardano~\cite{cardano} blockchain.
+  Hydra~\cite{cryptoeprint:2020:299} provides state channels for
+  Cardano~\cite{cardano}.
 
   %BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be
   %funded with no on-chain transactions by allowing parties to form groups that
@@ -92,21 +92,20 @@
   (e.g.,~\cite{BCDF+14,sidechains,KiaZin18}), commit-chains
   (e.g.,~\cite{plasma}) and non-cu\-sto\-di\-al chains
   (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lower-bounds}). These
-  approaches usually offer more efficient payment methods, at the cost of
-  requiring a distinguished mediator and a more cumbersome on- and off-boarding
-  process. Furthermore, they do not enable payments between different instances
+  approaches offer more efficient payment methods, at the cost of
+  requiring a distinguished mediator, additional tust, or on-chain
+  checkpointing. Furthermore, they do not enable payments between different instances
   of the same protocol. Due to their conceptual and interface differences as
   well as differing levels of software maturity, dedicated user studies need to
   be carried out in order to compare the usability and overall costs of each
   approach under various usage patterns. Rollups~\cite{ZKRollup,Optimism} are
-  incompatible with Bitcoin, as rollups only optimise computation, not storage,
-  whereas Bitcoin has minimal computation requirements by design.
+  incompatible with Bitcoin, as they only optimise computation, not storage,
+  whereas Bitcoin has by design minimal computation needs.
 %  and partially centralised payment networks that entirely avoid using a
 %  blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}.
 
   Last but not least, a number of works propose virtual channel constructions
-  for Bitcoin. Lightweight Virtual Payment
-  Channels~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
+  for Bitcoin. LVPC~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
   opened on top of two preexisting channels and uses a technique similar to DMC,
   unfortunately inheriting the fixed lifetime limitation.
   Let \emph{simple channels} be those built directly on-chain, i.e., channels that are not
@@ -123,24 +122,24 @@
   intermediaries actively monitor the blockchain.
 
   Donner~\cite{donner}
-    (released originally concurrently with the first technical report release of our work) 
+    (released originally concurrently with the first technical report of our work) 
 %  is the first work 
 %  to 
-achieves also variadic
-  virtual channels, but without recursion nor features that are not yet
-  available in Bitcoin. This is achieved by having the funder lock as
+also achieves variadic
+  virtual channels, but without recursion nor future Bitcoin features. This is
+  achieved by having the funder lock as
   collateral twice the amount of the desired channel funds: once on-chain with
   funds that are external to the \emph{base channels} (i.e., the channels that the
   virtual channel is based on) and once off-chain within its base channel. Thus
   the required collateral for the funder is double that of other protocols and
   a party lacking sufficient on-chain coins cannot fund a Donner channel;
   additionally, we conjecture that using external coins precludes variadic
-  virtual channel designs that are not encumbered with limited lifetime. This
+  virtual channels that are not encumbered with limited lifetime. This
   design choice further means that Donner is not symmetric. Donner also uses
-  placeholder outputs which, due to the minimum coins they need to carry to
+  placeholder outputs which, due to the minimum coins they need to
   exceed Bitcoin's \emph{dust limit}, may skew the incentives of rational players
   and adds to the
-  opportunity cost of maintaining a channel. Further, its design complicates
+  opportunity cost of channel maintenance. Further, its design complicates
   future iterations that lift its current restriction that only one of the two
   channel parties can fund the virtual channel. The aforementioned incentives
   together with its lack of recursiveness mean that if a party with coins in a
@@ -152,21 +151,20 @@ achieves also variadic
   complexity, and boasts a simpler design. 
   %, but has less room for optimisations and is not recursive. 
   Their work also introduces the \emph{Domino attack},
-  which we adress in detail in Section~\ref{sec:future-work}.
+  which we adress in Section~\ref{sec:future-work}.
 
-  Furthermore,  Donner as described in~\cite{donner}, 
-  is insecure because any state update to a base
+  Furthermore, as described in~\cite{donner}, Donner
+  is insecure since any state update to a base
   channel invalidates the corresponding $\mathsf{tx}^r$. There is a
-  straightforward fix, which however introduces an overhead to each payment over
-  any base channel: On every payment, the two base channel parties must update
+  straightforward fix, which however adds an overhead to each payment over
+  a base channel: On every payment, the two base channel parties must update
   their $\mathsf{tx}^r$ to spend the $\alpha$ output of the new state. Potential
   intermediaries must consider this overhead and possibly increase the fees they
-  require from the endpoints. Note this per-payment overhead can be avoided by using
+  require from the endpoints. This per-payment overhead can be avoided by using
   \texttt{ANYPREVOUT} in the $\alpha$ output.
 
   Table~\ref{table:comparison-features} contains a comparison of the
-  features and limitations of virtual channel protocols, including the one put
-  forth in this work.
+  features and limitations of virtual channel protocols, including Elmo.
 
   \begin{table*}
     \caption{Features \& requirements comparison of virtual channel protocols}

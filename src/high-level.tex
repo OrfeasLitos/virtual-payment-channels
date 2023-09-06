@@ -11,9 +11,9 @@
   channel (since Elmo is recursive, each base channel may itself be simple or
   virtual). To open a virtual
   channel, all parties $P_i$ on the
-  path follow our novel protocol, setting aside funds in their channels as
+  path follow our protocol, setting aside funds in their channels as
   collateral for the new virtual channel; this is done
-  by creating so-called \emph{virtual} transactions that essentially
+  by creating so-called \emph{virtual} transactions (txs) that essentially
   tie the spending of two adjacent base channels into a single atomic action.
   Once intermediaries are done, a special \emph{funding} output has been
   created off-chain which carries the sum of $P_1$ and $P_n$'s channel
@@ -29,18 +29,18 @@
 
   A virtual channel can be optimistically closed completely off-chain. At a high
   level, the parties that control the base channels \emph{revoke} their \emph{virtual}
-  transactions and the related \emph{commitment} transactions. Revoked transactions
-  cannot be used anymore. This effectively ``peels'' one layer of virtualisation.
-  Balances are redistributed so that intermediaries ``break even'', while $P_1$
-  and $P_n$ each gets its rightful coins (as reflected in the last state of the
-  virtual channel) in its base channel ($(P_1, P_2)$ and $(P_{n-1}, P_n)$
+  txs and the related \emph{commitment} txs. Revoked txs
+  cannot be used anymore. This effectively ``peels'' one virtualisation layer.
+  Coins are redistributed so that intermediaries ``break even'', while $P_1$
+  and $P_n$ get their rightful coins (as reflected in the last state of the
+  virtual channel) in their base channels ($(P_1, P_2)$ and $(P_{n-1}, P_n)$
   respectively).
 
   Finally, the unilateral closing procedure of a virtual channel $(P_1, P_n)$
   does not need cooperation and consists of signing and publishing a number of
-  transactions on-chain. In the simplest case, one of the two endpoints, say
-  $P_1$, publishes her virtual transaction. This prompts $P_2$ to publish her
-  virtual transaction as well and so on up to $P_{n-1}$, at which point the
+  txs on-chain. In the simplest case, one of the two endpoints, say
+  $P_1$, publishes her virtual tx. This prompts $P_2$ to publish her
+  virtual tx as well and so on up to $P_{n-1}$, at which point the
   funding output of $(P_1, P_n)$ is automatically on-chain and closing can
   proceed as in LN. If instead any intermediary stays inactive, then a timelock
   expires and a suitable output becomes the funding output for $(P_1, P_n)$, at
@@ -49,13 +49,12 @@
   single commitment tx per endpoint, avoiding a state blowup that would be
   exponential in the recursion depth and making off-chain payments efficient.
 
-  In a nutshell, a virtual channel is built on top of two or more \emph{base
+  Briefly, a virtual channel is built on top of two or more \emph{base
   channels}, which, due to the recursive property, may themselves be simple or
   virtual. The parties that control the base channels are called \emph{base
-  parties}. The fact that more than two base channels can be used by a
-  virtual channel is ensured by the variadic property.
+  parties}. The variadic property ensures that a virtual chanel can use more than two base channels.
 
-  As we mentioned earlier, a channel with its funding transaction on-chain is
+  As we mentioned earlier, a channel with its funding tx on-chain is
   called \emph{simple}. A channel is either simple or virtual, not both. At a
   high level, during the channel opening procedure (c.f.\
   Fig.~\ref{code:ln:open}) the two counterparties (i) create new keypairs and
@@ -63,9 +62,9 @@
   virtual, prepare the underlying base channels ($12 \cdot (n-1)$ total
   messages, i.e., $6$ outgoing messages per endpoint and $12$ outgoing messages
   per intermediary, for $n-2$ intermediaries), next (iii) they exchange
-  signatures for their respective initial commitment transactions ($2$ messages)
+  signatures for their respective initial commitment txs ($2$ messages)
   and lastly, (iv) if the channel is simple, the \emph{funder} signs and
-  publishes the \emph{funding} transaction to the ledger. We note that like LN,
+  publishes the \emph{funding} tx to the ledger. We note that like LN,
   only one of the two parties, the funder, provides coins for a new channel.
   This limitation simplifies the execution model and analysis, but can be lifted
   at the cost of additional protocol complexity.
@@ -107,9 +106,9 @@
   ($C_{A,i}$ in Fig.~\ref{figure:payment-layer-simple}) spends the funding tx
   and has one output for $A$ (initially with all coins) and one for $B$
   (initially with $0$ coins). $A$'s output can be spent by either a multisig, or
-  by $A$ after a \emph{relative timelock} of $t$ (with relative meaning that the countdown starts at the moment of
+  by $A$ after a \emph{relative timelock} of $t$ (relative means that the countdown starts at the moment of
   publication). This is, as we will promptly see, so
-  that $B$ has some time to \emph{punish} $A$ if she cheats. $B$'s commitment tx
+  that $B$ has time to \emph{punish} $A$ if she cheats. $B$'s commitment tx
   is symmetric.
 
   When $A$ pays $c$ coins to $B$, the parties create two new commitment txs.

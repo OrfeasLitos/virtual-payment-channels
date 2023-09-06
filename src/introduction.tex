@@ -79,7 +79,9 @@ managing and closing multiple virtual channels only to use the one at the
 closing operations that are symmetric in terms of computation, network and storage cost between the two
 \emph{endpoints} or the \emph{intermediaries} (but not necessarily
 a mix of both) for the
-optimistic and pessimistic execution paths. Importantly, this ensures that no party is worse-off or better-off after an application of the operator in terms of accessing the basic functionality of the channel.
+optimistic and pessimistic execution paths. Importantly, this ensures that no
+party is worse-off or better-off after an application of the operator in terms
+of accessing the basic channel functionality.
 \end{itemize}
 
 Endpoints are the two parties that share the channel and intermediaries are
@@ -103,23 +105,23 @@ congested ledger conditions. Without recursiveness and in the face of
 unresponsive channel parties, one would have to first
 close its virtual channel on-chain in order to then use some of its coins with
 another party, which is as slow as any on-chain transaction and in case of high
-congestion could become prohibitively expensive. Even if parties collaboratively
+congestion prohibitively expensive. Even if parties collaboratively
 close the original channel off-chain, the entire
-channel closes even if only a few of its coins are needed. On the other hand, a
+channel closes even if only some of its coins are needed. On the other hand, a
 recursive
-virtual channel allows using some of its coins with other parties by
+virtual channel permits using some of its coins with other parties by
 opening off-chain a new virtual channel on top without involvement of the base parties of
 the original channel, and even keeping the remaining coins in
 the latter. Importantly, users can decide to open a recursive virtual channel
-long after having established their underlying one. This flexibility may inspire more confidence in virtual
+long after having established their underlying one. This flexibility can inspire confidence in virtual
 channels, prompting users to transfer more coins off-chain and
-reduce further on-chain congestion.
+reduce on-chain congestion.
 
-A scenario that is only possible when both the recursive and the variadic
-properties are available is the following: Initially, Alice has a channel with
-Bob, Bob has one with Charlie and Charlie one with Dave. Alice opens a virtual
-channel with Dave over these $3$ channels -- this needs the variadic property.
-After using her new channel for a while, she realizes she needs to pay Eve a few
+A scenario only possible with both the recursive and the variadic
+properties is as follows: Initially Alice has a channel with
+Bob, Bob one with Charlie and Charlie one with Dave. Alice opens a virtual
+channel with Dave over the $3$ channels -- this needs the variadic property.
+After a while she realizes she has to pay Eve a few
 times, who happens to have a channel with Dave. Alice interacts just with
 Dave and Eve to move half of her coins from her virtual channel with Dave to a
 new one with Eve -- this needs the recursive property.
@@ -129,35 +131,35 @@ new one with Eve -- this needs the recursive property.
   {\paragraph{Our Contributions}}%
   {\paragraph{Our Contributions.}}%
 \makeatother%
- We present the first Bitcoin-suitable
+ Elmo (named after St.
+Elmo's fire) is the first Bitcoin-suitable
 recursive virtual channel constructor that supports channels
-with an indefinite lifetime. In addition, our constructor, Elmo (named after St.
-Elmo's fire), is variadic and symmetric. In our constructor, both optimistic and
+of indefinite lifetime. In addition, our constructor is variadic and symmetric. Both optimistic and
 pessimistic execution paths are optimal in terms of round complexity: issuing
-payments between the two endpoints requires just three messages of size
-independent of the length of the channel, closing the channel cooperatively
-requires at most three messages from each party while
-closing the channel unilaterally requires up to two on-chain transactions for
+payments between two endpoints requires just three messages of size
+independent of the channel length, closing a channel cooperatively
+needs at most three messages from each party while
+closing a channel unilaterally demands up to two on-chain transactions for
 any involved party (endpoint or intermediary) that can be submitted
-simultaneously, also independent of the channel's length. We build Elmo on top
-of Bitcoin, as this means it can be adapted to function over any blockchain that
+simultaneously, also independent of the channel length. We build Elmo on top
+of Bitcoin, as this means it can be adapted for any blockchain that
 supports Turing-complete smart contracts such as
-Ethereum~\cite{wood2014ethereum}. Elmo also can inspire designers of future
-blockchains that want to maintain minimal on-chain scripting capabilities while
+Ethereum~\cite{wood2014ethereum}. The latter provides additional tools to
+increase Elmo efficiency. Furthermore, Elmo can inspire future
+blockchain designs that maintain minimal scripting capabilities while
 providing robust off-chain functionality.
 
 We achieve the above by leveraging a sophisticated virtual channel setup
 protocol which, on the one hand, enables endpoints to use an interface that is
 invariant between on-chain and off-chain (i.e., virtual) channels,
 while on the other, parties can securely close the channel cooperatively
-off-chain, or instead opt for unilateral on-chain closing, following an arbitrary
+off-chain, or instead close unilaterally on-chain, following an arbitrary
 activation sequence. The latter is achieved by enabling anyone to
-become an initiator towards closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to successfully complete the closure process by posting a single transaction each.
+start closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to complete the closure process by posting a single transaction each.
 
-  We formally prove the security of the constructor protocol in the Universal
+  We formally prove the security of our protocol in the Universal
   Composition (UC)~\cite{uc} setting; our ideal functionality is global,
-  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. The
-  protocol requires the \texttt{ANYPREVOUT} signature type (slated for
+  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. Elmo requires the \texttt{ANYPREVOUT} signature type (slated for
   inclusion in the next Bitcoin update\footnote{\url{https://anyprevout.xyz/}}), which does not sign the hash of the
   transaction it spends, thus enabling a single pre-signed transaction
   to spend any output with a suitable script. We leverage \texttt{ANYPREVOUT} to
