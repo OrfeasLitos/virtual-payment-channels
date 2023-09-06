@@ -108,7 +108,9 @@ closes, effectively keeping more funds off-chain even after a Domino attack.
   As mentioned before, we conjecture that a variadic virtual
   channel protocol with unlimited lifetime needs each party to store an
   exponential number of signatures if \texttt{ANYPREVOUT} is not available. We
-  leave proof of this as future work.
+  leave proof of this as future work. Furthermore, the formal verification of
+  the UC security proof is deferred to such a time when a practical framework
+  for mechanised UC proofs becomes available.
 
   Last but not least, the current analysis gives no privacy guarantees for the
   protocol, as it does not employ onion packets~\cite{sphinx} like Lightning.
