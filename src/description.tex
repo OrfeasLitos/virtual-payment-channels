@@ -29,7 +29,7 @@
   as checking the ledger periodically and being ready to take action if
   misbehaviour is detected. Let us first consider a simple channel that has been
   established between \alice and \bob where the former owns $c_A$ and the latter
-  $c_B$ coins -- we refer the reader to Section~\ref{sec:pseudocode} for an
+  $c_B$ coins -- we refer the reader to Appx.~\ref{sec:pseudocode} for an
   overview of the opening procedure. There are
   three sets of transactions at play: A \emph{funding}
   transaction that is put on-chain, \emph{commitment} transactions that are stored
@@ -92,7 +92,7 @@
   Before opening the virtual, each base channel is entirely independent, having
   different unique keys, separate on-chain funding outputs, a possibly different
   balance and number of updates. After the $n$ parties follow our novel virtual
-  channel opening protocol (c.f., Section~\ref{sec:pseudocode}), they will all
+  channel opening protocol (c.f., Appx.~\ref{sec:pseudocode}), they will all
   hold off-chain a number of new,
   \emph{virtual} transactions that spend their respective funding transactions. The
   \emph{virtual} transactions can be spent by \emph{bridge} transactions which in turn
