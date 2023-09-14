@@ -37,7 +37,7 @@
   succeed LN is eltoo~\cite{eltoo}. It is conceptually simpler,
   has smaller on-chain footprint and a more forgiving attitude towards
   submitting an old channel state than LN (the old state is superseded without punishment), but it needs
-  \texttt{ANYPREVOUT}. Since eltoo and LN function similarly, the previous comparison of
+  \texttt{ANYPREVOUT}. Because eltoo and LN function similarly, the previous comparison of
   Elmo with LN applies to eltoo as well. On a related note, the payment
   logic of Elmo could also be designed based on the eltoo mechanism instead of
   the currently used LN.
@@ -122,39 +122,38 @@
   intermediaries actively monitor the blockchain.
 
   Donner~\cite{donner}
-    (released originally concurrently with the first technical report of our work) 
+    (released originally concurrently with the first technical report of Elmo) 
 %  is the first work 
 %  to 
 also achieves variadic
   virtual channels, but without recursion nor future Bitcoin features. This is
-  achieved by having the funder lock as
+  done by having the funder lock as
   collateral twice the amount of the desired channel funds: once on-chain with
   funds that are external to the \emph{base channels} (i.e., the channels that the
   virtual channel is based on) and once off-chain within its base channel. Thus
-  the required collateral for the funder is double that of other protocols and
-  a party lacking sufficient on-chain coins cannot fund a Donner channel;
+  the required collateral for the funder is double that of other protocols;
   additionally, we conjecture that using external coins precludes variadic
-  virtual channels that are not encumbered with limited lifetime. This
+  virtual channels with unlimited lifetime. This
   design choice further means that Donner is not symmetric. Donner also uses
   placeholder outputs which, due to the minimum coins they need to
   exceed Bitcoin's \emph{dust limit}, may skew the incentives of rational players
-  and adds to the
-  opportunity cost of channel maintenance. Further, its design complicates
-  future iterations that lift its current restriction that only one of the two
-  channel parties can fund the virtual channel. The aforementioned incentives
+  and adds to the channel
+  opportunity cost. The aforementioned incentives
   together with its lack of recursiveness mean that if a party with coins in a
   Donner channel decides to use them with another party, it first has to close
   its channel either off-chain, which needs cooperation of all base parties, or
   else on-chain, with all the delays and fees this entails.
-  On the positive side, Donner is
+  Further, its design complicates
+  future iterations that lift its current restriction that only one of the two
+  channel parties can fund the virtual channel. On the positive side, Donner is
   more efficient than Elmo in terms of storage, computation and communication
   complexity, and boasts a simpler design. 
   %, but has less room for optimisations and is not recursive. 
   Their work also introduces the \emph{Domino attack},
   which we adress in Section~\ref{sec:future-work}.
 
-  Furthermore, as described in~\cite{donner}, Donner
-  is insecure since any state update to a base
+  Furthermore, Donner
+  is technically insecure since any state update to a base
   channel invalidates the corresponding $\mathsf{tx}^r$. There is a
   straightforward fix, which however adds an overhead to each payment over
   a base channel: On every payment, the two base channel parties must update
@@ -164,8 +163,11 @@ also achieves variadic
   \texttt{ANYPREVOUT} in the $\alpha$ output.
 
   Table~\ref{table:comparison-features} contains a comparison of the
-  features and limitations of virtual channel protocols, including Elmo.
+  features and limitations of virtual channel protocols, including the current
+  work.
 
+  % splncs
+  \addtolength{\intextsep}{-30pt}
   \begin{table*}
     \caption{Features \& requirements comparison of virtual channel protocols}
     \label{table:comparison-features}
@@ -197,3 +199,5 @@ also achieves variadic
     \end{center}
     \end{minipage}
   \end{table*}
+  % splncs
+  \addtolength{\intextsep}{30pt}
