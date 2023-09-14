@@ -222,7 +222,10 @@
 % C-like /* comment */
 \algnewcommand{\StarComment}[1]{\textcolor{gray}{/*#1*/}}
 
-% uncomment for IEEE
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{proposition}[theorem]{Proposition}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\newtheorem{theorem}{Theorem}%
+\newtheorem{lemma}[theorem]{Lemma}%
+\newtheorem{proposition}[theorem]{Proposition}}%
+{}%
+\makeatother%
