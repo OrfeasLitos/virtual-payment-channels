@@ -1,7 +1,10 @@
 \ProvidesPackage{preamble}
 
-% comment out for IEEE
-\usepackage[shortlabels]{enumitem}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{}%
+{\usepackage[shortlabels]{enumitem}}%
+\makeatother%
 
 \usepackage{graphicx}
 \usepackage{algpseudocode}
@@ -9,8 +12,17 @@
 \usepackage[english]{babel}
 \usepackage{amsmath}
 
-% uncomment for IEEE
-\usepackage{amssymb}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\usepackage{amssymb}}%
+{}%
+\makeatother%
+
+\makeatletter%
+\@ifclassloaded{llncs}%
+{\usepackage{amssymb}}%
+{}%
+\makeatother%
 
 \usepackage{mathtools}
 \usepackage{multirow}
@@ -30,16 +42,22 @@
 \usepackage{float}
 \usepackage{capt-of}
 
-% comment out for IEEE
-%\usepackage{appendix}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{}%
+{\usepackage{appendix}}%
+\makeatother%
 
 \usepackage{pifont}
 \usepackage{newunicodechar}
 \usepackage{wasysym}
 \usepackage{subcaption}
 
-% comment out for IEEE
-%\usepackage[subtle]{savetrees}
+%\makeatletter%
+%\@ifclassloaded{IEEEtran}%
+%{}%
+%{\usepackage[subtle]{savetrees}}%
+%\makeatother%
 
 \usepackage{pstricks,pst-node}
 \usepackage{auto-pst-pdf}
