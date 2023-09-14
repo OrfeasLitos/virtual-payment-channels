@@ -121,42 +121,6 @@
   UC security is novel. It is of independent interest and can be reused to prove
   UC security in protocols that may use copies of themselves as subroutines.
 
-  Theorem~\ref{theorem:security:simple} states
-  that $\pchansup{1}$ UC-realises $\fchansup{1}$.
-
-\begin{theorem}[Simple Payment Channel Security]
-  \label{theorem:security:simple}
-  The protocol $\pchansup{1}$ UC-realises $\fchansup{1}$ in the presence of a
-  global functionality $\ledger$ and assuming the security of the underlying
-  digital signature:
-  \begin{gather*}
-    \forall \text{ PPT } \adversary, \exists \text{ PPT } \simulator: \forall
-    \text{ PPT } \environment \text{ it is }\\
-    \textsc{exec}^{\ledger}_{\pchansup{1}, \adversary, \environment} \approx
-    \textsc{exec}^{\fchansup{1}, \ledger}_{\simulator, \environment} \enspace.
-  \end{gather*}
-\end{theorem}
-
-  The corresponding proof stems from
-  Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
-  \simulator faithfully simulates \pchan. Lastly we prove that $\forall$
-  integers $n \geq 2, \pchansup{n}$ UC-realises $\fchansup{n}$.
-  %in the presence of $\fchansup{1}, \dots, \fchansup{n-1}$
-  %(leveraging the relevant definition
-  %from~\cite{DBLP:conf/tcc/BadertscherCHTZ20}).
-
-\begin{theorem}[Recursive Virtual Payment Channel Security]
-  \label{theorem:security:virtual}
-  $\forall n \in \mathbb{N}^* \setminus \{1\}$, the protocol $\pchansup{n}$
-  UC-realises $\fchansup{n}$ in the presence of $\fchansup{1}, \dots,
-  \fchansup{n-1}$ and \ledger, assuming the security of the underlying digital
-  signature. Specifically,
-  \begin{gather*}
-    \forall n \in \mathbb{N}^* \setminus \{1\}, \forall \text{ PPT } \adversary,
-    \exists \text{ PPT } \simulator: \forall \text{ PPT } \environment \text{ it
-    is } \\
-    \textsc{exec}^{\ledger, \fchansup{1}, \dots, \fchansup{n-1}}_{\pchansup{n},
-    \adversary, \environment} \approx
-    \textsc{exec}^{\fchansup{n}, \ledger}_{\simulator, \environment} \enspace.
-  \end{gather*}
-\end{theorem}
+  Theorems~\ref{theorem:security:simple} and~\ref{theorem:security:virtual}
+  (c.f., Appx.~\ref{sec:proofs}) state
+  that $\forall n \geq 1, \pchansup{n}$ UC-realises $\fchansup{n}$.
