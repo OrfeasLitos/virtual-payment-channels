@@ -35,7 +35,7 @@
   transaction that is put on-chain, \emph{commitment} transactions that are stored
   off-chain and
   spend the funding output on channel closure and off-chain \emph{revocation}
-  transactions that spend commitment outputs in case of misbehaviour (c.f.\
+  transactions that spend commitment outputs in case of misbehaviour (c.f.,
   Figure~\ref{figure:payment-layer}).
 
   \begin{figure}
@@ -92,7 +92,7 @@
   Before opening the virtual, each base channel is entirely independent, having
   different unique keys, separate on-chain funding outputs, a possibly different
   balance and number of updates. After the $n$ parties follow our novel virtual
-  channel opening protocol (c.f.\ Section~\ref{sec:pseudocode}), they will all
+  channel opening protocol (c.f., Section~\ref{sec:pseudocode}), they will all
   hold off-chain a number of new,
   \emph{virtual} transactions that spend their respective funding transactions. The
   \emph{virtual} transactions can be spent by \emph{bridge} transactions which in turn
@@ -105,7 +105,7 @@
   commitment and revocation txs), each of the two
   endpoints also has an \emph{initiator} transaction that spends the funding output
   of its only base channel and produces two outputs: one new funding output for
-  the base channel and one \emph{virtual} output (c.f.\
+  the base channel and one \emph{virtual} output (c.f.,
   Figures~\ref{figure:virtual-layer-endpoint},~\ref{code:virtual-layer:endpoint-txs}).
   If the initiator transaction ends up on-chain honestly, the latter output
   carries coins that will directly or indirectly fund the funding output of the
@@ -194,7 +194,7 @@
   funding their channel -- lack of such signatures would allow two colluding
   intermediaries to claim the virtual output for themselves. The revocation
   spending conditions take precedence over others because (i) they do not have a
-  timelock and (ii) any other spending condition without a timelock (e.g.\ the
+  timelock and (ii) any other spending condition without a timelock (e.g., the
   $n$-of-$n$ multisig of an initiator transaction) is transitively spendable by
   a transaction in which the only non-timelocked spending condition is the
   revocation.
@@ -305,7 +305,7 @@
   Let a single \emph{channel round} be a series of messages starting from the
   funder and hop by hop reaching the fundee and back again. For the actual
   protocol that establishes a virtual channel $6$ channel rounds are needed
-  (c.f.\ Figure~\ref{code:ln:prepare-base}). The first communicates
+  (c.f., Figure~\ref{code:ln:prepare-base}). The first communicates
   parties' identities, their funding keys, revocation keys and their neighbours'
   channel balances, the second creates new commitment transactions, the third
   communicates keys for virtual transactions (a.k.a.\ virtual keys), all parties'
@@ -314,7 +314,7 @@
   virtual outputs and funding outputs respectively) and the sixth shares
   revocation signatures for the old channel states.
 
-  Cooperative closing is quite intuitive (c.f.\
+  Cooperative closing is quite intuitive (c.f.,
   Figures~\ref{code:ln:coop-close},~\ref{code:ln:coop-closed-to-initiator},~\ref{code:ln:coop-close-fundee},~\ref{code:ln:coop-close-funder}
   and~\ref{code:virtual-layer:coop-close-intermediary}). It can be initiated by
   any party, one and a half communication rounds are needed. The funder builds

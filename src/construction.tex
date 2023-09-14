@@ -18,7 +18,7 @@
   As in previous formulations, (e.g.,~\cite{DBLP:conf/csfw/KiayiasL20}), the
   role of \environment corresponds to two distinct actors in a real world
   implementation. On the one hand \environment passes inputs that correspond to
-  the desires of human users (e.g.\ open a channel, pay, close), on the other hand
+  the desires of human users (e.g., open a channel, pay, close), on the other hand
   \environment is responsible with periodically waking up parties to check the
   ledger and act upon any detected counterparty misbehaviour, similar to an
   always-on ``daemon'' of real-life software that periodically nudges the
@@ -30,11 +30,11 @@
   negligent. A party is deemed negligent if more than $p$ blocks have been added
   to \ledger between any consecutive pair of activations. The need for explicit
   negligence checking stems from the fact that party activation is entirely
-  controlled by \environment and no synchrony limitations are imposed (e.g.\ via
+  controlled by \environment and no synchrony limitations are imposed (e.g., via
   the use of \Fclock), therefore it can happen that an otherwise honest party is
   not activated in time to prevent a malicious counterparty from successfully
   using an old commitment transaction. If a party is marked as negligent, no
-  balance security guarantees are given (c.f.\
+  balance security guarantees are given (c.f.,
   Lemma~\ref{lemma:real-balance-security-informal}). Note that in realistic
   software the aforementioned daemon is local and trustworthy, therefore it
   would never allow \pchan to become negligent, as long as the machine is
@@ -51,7 +51,7 @@
   when a simulated honest party in \simulator needs to send a message to
   \ledger, \simulator instructs \fchan to send this message to \ledger on this
   party's behalf.
-  \fchan internally maintains two state machines, one per channel party (c.f.\
+  \fchan internally maintains two state machines, one per channel party (c.f.,
   Figures~\ref{figure:fchan-state-init},~\ref{figure:fchan-state-open-funder},~\ref{figure:fchan-state-open-fundee},~\ref{figure:fchan-state-fund},~\ref{figure:fchan-state-pay},~\ref{figure:fchan-state-close},~\ref{figure:fchan-state-corruption})
   that keep track of whether the parties are corrupted or negligent, whether the
   channel has opened, whether a payment is underway, which ITIs are to be
@@ -61,7 +61,7 @@
   closed. The single security check performed is \emph{whether the on-chain
   coins are at least equal to the expected balance once the channel closes}. If
   this check fails, \fchan halts. Since the protocol \pchan (which realises
-  \fchan, c.f.\ Theorems~\ref{theorem:security:simple}
+  \fchan, c.f., Theorems~\ref{theorem:security:simple}
   and~\ref{theorem:security:virtual}) never halts, this ideal world check
   corresponds to the security guarantee offered by \pchan. Note that this check
   is not performed for negligent parties, as \simulator notifies \fchan if a
