@@ -1,3 +1,12 @@
+\begin{lemma}[No halt]
+\label{lemma:no-halt}
+  In an ideal execution with \fchan and \simulator, if the kindred parties of
+  the honest parties of \fchan are themselves honest, then the functionality
+  halts with negligible probability in the security parameter (i.e.,
+  l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}
+  is executed negligibly often).
+\end{lemma}
+
 \begin{proof}[Proof of Lemma~\ref{lemma:no-halt}]
   We prove the Lemma in two steps. We first show that if the conditions of
   Lemma~\ref{lemma:ideal-balance} hold, then the conditions of
