@@ -196,85 +196,37 @@
   (sender, receiver, value triples), the protocol (Elmo, Donner, LVPC, LN or
   on-chain only), which future payments each payer knows and the utility
   function it maximises. The knowledge function defines which future payments
-  inform each decision. Several knowledge functions are provided, such as full
+  inform each decision.
+
+  Several knowledge functions are provided, such as full
   knowledge of all future payments and knowledge of the payer's next $m$
   payments.
-
   The utility of a payment is high when its latency and fees are
   low, it increases the payer's network centrality, and reduces
   distance from other parties. We weigh low latency
   and fees most, then small distance and high centrality last.
-  Each payment is carried out by dry-running all known future
-  payments with the three possible payment kinds (simply
-  on-chain, opening a new channel, using existing
-  channels), comparing their utility and executing the best one.
   Recognising the arbitrary nature of the concrete weights, we
   chose them before running our simulations in order to minimise
   bias.
   % TODO: try some more weights and change above to:
   %tested for various different weights obtaining results similar to the ones we
   %present.
+  Each payment is carried out by dry-running all known future
+  payments with the three possible payment kinds (simply
+  on-chain, opening a new channel, using existing
+  channels), comparing their utility and executing the best one.
+  Our simulation framework is of independent interest, as it is flexible
+  and reusable for a variety of payment network protocol evaluations.
 
-  The simulation outputs extensive data on the progress of each run. Our
-  simulation framework is of independent interest, as it is built to be flexible
-  and reusable for a variety of payment network protocol evaluations. We here
+  We here
   show the performance of the $3$ protocols with respect to the metrics payment
-  channels aim to improve, namely payment latency and fees.
-
-  Due to the privacy guarantees of LN, we are unable to obtain real-world
-  off-chain payment data. We therefore generate payments randomly. More
-  specifically, we provide three different payment topologies to mimic
-  different usage schemes: First, each party has a preferred receiver, chosen
-  uniformly at the beginning, which it pays half the time, the other half
-  choosing the payee uniformly at random. Each payment value is chosen
-  uniformly at random from the $[0, \max]$ range, for $\max =
-  \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}$. We
-  employ $1000$ parties, with a knowledge function disclosing to each party its
-  next $m=100$ payments, as it appeared this is a realistic knowledge function
-  for this case. This scenario occurs when new users are onboarded with
-  the intent to primarily pay a single counterparty, but sporadically pay
-  others as well. Second, in an attempt to emulate real-world payment
-  distributions, the value and number of incoming payments of each player are
-  drawn from the zipf~\cite{powers-1998-applications} distibution with
-  parameter $2$, which corresponds to real-world power-law distributions with a
-  heavy tail~\cite{DBLP:journals/cn/BroderKMRRSTW00}. Each payment value is
-  chosen according to the
-  zipf$(2.16)$ distribution which corresponds to the $80/20$
-  rule~\cite{pareto}, moved to have a mean equal to $\frac{\max}{2}$. We
-  consider $500$ parties, and a knowledge function with $m=10$, as this is more
-  aligned with real-world scenarios. Third, all choices are made uniformly at
-  random, with each payment chosen uniformly from $[0, \max]$, employing a
-  total of $3000$ parties, again with each knowing its next $m=10$ payments.
-  For all scenarios the payer of each payment is chosen uniformly at
-  random, no channels exist initially, and all parties initially own the same
-  amount of coins on-chain. A payer funds a new channel with the minimum of all
-  the on-chain funds of the payer and the sum of the known future payments to
-  the same payee plus $10$ times the current payment value. The
-  number of parties is chosen to ensure the simulation completes within a
-  reasonable length of time.
-
-  In order to avoid bias, we simulate each
-  protocol with the same payments. We simulate each scenario with $20$
-  distinct sets of payments and keep the average. Figs.~\ref{graph:delays}
-  and~\ref{graph:fees} show the per-payment latency and fee
-  respectively. Scale does not begin at zero for better visibility. Payment
-  delays are calculated based on which protocol is used and how the payment is
-  performed. Average
-  latency is high as it describes the whole run, including slow on-chain
-  payments and channel openings. Total fees are calculated by summing the fee
-  of each ``basic'' event (e.g., paying an intermediary for its service). None
-  of the $3$ protocols provide fee recommendations, so we use the same baseline
-  fees for the same events in all $3$ to avoid bias. These
-  fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
-  relative, not absolute, fees.
-
-  As Fig.~\ref{graph:delays} shows, delays are primarily influenced by the
-  payment distribution and only secondarily by the protocol: The preferred
-  receiver is the fastest and the uniform is the slowest. This is reasonable:
-  In the preferred receiver scenario at least half of each party's payments can
-  be performed over a single channel, thus on-chain actions are reduced. On the
-  other hand, in the uniform scenario payments are spread over all parties
-  evenly, so channels are not as well utilised.
+  channels aim to improve, namely payment latency (Fig.~\ref{graph:delays}) and
+  fees (Fig.~\ref{graph:fees}). We have designed $3$
+  workloads: ``power law'', in which incoming payments follow a
+  zipf~\cite{powers-1998-applications} distribution, ``preferred receiver'', in
+  which each party has a preferred payee which receives half of the payments,
+  and ``uniform'', where payments are chosen uniformly at random. See
+  Appx.~\ref{sec:simulation-details} for more details.
 
   As can be seen, Elmo is the best or on par with the best protocol in every
   case. We attribute this to the flexibility of Elmo, as it is both variadic and
