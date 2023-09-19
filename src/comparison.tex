@@ -197,24 +197,6 @@
   on-chain only), which future payments each payer knows and the utility
   function it maximises. The knowledge function defines which future payments
   inform each decision.
-
-  Several knowledge functions are provided, such as full
-  knowledge of all future payments and knowledge of the payer's next $m$
-  payments.
-  The utility of a payment is high when its latency and fees are
-  low, it increases the payer's network centrality, and reduces
-  distance from other parties. We weigh low latency
-  and fees most, then small distance and high centrality last.
-  Recognising the arbitrary nature of the concrete weights, we
-  chose them before running our simulations in order to minimise
-  bias.
-  % TODO: try some more weights and change above to:
-  %tested for various different weights obtaining results similar to the ones we
-  %present.
-  Each payment is carried out by dry-running all known future
-  payments with the three possible payment kinds (simply
-  on-chain, opening a new channel, using existing
-  channels), comparing their utility and executing the best one.
   Our simulation framework is of independent interest, as it is flexible
   and reusable for a variety of payment network protocol evaluations.
 
@@ -228,9 +210,9 @@
   and ``uniform'', where payments are chosen uniformly at random. See
   Appx.~\ref{sec:simulation-details} for more details.
 
-  As can be seen, Elmo is the best or on par with the best protocol in every
+  As evidenced, Elmo is the best or on par with the best protocol in every
   case. We attribute this to the flexibility of Elmo, as it is both variadic and
-  recursive and thus can exploit the cheapest payment method in every scenario.
+  recursive, thus able to exploit the cheapest payment method in all scenarios.
   In particular, Donner is consistently the most fee-heavy protocol and LVPC the
   slowest. Elmo experiences similar delays to Donner and slightly higher fees
   than LVPC.
@@ -246,8 +228,8 @@
   \begin{subfigure}{.3293\textwidth}
   \includegraphics[width=\textwidth]{../simulation/Delays_uniform.png}
   \end{subfigure}
-  \caption{Average per-payment delay (including both on- and off-chain) in
-  seconds. Less is better.}
+  \caption{Average per-payment delay (both on- and off-chain) in
+  sec. Less is better.}
   \label{graph:delays}
   \end{figure*}
   \begin{figure*}

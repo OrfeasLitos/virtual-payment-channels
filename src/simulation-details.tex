@@ -1,5 +1,23 @@
 \section{Payment Simulation details}
 \label{sec:simulation-details}
+  Several knowledge functions are provided, such as full
+  knowledge of all future payments and knowledge of the payer's next $m$
+  payments.
+  The utility of a payment is high when its latency and fees are
+  low, it increases the payer's network centrality, and reduces
+  distance from other parties. We weigh low latency
+  and fees most, then small distance and high centrality last.
+  Recognising the arbitrary nature of the concrete weights, we
+  chose them before running our simulations in order to minimise
+  bias.
+  % TODO: try some more weights and change above to:
+  %tested for various different weights obtaining results similar to the ones we
+  %present.
+  Each payment is carried out by dry-running all known future
+  payments with the three possible payment kinds (simply
+  on-chain, opening a new channel, using existing
+  channels), comparing their utility and executing the best one.
+
   Due to the privacy guarantees of LN, we are unable to obtain real-world
   off-chain payment data. We therefore generate payments randomly. More
   specifically, we provide three different payment topologies to mimic
