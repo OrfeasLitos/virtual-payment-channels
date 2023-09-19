@@ -21,18 +21,18 @@
   Consider the setting of $1$
   funder ($P_1$), $1$ fundee ($P_n$) and $n-2$ intermediaries ($P_2, \dots,
   P_{n-1}$) where $P_i$ has a base channel with each of $P_{i-1}$,
-  $P_{i+1}$. We compare the off-chain cost of opening
-  (Table~\ref{table:comparison:overhead:n-parties:open}) and the on-chain cost
-  of unilaterally closing
-  (Table~\ref{table:comparison:overhead:n-parties:close}). We refer the reader
-  to Appx~\ref{sec:cost-details} for comparison details and choices.
+  $P_{i+1}$. We compare the costs of off-chain opening
+  (Table~\ref{table:comparison:overhead:n-parties:open}) and on-chain
+  closing unilaterally
+  (Table~\ref{table:comparison:overhead:n-parties:close}). See
+  Appx.~\ref{sec:cost-details} for comparison details and choices.
 
   Regarding opening, in
   Table~\ref{table:comparison:overhead:n-parties:open} we measure for each of
   the $3$ protocols the number of communication rounds required, the total
   size of outgoing messages as well as the amount of space for storing
-  channel data. We measure from the perspective of the funder, the fundee
-  and an intermediary, along with the aggregate for all parties.
+  channel data. We measure funder, fundee
+  and intermediary requirements, along with the aggregate for all parties.
 
   Regarding closing, in Table~\ref{table:comparison:overhead:n-parties:close} we
   measure for each of the three protocols the worst-case on-chain cost for a party
@@ -172,17 +172,16 @@
 
   We also note that, since human connections form a
   small world~\cite{smallworld}, we expect that in practice the
-  need for virtual channels with a large number of
+  need for virtual channels with many
   intermediaries will be exceedingly rare. This is corroborated by
   the fact that LN only supports payments of up to $20$ hops
   without impact to its usefulness. Therefore, the asymptotic
-  network and storage complexity are not as relevant as the
+  complexity is not as relevant as the
   concrete costs for specific, low values of $n$. Under this
   light, the overhead of Elmo is tolerable. For example, the
   network requirements for a funder when opening an Elmo channel
   of length $6$ are less than $3$ times those of Donner and
-  slightly cheaper than LVPC
-  (Table~\ref{table:comparison:overhead:n-parties:open}).
+  slightly cheaper than LVPC.
 
   \makeatletter%
   \@ifclassloaded{IEEEtran}%
