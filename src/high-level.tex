@@ -87,7 +87,7 @@
   signatures are exchanged. $A$ then publishes the funding tx on-chain. Once it
   is finalised, the channel is open.
 
-  \begin{figure}
+  \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
     \caption{Left to right: funding, $A$'s commitment and $B$'s revocation txs.
@@ -168,7 +168,7 @@
   all base funding outputs are spent and all intermediaries are refunded. The
   last virtual output is finally the funding output of the virtual channel.
 
-  \begin{figure}
+  \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
     \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
     funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
@@ -177,7 +177,7 @@
     \label{figure:virtual-layer-initiator-simple}
   \end{figure}
 
-  \begin{figure}
+  \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
     \caption{$A-E$ virtual channel: One of $B$'s extend interval
     transactions. Spends the virtual output of $A$'s
@@ -225,7 +225,7 @@
   with the depth of the recursion. The exact values are shown in
   Appxs.~\ref{sec:pseudocode} and~\ref{sec:protocol}.
 
-  \begin{figure}
+  \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
     \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
     funding output of the $A-B$ channel. Can be used if $B$ has not published
@@ -233,7 +233,7 @@
     \label{figure:virtual-layer-endpoint-simple}
   \end{figure}
 
-  \begin{figure}
+  \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
     transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
@@ -288,7 +288,7 @@
   Both simple and virtual channels avoid key reuse on-chain, thus ensuring party
   privacy against on-chain observers.
 
-  \begin{figure*}
+  \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
     \caption{$4$ simple channels supporting a virtual. $A$ starts closing by
@@ -300,5 +300,5 @@
     same funding output, as \texttt{ANYPREVOUT} only works across identical
     outputs.}
     \label{figure:example-start-end-simple}
-  \end{figure*}
+  \end{figure}
 
