@@ -1,6 +1,6 @@
 \section{Security}
   \label{section:security}
-  Additionally to the UC-based security guarantees, Elmo provides concrete
+  Elmo provides concrete security
   properties regarding the conservation of funds as described in
   Lemma~\ref{lemma:real-balance-security-informal}. Informally, it establishes
   that if an honest, non-negligent party was implicated in a channel that it
@@ -35,7 +35,6 @@
   virtuals + funds returned from hosted virtuals - outbound payments + inbound
   payments]. Note that the funds for hosted virtuals only refer to those funds
   used by the funder of the virtual channel, not the rest of the base parties.
-
   The proof follows all possible execution paths, keeping track of the
   resulting balance in each case.
   %and coming to the conclusion that balance is
@@ -49,8 +48,15 @@
   %Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
   %therefore concluding the proof.
 
-  Let us now shift our attention to the UC-based analysis. A salient observation
-  regarding \pchan is that, in order to
+  Complementarily to the direct security properties above, in this work we
+  embrace the Universal Composition (UC) framework~\cite{uc}
+  together with its global subroutines extension,
+  UCGS~\cite{DBLP:conf/tcc/BadertscherCHTZ20}, to
+  model parties, network interactions, adversarial influence and corruptions, as
+  well as formalise and prove security.
+  A salient observation
+  regarding our UC protocol \pchan (Appx.~\ref{construction:real-world}) is
+  that, in order to
   open a virtual channel, it passes inputs to another \pchan instance that
   belongs to a different extended session, therefore \pchan is not
   \emph{subroutine respecting}, as defined in~\cite{uc}. To
