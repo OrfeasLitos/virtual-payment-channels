@@ -81,12 +81,7 @@
     {\paragraph{Simple channel}}%
     {\paragraph{Simple channel.}}%
   \makeatother%
-  First $A$ and $B$ generate keypairs and exchange the public keys. Each then
-  locally generates the \emph{funding} and the two \emph{commitment} txs
-  (Fig.~\ref{figure:payment-layer-simple}). The latter are signed and the
-  signatures are exchanged. $A$ then publishes the funding tx on-chain. Once it
-  is finalised, the channel is open.
-
+  \addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
@@ -99,6 +94,13 @@
     spendable by either $A_R \wedge B_R$ or by $A + t$.}%, with the ``or'' denoted with $\vee$.}
     \label{figure:payment-layer-simple}
   \end{figure}
+  \addtolength{\intextsep}{15pt}
+
+  First $A$ and $B$ generate keypairs and exchange the public keys. Each then
+  locally generates the \emph{funding} and the two \emph{commitment} txs
+  (Fig.~\ref{figure:payment-layer-simple}). The latter are signed and the
+  signatures are exchanged. $A$ then publishes the funding tx on-chain. Once it
+  is finalised, the channel is open.
 
   The funding tx moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
   output that needs signatures from both $A$ and $B$ to be spent. There is one
@@ -133,6 +135,17 @@
     {\paragraph{Virtual channel}}%
     {\paragraph{Virtual channel.}}%
   \makeatother%
+  \addtolength{\intextsep}{-15pt}
+  \begin{figure}[!htbp]
+    \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
+    \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
+    funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
+    $A$ nor $C$ have published a virtual transaction yet. $A_V$: $A$'s
+    ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
+    \label{figure:virtual-layer-initiator-simple}
+  \end{figure}
+  \addtolength{\intextsep}{15pt}
+
   Assume now that channels $(A, B)$, $\dots,(D, E)$, are open and the ``left''
   party of each owns at least $c$ coins in it. These channels can be either
   simple or virtual -- in the latter case, the recursive property is leveraged.
@@ -146,6 +159,18 @@
   keys for their input multisig, since, as we will see, so-called \emph{virtual}
   txs will interject the funding and the commitment txs from now on, all
   together forming the \emph{virtual layer}.
+
+  \addtolength{\intextsep}{-15pt}
+  \begin{figure}[!htbp]
+    \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
+    \caption{$A-E$ virtual channel: One of $B$'s extend interval
+    transactions. Spends the virtual output of $A$'s
+    initiator transaction and the funding output of the $B$-$C$ channel. Can be
+    used if $A$ has already published its initiator transaction and $C$ has not
+    published a virtual transaction yet.}
+    \label{figure:virtual-layer-extend-interval-simple}
+  \end{figure}
+  \addtolength{\intextsep}{15pt}
 
   Next, these virtual txs are generated and signed. These txs sit at the core of
   Elmo. Their logic is as follows: each intermediary is forced to spend both its
@@ -168,25 +193,6 @@
   all base funding outputs are spent and all intermediaries are refunded. The
   last virtual output is finally the funding output of the virtual channel.
 
-  \begin{figure}[!htbp]
-    \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
-    \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
-    funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
-    $A$ nor $C$ have published a virtual transaction yet. $A_V$: $A$'s
-    ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
-    \label{figure:virtual-layer-initiator-simple}
-  \end{figure}
-
-  \begin{figure}[!htbp]
-    \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
-    \caption{$A-E$ virtual channel: One of $B$'s extend interval
-    transactions. Spends the virtual output of $A$'s
-    initiator transaction and the funding output of the $B$-$C$ channel. Can be
-    used if $A$ has already published its initiator transaction and $C$ has not
-    published a virtual transaction yet.}
-    \label{figure:virtual-layer-extend-interval-simple}
-  \end{figure}
-
   The virtual txs are designed around two axes: First, each intermediary can
   only publish a single virtual tx, by which it is refunded its collateral
   exactly once. Second, if the chain of virtual txs is at any point broken by,
@@ -195,6 +201,16 @@
   the unclaimed virtual output into the funding output of the virtual channel
   after a timelock (see, e.g., $2$nd spending method of the $3$rd output of
   Fig.~\ref{figure:virtual-layer-initiator-simple}). In this case, the inactive party loses its collateral.
+
+  \addtolength{\intextsep}{-15pt}
+  \begin{figure}[!htbp]
+    \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
+    \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
+    funding output of the $A-B$ channel. Can be used if $B$ has not published
+    a virtual transaction.}
+    \label{figure:virtual-layer-endpoint-simple}
+  \end{figure}
+  \addtolength{\intextsep}{15pt}
 
   A number of considerations remain before the security of the scheme is
   ensured. Firstly, $A$ and $E$ need to be able to unilaterally initiate the
@@ -225,14 +241,7 @@
   with the depth of the recursion. The exact values are shown in
   Appxs.~\ref{sec:pseudocode} and~\ref{sec:protocol}.
 
-  \begin{figure}[!htbp]
-    \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
-    \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
-    funding output of the $A-B$ channel. Can be used if $B$ has not published
-    a virtual transaction.}
-    \label{figure:virtual-layer-endpoint-simple}
-  \end{figure}
-
+  \addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
@@ -241,10 +250,27 @@
     initiator or extend-interval transactions.}
     \label{figure:virtual-layer-merge-intervals-simple}
   \end{figure}
+  \addtolength{\intextsep}{15pt}
 
   After the virtual txs are set up, the parties revoke their previous commitment
   txs. This is achieved by signing the corresponding revocation txs, just like
   for a simple channel.
+
+  \addtolength{\intextsep}{-15pt}
+  \begin{figure}
+    \centering
+    \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
+    \caption{$4$ simple channels supporting a virtual. $A$ starts closing by
+    publishing its initiator tx, then $B$--$D$ publish their
+    suitable extend-interval. No party stays inactive.
+    Virtual outputs are marked with the interval of parties that have
+    already published a tx. \emph{Bridge} txs
+    like $b$ convert the various virtual outputs into the
+    same funding output, as \texttt{ANYPREVOUT} only works across identical
+    outputs.}
+    \label{figure:example-start-end-simple}
+  \end{figure}
+  \addtolength{\intextsep}{15pt}
 
   At last, the virtual layer has been set up: Both $A$ and $E$ can unilaterally
   force the funding output of their virtual channel on-chain, irrespective of
@@ -287,18 +313,3 @@
 
   Both simple and virtual channels avoid key reuse on-chain, thus ensuring party
   privacy against on-chain observers.
-
-  \begin{figure}[!htbp]
-    \centering
-    \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
-    \caption{$4$ simple channels supporting a virtual. $A$ starts closing by
-    publishing its initiator tx, then parties $B$--$D$ each publishes its
-    suitable extend-interval. No party stays inactive.
-    Virtual outputs are marked with the set (interval) of parties that have
-    already published a tx. \emph{Bridge} txs
-    (such as $b$) are needed to convert the various virtual outputs into the
-    same funding output, as \texttt{ANYPREVOUT} only works across identical
-    outputs.}
-    \label{figure:example-start-end-simple}
-  \end{figure}
-
