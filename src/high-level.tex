@@ -51,10 +51,7 @@
   single commitment tx per endpoint, avoiding an exponential state blowup in the
   recursion depth and making off-chain payments efficient.
 
-
-  As we mentioned earlier, a channel with its funding tx on-chain is
-  called \emph{simple}. A channel is either simple or virtual, not both. At a
-  high level, during the channel opening procedure (cf.
+  In slightly more detail, during the channel opening procedure (cf.
   Fig.~\ref{code:ln:open}) the two counterparties (i) create new keypairs and
   exchange the resulting public keys ($2$ messages), then (ii) if the channel is
   virtual, prepare the underlying base channels ($12 \cdot (n-1)$ total
