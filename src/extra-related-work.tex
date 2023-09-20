@@ -1,0 +1,104 @@
+\section{Further Related Work}
+\label{sec:further-related-work}
+ The first proposal for PCNs~\cite{spilman} only enabled
+ unidirectional payment channels. As mentioned previously, DMCs~\cite{decker}
+ with their decrementing timelocks have the shortcoming of limited channel
+ lifetime. This was ameliorated by LN~\cite{lightning} which has become the dominant paradigm for designing Bitcoin-compatible PCNs.
+ LN is currently implemented and operational for
+  Bitcoin. It has also been adapted for Ethereum, named
+  Raiden Network. Compared to Elmo, LN is more lightweight in terms of
+  storage and communication when setting up, but suffers from increased latency
+  and communication for payments, as intermediaries have to actively participate
+  in multi-hop payments. Its privacy also suffers, as intermediaries
+  learn the exact time and value of each payment.
+
+Various attacks have been identified against LN. The wormhole
+  attack~\cite{DBLP:conf/ndss/MalavoltaMSKM19} against LN allows
+  colluding parties in a multi-hop payment to steal the fees of the
+  intermediaries between them and Flood \& Loot attacks~\cite{10.1145/3419614.3423248}
+  analyses an attack in which too many channels are forced to
+  close in a short amount of time, harming blockchain liveness and enabling
+  a malicious party to steal off-chain funds.
+
+  To the best of our knowledge, no formal treatment of the privacy of LN exists.
+  Nevertheless, it intuitively improves upon the privacy of on-chain Bitcoin
+  transactions, as LN payments do not leave a permanent record: only
+  intermediaries of each payment are informed. It can be argued that Elmo
+  further improves privacy, as payments are hidden from
+  the intermediaries of a virtual channel.
+
+  Payment routing~\cite{spider,prihodko2016flare,lee2020routee} is another research area that aims to improve network efficiency without sacrificing  privacy. Actively rebalancing channels~\cite{DBLP:conf/ccs/KhalilG17} can
+  further increase network efficiency by reducing unavailable routes due to lack of well-balanced funds.
+
+  An alternantive payment channel system for Bitcoin that aspires to
+  succeed LN is eltoo~\cite{eltoo}. It is conceptually simpler,
+  has smaller on-chain footprint and a more forgiving attitude towards
+  submitting an old channel state than LN (the old state is superseded without punishment), but it needs
+  \texttt{ANYPREVOUT}. Because eltoo and LN function similarly, the previous comparison of
+  Elmo with LN applies to eltoo as well. On a related note, the payment
+  logic of Elmo could also be designed based on the eltoo mechanism instead of
+  the currently used LN.
+
+  Bolt~\cite{10.1145/3133956.3134093} constructs privacy-preserving payment
+  channels enabling both direct payments and payments with a single untrusted
+  intermediary. Sprites~\cite{sprites} leverages the scripting language of
+  E\-the\-re\-um to decrease the time collateral is locked compared to LN.
+
+  State channels are a generalisation of payment channels, which enable
+  off-chain execution of any smart contract supported by the underlying
+  blockchain, not just payments. Generalized Bitcoin-Compatible
+  Channels~\cite{DBLP:journals/iacr/AumayrEEFHMMR20} enable the creation of
+  state channels on Bitcoin, extending channel functionality from simple
+  payments to arbitrary Bitcoin scripts. Since Elmo only pertains to payment,
+  not state, channels, we choose not to build it on top
+  of~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}. State channels can also be
+  extended to more than two
+  parties~\cite{DBLP:conf/asiaccs/LiaoZSS22,DBLP:conf/eurocrypt/DziembowskiEFHH19}.
+
+  Features similar to GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} are provided by
+  Celer~\cite{dong2018celer}.
+  Hydra~\cite{cryptoeprint:2020:299} provides state channels for
+  Cardano~\cite{cardano}.
+
+  BDW~\cite{scalable-funding} shows how pairwise channels over Bitcoin can be
+  funded with no on-chain transactions by allowing parties to form groups that
+  can pool their funds together off-chain and then use those funds to open
+  channels. Such proposals are complementary to virtual channels and, depending
+  on the use case, could be more efficient. In comparison to Elmo, BDW is less
+  flexible: coins in a BDW pool can only be exchanged with members of that
+  pool. ACMU~\cite{10.1145/3319535.3345666} allows for multi-path atomic
+  payments with reduced collateral, enabling new applications such as
+  crowdfunding conditional on reaching a funding target.
+
+  TEE-based~\cite{zhao2019sok}
+solutions~\cite{teechan,10.1145/3341301.3359627,DBLP:conf/asiaccs/LiaoZSS22,lee2020routee}
+  improve the throughput and efficiency of PCNs by an order of magnitude or
+  more, at the cost of having to trust TEEs. Brick~\cite{avarikioti2020brick}
+  uses a partially trusted committee to extend PCNs to fully asynchronous
+  networks.
+
+  Solutions alternative to PCNs include side\-chains
+  (e.g.,~\cite{BCDF+14,sidechains,KiaZin18}), commit-chains
+  (e.g.,~\cite{plasma}) and non-cu\-sto\-di\-al chains
+  (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lower-bounds}). These
+  approaches offer more efficient payment methods, at the cost of
+  requiring a distinguished mediator, additional tust, or on-chain
+  checkpointing. Furthermore, they do not enable payments between different instances
+  of the same protocol.
+  Due to their conceptual and interface differences as
+  well as differing levels of software maturity, dedicated user studies need to
+  be carried out in order to compare the usability and overall costs of each
+  approach under various usage patterns. Rollups~\cite{ZKRollup,Optimism} are
+  incompatible with Bitcoin, as they only optimise computation, not storage,
+  whereas Bitcoin has by design minimal computation needs.
+  and partially centralised payment networks that entirely avoid using a
+  blockchain~\cite{DBLP:conf/trust/ArmknechtKMYZ15,stellar,silentwhispers,DBLP:conf/ndss/RoosMKG18}.
+
+  Donner is technically insecure since any state update to a base
+  channel invalidates the corresponding $\mathsf{tx}^r$. There is a
+  straightforward fix, which however adds an overhead to each payment over
+  a base channel: On every payment, the two base channel parties must update
+  their $\mathsf{tx}^r$ to spend the $\alpha$ output of the new state. Potential
+  intermediaries must consider this overhead and possibly increase the fees they
+  require from the endpoints. This per-payment overhead can be avoided by using
+  \texttt{ANYPREVOUT} in the $\alpha$ output.
