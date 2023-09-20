@@ -51,10 +51,6 @@
   single commitment tx per endpoint, avoiding an exponential state blowup in the
   recursion depth and making off-chain payments efficient.
 
-  Briefly, a virtual channel is built on top of two or more \emph{base
-  channels}, which, due to the recursive property, may themselves be simple or
-  virtual. The parties that control the base channels are called \emph{base
-  parties}. The variadic property ensures that a virtual chanel can use more than two base channels.
 
   As we mentioned earlier, a channel with its funding tx on-chain is
   called \emph{simple}. A channel is either simple or virtual, not both. At a
