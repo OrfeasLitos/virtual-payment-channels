@@ -5,29 +5,30 @@
   {\paragraph{Domino attack}}%
   {\paragraph{Domino attack.}}%
 \makeatother%
-In~\cite{donner} the Domino attack is presented. In a nutshell, it claims that a
-malicious member of a virtual channel can force other participant channels to close. To illustrate the objective, consider
- Fig.~\ref{figure:example-start-end}, and suppose $A$ and $E$ open channels
-$(A, B)$, $(D, E)$ and $(A, E)$ only with the intent of forcing channels $(B,
-C)$ and $(C, D)$ to close. Applying the attack to our protocol, we observe that contrary to the objective of the attack,  honest base parties are only
-forced to publish a single virtual transaction each and that all virtual
-transactions have a funding output for the corresponding channel, therefore no
-base channel is closed. Thus the attack does not achieve its objective, it merely requires the publication of a single virtual transaction per base
-party. This still has a small downside: 
+In~\cite{donner} the Domino attack is presented. Briefly, it claims that a
+malicious virtual channel member can force other channels to close. To
+illustrate this, suppose $A$ and $E$ of Fig.~\ref{figure:example-start-end} open
+channels
+$(A, B)$, $(D, E)$ and $(A, E)$ with the sole intent of forcing channels $(B,
+C)$ and $(C, D)$ to close. We observe that, contrary to the attack goal, honest
+base parties are only
+forced to publish a single virtual transaction each, which places their funding
+outputs on-chain but does not cause the base channels to close. There is still a
+small downside:
 the channel capacity is reduced by the collateral, which
 is paid directly to one of the two base channel parties. Since no coins are
-stolen in the process, the only cost to $B$, $C$ and $D$ is the on-chain fees
-for publishing a transaction. This is an inherent but small risk of
-recursive channels, which must be taken into account before allowing one's
-channel to be the base of another. This risk can be eliminated by imposing a
-unilateral closing fee equal to the on-chain fee of publishing one transaction
-per base party. This fee need not apply in case of cooperative closing nor
-during normal operation and can be reduced for reputable counterparties.
+stolen, the only cost to $B$, $C$ and $D$ is the on-chain fees
+of one transaction. This is an inherent but small risk of
+recursive channels, which must be taken into account when making one's
+channel the base of another. This risk can be eliminated by making an attacker
+pay the fees for the others' on-chain transactions. This fee need not apply in
+case of cooperative closing nor
+during normal operation and can be reduced for reputable parties.
 Mechanisms for assigning inactivity blame (i.e., proving that honest parties
 attempted collaborative closing before closing unilaterally) can be designed but
 are beyond the scope of this work.
 
-There is also a simple modification to Elmo that eliminates the issue of base channel capacity reduction under Domino attack, while it also reduces on-chain
+There is also a simple modification to Elmo that eliminates the channel capacity reduction issue under Domino attack, while it also reduces on-chain
 footprint: from each virtual tx, we can
 eliminate the output that directly
 pays a party (e.g., $1$st output of
@@ -37,7 +38,7 @@ ensure at the protocol level that the base party that owns these coins never
 allows its channel balance to fall below the collateral, until the supported
 virtual channel closes. This change ensures that the collateral
 automatically becomes available to use in the base channel after the virtual one
-closes, effectively keeping more funds off-chain even after a Domino attack.
+closes, keeping more funds off-chain after a Domino attack.
 
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
