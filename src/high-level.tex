@@ -31,7 +31,8 @@
   A virtual channel can be optimistically closed completely off-chain. At a high
   level, the parties that control the base channels \emph{revoke} their \emph{virtual}
   txs and the related \emph{commitment} txs. Revoked txs
-  cannot be used anymore. This effectively ``peels'' one virtualisation layer.
+  cannot be used anymore. This effectively ``peels'' one \emph{virtualisation
+  layer}.
   Coins are redistributed so that intermediaries ``break even'', while $P_1$
   and $P_n$ get their rightful coins (as reflected in the last virtual channel
   state) in their base channels ($(P_1, P_2)$ and $(P_{n-1}, P_n)$
@@ -174,7 +175,8 @@
   \addtolength{\intextsep}{15pt}
 
   Next, these virtual txs are generated and signed. These txs sit at the core of
-  Elmo. Their logic is as follows: each intermediary is forced to spend both its
+  Elmo. Their logic is as follows: each intermediary is forced to spend
+  \emph{both} its
   adjacent funding outputs at once if it wants to close either of its channels
   -- the currently valid way of spending the funding output, the commitment tx,
   will soon be revoked. Spending the two funding outputs is done by the
