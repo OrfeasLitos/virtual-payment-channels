@@ -59,6 +59,8 @@ recent work~\cite{9519487} brought them closer to
 Bitcoin-compatibility (by leveraging adaptor
 signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}).
 
+We call the two parties that share the channel \emph{endpoints} and the parties
+of any of the underlying channels \emph{intermediaries}.
 A virtual channel constructor can be thought of as an \emph{operator} over the
 underlying state channel primitive. We identify three natural
 desiderata for it.
@@ -77,15 +79,11 @@ managing and closing multiple virtual channels only to use the one at the
 ``top'' of the recursion.
 \item Symmetric. A symmetric virtual channel constructor offers setup and
 closing operations that are symmetric in terms of computation, network and storage cost between the two
-\emph{endpoints} or the \emph{intermediaries} (but not necessarily
-a mix of both) for the
+endpoints or the intermediaries (but not necessarily a mix of both) for the
 optimistic and pessimistic execution paths. Importantly, this ensures that no
 party is worse-off or better-off after an application of the operator in terms
 of accessing the basic channel functionality.
 \end{itemize}
-
-Endpoints are the two parties that share the channel and intermediaries are
-the parties of any of the underlying channels.
 
 We note that recursiveness, while identified already as an important design
 property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has not been achieved for Bitcoin-compatible channels
