@@ -132,14 +132,25 @@
   \makeatother%
   % splncs
   %\addtolength{\intextsep}{-15pt}
-  \begin{figure}[!htbp]
+  \begin{figure*}[!htbp]
+    \begin{minipage}{.47\textwidth}
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
     \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
     funding outputs of the $A-B$ and $B-C$ channels. Can be used if neither
     $A$ nor $C$ have published a virtual transaction yet. $A_V$: $A$'s
     ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
     \label{figure:virtual-layer-initiator-simple}
-  \end{figure}
+    \end{minipage}\hspace{23pt}%
+    \begin{minipage}{.48\textwidth}
+    \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
+    \caption{$A-E$ virtual channel: One of $B$'s extend-interval
+    transactions. Spends the virtual output of $A$'s
+    initiator transaction and the funding output of the $B$-$C$ channel. Can be
+    used if $A$ has already published its initiator transaction and $C$ has not
+    published a virtual transaction yet.}
+    \label{figure:virtual-layer-extend-interval-simple}
+    \end{minipage}
+  \end{figure*}
   % splncs
   %\addtolength{\intextsep}{15pt}
 
@@ -156,20 +167,6 @@
   keys for their input multisig, since, as we will see, so-called \emph{virtual}
   txs will interject the funding and the commitment txs from now on, all
   together forming the \emph{virtual layer}.
-
-  % splncs
-  %\addtolength{\intextsep}{-15pt}
-  \begin{figure}[!htbp]
-    \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
-    \caption{$A-E$ virtual channel: One of $B$'s extend-interval
-    transactions. Spends the virtual output of $A$'s
-    initiator transaction and the funding output of the $B$-$C$ channel. Can be
-    used if $A$ has already published its initiator transaction and $C$ has not
-    published a virtual transaction yet.}
-    \label{figure:virtual-layer-extend-interval-simple}
-  \end{figure}
-  % splncs
-  %\addtolength{\intextsep}{15pt}
 
   Next, these virtual txs are generated and signed. These txs sit at the core of
   Elmo. Their logic is as follows: each intermediary is forced to spend
