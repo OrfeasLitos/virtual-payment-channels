@@ -34,8 +34,9 @@ There is also a simple modification to Elmo that eliminates the channel capacity
 footprint: from each virtual tx, we can
 eliminate the output that directly
 pays a party (e.g., $1$st output of
-Fig.~\ref{figure:virtual-layer-extend-interval-simple}) and move the
-corresponding coins into the funding output of this transaction. We further
+Fig.~\ref{figure:virtual-layer-extend-interval-simple}) and move its coins into
+the funding output of this transaction (e.g., $3$rd
+output of Fig.~\ref{figure:virtual-layer-extend-interval-simple}). We further
 ensure at the protocol level that the base party that owns these coins never
 allows its channel balance to fall below the collateral, until the supported
 virtual channel closes. This change ensures that the collateral
