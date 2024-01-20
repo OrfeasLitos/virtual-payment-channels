@@ -176,7 +176,8 @@
   \emph{both} its
   adjacent funding outputs at once if it wants to close either of its channels
   --- each party will soon revoke the currently valid way of spending the
-  funding output, the commitment tx.
+  funding output, the commitment tx, to ensure that it cannot spend only one
+  funding output.
   An intermediary can spend the two funding outputs using its
   \emph{initiator} virtual tx, which produces one new funding
   output for each of the channels
@@ -197,7 +198,8 @@
 
   The virtual txs are designed around two axes: First, each intermediary can
   publish only one virtual tx, which refunds its collateral
-  exactly once. Second, if the chain of virtual txs is at any point broken by,
+  exactly once. We will see how this is enforced below. Second, if the chain of
+  virtual txs is at any point broken by,
   e.g., an inactive intermediary that does not publish its virtual tx, the
   virtual channel will still be funded correctly. This is guaranteed because
   the unclaimed virtual output automatically turns into the funding output of
