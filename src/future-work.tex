@@ -30,8 +30,9 @@ blame (i.e., proving which parties tried collaborative closing before
 closing unilaterally), which are needed to determine who must pay the fees,
 can be designed but are beyond the scope of this work.
 
-There is also a simple modification to Elmo that eliminates the channel capacity reduction issue under Domino attack, while it also reduces on-chain
-footprint: from each virtual tx, we can
+Furthermore, the following modification to Elmo eliminates the channel capacity
+reduction under a Domino attack, while also reducing the on-chain
+footprint of unilateral closing: from each virtual tx, we
 eliminate the output that directly
 pays a party (e.g., $1$st output of
 Fig.~\ref{figure:virtual-layer-extend-interval-simple}) and move its coins into
