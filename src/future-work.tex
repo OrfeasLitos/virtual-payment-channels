@@ -41,7 +41,13 @@ ensure at the protocol level that the base party that owns these coins never
 allows its channel balance to fall below the collateral, until the supported
 virtual channel closes. This change ensures that the collateral
 automatically becomes available to use in the base channel after the virtual one
-closes, keeping more funds off-chain after a Domino attack.
+closes, keeping more funds off-chain after a Domino attack. This approach
+however has the drawback that, depending on which of the two parties first
+spends the funding output (with a virtual tx), the funds allocation in the
+channel differs. Base parties thus would have to maintain two sets of commitment
+and revocation txs, one for each case. Since this overhead encumbers the
+optimistic, cooperative case and only confers advantages in the pessimistic
+case, we choose not to adopt this approach into our design.
 
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
