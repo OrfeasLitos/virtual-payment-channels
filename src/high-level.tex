@@ -74,7 +74,8 @@
     {\paragraph{Simple channel}}%
     {\paragraph{Simple channel.}}%
   \makeatother%
-  \addtolength{\intextsep}{-15pt}
+  % splncs
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
@@ -87,7 +88,8 @@
     spendable by either $A_R \wedge B_R$ or by $A + t$.}%, with the ``or'' denoted with $\vee$.}
     \label{figure:payment-layer-simple}
   \end{figure}
-  \addtolength{\intextsep}{15pt}
+  % splncs
+  %\addtolength{\intextsep}{15pt}
 
   First $A$ and $B$ generate keypairs and exchange the public keys. Each then
   locally generates the \emph{funding} and the two \emph{commitment} txs
@@ -128,7 +130,8 @@
     {\paragraph{Virtual channel}}%
     {\paragraph{Virtual channel.}}%
   \makeatother%
-  \addtolength{\intextsep}{-15pt}
+  % splncs
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
     \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
@@ -137,7 +140,8 @@
     ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
     \label{figure:virtual-layer-initiator-simple}
   \end{figure}
-  \addtolength{\intextsep}{15pt}
+  % splncs
+  %\addtolength{\intextsep}{15pt}
 
   Assume now that channels $(A, B)$, $\dots,(D, E)$, are open and the ``left''
   party of each owns at least $c$ coins in it. These channels can be either
@@ -153,7 +157,8 @@
   txs will interject the funding and the commitment txs from now on, all
   together forming the \emph{virtual layer}.
 
-  \addtolength{\intextsep}{-15pt}
+  % splncs
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
     \caption{$A-E$ virtual channel: One of $B$'s extend-interval
@@ -163,7 +168,8 @@
     published a virtual transaction yet.}
     \label{figure:virtual-layer-extend-interval-simple}
   \end{figure}
-  \addtolength{\intextsep}{15pt}
+  % splncs
+  %\addtolength{\intextsep}{15pt}
 
   Next, these virtual txs are generated and signed. These txs sit at the core of
   Elmo. Their logic is as follows: each intermediary is forced to spend
@@ -197,7 +203,8 @@
   Fig.~\ref{figure:virtual-layer-initiator-simple}). The inactive party then
   loses its collateral.
 
-  \addtolength{\intextsep}{-15pt}
+  % splncs
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
     \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
@@ -205,7 +212,8 @@
     a virtual transaction.}
     \label{figure:virtual-layer-endpoint-simple}
   \end{figure}
-  \addtolength{\intextsep}{15pt}
+  % splncs
+  %\addtolength{\intextsep}{15pt}
 
   A number of considerations remain before the security of the scheme is
   ensured. Firstly, $A$ and $E$ need to be able to unilaterally initiate the
@@ -236,7 +244,8 @@
   with the depth of the recursion. The exact values are shown in
   Appxs.~\ref{sec:pseudocode} and~\ref{sec:protocol}.
 
-  \addtolength{\intextsep}{-15pt}
+  % splncs
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
@@ -245,13 +254,15 @@
     initiator or extend-interval transactions.}
     \label{figure:virtual-layer-merge-intervals-simple}
   \end{figure}
-  \addtolength{\intextsep}{15pt}
+  % splncs
+  %\addtolength{\intextsep}{15pt}
 
   After the virtual txs are set up, the parties revoke their previous commitment
   txs. This is achieved by signing the corresponding revocation txs, just like
   for a simple channel.
 
-  \addtolength{\intextsep}{-15pt}
+  % splncs
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure*}
     \centering
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
@@ -265,7 +276,8 @@
     outputs.}
     \label{figure:example-start-end-simple}
   \end{figure*}
-  \addtolength{\intextsep}{15pt}
+  % splncs
+  %\addtolength{\intextsep}{15pt}
 
   At last, the virtual layer has been set up: Both $A$ and $E$ can unilaterally
   force the funding output of their virtual channel on-chain, irrespective of
