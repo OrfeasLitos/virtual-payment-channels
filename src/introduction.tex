@@ -116,13 +116,25 @@ channels, prompting users to transfer more coins off-chain and
 reduce on-chain congestion.
 
 A scenario only possible with both the recursive and the variadic
-properties is as follows: Initially Alice has a channel with
+properties is as follows (Fig.~\ref{figure:graph}): Initially Alice has a channel with
 Bob, Bob one with Charlie and Charlie one with Dave. Alice opens a virtual
 channel with Dave over the $3$ channels -- this needs the variadic property.
 After a while she realises she has to pay Eve a few
 times, who happens to have a channel with Dave. Alice interacts just with
 Dave and Eve to move half of her coins from her virtual channel with Dave to a
 new one with Eve -- this needs the recursive property.
+
+\begin{figure}[!htbp]
+  \centering
+  \subimport{./figures/manual-tikz/}{graph.tex}
+  \caption{An example Elmo network with $5$ nodes, $4$ black \emph{simple}
+  (i.e., on-chain) channels, $1$ blue virtual channel built only on simple ones,
+  and $1$ green virtual channel built on the blue virtual and a simple one. Each
+  virtual channel is connected with its \emph{base} channels with dashed lines
+  of the same colour. The variadic and recursive properties of Elmo are
+  showcased.}
+  \label{figure:graph}
+\end{figure}
 
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
