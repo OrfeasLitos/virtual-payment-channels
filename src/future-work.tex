@@ -76,7 +76,7 @@ case, we choose not to adopt this approach into our design.
   (Figure~\ref{code:ln:init}) and $s$ (Figure~\ref{code:ln:exchange-open-sigs}),
   which are global constants that are immutable and common to all parties. The
   parameter $s$ stems from the liveness guarantees of Bitcoin, as discussed in
-  Proposition~\ref{prop:liveness} and therefore cannot be tweaked. However, $p$
+  Proposition~\ref{prop:liveness} (Appx.~\ref{sec:liveness}) and therefore cannot be tweaked. However, $p$
   represents the maximum time (in blocks) between two activations of a
   non-negligent party, so in principle it is possible for the parties to
   explicitly negotiate this value when opening a new channel and even
