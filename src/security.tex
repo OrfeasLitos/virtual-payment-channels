@@ -1,14 +1,17 @@
 \section{Security}
   \label{section:security}
-  Elmo provides concrete security
-  properties regarding the conservation of funds as described in
-  Lemma~\ref{lemma:real-balance-security-informal}. Informally, it establishes
-  that if an honest, non-negligent party was implicated in a channel that it
-  then unilaterally closes, then the party will have at least the expected funds
-  on-chain. The formal statements
-  (Lemmas~\ref{lemma:real-balance-security},~\ref{lemma:ideal-balance},
-  and~\ref{lemma:no-halt}) along with all proofs are deferred to
-  Appx.~\ref{sec:proofs}.
+    Before providing the UC-based security guarantees, it is useful to obtain
+  concrete properties directly from our protocol. We first delineate the
+  security guarantees Elmo provides by proving two similar claims regarding the
+  conservation of funds in the real and ideal world,
+  Lemmas~\ref{lemma:real-balance-security-informal}
+  and~\ref{lemma:ideal-balance-informal} respectively. The formal statements
+  (\ref{lemma:real-balance-security} and~\ref{lemma:ideal-balance}) along with
+  all proofs are deferred
+  to Appx.~\ref{sec:proofs}. Informally, the first
+  establishes that if an honest, non-negligent party was implicated in a channel
+  that has now been unilaterally closed,
+  then the party will have at least the expected funds on-chain.
 
 \begin{lemma}[Real world balance security (informal)]
 \label{lemma:real-balance-security-informal}
@@ -31,11 +34,39 @@
   \end{equation}
 \end{lemma}
 
-  The expected funds are [initial balance - funds for hosted
+  Lemma~\ref{lemma:ideal-balance-informal} states that for an ideal party in a
+  similar situation, the relevant balance stored in \fchan equals the expected
+  funds.
+
+\begin{lemma}[Ideal world balance (informal)]
+\label{lemma:ideal-balance-informal}
+  Consider an ideal world execution with functionality \fchan. Let $P \in
+  \{\alice, \bob\}$ one of the two parties of \fchan.
+  Assume that all of the following hold:
+  \begin{itemize}
+    \item $P$ is not corrupted or negligent, nor any member of the
+    transitive closure of its hosts has published a revocation transaction,
+    \item $P$ opened the channel, with initial balance $c$,
+    \item $P$ is the host of $n$ channels, each funded with $f_i$ coins,
+    \item $P$ has cooperatively closed $k$ channels, where the $i$-th channel
+    transferred $r_i$ coins from the hosted virtual channel to $P$,
+    \item $P$ has sent $m$ payments, each involving $d_i$ coins,
+    \item $P$ has received $l$ payments, involving $e_i$ coins.
+  \end{itemize}
+  Let $\texttt{balance}_P$ be the balance that \fchan stores for $P$.
+  If the channel is closed (either unilaterally or cooperatively), then the
+  following holds with overwhelming probability on the security parameter:
+  \begin{equation}
+    \texttt{balance}_P = c - \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i +
+    \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i \enspace.
+  \end{equation}
+\end{lemma}
+
+  In both cases the expected funds are [initial balance - funds for hosted
   virtuals + funds returned from hosted virtuals - outbound payments + inbound
   payments]. Note that the funds for hosted virtuals only refer to those funds
   used by the funder of the virtual channel, not the rest of the base parties.
-  The proof follows all possible execution paths, keeping track of the
+  Both proofs follow all possible execution paths, keeping track of the
   resulting balance in each case.
   %and coming to the conclusion that balance is
   %secure in all cases, except if signatures are forged.
@@ -48,12 +79,29 @@
   %Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
   %therefore concluding the proof.
 
-  Complementarily to the direct security properties above, in this work we
-  embrace the Universal Composition (UC) framework~\cite{uc}
-  together with its global subroutines extension,
-  UCGS~\cite{DBLP:conf/tcc/BadertscherCHTZ20}, to
-  model parties, network interactions, adversarial influence and corruptions, as
-  well as formalise and prove security.
+    It is important to note that in fact \pchan provides a stronger guarantee:
+  a party can always unilaterally close its channel
+  and obtain the expected funds on-chain within a known number of blocks.
+  This stronger guarantee is sufficient to make Elmo reliable
+  enough for real-world applications. However an ideal world
+  functionality with such guarantees would have to be aware of specific
+  txs and signatures, making it as complicated
+  as the protocol, thus violating the spirit of the simulation-based security
+  paradigm.
+
+  Subsequently we prove Lemma~\ref{lemma:no-halt}, which informally states that
+  if an ideal party and all its kindred parties are honest, then \fchan does not
+  halt with overwhelming probability.
+
+\begin{lemma}[No halt]
+\label{lemma:no-halt}
+  In an ideal execution with \fchan and \simulator, if the kindred parties of
+  the honest parties of \fchan are themselves honest, then the functionality
+  halts with negligible probability in the security parameter (i.e.,
+  l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}
+  is executed negligibly often).
+\end{lemma}
+
   A salient observation
   regarding our UC protocol \pchan (Appx.~\ref{construction:real-world}) is
   that, in order to
