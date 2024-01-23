@@ -104,7 +104,7 @@
   The funding tx moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
   output that needs signatures from both $A$ and $B$ to be spent. There is one
   commitment tx per party, stored locally off-chain. The one held by $A$
-  ($C_{A,i}$ in Fig.~\ref{figure:payment-layer-simple}) spends the funding tx
+  ($C_A$ in Fig.~\ref{figure:payment-layer-simple}) spends the funding tx
   and has one output for $A$ (initially with all coins) and one for $B$
   (initially with $0$ coins). $A$'s output can be spent by either a multisig, or
   by $A$ after a \emph{relative timelock} of $t$ (relative means that the countdown starts at the moment of
