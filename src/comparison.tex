@@ -172,16 +172,17 @@
 
   We also note that, since human connections form a
   small world~\cite{smallworld}, we expect that in practice the
-  need for virtual channels with many
+  need for virtual channels with a large number of
   intermediaries will be exceedingly rare. This is corroborated by
   the fact that LN only supports payments of up to $20$ hops
   without impact to its usefulness. Therefore, the asymptotic
-  complexity is not as relevant as the
+  network and storage complexity are not as relevant as the
   concrete costs for specific, low values of $n$. Under this
   light, the overhead of Elmo is tolerable. For example, the
   network requirements for a funder when opening an Elmo channel
   of length $6$ are less than $3$ times those of Donner and
-  slightly cheaper than LVPC.
+  slightly cheaper than LVPC
+  (Table~\ref{table:comparison:overhead:n-parties:open}).
 
   \makeatletter%
   \@ifclassloaded{IEEEtran}%
