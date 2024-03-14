@@ -62,7 +62,7 @@ signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}).
 We call the two parties that share the channel \emph{endpoints} and the parties
 of any of the underlying channels \emph{intermediaries}.
 A virtual channel constructor can be thought of as an \emph{operator} over the
-underlying state channel primitive. We identify three natural
+underlying payment channel primitive. We identify three natural
 desiderata for it.
 
 \begin{itemize}
@@ -72,7 +72,7 @@ operator. This is important in the context of PCNs since it allows building
 virtual channels on top of pre-existing virtual channels, allowing the channel
 structure to evolve dynamically.
 \item Variadic. A variadic virtual channel constructor can virtualize any number
-of input state channels directly, i.e., without leveraging recursion, contrary to a \emph{binary} constructor. This is
+of input payment channels directly, i.e., without leveraging recursion, contrary to a \emph{binary} constructor. This is
 important in the context of PCNs since it enables applying the operator to build
 virtual channels of arbitrary length, without the undue overhead of opening,
 managing and closing multiple virtual channels only to use the one at the
