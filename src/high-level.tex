@@ -181,22 +181,31 @@
   the virtual channel ``flows'' along the base channels. There are $3$ virtual
   tx types -- looking ahead, we now explain them via example of their use during
   channel closing. The \emph{initiator} virtual tx spends the two funding outputs of an
-  intermediary. It produces $4$ outputs: one new funding
-  output for each of the channels
+  intermediary (say $D$) and thus needs to be signed by $C$, $D$, and $E$. It produces $4$ outputs: one new funding
+  output for each of $(C, D)$ and $(D, E)$
   (Fig.~\ref{figure:virtual-layer-initiator-simple}, top \& bottom outputs), one
-  output that refunds the collateral to the intermediary ($2$nd from top) and,
+  output that refunds the collateral to $D$ ($2$nd from top) and,
   crucially, a so-called \emph{virtual} output ($3$rd from top). The latter
-  can be spent by either of the two adjacent parties if they are
-  intermediaries with an \emph{extend-interval} virtual tx. This tx also
-  spends the other, as-of-yet unspent, funding output of the publishing
-  intermediary (Fig.~\ref{figure:virtual-layer-extend-interval-simple}, bottom
-  input). It has $3$ outputs: one refunding the collateral to the publisher
-  (top), another virtual output (middle) and a funding output that replaces the
-  one just spent (bottom). Another adjacent party can in turn spend this virtual
-  output with another
-  extend-interval tx, which produces yet another virtual output and so on until
-  all base funding outputs are spent and all intermediaries are refunded. The
-  last virtual output is finally the funding output of the virtual channel.
+  can be spent by $C$ with an \emph{extend-interval} tx, the second type of virtual
+  tx, which needs signatures from all $5$ parties. This tx also
+  spends the other, as-of-yet unspent, $C$'s funding output, namely that of
+  $(B,C)$ (Fig.~\ref{figure:virtual-layer-extend-interval-simple}, bottom
+  input). It has $3$ outputs: one refunding the collateral to $C$
+  (top), another virtual output (middle), and a funding output that replaces the
+  one just spent (bottom). In our example, $A$ also uses its initiator tx, which
+  is different since $A$ is an endpoint (Fig.~\ref{figure:virtual-layer-endpoint-simple}). It spends only the funding output of
+  $(A, B)$ and produces $2$ outputs: a new funding output for $(A, B)$ (top) and
+  a virtual output (bottom) -- this is the only virtual tx $A$ needs. $B$ can in
+  turn spend $A$'s and $C$'s virtual outputs with a
+  \emph{merge-intervals} tx
+  (Fig.~\ref{figure:virtual-layer-merge-intervals-simple}), the last virtual tx
+  type, which also needs signatures from all $5$ parties. It has $2$ outputs: one refunds $B$ and
+  the other produces a new virtual
+  output. Now
+  all base funding outputs are spent, all intermediaries are refunded and the
+  virtual layer has ``collapsed''. Additionally, the
+  virtual output of $B$'s tx plays the role of the funding output of the virtual
+  channel $(A, E)$.
 
   The virtual txs are designed around two axes: First, each intermediary can
   publish only one virtual tx, which refunds its collateral
@@ -222,18 +231,8 @@
   % splncs
   %\addtolength{\intextsep}{15pt}
 
-  A number of considerations remain before we can ascertain the security of the
-  scheme. Firstly, $A$ and $E$ need to be able to unilaterally initiate the
-  ``collapse'' of the virtual layer. This is achieved by equipping them with
-  special, single-input initiator txs
-  (Fig.~\ref{figure:virtual-layer-endpoint-simple}) -- these are the only virtual
-  txs that the $2$ endpoints need. Secondly, intermediaries must be able to
-  regain their collateral even if both their neighbours have consumed their
-  funding outputs. We ensure this by giving intermediaries
-  \emph{merge-intervals} virtual txs (e.g.,
-  Fig.~\ref{figure:virtual-layer-merge-intervals-simple}) which spend both
-  lateral virtual outputs, refund the publisher and produce a new virtual
-  output. Thirdly, we must ensure that no intermediary can publish more than
+  Some considerations remain before we can ascertain the security of the
+  scheme. Firstly, we must ensure that no intermediary can publish more than
   one virtual tx to protect the endpoints from an unbounded sequence of virtual
   txs preventing them from accessing their funding output indefinitely -- note
   that malicious parties can fabricate arbitrarily many virtual outputs using
@@ -249,7 +248,7 @@
   another virtual
   transaction. This ensures that the endpoints will eventually obtain a funding
   output. Preventing this attack means that intermediaries need to store
-  $O(n^3)$ virtual transactions for a virtual channel over $n$ parties. Lastly,
+  $O(n^3)$ virtual transactions for a virtual channel over $n$ parties. Secondly,
   we have to carefully select the exact values of timelocks to ensure that
   each party has enough time to act. The timelocks increase linearly
   with the depth of the recursion. The exact values are shown in
@@ -330,9 +329,9 @@
   (Figs.~\ref{figure:virtual-layer-endpoint-simple}-\ref{figure:virtual-layer-merge-intervals-simple})
   have a spending method with $A_R \dots E_R$ keys.
 
-  What if one party does not cooperate? Then one of the other parties must close
+  What if one party does not cooperate? Then one or more of the other parties must close
   unilaterally on-chain. Fig.~\ref{figure:example-start-end-simple} shows how
-  this would play out if $A$ initiated this procedure.
+  this would play out if $A$ and $D$ initiated this procedure.
 
   Our protocol is recursive because both simple and virtual channels are
   ultimately represented by a funding output that either already is or can be put
