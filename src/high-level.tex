@@ -162,27 +162,26 @@
   Assume now that channels $(A, B)$, $\dots,(D, E)$, are open and the ``left''
   party of each owns at least $c$ coins in it. These channels can be either
   simple or virtual -- in the latter case, the virtual channel $(A, E)$ will
-  leverage the recursive property.
-  Thanks to the similarity of all layers, the description below is identical in
-  either case. In order for $(A, E)$ to open using $(A, B)$,
+  leverage the recursive property --
+  thanks to the similarity of all layers, the description below is identical in
+  both cases. In order for $(A, E)$ to open using $(A, B)$,
   $\dots,(D, E)$, as base channels, initially with $A$ having $c$ coins, the
-  $5$ parties act as follows. First, they generate and exchange keys. Then the
-  base parties prepare: each pair updates their base channel to contain $c$ less
-  coins, taken from the ``left'' party. The updated commitment txs also use new
-  keys for their input multisig, since, as we will see, so-called \emph{virtual}
-  txs will interject the funding and the commitment txs from now on, all
-  together forming the \emph{virtual layer}.
+  $5$ parties act as follows. First, they generate and exchange a number of new keys. Then
+  each base pair removes $c$ coins from the ``left'' party in
+  their base channel. The updated commitment txs use some of the new
+  keys for the multisig in their input, since, as we will see, so-called \emph{virtual}
+  txs will stand between the funding and the commitment txs from now on. These
+  virtual txs will form the \emph{virtual layer}.
 
-  Next, parties generate and sign these virtual txs. These txs sit at
+  Next, parties generate and sign the virtual txs and send the signatures among
+  them. These txs sit at
   the core of
-  Elmo. Their logic is as follows: each intermediary is forced to spend
-  \emph{both} its
-  adjacent funding outputs at once if it wants to close either of its channels
-  --- each party will soon revoke the currently valid way of spending the
-  funding output, the commitment tx, to ensure that it cannot spend only one
-  funding output.
-  An intermediary can spend the two funding outputs using its
-  \emph{initiator} virtual tx, which produces one new funding
+  Elmo. Intuitively, they force each intermediary to interact with both of its
+  base channels instead of one at a time, ensuring that information relevant to
+  the virtual channel ``flows'' along the base channels. There are $3$ virtual
+  tx types -- looking ahead, we now explain them via example of their use during
+  channel closing. The \emph{initiator} virtual tx spends the two funding outputs of an
+  intermediary. It produces $4$ outputs: one new funding
   output for each of the channels
   (Fig.~\ref{figure:virtual-layer-initiator-simple}, top \& bottom outputs), one
   output that refunds the collateral to the intermediary ($2$nd from top) and,
@@ -269,7 +268,7 @@
   % splncs
   %\addtolength{\intextsep}{15pt}
 
-  After the $5$ parties set up the virtual txs, they revoke their previous
+  We now return to the opening procedure. After the $5$ parties set up the virtual txs, they revoke their previous
   commitment
   txs. They do this by signing the corresponding revocation txs, just like
   for a simple channel.
@@ -296,7 +295,9 @@
   unilaterally
   force the funding output of their virtual channel on-chain, irrespective of
   the actions of the rest of the parties. Likewise, honest intermediaries can
-  unilaterally retrieve their funds. $A$ and $E$ finally exchange
+  unilaterally retrieve their funds.
+
+  $A$ and $E$ finally exchange
   commitment transactions for their new channel, thus concluding its opening.
   $A$ and $E$ can pay each other over their virtual channel exactly like
   they would over a simple channel; we refer the reader to the relevant
@@ -307,11 +308,16 @@
   \texttt{ANYPREVOUT} were not used, each virtual layer would need a copy of the
   entire set of discussed txs for each possible funding output of its base
   layer, resulting in exponential storage requirements. To make matters worse,
-  a payment over channel $C$ would need $A$ and $E$ to renegotiate exponentially
+  a payment over $(A, E)$ would need $A$ and $E$ to renegotiate exponentially
   many commitment txs, as well as recalculate all their downstream txs, which
   would in turn need interaction with intermediaries of all virtual channels
-  built over $C$, completely defeating the essence of payment channels.
+  built over $(A, E)$, completely defeating the essence of payment channels.
 
+  \makeatletter%
+  \@ifclassloaded{IEEEtran}%
+    {\paragraph{Cooperative closing}}%
+    {\paragraph{Cooperative closing.}}%
+  \makeatother%
   To enhance usability, our protocol allows the virtual channel to be closed
   off-chain, given that all parties cooperate. To do this, the endpoints first
   let the intermediaries know their final virtual channel balance. Then the
@@ -332,4 +338,4 @@
   ultimately represented by a funding output that either already is or can be put
   on-chain, therefore new virtual channels can be built on either.
   Both simple and virtual channels avoid key reuse on-chain, thus ensuring party
-  privacy against on-chain observers.
+  privacy from on-chain observers.
