@@ -297,7 +297,9 @@
         \IfThenElse{$i = n-1$}{$l \gets n$}{$l \gets n-1$}
         \State $\texttt{bridge}_1 \gets 4/\{\pk{1, 2, 1}, \pk{i-1, 2, 1},
         \pk{i+1, 2, 1}, \pk{n, 2, 1}\} \wedge \texttt{"1"}$ \Comment{We reuse
-        the $\pk{j, 2, 1}$ keys for all \texttt{bridge}s to avoid new keys}
+        the $\pk{j, 2, 1}$ keys for all \texttt{bridge}s to avoid new keys.
+        $\pk{i, 2, 1}$ is not needed because $i$ is not a beneficiary of the
+        bridge tx.}
         \State $\texttt{revocation}_1 \gets 4/\{\pk{\mathrm{funder},
         \mathrm{rev}}, \pk{\mathrm{loc}, \mathrm{rev}}, \pk{\mathrm{right},
         \mathrm{rev}}, \pk{\mathrm{fundee}, \mathrm{rev}}\} \wedge \texttt{"1"}$
