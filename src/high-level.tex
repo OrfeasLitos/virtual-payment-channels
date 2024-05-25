@@ -169,12 +169,13 @@
   thanks to the similarity of all layers, the description below is identical in
   both cases. In order for $(A, E)$ to open using $(A, B)$,
   $\dots,(D, E)$, as base channels, initially with $A$ having $c$ coins, the
-  $5$ parties act as follows. First, they generate and exchange a number of new keys. Then
+  $5$ parties act as follows. First, they generate and exchange a number of new
+  keys (i.e., all keys that appear in the outputs of Figs.~\ref{figure:virtual-layer-initiator-simple}-\ref{figure:virtual-layer-merge-intervals-simple}). Then
   each base pair removes $c$ coins from the ``left'' party in
   their base channel. The updated commitment txs use some of the new
   keys for the multisig in their input, since, as we will see, so-called \emph{virtual}
   txs will stand between the funding and the commitment txs from now on. These
-  virtual txs will form the \emph{virtual layer}.
+  virtual txs will form the \emph{virtual layer} (Fig.~\ref{figure:example-start-end-simple}).
 
   Next, parties generate and sign the virtual txs and send the signatures among
   them. These txs sit at
@@ -191,9 +192,10 @@
   output that refunds the collateral to $D$ ($2$nd from top) and,
   crucially, a so-called \emph{virtual} output ($3$rd from top). The latter
   can be spent by $C$ with an \emph{extend-interval} tx, the second type of virtual
-  tx, which needs signatures from all $5$ parties. This tx also
+  tx (Fig.~\ref{figure:virtual-layer-extend-interval-simple}), which needs
+  signatures from all $5$ parties (top input). This tx also
   spends the other, as-of-yet unspent, $C$'s funding output, namely that of
-  $(B,C)$ (Fig.~\ref{figure:virtual-layer-extend-interval-simple}, bottom
+  $(B,C)$ (bottom
   input). It has $3$ outputs: one refunding the collateral to $C$
   (top), another virtual output (middle), and a funding output that replaces the
   one just spent (bottom). In our example, $A$ also uses its initiator tx, which
