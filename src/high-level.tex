@@ -212,12 +212,14 @@
   exactly once. We will see how this is enforced below. Second, if the chain of
   virtual txs is at any point broken by,
   e.g., an inactive intermediary that does not publish its virtual tx, the
-  virtual channel will still be funded correctly. This is guaranteed because
+  virtual channel will still be funded correctly and the inactive party will
+  lose its collateral. This is guaranteed because
   the unclaimed virtual output automatically turns into the funding output of
   the virtual channel
-  after a timelock (see, e.g., $2$nd spending method of the $3$rd output of
-  Fig.~\ref{figure:virtual-layer-initiator-simple}). The inactive party then
-  loses its collateral.
+  after a timelock. See, e.g., $2$nd spending method of the $3$rd output of
+  Fig.~\ref{figure:virtual-layer-initiator-simple}. Keys $A_b \dots E_b$ can be
+  spent by \emph{bridge} txs, the output of which funds the $(A, E)$ channel.
+  Bridge txs are discussed in Appx.~\ref{subsec:description-virtual-channels}.
 
   % splncs
   %\addtolength{\intextsep}{-15pt}
