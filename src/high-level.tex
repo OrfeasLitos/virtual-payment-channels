@@ -63,7 +63,7 @@
   publishes the \emph{funding} tx to the ledger. We note that like LN,
   only one of the two parties, the funder, provides coins for a new channel.
 
-  In order to build better intuition for Elmo, let us present examples of the
+  In order to build intuition, let us present examples of the
   lifecycles of a simple and a virtual channel. Consider $5$ parties, $A, B,
   \dots, E$ and $4$ channels, $(A, B)$, $\dots,(D, E)$, that will act as
   the base of the virtual channel $(A, E)$. We first follow the operations of
@@ -335,7 +335,7 @@
   across their two channels. Once this is done, the parties revoke all virtual
   txs, using a logic similar to the revocation procedure of simple channels but
   scaled up to all parties. This is why all virtual tx outputs
-  (Figs.~\ref{figure:virtual-layer-endpoint-simple}-\ref{figure:virtual-layer-merge-intervals-simple})
+  (Figs.~\ref{figure:virtual-layer-initiator-simple}--\ref{figure:virtual-layer-merge-intervals-simple})
   have a spending method with $A_R \dots E_R$ keys.
 
   What if one party does not cooperate? Then one or more of the other parties must close
