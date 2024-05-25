@@ -143,17 +143,17 @@
   \begin{figure*}[!htbp]
     \begin{minipage}{.47\textwidth}
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
-    \caption{$A-E$ virtual channel: $B$'s initiator transaction. Spends the
-    funding outputs of the $A-B$ and $B-C$ channels. $B$ can use it if neither
+    \caption{$A$--$E$ virtual channel: $B$'s initiator transaction. Spends the
+    funding outputs of the $A$--$B$ and $B$--$C$ channels. $B$ can use it if neither
     $A$ nor $C$ have published a virtual transaction yet. $A_V$: $A$'s
     ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
     \label{figure:virtual-layer-initiator-simple}
     \end{minipage}\hspace{23pt}%
     \begin{minipage}{.48\textwidth}
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
-    \caption{$A-E$ virtual channel: One of $B$'s extend-interval
+    \caption{$A$--$E$ virtual channel: One of $B$'s extend-interval
     transactions. Spends the virtual output of $A$'s
-    initiator transaction and the funding output of the $B$-$C$ channel. $B$ can
+    initiator transaction and the funding output of the $B$--$C$ channel. $B$ can
     use it if $A$ has already published its initiator transaction and $C$ has
     not published a virtual transaction yet.}
     \label{figure:virtual-layer-extend-interval-simple}
@@ -232,8 +232,8 @@
   %\addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
-    \caption{$A-E$ virtual channel: $A$'s initiator transaction. Spends the
-    funding output of the $A-B$ channel. $A$ can use it if $B$ has not published
+    \caption{$A$--$E$ virtual channel: $A$'s initiator transaction. Spends the
+    funding output of the $A$--$B$ channel. $A$ can use it if $B$ has not published
     a virtual transaction.}
     \label{figure:virtual-layer-endpoint-simple}
   \end{figure}
