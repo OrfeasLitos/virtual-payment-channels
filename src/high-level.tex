@@ -81,13 +81,14 @@
   \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
-    \caption{Left to right: funding, $A$'s commitment and $B$'s revocation txs.
+    \caption{Left to right: funding ($F$), $A$'s commitment ($C_A$) and $B$'s
+    revocation ($R_B$) txs.
     The symmetric commitment and
     revocation txs of $B$ and $A$ respectively are not shown.
     %$A \wedge B$ needs a signature by both $A$ and $B$,
-    $A_R$ is $A$'s revocation key. $A+t$ needs a signature
-    by $A$ after relative timelock of $t$. The first commitment output is
-    spendable by either $A_R \wedge B_R$ or by $A + t$. Inputs and outputs are
+    $A_F$ and $A_R$ are $A$'s funding and revocation keys respectively. $A+t$ needs a signature
+    by $A$ after relative timelock of $t$. The first $C_A$ output is
+    spendable either by both $A_R$ and $B_R$, or by $A + t$. Inputs and outputs are
     represented by separate arrows: The input of $C_A$ spending the output of
     $F$ is shown as two connected arrows.}%, with the ``or'' denoted with $\vee$.}
     \label{figure:payment-layer-simple}
@@ -95,14 +96,16 @@
   % splncs
   %\addtolength{\intextsep}{15pt}
 
-  First $A$ and $B$ generate keypairs and exchange the public keys. Each then
+  First $A$ and $B$ generate funding and revocation keypairs and exchange
+  public keys ($A_F, B_F, A_R, B_R$ in Fig.~\ref{figure:payment-layer-simple}). Each then
   locally generates the \emph{funding} and the two \emph{commitment} txs
-  (Fig.~\ref{figure:payment-layer-simple}). They sign the latter and exchange the
-  signatures. $A$ then publishes the funding tx on-chain. Once it
+  ($F, C_A$ in Fig.~\ref{figure:payment-layer-simple}). They
+  sign $C_A$ and exchange the
+  signatures. $A$ then publishes the $F$ on-chain. Once it
   is finalised, the channel is open.
 
-  The funding tx moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
-  output that needs signatures from both $A$ and $B$ to be spent. There is one
+  The funding tx $F$ moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
+  output that needs signatures from both $A_F$ and $B_F$ to be spent. There is one
   commitment tx per party, stored locally off-chain. The one held by $A$
   ($C_A$ in Fig.~\ref{figure:payment-layer-simple}) spends the funding tx
   and has one output for $A$ (initially with all coins) and one for $B$
@@ -110,7 +113,7 @@
   by $A$ after a \emph{relative timelock} of $t$ (relative means that the countdown starts at the moment of
   publication). This is, as we will promptly see, so
   that $B$ has time to \emph{punish} $A$ if she cheats. $B$'s commitment tx
-  is symmetric.
+  $C_B$ is symmetric.
 
   When $A$ pays $c$ coins to $B$ in the channel, the parties create two new
   commitment txs.
@@ -181,7 +184,8 @@
   the virtual channel ``flows'' along the base channels. There are $3$ virtual
   tx types -- looking ahead, we now explain them via example of their use during
   channel closing. The \emph{initiator} virtual tx spends the two funding outputs of an
-  intermediary (say $D$) and thus needs to be signed by $C$, $D$, and $E$. It produces $4$ outputs: one new funding
+  intermediary (say $D$) and thus needs to be signed by $C_F$, $D_F$, and $E_F$.
+  It produces $4$ outputs: one new funding
   output for each of $(C, D)$ and $(D, E)$
   (Fig.~\ref{figure:virtual-layer-initiator-simple}, top \& bottom outputs), one
   output that refunds the collateral to $D$ ($2$nd from top) and,
