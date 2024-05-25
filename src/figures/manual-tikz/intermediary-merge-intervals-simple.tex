@@ -2,17 +2,17 @@
 \begin{tikzpicture}[>=latex,line join=bevel,]
   \coordinate (virtual_in_1) at (54.595bp,76.714bp);
   \coordinate (virtual_in_2) at (54.595bp,22.714bp);
-  \node (virtual) at (105.69bp,49.714bp) [draw,ellipse] {$V$};
+  \node (virtual) at (105.69bp,49.714bp) [draw,ellipse] {$B$};
   \coordinate (virtual_out_1) at (240.68bp,68.714bp);
   \coordinate (virtual_out_2) at (240.68bp,32.714bp);
   \draw [->] (virtual_in_1) .. controls (97bp,70bp) .. (virtual);
   \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
   \pgfsetstrokecolor{strokecol}
   \draw (73.19bp,79.714bp) node {$c$};
-  \draw (68.19bp,64.714bp) node {$A \wedge \dots \wedge E$};
+  \draw (68.19bp,64.714bp) node {$A_V \wedge \dots \wedge E_V$};
   \draw [->] (virtual_in_2) .. controls (97bp,28bp) .. (virtual);
   \draw (73.19bp,32.714bp) node {$c$};
-  \draw (68.19bp,14.714bp) node {$A \wedge \dots \wedge E$};
+  \draw (68.19bp,14.714bp) node {$A_V \wedge \dots \wedge E_V$};
   \draw [->] (virtual) .. controls (120bp,64bp) .. (virtual_out_1);
   \draw (177.19bp,72.714bp) node {$c$};
   \draw (180.19bp,56.714bp) node {$(B + t) \vee (A_R \wedge B_R)$};

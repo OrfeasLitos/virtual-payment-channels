@@ -143,18 +143,18 @@
   \begin{figure*}[!htbp]
     \begin{minipage}{.47\textwidth}
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
-    \caption{$A$--$E$ virtual channel: $B$'s initiator transaction. Spends the
-    funding outputs of the $A$--$B$ and $B$--$C$ channels. $B$ can use it if neither
-    $A$ nor $C$ have published a virtual transaction yet. $A_V$: $A$'s
+    \caption{$A$--$E$ virtual channel: $D$'s initiator transaction. Spends the
+    funding outputs of the $C$--$D$ and $D$--$E$ channels. $D$ can use it if neither
+    $C$ nor $E$ have published a virtual transaction yet. $A_V$: $A$'s
     ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
     \label{figure:virtual-layer-initiator-simple}
     \end{minipage}\hspace{23pt}%
     \begin{minipage}{.48\textwidth}
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
-    \caption{$A$--$E$ virtual channel: One of $B$'s extend-interval
-    transactions. Spends the virtual output of $A$'s
-    initiator transaction and the funding output of the $B$--$C$ channel. $B$ can
-    use it if $A$ has already published its initiator transaction and $C$ has
+    \caption{$A$--$E$ virtual channel: One of $C$'s extend-interval
+    transactions. Spends the virtual output of $D$'s
+    initiator transaction and the funding output of the $B$--$C$ channel. $C$ can
+    use it if $D$ has already published its initiator transaction and $B$ has
     not published a virtual transaction yet.}
     \label{figure:virtual-layer-extend-interval-simple}
     \end{minipage}
@@ -286,14 +286,15 @@
   \begin{figure*}
     \centering
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
-    \caption{$4$ simple channels supporting a virtual. $A$ starts closing by
-    publishing its initiator tx, then $B$--$D$ publish their
-    suitable extend-interval. No party stays inactive.
-    Virtual outputs are marked with the interval of parties that have
-    already published a tx. \emph{Bridge} txs
-    like $b$ convert the various virtual outputs into the
-    same funding output, as \texttt{ANYPREVOUT} only works across identical
-    outputs.}
+    \caption{$4$ simple channels supporting a virtual one. $A$ and $D$ start
+    closing by publishing their initiator virtual txs, then $C$ publishes its
+    suitable extend-interval virtual tx, after which $B$ publishes its suitable
+    merge-intervals virtual tx. No party stays inactive. The virtual
+    transactions $A$--$D$ form the virtual layer. Virtual outputs are marked
+    with the set (interval) of parties that have already published a tx.
+    \emph{Bridge} txs like $b$ are used by $A$ and $E$ to convert the various
+    virtual outputs into the same funding output, as \texttt{ANYPREVOUT} only
+    works across identical outputs.}
     \label{figure:example-start-end-simple}
   \end{figure*}
   % splncs
