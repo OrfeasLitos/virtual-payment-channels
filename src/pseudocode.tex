@@ -21,16 +21,18 @@ description in prose.
         \EndIf
       \end{algorithmic}
 
-      \item Open channel with counterparty $P'$:
+      \item Open channel with counterparty $P'$: \Comment{$A$, $B$ of
+      Fig.~\ref{figure:payment-layer-simple} are $P$, $P'$ resp.}
       \begin{algorithmic}[0]
-        \State Generate funding and revocation keypairs.
-        \State Exchange funding, revocation \& own public keys with $P'$.
+        \State Generate funding ($P_F$) and revocation ($P_R$) keypairs.
+        \State Exchange funding, revocation \& own ($P$) public keys with $P'$.
         \If{opening virtual (off-chain) channel}
           \State Run next bullet ``Host a virtual channel'' as endpoint.
         \EndIf
-        \State Exchange \& verify signatures on commitment txs with $P'$.
+        \State Exchange \& verify signatures by $P_F$ and $P'_F$ on
+        $C_P$ and $C_{P'}$.
         \If{opening simple (on-chain) channel}
-          \State Prepare and submit funding transaction to ledger and wait for
+          \State Prepare and submit funding tx ($F$) to ledger and wait for
           its inclusion. \Comment{only one party funds the channel, so the
           funding tx needs only the funder's signature}
           \State $t_P \gets s + p$ \Comment{simple channel timelock}
@@ -38,20 +40,27 @@ description in prose.
         \EndIf
       \end{algorithmic}
 
-      \item Host a virtual channel of $c$ coins (endpoint or intermediary):
+      \item Host virtual channel of $c$ coins (endpoint/intermediary):
+      \Comment{Fig.~\ref{figure:virtual-layer-initiator-simple}--\ref{figure:example-start-end-simple}}
       \begin{algorithmic}[0]
         \State Ensure we have at least $c$ coins.
-        \State Generate one new funding keypair, $O(n^2)$ virtual keypairs
-        ($O(n)$ per hop) and one virtual revocation keypair.
+        \State Generate one new funding keypair ($P_F'$), $O(n^2)$ virtual
+        keypairs ($P_V$)
+        ($O(n)$ per hop) and one virtual revocation keypair ($P_R$).
+        \State \Comment{Revocation keys in virtual and commitment txs are
+        distinct, but we reuse notation in Fig.~\ref{figure:payment-layer-simple} and Figs.~\ref{figure:virtual-layer-initiator-simple}--\ref{figure:example-start-end-simple} for simplicity.}
         \State Exchange these public keys with all base channel parties.
-        \State Generate and sign new commitment txs with our counterparty/ies
+        \State Generate and sign new commitment txs ($C_P$, $C_{P'}$) with our
+        counterparty/ies
         ($1$ if endpoint, $2$ if intermediary), using the new funding and latest
         revocation keys and reducing by $c$ the balance of the party ``closer''
         to the funder.
         \State Exchange signatures with counterparty/ies and verify them.
-        \State Generate and sign all $O(n^3)$ virtual and bridge txs.
-        \State Exchange all signatures among all base channel parties and verify
-        that all our virtual txs have fully signed inputs.
+        \State Generate and sign all $O(n^3)$ virtual and bridge txs ($b$ of
+        Fig.~\ref{figure:example-start-end-simple}) with the virtual ($P_V$) and
+        bridge ($P_B$) keys.
+        \State Exchange signatures among all base channel parties and verify
+        that all our virtual txs have signed virtual inputs.
         \State Exchange with counterparty/ies and verify signatures for the
         funding inputs of our initiator and extend-interval txs.
         \State Exchange with counterparty/ies and verify signatures for the
@@ -81,10 +90,11 @@ description in prose.
           \State Ensure new balance prevents griefing.
           \Comment{cf.~\ref{construction:ln}}
         \EndIf
-        \State Generate and sign new commitment txs, with $x$ coins less for the
+        \State Generate and sign new commitment txs ($C_P$, $C_{P'}$), with $x$ coins less for the
         payer and $x$ coins more for the payee.
-        \State Exchange and verify signatures.
-        \State Sign revocation txs corresponding to old commitment txs.
+        \State Exchange and verify signatures by funding keys ($P_F$, $P'_F$).
+        \State Sign revocation txs ($R_P$, $R_{P'}$) corresponding to old
+        commitment txs with revocation keys ($P_R$, $P'_R$).
         \State Generate next revocation keypairs.
         \State Exchange and verify revocation signatures and public keys.
       \end{algorithmic}
@@ -111,17 +121,17 @@ description in prose.
         \State All parties generate new revocation keypairs.
         \State All pairs exchange \& verify sigs \& new revocation public keys.
         \State All parties generate and sign revocation txs for the old virtual,
-        bridge and commitment txs.
+        bridge and commitment txs with their virtual revocation keys.
         \State All pairs exchange and verify these signatures.
       \end{algorithmic}
 
       \item Punish malicious counterparties: \Comment{Run every $p$ blocks}
       \begin{algorithmic}[0]
         \If{an old commitment tx is on-chain}
-          \State Sign and publish the corresponding revocation tx.
+          \State Sign w/ revocation key \& publish corresp. revocation tx.
         \EndIf
         \If{the ledger contains an old virtual or bridge tx}
-          \State Sign and publish the corresponding revocation tx(s)
+          \State Sign w/ revocation key \& publish corresp. revocation tx(s).
         \EndIf
       \end{algorithmic}
     \end{itemize}
