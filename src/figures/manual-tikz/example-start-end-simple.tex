@@ -62,10 +62,10 @@
   \node[minimum size=0pt,inner sep=0pt,above of=B_virt,left of=B_virt] (B_self) {};
   \draw [->] (B_virt) -- (B_self) node[midway,left] {$B$};
   \node[minimum size=0pt,inner sep=0pt,above of=B_virt,right of=B_virt] (B_virt_out) {};
-  \draw [->] (B_virt) -- (B_virt_out);
+  \draw [->] (B_virt) -- (B_virt_out) node[midway,right] {$A_B \wedge E_B$};
 
   \node[right of=B_virt_out,node distance=2*\distance] (bridge) [draw,circle] {$b$};
-  \draw [->] (B_virt_out) -- (bridge) node[midway,above] {$A_B \wedge E_B$};
+  \draw [->] (B_virt_out) -- (bridge);
   \node[minimum size=0pt,inner sep=0pt,right of=bridge,node distance=2*\distance] (bridge_out) {};
   \draw [->] (bridge) -- (bridge_out) node[midway,above] {$A_F' \wedge E_F'$};
 \end{tikzpicture}
