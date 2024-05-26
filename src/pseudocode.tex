@@ -32,7 +32,7 @@ description in prose.
         \If{opening simple (on-chain) channel}
           \State Prepare and submit funding transaction to ledger and wait for
           its inclusion. \Comment{only one party funds the channel, so the
-          funding transaction needs only the funder's signature}
+          funding tx needs only the funder's signature}
           \State $t_P \gets s + p$ \Comment{simple channel timelock}
           \State \Comment{$s$: max blocks before submitted tx enters ledger}
         \EndIf
@@ -77,7 +77,7 @@ description in prose.
       \item Pay $x$ coins to $P'$ over our (simple or virtual) channel:
       \begin{algorithmic}[0]
         \State Ensure we have at least $x$ coins.
-        \If{we host a virtual channel}
+        \If{we host another virtual channel}
           \State Ensure new balance prevents griefing.
           \Comment{cf.~\ref{construction:ln}}
         \EndIf
@@ -98,9 +98,9 @@ description in prose.
 
       \item Close virtual channel cooperatively: \Comment{Only if not hosting}
       \begin{algorithmic}[0]
-        \State Endpoints sign \& send their balance $(c_1, c_2)$ to all
+        \State Endpoints send their balance $(c_1, c_2)$ to all
         parties.
-        \State Parties verify sigs, ensure endpoints agree and $c_1 + c_2 = c$.
+        \State Parties ensure endpoints agree and $c_1 + c_2 = c$.
         \State All parties generate and sign new commitment txs with:
         \begin{itemize}
           \item the funding keys used before opening virtual channel,
@@ -109,10 +109,10 @@ description in prose.
           other.
         \end{itemize}
         \State All parties generate new revocation keypairs.
-        \State All pairs exchange \& verify sigs \& revocation public keys.
+        \State All pairs exchange \& verify sigs \& new revocation public keys.
         \State All parties generate and sign revocation txs for the old virtual,
         bridge and commitment txs.
-        \State All pairs exchange and verify signatures.
+        \State All pairs exchange and verify these signatures.
       \end{algorithmic}
 
       \item Punish malicious counterparties: \Comment{Run every $p$ blocks}
