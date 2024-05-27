@@ -22,10 +22,8 @@
   the funding output: their channel is now open. LN demands that the funding
   output is on-chain, but we lift this requirement. We instead guarantee that
   either endpoint can put the funding output on-chain unilaterally.
-
   A payment over an established channel follows a procedure also inspired by
   LN.
-  The two parties need to exchange three messages to perform a payment.
 
   Parties $P_1, \dots, P_n$ can close optimistically a virtual channel
   completely off-chain. At a high
@@ -52,16 +50,14 @@
   single commitment tx per endpoint, avoiding an exponential state blowup in the
   recursion depth and making off-chain payments efficient.
 
-  In slightly more detail, during the channel opening procedure (cf.
+  In more detail, during the channel opening procedure (cf.
   Fig.~\ref{code:ln:open}) the two counterparties (i) create new keypairs and
-  exchange the resulting public keys ($2$ messages), then (ii) if the channel is
-  virtual, prepare the underlying base channels ($12 \cdot (n-1)$ total
-  messages, i.e., $6$ messages per endpoint and $12$ messages
-  per intermediary), next (iii) they exchange
-  signatures for their initial commitment txs ($2$ messages)
-  and lastly, (iv) if the channel is simple, the \emph{funder} signs and
-  publishes the \emph{funding} tx to the ledger. We note that like LN,
-  only one of the two parties, the funder, provides coins for a new channel.
+  exchange the resulting public keys, then (ii) if the channel is
+  virtual, prepare the underlying base channels, next (iii) they exchange
+  signatures for their initial commitment txs
+  and lastly, (iv) if the channel is simple, the \emph{funder} (who is the only
+  party that provides coins for a new channel, like in LN) signs and publishes
+  the \emph{funding} tx to the ledger.
 
   In order to build intuition, let us present examples of the
   lifecycles of a simple and a virtual channel. Consider $5$ parties, $A, B,
@@ -97,11 +93,12 @@
   %\addtolength{\intextsep}{15pt}
 
   First $A$ and $B$ generate funding and revocation keypairs and exchange
-  public keys ($A_F, B_F, A_R, B_R$ in Fig.~\ref{figure:payment-layer-simple}). Each then
+  public keys ($A_F, B_F, A_R, B_R$ in Fig.~\ref{figure:payment-layer-simple} --
+  $2$ messages). Each then
   locally generates the \emph{funding} and the two \emph{commitment} txs
   ($F, C_A$ in Fig.~\ref{figure:payment-layer-simple}). They
   sign $C_A$ and exchange the
-  signatures. $A$ then publishes the $F$ on-chain. Once it
+  signatures ($2$ messages). $A$ then publishes the $F$ on-chain. Once it
   is finalised, the channel is open.
 
   The funding tx $F$ moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
@@ -122,7 +119,7 @@
   They sign them and exchange the signatures. In order to ensure only one set of
   commitment txs is valid at a time, they then revoke their previous ones. They
   do this by generating and signing the revocation txs of the previous
-  commitment txs. $B$'s revocation tx ($R_B$ in
+  commitment txs. $3$ messages are needed for a payment. $B$'s revocation tx ($R_B$ in
   Fig.~\ref{figure:payment-layer-simple}) gives $B$ the coins that belonged
   to $A$ in the previous commitment tx and vice versa. This way both parties are
   disincentivised from publishing an old commitment tx under the threat of
@@ -279,8 +276,9 @@
 
   We now return to the opening procedure. After the $5$ parties set up the virtual txs, they revoke their previous
   commitment
-  txs. They do this by signing the corresponding revocation txs, just like
-  for a simple channel.
+  txs. They do this by signing the relevant revocation txs, just like
+  for a simple channel. It takes $12 \cdot (n-1)$ messages, i.e., $6$ messages
+  per endpoint and $12$ messages per intermediary, to set up the virtual layer.
 
   % splncs
   %\addtolength{\intextsep}{-15pt}
