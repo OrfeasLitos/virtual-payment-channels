@@ -46,7 +46,7 @@ description in prose.
         \State Ensure we have at least $c$ coins.
         \State Generate one new funding keypair ($P_F'$), $O(n^2)$ virtual
         keypairs ($P_V$)
-        ($O(n)$ per hop) and one virtual revocation keypair ($P_R$).
+        ($1$ per hop and party, to control which virtual txs can spend which) and one virtual revocation keypair ($P_R$).
         \State \Comment{Revocation keys in virtual and commitment txs are
         distinct, but we reuse notation in Fig.~\ref{figure:payment-layer-simple} and Figs.~\ref{figure:virtual-layer-initiator-simple}--\ref{figure:example-start-end-simple} for simplicity.}
         \State Exchange these public keys with all base channel parties.
