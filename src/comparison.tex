@@ -308,7 +308,7 @@
   amount of coins on-chain. A payer funds a new channel with the minimum of all
   the on-chain funds of the payer and the sum of the known future payments to
   the same payee plus $10$ times the current payment value.
-  The coins that fund new virtual channels are essentially decided in the same way as funding coins for simple channels. The only difference is that we artificially limit the availability of funding from the underlying channel so that it does not deplete too fast. This ensures that the underlying channel can be used as a base for several virtual channels, as well as for more transactions.
+  The coins that fund new virtual channels are essentially decided in the same way as funding coins for simple channels. The only difference is that the availability of funding from the underlying channel is artificially limited so that it does not deplete too fast. This ensures that the underlying channel can be used as a base for several virtual channels, as well as for more transactions. The authors would use this heuristic to allocate their own funds in real-life use cases.
   The fees for new virtual channels are decided as follows. There is a fixed base fee that has to be payed for each intermediary. Furthermore, each intermediary gets a small fixed proportion of the number of coins that will be put on the virtual channel.
   The
   number of parties is chosen to ensure the simulation completes within a
