@@ -258,6 +258,7 @@
   low, it increases the payer's network centrality, and reduces
   distance from other parties. We weigh low latency
   and fees most, then small distance and high centrality last.
+  Latency here is the time that passes until a payment is finalized. This depends on whether the party decides to do an on-chain transaction, open a new channel, or do an off-chain transaction if possible. Note that the first two are bound by the ~10' latency of Bitcoin blocks. We measure latency in seconds.
   Recognising the arbitrary nature of the concrete weights, we
   chose them before running our simulations in order to minimise
   bias.
@@ -306,9 +307,14 @@
   random, no channels exist initially, and all parties initially own the same
   amount of coins on-chain. A payer funds a new channel with the minimum of all
   the on-chain funds of the payer and the sum of the known future payments to
-  the same payee plus $10$ times the current payment value. The
+  the same payee plus $10$ times the current payment value.
+  The coins that fund new virtual channels are essentially decided in the same way as funding coins for simple channels. The only difference is that we artificially limit the availability of funding from the underlying channel so that it does not deplete too fast. This ensures that the underlying channel can be used as a base for several virtual channels, as well as for more transactions.
+  The fees for new virtual channels are decided as follows. There is a fixed base fee that has to be payed for each intermediary. Furthermore, each intermediary gets a small fixed proportion of the number of coins that will be put on the virtual channel.
+  The
   number of parties is chosen to ensure the simulation completes within a
   reasonable length of time.
+  
+  %TODO: add if space permits: In the simulation we do not close any channels, since this would require complicated heuristics of when to close a channel. One reason to avoid it is simplicity. Furthermore in the real world parties will act according to the characteristics of the payment network. Hence the heuristics should to some extent depend also on these characteristics and therefore would be easy to skew in favor of whichever payment network on prefers.
 
   In order to avoid bias, we simulate each
   protocol with the same payments. We simulate each scenario with $20$
