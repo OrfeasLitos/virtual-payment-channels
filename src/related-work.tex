@@ -115,7 +115,9 @@ also achieves variadic
   collateral twice the amount of the desired channel funds: once on-chain with
   funds that are external to the \emph{base channels} (i.e., the channels that the
   virtual channel is based on) and once off-chain within its base channel. Thus
-  the required collateral for the funder is double that of other protocols.
+  the required collateral for the funder is double that of other protocols,
+  including LVPC and Elmo. The collateral for all other parties is the same
+  across LVPC, Donner, and Elmo.
   Additionally, a Donner channel needs active periodic collaboration of the
   endpoints and all base channel parties to refresh
   its lifetime, therefore a Donner channel does not have a truly unlimited
