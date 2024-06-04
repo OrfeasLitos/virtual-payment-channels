@@ -168,8 +168,10 @@ activation sequence. The latter is achieved by enabling anyone to
 start closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to complete the closure process by posting a single transaction each.
 
   We formally prove the security of our protocol in the Universal
-  Composition (UC)~\cite{uc} setting; our ideal functionality \fchan is global,
-  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20}. Elmo requires the \texttt{ANYPREVOUT} signature type (slated for
+  Composition (UC)~\cite{uc} setting; our ideal functionality \fchan represents
+  a single channel and is thus a global functionality,
+  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20} (cf.
+  Sec.~\ref{section:security}). Elmo requires the \texttt{ANYPREVOUT} signature type (slated for
   inclusion in the next Bitcoin update\footnote{\url{https://anyprevout.xyz/}}), which does not sign the hash of the
   transaction it spends, thus enabling a single pre-signed transaction
   to spend any output with a suitable script. We leverage \texttt{ANYPREVOUT} to

@@ -65,6 +65,13 @@
   functionality \fchan (Appx.~\ref{sec:functionality}) does not
   halt with overwhelming probability.
 
+  Since \fchan corresponds to a single channel, which in turn can form the base
+  of multiple independent virtual channels and thus needs to be accessible by
+  all of them, \fchan is a global functionality, i.e., it can communicate with
+  entities outside the (single-channel) protocol. The alternative of modelling
+  all channels within a single protocol~\cite{DBLP:conf/csfw/KiayiasL20} leads
+  to a monolithic, hard-to-reuse ideal functionality.
+
   A salient observation is that, in order to open a virtual channel, \pchan
   passes inputs to another \pchan instance
   that belongs to a different extended session, therefore \pchan is not
