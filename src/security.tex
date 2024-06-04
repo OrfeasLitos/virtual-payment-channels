@@ -64,11 +64,9 @@
   if an ideal party and all its kindred parties are honest, then \fchan does not
   halt with overwhelming probability.
 
-  A salient observation
-  on our UC protocol \pchan (Appx.~\ref{construction:real-world}) is
-  that, in order to
-  open a virtual channel, it passes inputs to another \pchan instance that
-  belongs to a different extended session, therefore \pchan is not
+  A salient observation is that, in order to open a virtual channel, \pchan
+  passes inputs to another \pchan instance
+  that belongs to a different extended session, therefore \pchan is not
   \emph{subroutine respecting}, as defined in~\cite{uc}. To
   address this, we first add a superscript to \pchan, i.e.,
   $\pchansup{n}$. $\pchansup{1}$ is always a simple channel.
