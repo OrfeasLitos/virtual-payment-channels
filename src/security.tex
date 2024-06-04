@@ -60,18 +60,9 @@
   as the protocol, thus violating the spirit of the simulation-based security
   paradigm.
 
-  Subsequently we prove Lemma~\ref{lemma:no-halt}, which informally states that
+  Subsequently we prove the ``no-halt'' Lemma (\ref{lemma:no-halt}), which informally states that
   if an ideal party and all its kindred parties are honest, then \fchan does not
   halt with overwhelming probability.
-
-\begin{lemma}[No halt]
-\label{lemma:no-halt}
-  In an ideal execution with \fchan and \simulator, if the kindred parties of
-  the honest parties of \fchan are themselves honest, then the functionality
-  halts with negligible probability in the security parameter (i.e.,
-  l.~\ref{code:functionality:close:halt} of Fig.~\ref{code:functionality:close}
-  is executed negligibly often).
-\end{lemma}
 
   A salient observation
   on our UC protocol \pchan (Appx.~\ref{construction:real-world}) is
