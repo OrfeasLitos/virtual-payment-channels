@@ -156,8 +156,8 @@
 
 % environment for proof sketch
 \ifelseieee
-  {\newenvironment{proofsketch}[1][Proof Sketch]{\begin{IEEEproof}[#1]}{\end{IEEEproof}}}
-  {\newenvironment{proofsketch}{\noindent \textit{Proof Sketch.}}{\qed \smallskip \ \\}}
+  {\NewDocumentEnvironment{proofsketch}{o}{\begin{IEEEproof}[Proof Sketch\IfNoValueTF{#1}{}{ [#1]}]}{\end{IEEEproof}}}
+  {\NewDocumentEnvironment{proofsketch}{o}{\noindent \textit{Proof Sketch\IfNoValueTF{#1}{}{ [#1]}.}}{\qed \ \\}}
 
 % bibliography style set to splncs
 \bibliographystyle{splncs04}
