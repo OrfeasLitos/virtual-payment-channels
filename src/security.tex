@@ -25,7 +25,7 @@
     \item $P$ has received $l$ payments, each involving $e_i$ coins.
   \end{itemize}
   If $P$ closes unilaterally, eventually there will be $h$ outputs on-chain
-  spendable only by $P$ or a kindred party, each of value $c_i$, such that
+  spendable only by $P$, each of value $c_i$, such that
   \begin{equation}
     \sum\limits_{i=1}^h c_i \geq c - \sum\limits_{i=1}^n f_i -
     \sum\limits_{i=1}^m d_i + \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i
@@ -61,7 +61,7 @@
   paradigm.
 
   Subsequently (Appx.~\ref{sec:proofs}) we prove the ``no-halt'' Lemma (\ref{lemma:no-halt}), which informally states that
-  if an ideal party and all its kindred parties are honest, then our ideal
+  if an ideal party is honest, then our ideal
   functionality \fchan (Appx.~\ref{sec:functionality}) does not
   halt with overwhelming probability.
 
