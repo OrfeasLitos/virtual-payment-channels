@@ -51,3 +51,69 @@
   The proof is exactly the same as that of
   Theorem~\ref{theorem:security:simple}, replacing superscripts $1$ for $n$.
 \end{proof}
+
+Since we use a global setup, proving UC-emulation is not enough. We further
+need to prove that all ideal global subroutines are \emph{replaceable}, i.e.,
+they can be replaced with their real counterparts. This guarantees that a real
+deployment will offer the same security guarantees as its idealized description.
+
+For any $i \in [n]$, the individual global subroutines $\ledger, \fchansup{1},
+\dots, \fchansup{i}$ can be merged (as per Def.~4.1
+of~\cite{10.1007/978-3-030-90453-1_22}) into the ``global setup''
+$\mathcal{G}^i$. Likewise, the realisation $\pledger$ of $\ledger$~\cite{BMTZ17}
+and $\pchansup{1}, \dots, \pchansup{i}$ can be merged into $\Pi^i$.
+
+\begin{lemma}
+\label{lemma:merged-emulate}
+For all $i \in [n]$, $\Pi^i$ UC-emulates $\mathcal{G}^i$.
+\end{lemma}
+
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Lemma~\ref{lemma:merged-emulate}]
+The following facts hold (note the inversion of the order of indices compared to
+the formulation of Theorem~4.3): $\ledger$ and $\pledger$ are \emph{subroutine
+respecting} (Def.~A.6~\cite{10.1007/978-3-030-90453-1_22}) as they do not
+accept/pass inputs or outputs from/to parties outside their session (this can be
+verified by inspection). $\fchansup{1}$ and $\pchansup{1}$ are $\ledger$- and
+$\pledger$-subroutine respecting respectively
+(Def.~2.3~\cite{10.1007/978-3-030-90453-1_22}), as they they do not accept/pass
+inputs or outputs from/to parties outside their session apart from $\ledger$ and
+$\pledger$ respectively. For any $j \in [i] \setminus \{1\}$, $\fchansup{j}$ and
+$\pchansup{j}$ are $\mathcal{G}^{j-1}$- and $\Pi^{j-1}$-subroutine respecting
+respectively, as they they do not accept/pass inputs or outputs from/to parties
+outside their session apart from $\mathcal{G}^{j-1}$ and $\Pi^{j-1}$
+respectively. Theorem~4.3 of~\cite{10.1007/978-3-030-90453-1_22} then implies
+the required result.
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
+
+\begin{theorem}[Full Replacement]
+\label{theorem:replacement}
+For all $i \in [n]$, the ideal global setup $\mathcal{G}^i$ can be replaced with
+$\Pi^i$.
+\end{theorem}
+
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+Simulator \simulator{} (Figs.~\ref{code:simulator:flow}--\ref{code:simulator})
+is $\mathcal{G}$-\emph{agnostic} (Def.~3.4
+of~\cite{10.1007/978-3-030-90453-1_22}) as \simulator{} is a relay between
+parties and the environment \environment. This can be verified by inspection of
+Fig.~\ref{code:simulator:flow}. Thus Theorem~3.5
+of~\cite{10.1007/978-3-030-90453-1_22}, full replacement, applies inductively to
+$\mathcal{G}^i$ and $\Pi^i$.
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
