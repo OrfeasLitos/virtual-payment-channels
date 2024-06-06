@@ -50,8 +50,7 @@
   single commitment tx per endpoint, avoiding an exponential state blowup in the
   recursion depth and making off-chain payments efficient.
 
-  In more detail, during the channel opening procedure (cf.
-  Fig.~\ref{code:ln:open}) the two counterparties (i) create new keypairs and
+  In more detail, during the channel opening procedure (in the full version) the two counterparties (i) create new keypairs and
   exchange the resulting public keys, then (ii) if the channel is
   virtual, prepare the underlying base channels, next (iii) they exchange
   signatures for their initial commitment txs
@@ -64,7 +63,7 @@
   \dots, E$ and $4$ channels, $(A, B)$, $\dots,(D, E)$, that will act as
   the base of the virtual channel $(A, E)$. We first follow the operations of
   the simple channel $(A, B)$ and then those of $(A, E)$. We simplify some parts
-  of the protocol to aid comprehension --- see Appx.~\ref{sec:description} for
+  of the protocol to aid comprehension --- see the full version for
   more details.
 
   \makeatletter%
@@ -224,7 +223,7 @@
   after a timelock. See, e.g., $2$nd spending method of the $3$rd output of
   Fig.~\ref{figure:virtual-layer-initiator-simple}. Keys $A_b \dots E_b$ can be
   spent by \emph{bridge} txs, the output of which funds the $(A, E)$ channel.
-  Bridge txs are discussed in Appx.~\ref{subsec:description-virtual-channels}.
+  Bridge txs are discussed in the full version.
 
   % splncs
   %\addtolength{\intextsep}{-15pt}
@@ -259,7 +258,7 @@
   we have to carefully select the exact values of timelocks to ensure that
   each party has enough time to act. The timelocks increase linearly
   with the depth of the recursion. The exact values are shown in
-  Sec.~\ref{sec:pseudocode} and Appx.~\ref{sec:protocol}.
+  Sec.~\ref{sec:pseudocode}.
 
   % splncs
   %\addtolength{\intextsep}{-15pt}
