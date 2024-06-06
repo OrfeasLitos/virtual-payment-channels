@@ -1,74 +1,74 @@
-%\begin{theorem}[Simple Payment Channel Security]
-%  \label{theorem:security:simple}
-%  The protocol $\pchansup{1}$ UC-realises $\fchansup{1}$ in the presence of a
-%  global functionality $\ledger$ and assuming the security of the underlying
-%  digital signature:
-%  \begin{gather*}
-%    \forall \text{ PPT } \adversary, \exists \text{ PPT } \simulator: \forall
-%    \text{ PPT } \environment \text{ it is }\\
-%    \textsc{exec}^{\ledger}_{\pchansup{1}, \adversary, \environment} \approx
-%    \textsc{exec}^{\fchansup{1}, \ledger}_{\simulator, \environment} \enspace.
-%  \end{gather*}
-%\end{theorem}
-%
-%  The corresponding proof stems from
-%  Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
-%  \simulator faithfully simulates \pchan. Lastly we prove that $\forall n \geq 2, \pchansup{n}$ UC-realises $\fchansup{n}$
-%  in the presence of $\fchansup{1}, \dots, \fchansup{n-1}$
-%  (leveraging the relevant definition
-%  from~\cite{DBLP:conf/tcc/BadertscherCHTZ20}).
-%
-%\begin{theorem}[Recursive Virtual Payment Channel Security]
-%  \label{theorem:security:virtual}
-%  $\forall n \in \mathbb{N}^* \setminus \{1\}$, the protocol $\pchansup{n}$
-%  UC-realises $\fchansup{n}$ in the presence of $\fchansup{1}, \dots,
-%  \fchansup{n-1}$ and \ledger, assuming the security of the underlying digital
-%  signature. Specifically,
-%  \begin{gather*}
-%    \forall n \in \mathbb{N}^* \setminus \{1\}, \forall \text{ PPT } \adversary,
-%    \exists \text{ PPT } \simulator: \forall \text{ PPT } \environment \text{ it
-%    is } \\
-%    \textsc{exec}^{\ledger, \fchansup{1}, \dots, \fchansup{n-1}}_{\pchansup{n},
-%    \adversary, \environment} \approx
-%    \textsc{exec}^{\fchansup{n}, \ledger, \fchansup{1}, \dots,
-%    \fchansup{n-1}}_{\simulator, \environment} \enspace.
-%  \end{gather*}
-%\end{theorem}
-%
-%\makeatletter%
-%\@ifclassloaded{IEEEtran}%
-%{\begin{IEEEproof}}
-%{\begin{proof}}
-%\makeatother%
-%[Proof of Theorem~\ref{theorem:security:simple}]
-%  By inspection of Figures~\ref{code:functionality:rules}
-%  and~\ref{code:simulator:flow} we can deduce that for a particular
-%  \environment, in the ideal world execution $\textsc{exec}^{\fchansup{1},
-%  \ledger}_{\simulator_{\adversary}, \environment}$, $\simulator_{\adversary}$
-%  simulates internally the two $\pchansup{1}$ parties exactly as they would execute in
-%  $\textsc{exec}^{\ledger}_{\pchansup{1}, \adversary, \environment}$, the real world
-%  execution, in case $\fchansup{1}$ does not halt. Indeed, $\fchansup{1}$ only halts with
-%  negligible probability according to Lemma~\ref{lemma:no-halt}, therefore the
-%  two executions are computationally indistinguishable.
-%\makeatletter%
-%\@ifclassloaded{IEEEtran}%
-%{\end{IEEEproof}}
-%{\end{proof}}
-%\makeatother%
-%
-%\makeatletter%
-%\@ifclassloaded{IEEEtran}%
-%{\begin{IEEEproof}}
-%{\begin{proof}}
-%\makeatother%
-%[Proof of Theorem~\ref{theorem:security:virtual}]
-%  The proof is exactly the same as that of
-%  Theorem~\ref{theorem:security:simple}, replacing superscripts $1$ for $n$.
-%\makeatletter%
-%\@ifclassloaded{IEEEtran}%
-%{\end{IEEEproof}}
-%{\end{proof}}
-%\makeatother%
+\begin{theorem}[Simple Payment Channel Security]
+  \label{theorem:security:simple}
+  The protocol $\pchansup{1}$ UC-realises $\fchansup{1}$ in the presence of a
+  global functionality $\ledger$ and assuming the security of the underlying
+  digital signature:
+  \begin{gather*}
+    \forall \text{ PPT } \adversary, \exists \text{ PPT } \simulator: \forall
+    \text{ PPT } \environment \text{ it is }\\
+    \textsc{exec}^{\ledger}_{\pchansup{1}, \adversary, \environment} \approx
+    \textsc{exec}^{\fchansup{1}, \ledger}_{\simulator, \environment} \enspace.
+  \end{gather*}
+\end{theorem}
+
+  The corresponding proof stems from
+  Lemma~\ref{lemma:no-halt}, the fact that \fchan is a simple relay and that
+  \simulator faithfully simulates \pchan. Lastly we prove that $\forall n \geq 2, \pchansup{n}$ UC-realises $\fchansup{n}$
+  in the presence of $\fchansup{1}, \dots, \fchansup{n-1}$
+  (leveraging the relevant definition
+  from~\cite{DBLP:conf/tcc/BadertscherCHTZ20}).
+
+\begin{theorem}[Recursive Virtual Payment Channel Security]
+  \label{theorem:security:virtual}
+  $\forall n \in \mathbb{N}^* \setminus \{1\}$, the protocol $\pchansup{n}$
+  UC-realises $\fchansup{n}$ in the presence of $\fchansup{1}, \dots,
+  \fchansup{n-1}$ and \ledger, assuming the security of the underlying digital
+  signature. Specifically,
+  \begin{gather*}
+    \forall n \in \mathbb{N}^* \setminus \{1\}, \forall \text{ PPT } \adversary,
+    \exists \text{ PPT } \simulator: \forall \text{ PPT } \environment \text{ it
+    is } \\
+    \textsc{exec}^{\ledger, \fchansup{1}, \dots, \fchansup{n-1}}_{\pchansup{n},
+    \adversary, \environment} \approx
+    \textsc{exec}^{\fchansup{n}, \ledger, \fchansup{1}, \dots,
+    \fchansup{n-1}}_{\simulator, \environment} \enspace.
+  \end{gather*}
+\end{theorem}
+
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Theorem~\ref{theorem:security:simple}]
+  By inspection of Figures~\ref{code:functionality:rules}
+  and~\ref{code:simulator:flow} we can deduce that for a particular
+  \environment, in the ideal world execution $\textsc{exec}^{\fchansup{1},
+  \ledger}_{\simulator_{\adversary}, \environment}$, $\simulator_{\adversary}$
+  simulates internally the two $\pchansup{1}$ parties exactly as they would execute in
+  $\textsc{exec}^{\ledger}_{\pchansup{1}, \adversary, \environment}$, the real world
+  execution, in case $\fchansup{1}$ does not halt. Indeed, $\fchansup{1}$ only halts with
+  negligible probability according to Lemma~\ref{lemma:no-halt}, therefore the
+  two executions are computationally indistinguishable.
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
+
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Theorem~\ref{theorem:security:virtual}]
+  The proof is exactly the same as that of
+  Theorem~\ref{theorem:security:simple}, replacing superscripts $1$ for $n$.
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
 
 Since we use a global setup, proving UC-emulation is not enough. We further
 need to prove that all ideal global subroutines are \emph{replaceable}, i.e.,
