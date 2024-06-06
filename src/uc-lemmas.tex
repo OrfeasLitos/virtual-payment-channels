@@ -35,7 +35,12 @@
   \end{gather*}
 \end{theorem}
 
-\begin{proof}[Proof of Theorem~\ref{theorem:security:simple}]
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Theorem~\ref{theorem:security:simple}]
   By inspection of Figures~\ref{code:functionality:rules}
   and~\ref{code:simulator:flow} we can deduce that for a particular
   \environment, in the ideal world execution $\textsc{exec}^{\fchansup{1},
@@ -45,12 +50,25 @@
   execution, in case $\fchansup{1}$ does not halt. Indeed, $\fchansup{1}$ only halts with
   negligible probability according to Lemma~\ref{lemma:no-halt}, therefore the
   two executions are computationally indistinguishable.
-\end{proof}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
 
-\begin{proof}[Proof of Theorem~\ref{theorem:security:virtual}]
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Theorem~\ref{theorem:security:virtual}]
   The proof is exactly the same as that of
   Theorem~\ref{theorem:security:simple}, replacing superscripts $1$ for $n$.
-\end{proof}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
 
 Since we use a global setup, proving UC-emulation is not enough. We further
 need to prove that all ideal global subroutines are \emph{replaceable}, i.e.,

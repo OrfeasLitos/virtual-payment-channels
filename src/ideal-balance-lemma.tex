@@ -31,7 +31,12 @@
   \end{equation}
 \end{lemma}
 
-\begin{proof}[Proof of Lemma~\ref{lemma:ideal-balance}]
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Lemma~\ref{lemma:ideal-balance}]
   We will prove the Lemma by following the evolution of the $\subbalance{P}$
   variable.
   \begin{itemize}
@@ -93,4 +98,8 @@
   \sum\limits_{i=1}^k r_i$ if $P = \alice$, or else if $P = \bob$,
   $\subbalance{P} = - \sum\limits_{i=1}^n f_i - \sum\limits_{i=1}^m d_i +
   \sum\limits_{i=1}^l e_i + \sum\limits_{i=1}^k r_i$.
-\end{proof}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%

@@ -10,7 +10,11 @@
   (\maxTime + \frac{\vdelay}{2})/ \minTime \rceil$.
 \end{proposition}
 
-\begin{proof}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
   Consider $\tau^{\stkh}_h$ to be the round that a party $\stkh$ becomes aware
   of the $h$-th block in the $\texttt{state}$. It follows that $\tau_h \leq
   \tau^{\stkh}_h$ where $\tau_h$ is the round block $h$ enters $\texttt{state}$. Note
@@ -28,4 +32,8 @@
   result $r \cdot \windowSize$ blocks require at least $r \cdot \minTime \geq
   \maxTime + \frac{\vdelay}{2}$ rounds. We deduce that if $t \geq (2 +
   r)\windowSize$ the inequality follows.
-\end{proof}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%

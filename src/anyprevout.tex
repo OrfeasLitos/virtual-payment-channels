@@ -39,7 +39,12 @@
     then the protocol needs the \texttt{ANYPREVOUT} sighash flag.
   \end{theorem}
 
-  \begin{proof}[Proof of Theorem~\ref{theorem:anyprevout}]
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Theorem~\ref{theorem:anyprevout}]
     \orfeas{the next paragraph is wrong}
     When an off-chain protocol is closed, there has to be some form of
     on-chain enforceable information and coin flow to at least one of its neighbouring
@@ -132,7 +137,11 @@
     As a result, we conclude that party $P_2$ needs at least
     $2^{m-1} \in O(2^n)$ transactions to be
     able to unilaterally close its protocol.  
-  \end{proof}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
 
   Note that in case of a protocol that resembles ours but does not make use of
   \texttt{ANYPREVOUT}, the situation is further complicated in two distinct

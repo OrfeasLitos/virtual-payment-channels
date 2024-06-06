@@ -80,7 +80,12 @@
   \end{itemize}
 \end{lemma}
 
-\begin{proof}[Proof of Lemma~\ref{lemma:real-balance-security}]
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\begin{IEEEproof}}
+{\begin{proof}}
+\makeatother%
+[Proof of Lemma~\ref{lemma:real-balance-security}]
   We first note that, as signature forgeries only happen with negligible
   probability and only a polynomial number of signatures are verified by honest
   parties throughout an execution, the event in which any forged signature
@@ -858,4 +863,8 @@
   $P$ owns at the end of the two scenarios is exactly $c_P$ and due
   to~(\ref{eq:virt-balance}) we can directly derive the
   required~(\ref{eq:real-balance-coop-close}). The Lemma has now been proven.
-\end{proof}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+{\end{IEEEproof}}
+{\end{proof}}
+\makeatother%
