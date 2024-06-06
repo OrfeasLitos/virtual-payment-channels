@@ -123,10 +123,11 @@ $\Pi^i$.
 {\begin{IEEEproof}}
 {\begin{proof}}
 \makeatother%
-Our simulator \simulator{}
+Simulator \simulator{} (Figs.~\ref{code:simulator:flow}--\ref{code:simulator})
 is $\mathcal{G}$-\emph{agnostic} (Def.~3.4
 of~\cite{10.1007/978-3-030-90453-1_22}) as \simulator{} is a relay between
-parties and the environment \environment. Thus Theorem~3.5
+parties and the environment \environment. This can be verified by inspection of
+Fig.~\ref{code:simulator:flow}. Thus Theorem~3.5
 of~\cite{10.1007/978-3-030-90453-1_22}, full replacement, applies inductively to
 $\mathcal{G}^i$ and $\Pi^i$.
 \makeatletter%

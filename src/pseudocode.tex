@@ -2,7 +2,9 @@
 \label{sec:pseudocode}
 
 We here present a simplified version of the \pchan protocol. We omit
-complications imposed by UC.
+complications imposed by UC. Appx.~\ref{sec:protocol} contains
+the full UC protocol and Appx.~\ref{construction:real-world} its in-depth
+description in prose.
 \ \\
 
 \begin{center}
@@ -86,6 +88,7 @@ complications imposed by UC.
         \State Ensure we have at least $x$ coins.
         \If{we host another virtual channel}
           \State Ensure new balance prevents griefing.
+          \Comment{cf.~\ref{construction:ln}}
         \EndIf
         \State Generate and sign new commitment txs ($C_P$, $C_{P'}$), with $x$ coins less for the
         payer and $x$ coins more for the payee.
