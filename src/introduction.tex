@@ -10,7 +10,7 @@
   Channel Network} (PCN) (see, e.g.,~\cite{DBLP:conf/fc/GudgeonMRMG20} for a
   survey). Payments over a PCN happen \emph{off-chain}, i.e., without adding any
   transactions to the underlying blockchain. They only use the blockchain as an
-  arbiter in case of dispute.
+  arbiter in case of a dispute.
 
 The key primitive of PCN protocols is a payment channel. Two parties initiate
 the channel by locking some funds on-chain and subsequently exchange direct
@@ -20,7 +20,7 @@ performance limitations of the underlying blockchain protocol, making them a
 natural choice for parties that interact often. Multiple overlapping payment
 channels can be combined and form a PCN.
 
-Closing a channel is an operation that involves posting the state of the channel
+Closing a non-virtual channel is an operation that involves posting the state of the channel
 on-chain. Closing should be efficient, i.e., needing $O(1)$ on-chain
 transactions, independent of the number of payments that have occured off-chain.
 It is also essential that any party can unilaterally close a channel as
