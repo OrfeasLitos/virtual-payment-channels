@@ -73,7 +73,7 @@
     {\paragraph{Simple channel.}}%
   \makeatother%
   % splncs
-  %\addtolength{\intextsep}{-15pt}
+  \addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
@@ -90,7 +90,7 @@
     \label{figure:payment-layer-simple}
   \end{figure}
   % splncs
-  %\addtolength{\intextsep}{15pt}
+  \addtolength{\intextsep}{15pt}
 
   First $A$ and $B$ generate funding and revocation keypairs and exchange
   public keys ($A_F, B_F, A_R, B_R$ in Fig.~\ref{figure:payment-layer-simple} --
@@ -136,7 +136,7 @@
     {\paragraph{Virtual channel.}}%
   \makeatother%
   % splncs
-  %\addtolength{\intextsep}{-15pt}
+  \addtolength{\intextsep}{-15pt}
   \begin{figure*}[!htbp]
     \begin{minipage}{.47\textwidth}
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
@@ -157,7 +157,7 @@
     \end{minipage}
   \end{figure*}
   % splncs
-  %\addtolength{\intextsep}{15pt}
+  \addtolength{\intextsep}{15pt}
 
   Assume now that channels $(A, B)$, $\dots,(D, E)$, are open and the ``left''
   party of each owns at least $c$ coins in it. These channels can be either
@@ -227,7 +227,7 @@
   Bridge txs are discussed in Appx.~\ref{subsec:description-virtual-channels}.
 
   % splncs
-  %\addtolength{\intextsep}{-15pt}
+  \addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
     \caption{$A$--$E$ virtual channel: $A$'s initiator transaction. Spends the
@@ -236,7 +236,7 @@
     \label{figure:virtual-layer-endpoint-simple}
   \end{figure}
   % splncs
-  %\addtolength{\intextsep}{15pt}
+  \addtolength{\intextsep}{15pt}
 
   Some considerations remain before we can ascertain the security of the
   scheme. Firstly, we must ensure that no intermediary can publish more than
@@ -262,7 +262,7 @@
   Sec.~\ref{sec:pseudocode} and Appx.~\ref{sec:protocol}.
 
   % splncs
-  %\addtolength{\intextsep}{-15pt}
+  \addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
@@ -272,7 +272,7 @@
     \label{figure:virtual-layer-merge-intervals-simple}
   \end{figure}
   % splncs
-  %\addtolength{\intextsep}{15pt}
+  \addtolength{\intextsep}{15pt}
 
   We now return to the opening procedure. After the $5$ parties set up the virtual txs, they revoke their previous
   commitment
@@ -281,7 +281,7 @@
   per endpoint and $12$ messages per intermediary, to set up the virtual layer.
 
   % splncs
-  %\addtolength{\intextsep}{-15pt}
+  \addtolength{\intextsep}{-15pt}
   \begin{figure*}
     \centering
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
@@ -297,7 +297,7 @@
     \label{figure:example-start-end-simple}
   \end{figure*}
   % splncs
-  %\addtolength{\intextsep}{15pt}
+  \addtolength{\intextsep}{15pt}
 
   At last, the $5$ parties have set up virtual layer: Both $A$ and $E$ can
   unilaterally
