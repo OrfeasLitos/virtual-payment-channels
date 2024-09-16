@@ -25,7 +25,7 @@
   A payment over an established channel (described later for simple channels) follows a procedure inspired by
   LN.
 
-  Parties $P_1, \dots, P_n$ can close optimistically a virtual channel
+  Parties $P_1, \dots, P_n$ can optimistically close a virtual channel
   completely off-chain. At a high
   level, the parties that control the base channels \emph{revoke} their \emph{virtual}
   txs and the related \emph{commitment} txs. They cannot use their revoked txs
@@ -98,7 +98,7 @@
   locally generates the \emph{funding} and the two \emph{commitment} txs
   ($F, C_A$ in Fig.~\ref{figure:payment-layer-simple}). They
   sign $C_A$ and exchange the
-  signatures ($2$ messages). $A$ then publishes the $F$ on-chain. Once it
+  signatures ($2$ messages). $A$ then publishes $F$ on-chain. Once it
   is finalised, the channel is open.
 
   The funding tx $F$ moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
@@ -112,7 +112,7 @@
   that $B$ has time to \emph{punish} $A$ if she cheats. $B$'s commitment tx
   $C_B$ is symmetric.
 
-  When $A$ pays $c$ coins to $B$ in the channel, the parties create two new
+  When $A$ pays $c$ coins to $B$ in the channel, $A$ and $B$ create two new
   commitment txs.
   They have the same outputs and scripts as their previous ones, save for the
   coins: $A$'s outputs have $c$ coins less, $B$'s outputs have $c$ coins more.
