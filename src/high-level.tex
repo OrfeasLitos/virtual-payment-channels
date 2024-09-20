@@ -214,8 +214,8 @@
   The virtual txs are designed around two axes: First, each intermediary can
   publish only one virtual tx, which refunds its collateral
   exactly once. We will see how this is enforced below. Second, if the chain of
-  virtual txs is at any point broken by,
-  e.g., an inactive intermediary that does not publish its virtual tx, the
+  virtual txs is at any point broken by
+  an inactive intermediary that does not publish its virtual tx, the
   virtual channel will still be funded correctly and the inactive party will
   lose its collateral. This is guaranteed because
   the unclaimed virtual output automatically turns into the funding output of
@@ -331,7 +331,7 @@
   parties of each base channel create new commitment txs for their channels,
   moving the collateral back into the channel: the ``left'' party gets $A$'s
   coins and the ``right'' one gets $E$'s. Thus all intermediaries ``break even''
-  across their two channels. Once this is done, the parties revoke all virtual
+  across their two channels. Once they do this, the parties revoke all virtual
   txs, using a logic similar to the revocation procedure of simple channels but
   scaled up to all parties. This is why all virtual tx outputs
   (Figs.~\ref{figure:virtual-layer-initiator-simple}--\ref{figure:virtual-layer-merge-intervals-simple})
