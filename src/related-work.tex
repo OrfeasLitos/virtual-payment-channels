@@ -4,21 +4,21 @@
   {\paragraph{Related work.}}%
 \makeatother%
 Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
-  Turing-complete scripting language of Ethereum to provide virtual state
+  Turing-complete scripting language of Ethereum to build virtual state
   channels.
-  GSCN also uses a per-channel functionality and a similar recursive argument
-  as we use in our UC-security analysis. Their security argument is however
+  GSCN uses a per-channel functionality and a recursive argument similar
+  to that of our UC-security analysis. Their security argument is however
   flawed, as they incorrectly argue that every level is subroutine respecting
   with respect to the same environment and subroutines.
-  We believe that, given the versatile scripting of Ethereum, GSCN could be
-  straightforwardly extended to support variadic channels. 
+  We believe that, given the versatile Ethereum scripting, GSCN could be
+  straightforwardly extended to support variadic channels.
   Similar features are provided by Celer~\cite{dong2018celer}.
   Hydra~\cite{cryptoeprint:2020:299} provides state channels for
   Cardano~\cite{cardano}.
 
-  Last but not least, a number of works propose virtual channel constructions
+  Last but not least, several works propose virtual channel constructions
   for Bitcoin. LVPC~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
-  opened on top of two preexisting channels and uses a technique similar to DMC,
+  opened on top of two preexisting channels using a technique similar to DMC,
   unfortunately inheriting the fixed lifetime limitation.
   Let \emph{simple channels} be those built directly on-chain, i.e., channels that are not
   virtual.

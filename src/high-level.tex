@@ -120,8 +120,8 @@
   that end, they build and sign revocation txs for the previous
   commitment txs. A payment needs $3$ messages in total. $B$'s revocation tx ($R_B$ in
   Fig.~\ref{figure:payment-layer-simple}) gives $B$ all coins that belonged
-  to $A$ and vice versa. This way both parties are
-  disincentivised from publishing an old commitment tx under the threat of
+  to $A$ and vice versa. This disincentivises both parties
+  from publishing an old commitment tx under the threat of
   losing all their channel coins.
 
   $A$ or $B$ can now unilaterally close $(A, B)$ by simply publishing the latest
@@ -237,11 +237,11 @@
   % splncs
   \addtolength{\intextsep}{15pt}
 
-  Some considerations remain before we can ascertain the security of the
-  scheme. Firstly, we must ensure that no intermediary can publish more than
+  Some considerations remain to ascertain the scheme security.
+  Firstly, we must ensure that no intermediary can publish more than
   one virtual tx to protect the endpoints from an unbounded sequence of virtual
-  txs preventing them from accessing their funding output indefinitely -- note
-  that malicious parties can fabricate arbitrarily many virtual outputs using
+  txs preventing them from accessing their funding output indefinitely:
+  malicious parties can fabricate arbitrarily many virtual outputs using
   their own, external to the protocol, coins, therefore if all virtual outputs
   were identical, an adversary could publish a perpetual stream of
   merge-intervals txs, spending one valid and one fabricated virtual output.
@@ -252,9 +252,9 @@
   to extend it with their virtual tx. If all intermediaries publish a virtual
   tx, then the last virtual output that was published is not spendable by
   another virtual
-  transaction. This ensures that the endpoints will eventually obtain a funding
+  tx. This ensures that the endpoints will eventually obtain a funding
   output. Preventing this attack means that intermediaries need to store
-  $O(n^3)$ virtual transactions for a virtual channel over $n$ parties. Secondly,
+  $O(n^3)$ virtual txs for a virtual channel over $n$ parties. Secondly,
   we have to carefully select the exact values of timelocks to ensure that
   each party has enough time to act. The timelocks increase linearly
   with the depth of the recursion. The exact values are shown in
@@ -325,8 +325,8 @@
     {\paragraph{Cooperative closing}}%
     {\paragraph{Cooperative closing.}}%
   \makeatother%
-  To enhance usability, our protocol allows the virtual channel to be closed
-  off-chain, given that all parties cooperate. To do this, the endpoints first
+  To enhance usability, our protocol enables closing the virtual channel
+  off-chain if all parties cooperate. To do this, the endpoints first
   let the intermediaries know their final virtual channel balance. Then the
   parties of each base channel create new commitment txs for their channels,
   moving the collateral back into the channel: the ``left'' party gets $A$'s
