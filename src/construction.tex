@@ -120,7 +120,11 @@
   channel does leverage both \textsc{ln} and \textsc{virt}. A virtual channel
   uses both \textsc{ln} and \textsc{virt}.
 
-  \subsubsection{\textsc{ln} subprotocol}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+  {\subsubsection{\textsc{ln} subprotocol}}%
+  {\subsubsection{\textsc{ln} subprotocol.}}%
+\makeatother%
   \label{construction:ln}
   The \textsc{ln} subprotocol has two variations depending on whether $P$ is the
   channel funder (\alice) or the fundee (\bob). It performs a number of tasks:
@@ -271,7 +275,11 @@
   transaction if an old commitment transaction spends the funding output after
   all (Figure~\ref{code:ln:poll}).
 
-  \subsubsection{\textsc{virt} subprotocol}
+\makeatletter%
+\@ifclassloaded{IEEEtran}%
+  {\subsubsection{\textsc{virt} subprotocol}}%
+  {\subsubsection{\textsc{virt} subprotocol.}}%
+\makeatother%
   \label{construction:virt}
   This subprotocol acts as a mediator between the base channels and the
   Lightning-based logic. Put simply, its main responsibility is putting on-chain
