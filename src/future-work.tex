@@ -28,27 +28,8 @@ during normal operation and can be reduced for reputable parties.
 Suitable reputation systems, as well as mechanisms for assigning inactivity
 blame (i.e., proving which parties tried collaborative closing before
 closing unilaterally), which are needed to determine who must pay the fees,
-can be designed but are beyond the scope of this work.
-
-Furthermore, the following modification to Elmo eliminates the channel capacity
-reduction under a Domino attack, while also reducing the on-chain
-footprint of unilateral closing: from each virtual tx, we
-eliminate the output that directly
-pays a party (e.g., $1$st output of
-Fig.~\ref{figure:virtual-layer-extend-interval-simple}) and move its coins into
-the funding output of this transaction (e.g., $3$rd
-output of Fig.~\ref{figure:virtual-layer-extend-interval-simple}). We further
-ensure at the protocol level that the base party that owns these coins never
-allows its channel balance to fall below the collateral, until the supported
-virtual channel closes. This change ensures that the collateral
-automatically becomes available to use in the base channel after the virtual one
-closes, keeping more funds off-chain after a Domino attack. This approach
-however has the drawback that, depending on which of the two parties first
-spends the funding output (with a virtual tx), the funds allocation in the
-channel differs. Base parties thus would have to maintain two sets of commitment
-and revocation txs, one for each case. Since this overhead encumbers the
-optimistic, cooperative case and only confers advantages in the pessimistic
-case, we choose not to adopt this approach into our design.
+can be designed but are beyond the scope of this work. A possible solution to
+the recuded channel capacity is discussed in Appx.~\ref{sec:domino-prevention}.
 
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
