@@ -255,7 +255,7 @@
   (the latter term is explained in detail later), and
   $s$ the maximum number of blocks needed for an honest transaction to enter the
   blockchain after being published, as in Proposition~\ref{prop:liveness} of
-  Section~\ref{sec:liveness}.
+  Subsec.~\ref{subsec:liveness}.
   The required timelock of a party is $p + s$ if its channel is simple,  or $p +
   \sum\limits_{j = 2}^{n - 1}(s - 1 + t_j)$ if the channel is virtual, where
   $t_j$ is the required timelock of the base channel
@@ -391,3 +391,5 @@
   channels to reflect contingent payments by the endpoints. In case of lack of
   cooperation for an update, a party can simply close its base channel. The
   details of such a scheme are outside the scope of this work.
+
+\import{./src/}{liveness.tex}
