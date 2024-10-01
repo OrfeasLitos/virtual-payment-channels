@@ -168,24 +168,26 @@ activation sequence. The latter is achieved by enabling anyone to
 start closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to complete the closure process by posting a single transaction each.
 
   We formally prove the security of our protocol in the Universal
-  Composition (UC)~\cite{uc} setting; our ideal functionality \fchan represents
-  a single channel and is thus a global functionality,
+  Composition (UC)~\cite{uc} setting; our functionality \fchan represents
+  a single channel. It is a global functionality,
   as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20} (cf.
-  Sec.~\ref{section:security}). Elmo requires the \texttt{ANYPREVOUT} signature type (slated for
+  Sec.~\ref{section:security}). Elmo requires the \texttt{ANYPREVOUT} signature
+  type (candidate for
   inclusion in the next Bitcoin update\footnote{\url{https://anyprevout.xyz/}}), which does not sign the hash of the
   transaction it spends, thus enabling a single pre-signed transaction
   to spend any output with a suitable script. We leverage \texttt{ANYPREVOUT} to
-  avoid exponential storage and ensure off-chain payments of base channels are
-  practical. We further conjecture that without
+  avoid exponential storage.
+  %and ensure off-chain payments of base channels are practical.
+  We further conjecture that without
   \texttt{ANYPREVOUT} no efficient off-chain virtual channel constructor
   over Bitcoin can be built. In particular, if any such protocol
   (i) offers an efficient closing operation (i.e., with $O(1)$ on-chain
-  transactions), (ii) has parties store the channel state as transactions and
-  signatures in their local storage and (iii) does not require locking on-chain
-  coins (unlike~\cite{donner}), then each party will need exponentially
-  large space in the number of intermediaries. Note that the second protocol
+  transactions), (ii) has parties locally store the channel state as transactions and
+  signatures and (iii) does not require locking on-chain
+  coins (unlike~\cite{donner}), then each party needs exponential
+  space in the number of intermediaries. Note that the second protocol
   requirement is natural, since, to our knowledge, all trustless layer $2$
   protocols over Bitcoin require all implicated protocol parties to actively
   sign off every state transition and locally store the relevant transactions
-  and signatures of their counterparties, thus ensuring their ability to
+  and signatures of their counterparties to ensure they can
   unilaterally exit later.
