@@ -227,13 +227,23 @@
 
   % splncs
   \addtolength{\intextsep}{-15pt}
-  \begin{figure}[!htbp]
+  \begin{figure*}[!htbp]
+    \begin{minipage}{.48\textwidth}
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
     \caption{$A$--$E$ virtual channel: $A$'s initiator transaction. Spends the
     funding output of the $A$--$B$ channel. $A$ can use it if $B$ has not published
     a virtual transaction.}
     \label{figure:virtual-layer-endpoint-simple}
-  \end{figure}
+    \end{minipage}\hspace{10pt}%
+    \begin{minipage}{.49\textwidth}
+    \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
+    \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
+    transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
+    transactions. $B$ can use it if both $A$ and $C$ have already published
+    their initiator or extend-interval transactions.}
+    \label{figure:virtual-layer-merge-intervals-simple}
+    \end{minipage}
+  \end{figure*}
   % splncs
   \addtolength{\intextsep}{15pt}
 
@@ -259,19 +269,6 @@
   each party has enough time to act. The timelocks increase linearly
   with the depth of the recursion. The exact values are shown in
   Appx.~\ref{sec:pseudocode} and~\ref{sec:protocol}.
-
-  % splncs
-  \addtolength{\intextsep}{-15pt}
-  \begin{figure}[!htbp]
-    \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
-    \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
-    transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
-    transactions. $B$ can use it if both $A$ and $C$ have already published
-    their initiator or extend-interval transactions.}
-    \label{figure:virtual-layer-merge-intervals-simple}
-  \end{figure}
-  % splncs
-  \addtolength{\intextsep}{15pt}
 
   We now return to the opening procedure. After the $5$ parties set up the virtual txs, they revoke their previous
   commitment
