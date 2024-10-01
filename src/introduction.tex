@@ -12,7 +12,8 @@
   transactions to the underlying blockchain. They only use the blockchain as an
   arbiter in case of disputes.
 
-The key primitive of PCN protocols is a payment channel. Two parties initiate
+The key primitive of PCN protocols is a payment channel. Two parties (the
+\emph{endpoints}) initiate
 the channel by locking some funds on-chain and subsequently exchange direct
 messages to update the state of the channel. The key feature is that state
 updates are not posted on-chain and hence they remain unencumbered by the
@@ -43,7 +44,7 @@ punishment mechanism that can be triggered by Bob whenever Alice posts an old
 state update and vice-versa. The script timelocking is essential to allow an
 honest counterparty some time to act.
 
-Interconnecting channels in LN enables any two parties to transmit funds
+Interconnecting channels in LN enables endpoints to transmit funds
 to each other as long as there is a route of payment channels that connects
 them. The downside of this mechanism is that it requires the active involvement
 of all parties along the path for each payment. Instead, \emph{virtual payment
@@ -59,8 +60,7 @@ recent work~\cite{9519487} brought them closer to
 Bitcoin-compatibility (by leveraging adaptor
 signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}).
 
-We call the two parties that share the channel \emph{endpoints} and the parties
-of any of the underlying channels \emph{intermediaries}.
+We call the parties of the underlying channels \emph{intermediaries}.
 A virtual channel constructor can be thought of as an \emph{operator} over the
 underlying payment channel primitive. We identify three natural
 desiderata for it.
