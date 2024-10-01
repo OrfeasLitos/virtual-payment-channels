@@ -204,7 +204,12 @@
   We here
   show the performance of the $3$ protocols with respect to the metrics payment
   channels aim to improve, namely payment latency (Fig.~\ref{graph:delays}) and
-  fees (Fig.~\ref{graph:fees}).
+  fees (Fig.~\ref{graph:fees}). We have designed 3 workloads: ``power law'', in
+  which incoming payments follow a zipf~\cite{powers-1998-applications}
+  distribution, ``preferred receiver'', in which each party has a preferred
+  payee which receives half of the payments, and ``uniform'', where payments are
+  chosen uniformly at random. See Appx.~\ref{section:simulation-details} for
+  more details.
 
   As evidenced, Elmo is the best or on par with the best protocol in every
   case. We attribute this to the flexibility of Elmo, as it is both variadic and
