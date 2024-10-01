@@ -1,0 +1,88 @@
+\section{Payment simulation details}
+\label{section:simulation-details}
+  Several knowledge functions are provided, such as full
+  knowledge of all future payments and knowledge of the payer's next $m$
+  payments.
+  The utility of a payment is high when its latency and fees are
+  low, it increases the payer's network centrality, and reduces
+  distance from other parties. We weigh low latency
+  and fees most, then small distance and high centrality last.
+  Latency here is the time that passes until a payment is finalized. This depends on whether the party decides to do an on-chain transaction, open a new channel, or do an off-chain transaction if possible. Note that the first two are bound by the \raisebox{0.5ex}{\texttildelow}$10'$ latency of Bitcoin blocks. We measure latency in seconds.
+  Recognising the arbitrary nature of the concrete weights, we
+  chose them before running our simulations in order to minimise
+  bias.
+  % TODO: try some more weights and change above to:
+  %tested for various different weights obtaining results similar to the ones we
+  %present.
+  Each payment is carried out by dry-running all known future
+  payments with the three possible payment kinds (simply
+  on-chain, opening a new channel, using existing
+  channels), comparing their utility and executing the best one.
+
+  Due to the privacy guarantees of LN, we are unable to obtain real-world
+  off-chain payment data. We therefore generate payments randomly. More
+  specifically, we provide three different payment workloads to mimic
+  different usage schemes: For the first, each party has a \emph{preferred
+  receiver}, chosen
+  uniformly at the beginning, which it pays half the time, the other half
+  choosing the payee uniformly at random. Each payment value is chosen
+  uniformly at random from the $[0, \max]$ range, for $\max =
+  \frac{(\text{initial coins}) \cdot \text{\#players}}{\text{\#payments}}$. We
+  employ $1000$ parties, with a knowledge function disclosing to each party its
+  next $m=100$ payments, as it appeared this is a realistic knowledge function
+  for this case. This scenario occurs when new users are onboarded with
+  the intent to primarily pay a single counterparty, but sporadically pay
+  others as well. For the second, in an attempt to emulate real-world payment
+  distributions, the value and number of incoming payments of each player are
+  drawn from the zipf~\cite{powers-1998-applications} distibution with
+  parameter $2$, which corresponds to real-world \emph{power-law} distributions
+  with a heavy tail~\cite{DBLP:journals/cn/BroderKMRRSTW00}. Each payment value
+  is chosen according to the
+  zipf$(2.16)$ distribution which corresponds to the $80/20$
+  rule~\cite{pareto}, moved to have a mean equal to $\frac{\max}{2}$. We
+  consider $500$ parties, and a knowledge function with $m=10$, as this is more
+  aligned with real-world scenarios. For the third, all choices are made
+  \emph{uniformly at random}, with each payment chosen uniformly from $[0,
+  \max]$, employing a
+  total of $3000$ parties, again with each knowing its next $m=10$ payments.
+  For all scenarios the payer of each payment is chosen uniformly at
+  random, no channels exist initially, and all parties initially own the same
+  amount of coins on-chain. A payer funds a new channel with the minimum of all
+  the on-chain funds of the payer and the sum of the known future payments to
+  the same payee plus $10$ times the current payment value.
+  The coins that fund new virtual channels are essentially decided in the same way as funding coins for simple channels. The only difference is that the availability of funding from the underlying channel is artificially limited so that it does not deplete too fast. This ensures that the underlying channel can be used as a base for several virtual channels, as well as for more transactions. The authors would use this heuristic to allocate their own funds in real-life use cases.
+  The fees for new virtual channels are decided as follows: There is a fixed base fee that has to be payed for each intermediary. Furthermore, each intermediary gets a small fixed proportion of the number of coins that will be put on the virtual channel.
+  The
+  number of parties is chosen to ensure the simulation completes within a
+  reasonable length of time.
+
+  %TODO: remove when moving to main body to shorten
+  In the simulation we do not close any channels, since this would require
+  complicated heuristics of when to close a channel. One reason to avoid it is
+  simplicity. Furthermore in the real world parties will act according to the
+  characteristics of the payment network. Hence the heuristics should to some
+  extent depend also on these characteristics and therefore would be easy to
+  skew in favor of whichever payment network one prefers.
+
+  In order to avoid bias, we simulate each
+  protocol with the same payments. We simulate each scenario with $20$
+  distinct sets of payments and keep the average.
+  In Figs.~\ref{graph:delays} and~\ref{graph:fees}, scale does not begin at zero
+  for better visibility. Payment
+  delays are calculated based on which protocol is used and how the payment is
+  performed. Average
+  latency is high as it describes the whole run, including slow on-chain
+  payments and channel openings. Total fees are calculated by summing the fee
+  of each ``basic'' event (e.g., paying an intermediary for its service). None
+  of the $3$ protocols provide fee recommendations, so we use the same baseline
+  fees for the same events in all $3$ to avoid bias. These
+  fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
+  relative, not absolute, fees.
+
+  As Fig.~\ref{graph:delays} shows, delays are primarily influenced by the
+  payment distribution and only secondarily by the protocol: The preferred
+  receiver is the fastest and the uniform is the slowest. This is reasonable:
+  In the preferred receiver scenario at least half of each party's payments can
+  be performed over a single channel, thus on-chain actions are reduced. On the
+  other hand, in the uniform scenario payments are spread over all parties
+  evenly, so channels are not as well utilised.
