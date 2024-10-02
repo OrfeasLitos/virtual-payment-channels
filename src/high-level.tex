@@ -119,7 +119,7 @@
   coins: $A$'s outputs have $c$ coins less, $B$'s outputs have $c$ coins more.
   They sign them and swap signatures. In order to ensure only one set of
   commitment txs is valid at a time, they then revoke their previous ones. To
-  that end, they build and sign revocation txs for the previous
+  that end, they build and sign \emph{revocation} txs for the previous
   commitment txs. A payment needs $3$ messages in total. $B$'s revocation tx ($R_B$ in
   Fig.~\ref{figure:payment-layer-simple}) gives $B$ all coins that belonged
   to $A$ and vice versa. This disincentivises both parties
