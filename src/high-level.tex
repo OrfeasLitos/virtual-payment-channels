@@ -120,11 +120,11 @@
   They sign them and swap signatures. In order to ensure only one set of
   commitment txs is valid at a time, they then revoke their previous ones. To
   that end, they build and sign \emph{revocation} txs for the previous
-  commitment txs. A payment needs $3$ messages in total. $B$'s revocation tx ($R_B$ in
+  commitment txs. $B$'s revocation tx ($R_B$ in
   Fig.~\ref{figure:payment-layer-simple}) gives $B$ all coins that belonged
   to $A$ and vice versa. This disincentivises both parties
   from publishing an old commitment tx under the threat of
-  losing all their channel coins.
+  losing all their channel coins. A payment needs $3$ messages in total.
 
   $A$ or $B$ can now unilaterally close $(A, B)$ by simply publishing the latest
   commitment tx on-chain and waiting for the timelock to expire. Since the last
