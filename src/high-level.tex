@@ -98,7 +98,8 @@
   locally generates the \emph{funding} and the two \emph{commitment} txs
   ($F, C_A$ in Fig.~\ref{figure:payment-layer-simple}). They
   sign $C_A$ and exchange the
-  signatures ($2$ messages). $A$ then publishes $F$ on-chain. Once it
+  signatures ($2$ messages). $A$ stores her
+  signed commitment tx off-chain and publishes $F$ on-chain. Once $F$
   is finalised, the channel is open.
 
   The funding tx $F$ moves $A$'s initial coins to a $2$-of-$2$ multisig, i.e., an
