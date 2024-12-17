@@ -6,19 +6,18 @@
   \coordinate (commitment_out_2) at (608.08bp,-102.124bp);
   \node (revocation) at (762.87bp,72.124bp) [draw,ellipse] {$R_B$};
   \coordinate (revocation_out) at (935.16bp,72.124bp);
-  \draw [->] (funding) ..controls (40.199bp,39.124bp) and (83.589bp,39.124bp)  .. (funding_out);
+  \draw [-] (funding) ..controls (40.199bp,39.124bp) and (83.589bp,39.124bp)  .. (funding_out);
   \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
   \pgfsetstrokecolor{strokecol}
   \draw (152.0bp,-7.124bp) node {$A_F \wedge B_F$};
   \draw [->] (funding_out) -- (commitment);
-  \draw [->] (commitment) -- (commitment_out_1);
-  \draw (584.39bp,32.124bp) node {$(A_R \wedge B_R)$};
-  \draw (584.39bp,-10.124bp) node {$\vee (A + t)$};
+  \draw [->] (commitment) -- (revocation);
+  \draw (584.39bp,27.124bp) node {$(A_R \wedge B_R)$};
+  \draw (584.39bp,-15.124bp) node {$\vee (A + t)$};
   \draw [->] (commitment) -- (commitment_out_2);
   \draw (461.29bp,-66.124bp) node {$B$};
   \draw (339.52bp,26.036bp) node {$$};
   \draw (508.89bp,6.0bp) node {$$};
-  \draw [->] (commitment_out_1) -- (revocation);
   \draw [->] (revocation) -- (revocation_out);
   \draw (871.87bp,37.124bp) node {$B$};
   \draw (788.1bp,66.124bp) node {$$};

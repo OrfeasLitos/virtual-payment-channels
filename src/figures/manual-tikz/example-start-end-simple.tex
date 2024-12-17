@@ -3,35 +3,40 @@
 
   \node[minimum size=0pt,inner sep=0pt] (AB_funding_in) {};
   \node[minimum size=0pt,inner sep=0pt,above of=AB_funding_in] (AB_funding_out) {};
-  \draw [->] (AB_funding_in) -- (AB_funding_out) node[midway,right] {$A_F \wedge B_F$};
-
+  \node[above of=AB_funding_out] (A_virt) [draw,ellipse] {$A$};
   \node[minimum size=0pt,inner sep=0pt,node distance=4*\distance, right of=AB_funding_in] (BC_funding_in) {};
   \node[minimum size=0pt,inner sep=0pt,above of=BC_funding_in] (BC_funding_out) {};
-  \draw [->] (BC_funding_in) -- (BC_funding_out) node[midway,right] {$B_F \wedge C_F$};
-
   \node[minimum size=0pt,inner sep=0pt,node distance=4*\distance, right of=BC_funding_in] (CD_funding_in) {};
   \node[minimum size=0pt,inner sep=0pt,above of=CD_funding_in] (CD_funding_out) {};
-  \draw [->] (CD_funding_in) -- (CD_funding_out) node[midway,right] {$C_F \wedge D_F$};
-
+  \node[minimum size=0pt,inner sep=0pt] (BC_CD_fundings_midpoint) at ($(BC_funding_out)!0.5!(CD_funding_out)$) {};
+  \node[above of=BC_CD_fundings_midpoint,node distance=3*\distance] (C_virt) [draw,ellipse] {$C$};
   \node[minimum size=0pt,inner sep=0pt,node distance=4*\distance, right of=CD_funding_in] (DE_funding_in) {};
   \node[minimum size=0pt,inner sep=0pt,above of=DE_funding_in] (DE_funding_out) {};
-  \draw [->] (DE_funding_in) -- (DE_funding_out) node[midway,right] {$D_F \wedge E_F$};
+  \node[minimum size=0pt,inner sep=0pt] (CD_DE_fundings_midpoint) at ($(CD_funding_out)!0.5!(DE_funding_out)$) {};
+  \node[above of=CD_DE_fundings_midpoint] (D_virt) [draw,ellipse] {$D$};
+  \node[minimum size=0pt,inner sep=0pt] (AB_BC_fundings_midpoint) at ($(AB_funding_out)!0.5!(BC_funding_out)$) {};
+  \node[above of=AB_BC_fundings_midpoint,node distance=5*\distance] (B_virt) [draw,ellipse] {$B$};
+  \node[minimum size=0pt,inner sep=0pt,above of=B_virt,right of=B_virt] (B_virt_out) {};
+  \node[right of=B_virt_out,node distance=2*\distance] (bridge) [draw,circle] {$b$};
 
-  \node[above of=AB_funding_out] (A_virt) [draw,ellipse] {$A$};
+  \draw [->] (AB_funding_in) -- (A_virt) node[midway,right] {$A_F \wedge B_F$};
+
+  \draw [->] (BC_funding_in) -- (C_virt) node[midway,left] {$B_F \wedge C_F$};
+
+  \draw [->] (CD_funding_in) -- (D_virt) node[midway,left] {$C_F \wedge D_F$};
+
+  \draw [->] (DE_funding_in) -- (D_virt) node[midway,right] {$D_F \wedge E_F$};
+
   \draw [->] (AB_funding_out) -- (A_virt);
 
   \node[minimum size=0pt,inner sep=0pt,above of=A_virt,left of=A_virt] (AB_new_funding) {};
   \draw [->] (A_virt) -- (AB_new_funding) node[midway,left] {$A_F' \wedge B_F'$};
   \node[minimum size=0pt,inner sep=0pt,above of=A_virt,right of=A_virt] (A_virt_out) {};
-  \draw [->] (A_virt) -- (A_virt_out) node[midway,left] {$\{A\}$};
+  \draw [->] (A_virt) -- (B_virt) node[midway,left] {$\{A\}$};
 
-  \node[minimum size=0pt,inner sep=0pt] (CD_DE_fundings_midpoint) at ($(CD_funding_out)!0.5!(DE_funding_out)$) {};
-  \node[above of=CD_DE_fundings_midpoint] (D_virt) [draw,ellipse] {$D$};
-  \draw [->] (CD_funding_out) -- (D_virt);
-  \draw [->] (DE_funding_out) -- (D_virt);
 
   \node[minimum size=0pt,inner sep=0pt,above of=CD_funding_out,node distance=2*\distance] (D_virt_out) {};
-  \draw [->] (D_virt) -- (D_virt_out) node[midway,left,xshift=0.2*\distance,yshift=-0.3*\distance] {$\{D,E\}$};
+  \draw [->] (D_virt) -- (C_virt) node[midway,left,xshift=0.2*\distance,yshift=-0.3*\distance] {$\{D,E\}$};
   \node[minimum size=0pt,inner sep=0pt,above of=DE_funding_out,node distance=2*\distance] (DE_new_funding) {};
   \draw [->] (D_virt) -- (DE_new_funding) node[midway,right,xshift=-0.2*\distance,yshift=-0.3*\distance] {$D_F' \wedge E_F'$};
   \node[minimum size=0pt,inner sep=0pt] (CD_new_funding_base) at ($(D_virt_out)!.25!(DE_new_funding)$) {};
@@ -41,31 +46,18 @@
   \node[minimum size=0pt,inner sep=0pt,above of=D_self_base] (D_self) {};
   \draw [->] (D_virt) -- (D_self) node[midway,right] {$D$};
 
-  \node[minimum size=0pt,inner sep=0pt] (BC_CD_fundings_midpoint) at ($(BC_funding_out)!0.5!(CD_funding_out)$) {};
-  \node[above of=BC_CD_fundings_midpoint,node distance=3*\distance] (C_virt) [draw,ellipse] {$C$};
-  \draw [->] (BC_funding_out) -- (C_virt);
-  \draw [->] (D_virt_out) -- (C_virt);
-
   \node[minimum size=0pt,inner sep=0pt,above of=C_virt] (C_self_base) {};
   \node[minimum size=0pt,inner sep=0pt,left of=C_self_base] (C_virt_out) {};
-  \draw [->] (C_virt) -- (C_virt_out) node[midway,left] {$\{C,D,E\}$};
+  \draw [->] (C_virt) -- (B_virt) node[midway,left,xshift=0.6*\distance,yshift=-0.5*\distance] {$\{C,D,E\}$};
   \node[minimum size=0pt,inner sep=0pt,above of=C_self_base,node distance=0.5*\distance] (C_self) {};
   \draw [->] (C_virt) -- (C_self) node[midway,right] {$C$};
   \node[minimum size=0pt,inner sep=0pt,right of=C_self_base] (CD_new_funding) {};
   \draw [->] (C_virt) -- (CD_new_funding) node[midway,right] {$B_F' \wedge C_F'$};
 
-  \node[minimum size=0pt,inner sep=0pt] (AB_BC_fundings_midpoint) at ($(AB_funding_out)!0.5!(BC_funding_out)$) {};
-  \node[above of=AB_BC_fundings_midpoint,node distance=5*\distance] (B_virt) [draw,ellipse] {$B$};
-  \draw [->] (A_virt_out) -- (B_virt);
-  \draw [->] (C_virt_out) -- (B_virt);
-
   \node[minimum size=0pt,inner sep=0pt,above of=B_virt,left of=B_virt] (B_self) {};
   \draw [->] (B_virt) -- (B_self) node[midway,left] {$B$};
-  \node[minimum size=0pt,inner sep=0pt,above of=B_virt,right of=B_virt] (B_virt_out) {};
-  \draw [->] (B_virt) -- (B_virt_out) node[midway,right] {$A_B \wedge E_B$};
+  \draw [->] (B_virt) -- (bridge) node[midway,xshift=-0.4*\distance,yshift=0.4*\distance] {$A_B \wedge E_B$};
 
-  \node[right of=B_virt_out,node distance=2*\distance] (bridge) [draw,circle] {$b$};
-  \draw [->] (B_virt_out) -- (bridge);
   \node[minimum size=0pt,inner sep=0pt,right of=bridge,node distance=2*\distance] (bridge_out) {};
   \draw [->] (bridge) -- (bridge_out) node[midway,above] {$A_F' \wedge E_F'$};
 \end{tikzpicture}
