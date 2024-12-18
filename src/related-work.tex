@@ -3,6 +3,27 @@
   {\paragraph{Related work}}%
   {\paragraph{Related work.}}%
 \makeatother%
+ The first proposal for PCNs~\cite{spilman} only enabled
+ unidirectional payment channels. As mentioned previously, DMCs~\cite{decker}
+ with their decrementing timelocks have the shortcoming of limited channel
+ lifetime. This was ameliorated by LN~\cite{lightning} which has become the dominant paradigm for designing Bitcoin-compatible PCNs.
+ LN is currently implemented and operational for
+  Bitcoin. It has also been adapted for Ethereum, named
+  Raiden Network. Compared to Elmo, LN is more lightweight in terms of
+  storage and communication when setting up, but suffers from increased latency
+  and communication for payments, as intermediaries have to actively participate
+  in multi-hop payments. Its privacy also suffers, as intermediaries
+  learn the exact time and value of each payment.
+
+  An alternantive payment channel system for Bitcoin that aspires to
+  succeed LN is eltoo~\cite{eltoo}. It is conceptually simpler,
+  has smaller on-chain footprint and a more forgiving attitude towards
+  submitting an old channel state than LN (the old state is superseded without punishment), but it needs
+  \texttt{ANYPREVOUT}. Because eltoo and LN function similarly, the previous comparison of
+  Elmo with LN applies to eltoo as well. On a related note, the payment
+  logic of Elmo could also be designed based on the eltoo mechanism instead of
+  the currently used LN.
+
 Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
   Turing-complete scripting language of Ethereum to build virtual state
   channels.
@@ -15,6 +36,21 @@ Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
   Similar features are provided by Celer~\cite{dong2018celer}.
   Hydra~\cite{cryptoeprint:2020:299} provides state channels for
   Cardano~\cite{cardano}.
+
+  Solutions alternative to PCNs include side\-chains
+  (e.g.,~\cite{BCDF+14,sidechains,KiaZin18}), commit-chains
+  (e.g.,~\cite{plasma,10.1007/978-3-031-54776-8_2}) and non-cu\-sto\-di\-al chains
+  (e.g.,~\cite{plasma,konstantopoulos2019plasma,plasma-lower-bounds}). These
+  approaches offer more efficient payment methods, at the cost of
+  requiring a distinguished mediator, additional tust, or on-chain
+  checkpointing. Furthermore, they do not enable payments between different instances
+  of the same protocol.
+  Due to their conceptual and interface differences as
+  well as differing levels of software maturity, dedicated user studies need to
+  be carried out in order to compare the usability and overall costs of each
+  approach under various usage patterns. Rollups~\cite{ZKRollup,Optimism} are
+  incompatible with Bitcoin, as they only optimise computation, not storage,
+  whereas Bitcoin has by design minimal computation needs.
 
   Closer to Elmo, several works propose virtual channel constructions
   for Bitcoin. LVPC~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
