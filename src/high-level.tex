@@ -73,7 +73,7 @@
     {\paragraph{Simple channel.}}%
   \makeatother%
   % splncs
-  \addtolength{\intextsep}{-15pt}
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
@@ -88,7 +88,7 @@
     \label{figure:payment-layer-simple}
   \end{figure}
   % splncs
-  \addtolength{\intextsep}{15pt}
+  %\addtolength{\intextsep}{15pt}
 
   First $A$ and $B$ generate funding and revocation keypairs and exchange
   public keys ($A_F, B_F, A_R, B_R$ in Fig.~\ref{figure:payment-layer-simple} --
@@ -135,17 +135,29 @@
     {\paragraph{Virtual channel.}}%
   \makeatother%
   % splncs
-  \addtolength{\intextsep}{-15pt}
-  \begin{figure*}[!htbp]
-    \begin{minipage}{.44\textwidth}
+  %\addtolength{\intextsep}{-15pt}
+  %\begin{figure*}[!htbp]
+  %  \begin{minipage}{.44\textwidth}
+%
+  % acmart
+  \begin{figure}[!htbp]
+%
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
     \caption{$A$--$E$ virtual channel: $D$'s initiator transaction. Spends the
     funding outputs of the $C$--$D$ and $D$--$E$ channels. $D$ can use it if neither
     $C$ nor $E$ have published a virtual transaction yet. $A_V$: $A$'s
     ``virtual'' key. $A_b$: $A$'s ``bridge'' key.}
     \label{figure:virtual-layer-initiator-simple}
-    \end{minipage}\hspace{10pt}%
-    \begin{minipage}{.53\textwidth}
+  % acmart
+  \end{figure}
+%
+    % splncs
+    %\end{minipage}\hspace{10pt}%
+    %\begin{minipage}{.53\textwidth}
+%
+  %acmart
+  \begin{figure}[!htbp]
+%
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $C$'s extend-interval
     transactions. Spends the virtual output of $D$'s
@@ -153,10 +165,13 @@
     use it if $D$ has already published its initiator transaction and $B$ has
     not published a virtual transaction yet.}
     \label{figure:virtual-layer-extend-interval-simple}
-    \end{minipage}
-  \end{figure*}
+  % acmart
+  \end{figure}
+%
   % splncs
-  \addtolength{\intextsep}{15pt}
+  %  \end{minipage}
+  %\end{figure*}
+  %\addtolength{\intextsep}{15pt}
 
   Assume now that channels $(A, B)$, $\dots,(D, E)$, are open and the ``left''
   party of each owns at least $c$ coins in it. These channels can be either
@@ -226,26 +241,41 @@
   Bridge txs are discussed in Appx.~\ref{subsec:description-virtual-channels}.
 
   % splncs
-  \addtolength{\intextsep}{-15pt}
-  \begin{figure*}[!htbp]
-    \begin{minipage}{.48\textwidth}
+  %\addtolength{\intextsep}{-15pt}
+  %\begin{figure*}[!htbp]
+  %  \begin{minipage}{.48\textwidth}
+%
+  % acmart
+  \begin{figure}[!htbp]
+%
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
     \caption{$A$--$E$ virtual channel: $A$'s initiator transaction. Spends the
     funding output of the $A$--$B$ channel. $A$ can use it if $B$ has not published
     a virtual transaction.}
     \label{figure:virtual-layer-endpoint-simple}
-    \end{minipage}\hspace{10pt}%
-    \begin{minipage}{.49\textwidth}
+  % acmart
+  \end{figure}
+%
+    % splncs
+    %\end{minipage}\hspace{10pt}%
+    %\begin{minipage}{.49\textwidth}
+%
+  % acmart
+  \begin{figure}
+%
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
     transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
     transactions. $B$ can use it if both $A$ and $C$ have already published
     their initiator or extend-interval transactions.}
     \label{figure:virtual-layer-merge-intervals-simple}
-    \end{minipage}
-  \end{figure*}
+  % acmart
+  \end{figure}
+%
   % splncs
-  \addtolength{\intextsep}{15pt}
+  %  \end{minipage}
+  %\end{figure*}
+  %\addtolength{\intextsep}{15pt}
 
   Some considerations remain to ascertain the scheme security.
   Firstly, we must ensure that no intermediary can publish more than
@@ -277,7 +307,7 @@
   per endpoint and $12$ messages per intermediary, to set up the virtual layer.
 
   % splncs
-  \addtolength{\intextsep}{-15pt}
+  %\addtolength{\intextsep}{-15pt}
   \begin{figure*}
     \centering
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
@@ -293,7 +323,7 @@
     \label{figure:example-start-end-simple}
   \end{figure*}
   % splncs
-  \addtolength{\intextsep}{15pt}
+  %\addtolength{\intextsep}{15pt}
 
   At last, the $5$ parties have set up virtual layer: Both $A$ and $E$ can
   unilaterally
