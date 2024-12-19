@@ -59,14 +59,103 @@ case, we choose not to adopt this approach into our design.
   {\paragraph{Future work}}%
   {\paragraph{Future work.}}%
 \makeatother%
-Further usability enhancements are possible: Firstly, we can support many
-virtual channels in the same virtual layer, reducing on-chain and timelock
-demands. Also, the maximum time between activations can be turned from the
-currently global constant into a per-channel configurable parameter. Next,
-various non-malicious mishaps such as dropped messages can be handled without
-causing unilateral channel closure. What is more, LN features like one-off
-multi-hop payments and cooperative on-chain closing of simple channels can be
-easily incorporated. Lastly, an explicit fee system is needed. Periodic payments
-by the endpoints to the intermediares can compensate for the opportunity cost of
-the collateral for the latter. For additional future work, see
-Appx.~\ref{sec:extra-future-work}.
+% splncs
+%Further usability enhancements are possible: Firstly, we can support many
+%virtual channels in the same virtual layer, reducing on-chain and timelock
+%demands. Also, the maximum time between activations can be turned from the
+%currently global constant into a per-channel configurable parameter. Next,
+%various non-malicious mishaps such as dropped messages can be handled without
+%causing unilateral channel closure. What is more, LN features like one-off
+%multi-hop payments and cooperative on-chain closing of simple channels can be
+%easily incorporated. Lastly, an explicit fee system is needed. Periodic payments
+%by the endpoints to the intermediares can compensate for the opportunity cost of
+%the collateral for the latter. For additional future work, see
+%Appx.~\ref{sec:extra-future-work}.
+
+% arcmart
+  A number of features can be added to our protocol for additional efficiency,
+  usability and flexibility. First of all, in our current construction, each
+  time a particular channel $C$ acts as a base
+  channel for a new virtual channel, one more ``virtualisation layer'' is added. When
+  one of its owners wants to close $C$, it has to put on-chain as many
+  transactions as there are virtualisation layers. Also the timelocks associated
+  with closing a virtual channel increase with the number of virtualisation
+  layers of its base channels. Both these issues can be alleviated by extending
+  the opening and cooperative closing subprotocol with the ability to
+  cooperatively open and close multiple virtual channels in the same layer,
+  either simultaneously or by amending an existing virtualisation layer.
+
+  In this work we only allow a channel to be funded by one of the two endpoints.
+  This limitation simplifies the execution model and analysis, but can be lifted
+  at the cost of additional protocol complexity.
+
+  Furthermore, as it currently stands, the
+  timelocks calculated for the virtual channels are based on $p$
+  (Figure~\ref{code:ln:init}) and $s$ (Figure~\ref{code:ln:exchange-open-sigs}),
+  which are global constants that are immutable and common to all parties. The
+  parameter $s$ stems from the liveness guarantees of Bitcoin, as discussed in
+  Proposition~\ref{prop:liveness} (Appx.~\ref{subsec:liveness}) and therefore cannot be tweaked. However, $p$
+  represents the maximum time (in blocks) between two activations of a
+  non-negligent party, so in principle it is possible for the parties to
+  explicitly negotiate this value when opening a new channel and even
+  renegotiate it after the channel has been opened if the counterparties agree.
+  We leave this usability-augmenting protocol feature as future work.
+
+  Our protocol is not designed to ``gracefully'' recover from a situation in
+  which halfway through a subprotocol, one of the counterparties starts
+  misbehaving. Currently the only solution is to unilaterally close the channel.
+  This however means that DoS attacks (that still do not lead to channel fund
+  losses) are possible. A practical implementation of our protocol would need to
+  expand the available actions and states to be able to transparently and
+  gracefully recover from such problems, avoiding closing the channel where
+  possible, especially when the problem stems from network issues and not from
+  malicious behaviour.
+
+  Additionally, our protocol does not feature one-off multi-hop payments like
+  those possible in Lightning. This however is a useful feature in case two
+  parties know that they will only transact once, as opening a virtual channel
+  needs substantially more network communication than performing an one-off
+  multi-hop payment. It would be therefore fruitful to also enable the multi-hop
+  payment technique and allow human users to choose which method to use in each
+  case. Likewise, optimistic cooperative on-chain closing of simple channels
+  could be done just like in Lightning, obviating the need to wait for the
+  revocation timelock to expire and reducing on-chain costs if the counterparty
+  is cooperative.
+
+  What is more, any deployment of the protocol has to explicitly handle the issue
+  of tx fees. These include miner fees for on-chain txs and
+  intermediary fees for the parties that own base channels and facilitate
+  opening virtual channels. These fees should take into account the fact that
+  each intermediary has quadratic storage requirements, whereas endpoints only
+  need constant storage, creating an opportunity for amplification attacks.
+  Additionally, a fee structure that takes into account the opportunity cost of
+  base parties locking collateral for a potentially long time is needed. A
+  straightforward mechanism is for parties to agree on a time-based fee schedule
+  and periodically update their base channels to reflect contingent payments by
+  the endpoints. We leave the relevant incentive analysis as future work.
+
+  In order to increase readability and to keep focus on the salient points of
+  the construction, our protocol does not exploit various possible
+  optimisations. These include allowing parties to stay offline for
+  longer~\cite{DBLP:conf/ccs/AumayrTMMM22}, and some techniques employed in Lightning that
+  drastically reduce storage requirements, such as storage of per-update secrets
+  in $O(\log n)$
+  space\footnote{\url{https://github.com/lightning/bolts/blob/master/03-transactions.md\#efficient-per-commitment-secret-storage}},
+  and other improvements to our novel virtual subprotocol.
+
+  As mentioned before, we conjecture that a variadic virtual
+  channel protocol with unlimited lifetime needs each party to store an
+  exponential number of signatures if \texttt{ANYPREVOUT} is not available. We
+  leave proof of this as future work. Furthermore, the formal verification of
+  the UC security proof is deferred to such a time when a practical framework
+  for mechanised UC proofs becomes available.
+
+  Last but not least, the current analysis gives no privacy guarantees for the
+  protocol, as it does not employ onion packets~\cite{sphinx} like Lightning.
+  Furthermore, \fchan leaks all messages to the ideal adversary therefore
+  theoretically no privacy is offered at all. Nevertheless, onion packets can be
+  incorporated in the current construction. Intuitively our construction
+  leaks less data than Lightning for the same multi-hop payments, as
+  intermediaries in our case are not notified on each payment, contrary to
+  multi-hop payments in Lightning. Therefore a future extension can improve the
+  privacy of the construction and formally demonstrate exact privacy guarantees.
