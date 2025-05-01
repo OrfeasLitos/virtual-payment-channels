@@ -238,7 +238,14 @@
   after a timelock. See, e.g., $2$nd spending method of the $3$rd output of
   Fig.~\ref{figure:virtual-layer-initiator-simple}. Keys $A_b \dots E_b$ can be
   spent by \emph{bridge} txs, the output of which funds the $(A, E)$ channel.
-  Bridge txs are discussed in Appx.~\ref{subsec:description-virtual-channels}.
+
+  Bridge txs ensure that parties only need to maintain a single commitment tx.
+  Any virtual output may end up funding the virtual channel, but the various
+  virtual outputs do not have the same script, thus there cannot be a single
+  commitment tx able to spend all of them. Bridge txs protect parties from
+  having to keep track of $O(n^3)$ commitment txs. They all have the same
+  output, unifying the interface between the virtualisation and the payment txs,
+  making virtual channel updates as cheap as simple channel updates.
 
   % splncs
   %\addtolength{\intextsep}{-15pt}
