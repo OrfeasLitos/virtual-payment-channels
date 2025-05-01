@@ -67,8 +67,8 @@ desiderata for it.
 
 \begin{itemize}
 \item Recursive. A recursive virtual channel constructor can operate over
-channels that themselves could be the results of previous applications of the
-operator. This is important in the context of PCNs since it allows building
+channels that themselves could be the result of previous applications of the
+operator. This allows building
 virtual channels on top of pre-existing virtual channels, allowing the channel
 structure to evolve dynamically.
 \item Variadic. A variadic virtual channel constructor can virtualize any number
@@ -87,30 +87,33 @@ of accessing the basic channel functionality.
 \end{itemize}
 
 We note that recursiveness, while identified already as an important design
-property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has not been achieved for Bitcoin-compatible channels
-(it was achieved only for DMC-like fixed lifetime channels in~\cite{10.1007/978-3-030-65411-5_18} and left as an open question for LN-type channels in~\cite{9519487}).
+property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has been achieved for only for
+DMC-like fixed lifetime channels~\cite{10.1007/978-3-030-65411-5_18}, but was
+left as an open question for indefinite-lifetime, LN-type
+channels~\cite{9519487}).
 This is because of the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
 With respect to the other two properties, observe that successive applications
 of a recursive binary virtual channel operator to connect distant endpoints will
-break symmetry (since the sequence of operator applications will impact the
-participants' functions with respect to the resulting channel). This is of
+break symmetry,since the sequence of operator applications will impact the
+participants' functions with respect to the resulting channel. This is of
 particular concern since most previous virtual channel constructors proposed are
 binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
 
 The primary motivation for recursive channels is adding flexibility in
-moving off-chain coins quickly, with minimal interaction and at a low cost, even
+moving off-chain coins quickly, with minimal interaction, and at a low cost, even
 under consistently
 congested ledger conditions. Without recursiveness and when facing
 unresponsive channel parties, one would have to first
 close its channel on-chain in order to then use some of its coins with
 another party, which is as slow as any on-chain transaction and in case of high
-congestion prohibitively expensive. Even if parties collaboratively
-close the original channel off-chain, the entire
-channel closes even if only some of its coins are needed. On the other hand, a
+congestion prohibitively expensive. If a party needs to move only a
+fraction of the channel coins to a new channel, it still would have to close the
+entire original channel, even if the channel parties are collaborative.
+On the other hand, a
 recursive
 virtual channel permits using some of its coins with other parties by
-opening off-chain a new virtual channel on top without involvement of the base parties of
-the original channel, and even keeping the remaining coins in
+opening off-chain a new virtual channel on top, keeping the remaining coins in
+the original channel and without involving the parties of
 the latter. Importantly, users can decide to open a recursive virtual channel
 long after having established their underlying one. This flexibility can inspire confidence in virtual
 channels, prompting users to transfer more coins off-chain and
