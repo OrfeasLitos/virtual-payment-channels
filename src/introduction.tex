@@ -179,10 +179,14 @@ start closing the channel, while subsequent respondents, following the activatio
   Composition (UC)~\cite{uc} setting (Appx.~\ref{sec:uc}); our functionality
   \fchan (Appx.~\ref{subsec:fchan}) represents
   a single channel. It is a global functionality,
-  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20} (cf.
+  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20} (cf.\
   % splncs
   %Appx.~\ref{sec:globality}).
-  Sec.~\ref{section:security}).
+  Sec.~\ref{section:security}). We also guarantee that the real-world protocol
+  \pchan has \emph{balance security}, i.e., that honest parties can close
+  the channel and get the expected coins on-chain
+  (Lemma~\ref{lemma:real-balance-security-informal}), similarly to other payment
+  channel proofs~\cite{why3ln}.
 %
   Elmo requires the \texttt{ANYPREVOUT} signature
   type (candidate for
