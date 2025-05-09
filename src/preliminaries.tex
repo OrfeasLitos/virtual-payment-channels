@@ -34,8 +34,9 @@
   our lemmas and theorems statements to simplify notation; it should
   normally appear as a hybrid together with \ledger.
 
-  Our protocol is fully asynchronous, i.e., the adversary can delay any network
-  message arbitrarily long. The protocol is robust against such delays, as an
+  Our protocol does not impose any additional synchrony assumptions beyond what
+  is needed by the underlying blockchain, i.e., the adversary can delay protocol
+  messages arbitrarily long. The protocol is robust against such delays, as an
   honest party can unilaterally prevent loss of funds even if some of its
   messages are dropped by \adversary, given that
   the party can communicate with \ledger. In other words, no
