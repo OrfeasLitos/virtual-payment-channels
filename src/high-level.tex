@@ -122,7 +122,13 @@
   Fig.~\ref{figure:payment-layer-simple}) gives $B$ all coins that belonged
   to $A$ and vice versa. This disincentivises both parties
   from publishing an old commitment tx under the threat of
-  losing all their channel coins. A payment needs $3$ messages in total.
+  losing all their channel coins. A payment needs $3$ messages in total. Note
+  that, after generating the new commitment txs and before revoking the previous
+  ones, each party has two valid commitments for different channel versions.
+  This is fine, as the payment only concludes when revocation completes. If one
+  party publishes the new commitment tx before revocation, then the
+  other will consider the payment successful and vice versa for the old
+  commitment tx.
 
   $A$ or $B$ can now unilaterally close $(A, B)$ by simply publishing the latest
   commitment tx on-chain and waiting for the timelock to expire. Since the last
