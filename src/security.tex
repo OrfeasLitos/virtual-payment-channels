@@ -1,7 +1,8 @@
 \section{Security}
   \label{section:security}
     Before providing the UC-based security guarantees, it is useful to obtain
-  concrete properties directly from our protocol. We first delineate the
+  concrete properties directly from our protocol, essentially providing standard
+  property-based security in addition to our UC guarantees. We first delineate the
   security guarantees Elmo provides by proving
   Lemma~\ref{lemma:real-balance-security-informal} which discusses the
   conservation of funds. The formal statements
@@ -37,7 +38,9 @@
   The expected funds are [initial balance - funds for hosted
   virtuals + funds returned from hosted virtuals - outbound payments + inbound
   payments]. Note that the funds for hosted virtuals only refer to those funds
-  used by the funder of the virtual channel, not the rest of the base parties.
+  used by the funder of the virtual channel, not the rest of the base parties. A
+  similar property-based guarantee is provided for the ideal-world functionality
+  \fchan in Lemma~\ref{lemma:ideal-balance}.
 
 \begin{proofsketch}[Lemma~\ref{lemma:real-balance-security-informal}]
   All execution paths are followed, keeping track of the
