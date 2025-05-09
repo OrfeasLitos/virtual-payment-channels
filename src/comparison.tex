@@ -31,10 +31,10 @@
   %See Appx.~\ref{section:cost-details} for comparison details and choices.
 
   Regarding opening, in
-  Table~\ref{table:comparison:overhead:n-parties:open} we measure for each of
+  Table~\ref{table:comparison:overhead:n-parties:open} we calculate for each of
   the $3$ protocols the number of communication rounds required, the total
   size of outgoing messages as well as the amount of space for storing
-  channel data. We measure funder, fundee
+  channel data. We calculate funder, fundee
   and intermediary requirements, along with the aggregate for all parties.
   % acmart
   The communication rounds for a party are calculated as its [\#incoming
@@ -74,7 +74,7 @@
   calculated for Elmo are exact for $n \geq 4$ parties, whereas for $n = 3$ they
   slightly overestimate.
 
-  For the closing comparison, we measure on-chain transactions' size in
+  For the closing comparison, we calculate on-chain transactions' size in
   vbytes\footnote{\url{https://en.bitcoin.it/wiki/Weight_units}}, which map
   directly to on-chain fees and thus are preferable to raw bytes. Using vbytes
   also ensures our comparison remains up-to-date irrespective of the network
@@ -93,7 +93,7 @@
   channel, for a total of $2n-2$ transactions.
 
   In Table~\ref{table:comparison:overhead:n-parties:close} we
-  measure for each of the three protocols the worst-case on-chain cost for a party
+  calculate for each of the three protocols the worst-case on-chain cost for a party
   in order to unilaterally close its channel. The cost is
   measured both in the number of transactions and in their total size.
 
