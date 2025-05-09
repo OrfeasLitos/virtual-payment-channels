@@ -1,6 +1,7 @@
 %\documentclass{llncs}
-\documentclass[sigconf]{acmart}
+%\documentclass[sigconf]{acmart}
 %\documentclass[conference,compsoc]{IEEEtran}
+\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate]{lipics-v2021}
 \usepackage{preamble}
 
 % splncs
@@ -11,11 +12,11 @@
 %\import{./src/}{abstract.tex}
 
 % acmart
-\begin{document}
-\pagestyle{plain}
-\import{./src/}{acmart-title.tex}
-\import{./src/}{abstract.tex}
-\maketitle
+%\begin{document}
+%\pagestyle{plain}
+%\import{./src/}{acmart-title.tex}
+%\import{./src/}{abstract.tex}
+%\maketitle
 
 % IEEE
 %\pagestyle{plain}
@@ -23,6 +24,13 @@
 %\import{./src/}{ieee-title.tex}
 %\maketitle
 %\import{./src/}{abstract.tex}
+
+% lipics
+\pagestyle{plain}
+\import{./src/}{lipics-title.tex}
+\begin{document}
+\maketitle
+\import{./src}{abstract.tex}
 
 \import{./src/}{introduction.tex}
 \import{./src/}{related-work.tex}
