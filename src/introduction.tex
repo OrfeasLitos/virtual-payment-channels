@@ -57,7 +57,7 @@ its usefulness, it can be closed off-chain if the involved parties cooperate.
 Initial constructions for virtual channels capitalized on the extended functionality of Ethereum, e.g.,
 Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more
 recent work~\cite{9519487} brought them closer to
-Bitcoin-compatibility (by leveraging adaptor
+Bitcoin compatibility (by leveraging adaptor
 signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}).
 
 We call the parties of the underlying channels \emph{intermediaries}.
@@ -90,11 +90,11 @@ We note that recursiveness, while identified already as an important design
 property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has been achieved for only for
 DMC-like fixed lifetime channels~\cite{10.1007/978-3-030-65411-5_18}, but was
 left as an open question for indefinite-lifetime, LN-type
-channels~\cite{9519487}).
+channels~\cite{9519487}.
 This is because of the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
 With respect to the other two properties, observe that successive applications
 of a recursive binary virtual channel operator to connect distant endpoints will
-break symmetry,since the sequence of operator applications will impact the
+break symmetry, since the sequence of operator applications will impact the
 participants' functions with respect to the resulting channel. This is of
 particular concern since most previous virtual channel constructors proposed are
 binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
