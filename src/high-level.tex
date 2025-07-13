@@ -50,8 +50,8 @@
   single commitment tx per endpoint, avoiding an exponential state blowup in the
   recursion depth and making off-chain payments efficient.
 
-  In more detail, during the channel opening procedure (cf.
-  Fig.~\ref{code:ln:open}) the two counterparties (i) create new keypairs and
+  In more detail, during the channel opening procedure (cf. Appx.~\ref{sec:protocol},
+  Fig.~\ref{code:ln:open}) the two counterparties (i) create new signing keypairs and
   exchange the resulting public keys, then (ii) if the channel is
   virtual, prepare the underlying base channels, next (iii) they exchange
   signatures for their initial commitment txs
@@ -290,7 +290,7 @@
   %\end{figure*}
   %\addtolength{\intextsep}{15pt}
 
-  Some considerations remain to ascertain the scheme security.
+  Some considerations remain to ascertain the scheme's security.
   Firstly, we must ensure that no intermediary can publish more than
   one virtual tx to protect the endpoints from an unbounded sequence of virtual
   txs preventing them from accessing their funding output indefinitely:
@@ -317,7 +317,8 @@
   commitment
   txs. They do this by signing the relevant revocation txs, just like
   for a simple channel. It takes $12 \cdot (n-1)$ messages, i.e., $6$ messages
-  per endpoint and $12$ messages per intermediary, to set up the virtual layer.
+  per endpoint and $12$ messages per intermediary, to set up the virtual layer
+  --- see Sec.~\ref{section:comparison} for more details.
 
   % splncs
   \addtolength{\intextsep}{-15pt}
