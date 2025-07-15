@@ -20,9 +20,9 @@
   non-negligent party. Assume that all of the following are true:
   \begin{itemize}
     \item $P$ opened the channel, with initial balance $c$,
-    \item $P$ is the host of $n$ channels, each funded with $f_i$ coins,
+    \item $P$ is the funder of $n$ channels, each funded with $f_i$ coins,
     \item $P$ has cooperatively closed $k$ channels, where the $i$-th channel
-    transferred $r_i$ coins from the hosted virtual channel to $P$,
+    transferred $r_i$ coins from the funded virtual channel to $P$,
     \item $P$ has sent $m$ payments, each involving $d_i$ coins,
     \item $P$ has received $l$ payments, each involving $e_i$ coins.
   \end{itemize}
@@ -35,10 +35,9 @@
   \end{equation}
 \end{lemma}
 
-  The expected funds are [initial balance - funds for hosted
-  virtuals + funds returned from hosted virtuals - outbound payments + inbound
-  payments]. Note that the funds for hosted virtuals only refer to those funds
-  used by the funder of the virtual channel, not the rest of the base parties. A
+  The expected funds are [initial balance - funds for funded
+  virtuals + funds returned from funded virtuals - outbound payments + inbound
+  payments]. A
   similar property-based guarantee is provided for the ideal-world functionality
   \fchan in Lemma~\ref{lemma:ideal-balance}.
 
