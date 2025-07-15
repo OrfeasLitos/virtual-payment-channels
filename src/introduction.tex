@@ -21,7 +21,7 @@ performance limitations of the underlying blockchain protocol, making them a
 natural choice for parties that interact often. Multiple overlapping payment
 channels can be combined and form a PCN.
 
-Closing a non-virtual channel is an operation that involves posting the channel state
+Before the advent of virtual channels, closing a payment channel involved posting the channel state
 on-chain. Closing should be efficient, i.e., needing $O(1)$ on-chain
 transactions, independent of how many payments have occured off-chain.
 It is also essential that any party can unilaterally close a channel as
