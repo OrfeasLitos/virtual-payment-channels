@@ -13,7 +13,7 @@
   channel, all parties on the
   path set aside funds in their channels as
   collateral; they do this
-  by creating so-called \emph{virtual} transactions (txs) that essentially
+  by creating $O(n^3)$ so-called \emph{virtual} transactions (txs) that essentially
   tie the spending of two adjacent base channels into a single atomic action.
   Once intermediaries are done, they have created a special \emph{funding}
   output off-chain with the sum of $P_1$ and $P_n$'s channel
