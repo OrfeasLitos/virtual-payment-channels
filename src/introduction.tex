@@ -191,14 +191,15 @@ start closing the channel, while subsequent respondents, following the activatio
   (Lemma~\ref{lemma:real-balance-security-informal}), similarly to other payment
   channel proofs~\cite{why3ln}.
 %
-  Elmo requires the \texttt{ANYPREVOUT} signature
-  type (candidate for
-  inclusion in the next Bitcoin update\footnote{\url{https://anyprevout.xyz/}}), which does not sign the hash of the
-  transaction it spends, thus enabling a single pre-signed transaction
-  to spend any output with a suitable script. We leverage \texttt{ANYPREVOUT} to
-  avoid exponential storage.
-  %and ensure off-chain payments of base channels are practical.
-  We further conjecture that without
+  Elmo requires the \texttt{ANYPREVOUT} signature type, a candidate for
+  inclusion in the next Bitcoin update~\cite{anyprevout}. Contrary to existing
+  Bitcoin signature types, an \texttt{ANYPREVOUT} signature does not reference
+  the exact transaction it spends. In Bitcoin terms, the spent \emph{outpoint}
+  is not signed. This enables a transaction signed with an \texttt{ANYPREVOUT}
+  signature to spend any output as long as it has a suitable script, even an
+  output that was unknown at the time of signing.
+
+  We conjecture that without
   \texttt{ANYPREVOUT} no efficient off-chain virtual channel constructor
   over Bitcoin can be built. In particular, if any such protocol
   (i) offers an efficient closing operation (i.e., with $O(1)$ on-chain
