@@ -99,10 +99,13 @@ and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
 achieves variadic, but not recursive
   virtual channels. This is
   done by having the funder lock as
-  collateral twice the amount of the desired channel funds: once on-chain with
+  collateral twice the amount of the useful channel funds: once on-chain with
   funds that are external to the \emph{base channels} (i.e., the channels that the
   virtual channel is based on) and once off-chain within its base channel. Thus
-  the funder's collateral is double that of LVPC and Elmo. The
+  Donner requires the funder to keep locked and unusable an amount of coins
+  equal to those in the virtual channel, creating a considerable opportunity
+  cost. As this is not needed in other
+  constructions, the funder's collateral in Donner is double that of LVPC or Elmo. The
   collateral for all other parties is the same
   across LVPC, Donner, and Elmo.
   Additionally, a Donner channel needs active periodic collaboration of the
