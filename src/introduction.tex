@@ -1,6 +1,4 @@
 \section{Introduction}
-\TODO{(iii) Bitcoin does not support smart contracts due to (a) the
-non-Turing-completeness of Script and (b) the lack of covenants}
   The popularity of blockchain protocols in recent years has stretched their
   performance exposing a number of scalability considerations. In particular,
   Bitcoin and related blockchain protocols exhibit very high latency (e.g.,
@@ -59,8 +57,10 @@ its usefulness, it can be closed off-chain if the involved parties cooperate.
 Initial constructions for virtual channels capitalized on the extended functionality of Ethereum, e.g.,
 Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more
 recent work~\cite{9519487} brought them closer to
-Bitcoin compatibility (by leveraging adaptor
-signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}).
+Bitcoin compatibility by leveraging adaptor
+signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}. We note that Bitcoin
+imposes very strict design limitations, as it does not support Turing-complete
+smart contracts nor covenants~\cite{10.1007/978-3-319-70278-0_12}.
 
 We call the parties of the underlying channels \emph{intermediaries}.
 A virtual channel constructor can be thought of as an \emph{operator} over the
