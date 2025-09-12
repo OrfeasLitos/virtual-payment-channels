@@ -48,7 +48,10 @@
   the expense of the inactive party. As discussed later, the funding output
   employs \texttt{ANYPREVOUT} so that the channel needs only a
   single commitment tx per endpoint, avoiding an exponential state blowup in the
-  recursion depth and making off-chain payments efficient.
+  recursion depth and making off-chain payments efficient. We assume that
+  parties already have established secure communication channels among them.
+  Peer discovery is beyond the scope of this work, as techniques used by LN can
+  be readily reused.
 
   In more detail, during the channel opening procedure (cf. Appx.~\ref{sec:protocol},
   Fig.~\ref{code:ln:open}) the two counterparties (i) create new signing keypairs and
