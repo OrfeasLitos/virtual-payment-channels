@@ -143,10 +143,16 @@ case, we choose not to adopt this approach into our design.
   space\footnote{\url{https://github.com/lightning/bolts/blob/master/03-transactions.md\#efficient-per-commitment-secret-storage}},
   and other improvements to our novel virtual subprotocol.
 
-  As mentioned before, we conjecture that a variadic virtual
-  channel protocol with unlimited lifetime needs each party to store an
-  exponential number of signatures if \texttt{ANYPREVOUT} is not available. We
-  leave proof of this as future work. Furthermore, the formal verification of
+  As mentioned before, we make two conjectures: The first is that a variadic
+  virtual channel protocol with unlimited lifetime is impossible if the locking
+  of external on-chain coins is used, as is done in Donner~\cite{donner}. The
+  second conjecture is that, given today's Bitcoin which does not have
+  \texttt{ANYPREVOUT}, there is no off-chain virtual channel constructor that
+  offers a closing operation with $O(1)$ on-chain transactions, has parties
+  locally store the channel state as transactions and signatures, does not
+  require locking of external on-chain coins, and does not require each party to
+  invest an exponential storage space. We
+  leave proof of these conjectures as future work. Furthermore, the formal verification of
   the UC security proof is deferred to such a time when a practical framework
   for mechanised UC proofs becomes available.
 
