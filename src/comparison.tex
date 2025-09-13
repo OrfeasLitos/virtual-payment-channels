@@ -241,9 +241,8 @@
   of length $n=6$ are less than $3$ times those of Donner and
   slightly cheaper than LVPC
   (Table~\ref{table:comparison:overhead:n-parties:open}).
-
-  Moreover, Elmo can be deployed on commodity hardware in practice: To set up
-  and maintain a channel of length $n=6$, an intermediary needs to send less
+  Moreover, Elmo can be deployed on commodity hardware: To set up
+  and keep a channel of length $n=6$ active, an intermediary needs to send less
   than $14$ KiB over the network and store less than $15$ KiB --- the endpoints
   need even less resources.
 
@@ -255,7 +254,7 @@
   We implemented a simulation
   framework\footnote{\url{gitlab.com/anonymised-submission-8778e084/virtual-channels-simulation}}
   in which a list of randomly generated payments are carried out.
-  A single simulation is parametrised by a list of payments
+  A simulation run is parametrised by a list of payments
   (sender, receiver, value triples), the protocol (Elmo, Donner, LVPC, LN or
   on-chain only), which future payments each payer knows and the utility
   function it maximises. The knowledge function defines which future payments
@@ -283,8 +282,8 @@
   on-chain, opening a new channel, using existing
   channels), comparing their utility and executing the best one.
 
-  Our simulation framework is of independent interest, as it is flexible
-  and reusable for a variety of payment network protocol evaluations.
+  Our framework is of independent interest, as it can be used for evaluating
+  various payment networks.
   % splncs
   % (paragraph change)
 

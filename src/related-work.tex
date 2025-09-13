@@ -27,12 +27,12 @@
 Perun~\cite{perun},
 Thunderdome~\cite{avarikioti2025thunderdometimelockfreerationallysecurevirtual},
 and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
-  Turing-complete scripting language of Ethereum to build virtual state
+  Turing-complete language of Ethereum to build virtual state
   channels.
   GSCN uses a per-channel functionality and a recursive argument similar
-  to that of our UC-security analysis. Their security argument is however
+  to that of our UC-security analysis. However, their security argument is
   flawed, as they incorrectly argue that every level is subroutine respecting
-  with respect to the same environment and subroutines.
+  wrt the same environment and subroutines.
   We believe that, given the versatile Ethereum scripting, GSCN could be
   straightforwardly extended to support variadic channels.
   Similar features are provided by Celer~\cite{dong2018celer}.
@@ -44,7 +44,7 @@ and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
   opened on top of two preexisting channels using a technique similar to DMC,
   unfortunately inheriting the fixed lifetime limitation.
   Let \emph{simple channels} be those built directly on-chain, i.e., channels that are not
-  virtual, such as LN.
+  virtual, e.g., LN.
   Bitcoin-Compatible Virtual Channels~\cite{9519487} enables
   virtual channels on top of two preexisting simple channels
   and offers two protocols, the first of which guarantees that the channel will
@@ -108,26 +108,24 @@ achieves variadic, but not recursive
   constructions, the funder's collateral in Donner is double that of LVPC or Elmo. The
   collateral for all other parties is the same
   across LVPC, Donner, and Elmo.
-  Additionally, a Donner channel needs active periodic collaboration of the
-  endpoints and all base channel parties to refresh
-  its lifetime, therefore a Donner channel does not have a truly unlimited
+  Additionally, contrary to Elmo, a Donner channel needs active periodic
+  collaboration of all channel parties to refresh
+  it, thus Donner channels do not have an unlimited
   lifetime. We conjecture that using external coins precludes variadic
   virtual channels with unlimited lifetime. This
-  design choice further means that Donner is not symmetric. Donner also uses
+  further means that Donner is not symmetric. Donner also uses
   placeholder outputs which, due to the minimum coins they need to
   exceed Bitcoin's \emph{dust limit}, may skew the incentives of rational players
   and add to the channel
-  opportunity cost. The aforementioned incentives
-  together with its lack of recursiveness mean that if a party with coins in a
+  cost. Its lack of recursiveness mean that if a party with coins in a
   Donner channel decides to use them with another party, it first has to close
   its channel either off-chain, which needs cooperation of all intermediaries, or
   else on-chain, with all the delays and fees this entails.
   Further, its design complicates
   future iterations that lift its current restriction that only one of the two
   channel parties can fund the virtual channel. On the positive side, Donner is
-  more efficient than Elmo in terms of storage, computation and communication
-  complexity, and boasts a simpler design. 
-  %, but has less room for optimisations and is not recursive. 
+  more efficient than Elmo in terms of storage, computation and communication, and boasts a simpler design.
+  %, but has less room for optimisations and is not recursive.
   Their work also introduces the \emph{Domino attack},
   which we address in Section~\ref{sec:future-work}.
 

@@ -2,7 +2,7 @@
   The popularity of blockchain protocols in recent years has stretched their
   performance exposing a number of scalability considerations. In particular,
   Bitcoin and related blockchain protocols exhibit very high latency (e.g.,
-  Bitcoin has a latency of $\sim{}1$h~\cite{bitcoin}) and a very low throughput (e.g.,
+  Bitcoin has a latency of $\sim$$1$h~\cite{bitcoin}) and a very low throughput (e.g.,
   Bitcoin can handle at most 7 transactions per second~\cite{scaling}), both
   significant shortcomings that jeopardize wider use and adoption and are to a
   certain extent inherent~\cite{scaling}. To address these considerations a
@@ -25,18 +25,18 @@ Before the advent of virtual channels, closing a payment channel involved postin
 on-chain. Closing should be efficient, i.e., needing $O(1)$ on-chain
 transactions, independent of how many payments have occured off-chain.
 It is also essential that any party can unilaterally close a channel as
-otherwise a malicious counterparty (i.e., the other channel participant) could
-prevent an honest party from accessing their funds. This functionality however
-raises an important design consideration: how to prevent malicious parties from
+otherwise a malicious \emph{counterparty} (i.e., the other channel participant) could
+stop an honest party from accessing their funds. This functionality however
+raises an crucial design consideration: how to prevent malicious parties from
 posting old states of the channel.
 %
-Addressing this issue can be done with some suitable use of transaction
+This issue can be addressed with a suitable use of
 \emph{timelocks}, a native Bitcoin Script instruction that prevents a transaction or a specific script from
 being processed on-chain prior to a specific time (measured in block height).
 %
 For instance, diminishing transaction timelocks facilitated the Duplex
-Micropayment Channels (DMC)~\cite{decker} at the expense of bounding the overall
-lifetime of a channel. Using script timelocks, the Lightning Network
+Micropayment Channels (DMC)~\cite{decker} at the cost of bounding the overall
+lifetime of a channel. Using timelocks, the Lightning Network
 (LN)~\cite{lightning} provided a better solution that enabled channels to stay
 open for an arbitrary duration: the key idea was to duplicate the state of the
 channel between the two counterparties, say Alice and Bob, and facilitate a
@@ -44,19 +44,19 @@ punishment mechanism that can be triggered by Bob whenever Alice posts an old
 state update and vice-versa. The script timelocking is essential to allow an
 honest counterparty some time to act.
 
-Interconnecting channels in LN enables endpoints to transmit funds
+Interconnecting channels in LN enables endpoints to send funds
 to each other as long as there is a route of payment channels that connects
-them. The downside of this mechanism is that it requires the active involvement
-of all parties along the path for each payment. Instead, \emph{virtual payment
+them. This mechanism has the downside of requiring all parties along the path to
+be actively involved for each payment. Instead, \emph{virtual payment
 channels} suggest the more attractive approach of an one-time off-chain
-initialization step to set up a virtual payment channel over the preexisting
-channels, which subsequently can
+initialization to set up a virtual payment channel over the preexisting
+channels, which can then
 be used for direct payments with complexity ---in the optimistic case---
-independent of the path length. When the virtual channel has exhausted
+independent of the path length. When the virtual channel outlives
 its usefulness, it can be closed off-chain if the involved parties cooperate.
-Initial constructions for virtual channels capitalized on the extended functionality of Ethereum, e.g.,
-Perun~\cite{perun} and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}, while more
-recent work~\cite{9519487} brought them closer to
+Initial constructions for virtual channels capitalized on the extended
+functionality of Ethereum~\cite{perun,DBLP:conf/ccs/DziembowskiFH18}, while
+later work~\cite{9519487} brought them closer to
 Bitcoin compatibility by leveraging adaptor
 signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}. We note that Bitcoin
 imposes very strict design limitations, as it does not support Turing-complete
@@ -83,7 +83,7 @@ managing and closing multiple virtual channels only to use the one at the
 closing operations that are symmetric in terms of computation, network and storage cost between the two
 endpoints or the intermediaries (but not necessarily a mix of both) for the
 optimistic and pessimistic execution paths. Furthermore, payments by the two
-endpoints are encumbered with the same delay. Importantly, this ensures that no
+endpoints incur the same delay. Importantly, this ensures that no
 party is worse-off or better-off after an application of the operator in terms
 of accessing the basic channel functionality.
 \end{itemize}
@@ -91,8 +91,8 @@ of accessing the basic channel functionality.
 We note that recursiveness, while identified already as an important design
 property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has been achieved for only for
 DMC-like fixed lifetime channels~\cite{10.1007/978-3-030-65411-5_18}, but was
-left as an open question for indefinite-lifetime, LN-type
-channels~\cite{9519487} on Bitcoin.
+left as an open question for indefinite lifetime
+channels on Bitcoin~\cite{9519487}.
 This is because of the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
 With respect to the other two properties, observe that successive applications
 of a recursive binary virtual channel operator to connect distant endpoints will
@@ -105,14 +105,13 @@ The primary motivation for recursive channels is adding flexibility in
 moving off-chain coins quickly, with minimal interaction, and at a low cost, even
 under consistently
 congested ledger conditions. Without recursiveness and when facing
-unresponsive channel parties, one would have to first
+unresponsive channel parties, one has to first
 close its channel on-chain in order to then use some of its coins with
 another party, which is as slow as any on-chain transaction and in case of high
-congestion prohibitively expensive. If a party needs to move only a
-fraction of the channel coins to a new channel, it still would have to close the
+congestion prohibitively expensive. To move only part the channel coins to a
+new channel, a party still has to close the
 entire original channel, even if the channel parties are collaborative.
-On the other hand, a
-recursive
+On the other hand, a recursive
 virtual channel permits using some of its coins with other parties by
 opening off-chain a new virtual channel on top, keeping the remaining coins in
 the original channel and without involving the parties of
@@ -120,10 +119,6 @@ the latter. Importantly, users can decide to open a recursive virtual channel
 long after having established their underlying one. This flexibility can inspire confidence in virtual
 channels, prompting users to transfer more coins off-chain and
 reduce on-chain congestion.
-
-Furthermore, Elmo channels have an indefinite lifetime, in contrast
-to~\cite{donner}. This means that parties of Elmo channels do not need to
-periodically coordinate to extend the channel lifetime.
 
 A scenario only possible with both the recursive and the variadic
 properties is as follows (Fig.~\ref{figure:graph}): Initially Alice has a channel with
@@ -178,17 +173,15 @@ activation sequence. The latter is achieved by enabling anyone to
 start closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to complete the closure process by posting a single transaction each.
 
   We formally prove the security of our protocol in the Universal
-  Composition (UC)~\cite{uc} setting (Appx.~\ref{sec:uc}); our functionality
+  Composition (UC)~\cite{uc} setting (Appx.~\ref{sec:uc}); our \emph{global} functionality
   \fchan (Appx.~\ref{subsec:fchan}) represents
-  a single channel. It is a global functionality,
-  as defined in~\cite{DBLP:conf/tcc/BadertscherCHTZ20} (cf.\
+  a single channel (on globality, see~\cite{DBLP:conf/tcc/BadertscherCHTZ20} and
   % splncs
   %Appx.~\ref{sec:globality}).
   Sec.~\ref{section:security}). We also guarantee that the real-world protocol
-  \pchan has \emph{balance security}, i.e., that honest parties can close
+  \pchan has \emph{balance security}~\cite{why3ln}, i.e., that honest parties can close
   the channel and get the expected coins on-chain
-  (Lemma~\ref{lemma:real-balance-security-informal}), similarly to other payment
-  channel proofs~\cite{why3ln}.
+  (Lemma~\ref{lemma:real-balance-security-informal}).
 %
   Elmo requires the \texttt{ANYPREVOUT} signature type, a candidate for
   inclusion in the next Bitcoin update~\cite{anyprevout}. Contrary to existing
@@ -199,15 +192,14 @@ start closing the channel, while subsequent respondents, following the activatio
   output that was unknown at the time of signing.
 
   We conjecture that without
-  \texttt{ANYPREVOUT} no efficient off-chain virtual channel constructor
+  \texttt{ANYPREVOUT} no efficient virtual channel
   over Bitcoin can be built. In particular, if any such protocol
-  (i) offers an efficient closing operation (i.e., with $O(1)$ on-chain
+  (i) has an efficient closing operation (i.e., with $O(1)$ on-chain
   transactions), (ii) has parties locally store the channel state as transactions and
-  signatures and (iii) does not require locking on-chain
-  coins (as~\cite{donner} does), then each party needs exponential
-  space in the number of intermediaries. Note that the second protocol
+  signatures and (iii) does not need locking on-chain
+  coins (as~\cite{donner} does), then each party needs space exponential
+  in the number of intermediaries. The second protocol
   requirement is natural, since, to our knowledge, all trustless layer $2$
   protocols over Bitcoin require all implicated protocol parties to actively
-  sign off every state transition and locally store the relevant transactions
-  and signatures of their counterparties to ensure they can
-  unilaterally exit later.
+  sign off every state transition and locally store their counterparties' relevant
+  signatures to ensure they can unilaterally exit later.
