@@ -3,27 +3,6 @@
   {\paragraph{Related work}}%
   {\paragraph{Related work.}}%
 \makeatother%
- The first proposal for PCNs~\cite{spilman} only enabled
- unidirectional payment channels. As mentioned previously, DMCs~\cite{decker}
- with their decrementing timelocks have the shortcoming of limited channel
- lifetime. This was ameliorated by LN~\cite{lightning} which has become the dominant paradigm for designing Bitcoin-compatible PCNs.
- LN is currently implemented and operational for
-  Bitcoin. It has also been adapted for Ethereum, named
-  Raiden Network. Compared to Elmo, LN is more lightweight in terms of
-  storage and communication when setting up, but suffers from increased latency
-  and communication for payments, as intermediaries have to actively participate
-  in multi-hop payments. Its privacy also suffers, as intermediaries
-  learn the exact time and value of each payment.
-
-  An alternative payment channel system for Bitcoin that aspires to
-  succeed LN is eltoo~\cite{eltoo}. It is conceptually simpler,
-  has smaller on-chain footprint and a more forgiving attitude towards
-  submitting an old channel state than LN (the old state is superseded without punishment), but it needs
-  \texttt{ANYPREVOUT}. Because eltoo and LN function similarly, the previous comparison of
-  Elmo with LN applies to eltoo as well. On a related note, the payment
-  logic of Elmo could also be designed based on the eltoo mechanism instead of
-  the currently used LN.
-
 Perun~\cite{perun},
 Thunderdome~\cite{avarikioti2025thunderdometimelockfreerationallysecurevirtual},
 and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
@@ -57,7 +36,7 @@ and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
   intermediaries actively monitor the blockchain.
 
   % splncs
-  %\addtolength{\intextsep}{-23pt}
+  \addtolength{\intextsep}{-23pt}
   \begin{table*}
     \caption{Features \& requirements comparison of virtual channel protocols}
     \label{table:comparison-features}
@@ -90,7 +69,7 @@ and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} exploit the
     \end{minipage}
   \end{table*}
   % splncs
-  %\addtolength{\intextsep}{23pt}
+  \addtolength{\intextsep}{23pt}
 
   Donner~\cite{donner}
     (released originally concurrently with the first technical report of Elmo) 
@@ -127,7 +106,7 @@ achieves variadic, but not recursive
   more efficient than Elmo in terms of storage, computation and communication, and boasts a simpler design.
   %, but has less room for optimisations and is not recursive.
   Their work also introduces the \emph{Domino attack},
-  which we address in Section~\ref{sec:future-work}.
+  which we address in Sec.~\ref{sec:future-work}.
 
   We refer the reader to Appx.~\ref{sec:further-related-work} for further
   related work, including a technical issue in Donner and its resolution.

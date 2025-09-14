@@ -29,8 +29,14 @@
   as checking the ledger periodically and being ready to take action if
   misbehaviour is detected. Let us first consider a simple channel that has been
   established between \alice and \bob where the former owns $c_A$ and the latter
-  $c_B$ coins -- we refer the reader to Sec.~\ref{sec:pseudocode} for an
-  overview of the opening procedure. There are
+  $c_B$ coins -- we refer the reader to
+  % acmart
+  Sec.~\ref{sec:pseudocode})
+%
+  % splncs
+  Appx.~\ref{sec:pseudocode})
+%
+  for an overview of the opening procedure. There are
   three sets of transactions at play: A \emph{funding}
   transaction that is put on-chain, \emph{commitment} transactions that are stored
   off-chain and
@@ -95,7 +101,14 @@
   Before opening the virtual, each base channel is entirely independent, having
   different unique keys, separate on-chain funding outputs, a possibly different
   balance and number of updates. After the $n$ parties follow our novel virtual
-  channel opening protocol (cf. Sec.~\ref{sec:pseudocode}), they will all
+  channel opening protocol (cf.\
+  % acmart
+  Sec.~\ref{sec:pseudocode}),
+%
+  % splncs
+  Appx.~\ref{sec:pseudocode}),
+%
+  they will all
   hold off-chain a number of new,
   \emph{virtual} transactions that spend their respective funding transactions. The
   \emph{virtual} transactions can be spent by \emph{bridge} transactions which in turn
@@ -257,7 +270,7 @@
   (the latter term is explained in detail later), and
   $s$ the maximum number of blocks needed for an honest transaction to enter the
   blockchain after being published, as in Proposition~\ref{prop:liveness} of
-  Subsec.~\ref{subsec:liveness}.
+  Appx.~\ref{subsec:liveness}.
   The required timelock of a party is $p + s$ if its channel is simple,  or $p +
   \sum\limits_{j = 2}^{n - 1}(s - 1 + t_j)$ if the channel is virtual, where
   $t_j$ is the required timelock of the base channel

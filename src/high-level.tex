@@ -85,7 +85,7 @@
   is finalised, the channel is \emph{open}.
 
   % splncs
-  %\addtolength{\intextsep}{-15pt}
+  \addtolength{\intextsep}{-15pt}
   \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
@@ -100,7 +100,7 @@
     \label{figure:payment-layer-simple}
   \end{figure}
   % splncs
-  %\addtolength{\intextsep}{15pt}
+  \addtolength{\intextsep}{15pt}
 
   The funding tx $F$ moves $A$'s initial coins to a \emph{$2$-of-$2$ multisig}, i.e., an
   output that needs signatures from $A_F$ and $B_F$ to be spent. There is one
@@ -160,12 +160,12 @@
   virtual txs will form the \emph{virtual layer} (Fig.~\ref{figure:example-start-end-simple}).
 
   % splncs
-  %\addtolength{\intextsep}{-15pt}
-  %\begin{figure*}[!htbp]
-  %  \begin{minipage}{.44\textwidth}
+  \addtolength{\intextsep}{-15pt}
+  \begin{figure*}[!htbp]
+    \begin{minipage}{.48\textwidth}
 %
   % acmart
-  \begin{figure}[!htbp]
+  %\begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
     \caption{$A$--$E$ virtual channel: $D$'s initiator tx. Spends the
@@ -175,14 +175,14 @@
     \emph{virtual} key. $A_b$: $A$'s \emph{bridge} key.}
     \label{figure:virtual-layer-initiator-simple}
   % acmart
-  \end{figure}
+  %\end{figure}
 %
     % splncs
-  %  \end{minipage}\hspace{10pt}%
-  %  \begin{minipage}{.53\textwidth}
+    \end{minipage}\hspace{10pt}%
+    \begin{minipage}{.49\textwidth}
 %
   %acmart
-  \begin{figure}[!htbp]
+  %\begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $C$'s extend-interval
@@ -192,13 +192,12 @@
     not published a virtual tx yet.}
     \label{figure:virtual-layer-extend-interval-simple}
   % acmart
-  \end{figure}
+  %\end{figure}
 %
   % splncs
-  %  \end{minipage}
-  %\end{figure*}
-  %\addtolength{\intextsep}{15pt}
-
+    \end{minipage}
+  \end{figure*}
+  \addtolength{\intextsep}{15pt}
 
   Next, parties generate and sign these virtual txs and exchange the signatures.
   These txs form
@@ -258,12 +257,12 @@
   updates.
 
   % splncs
-  %\addtolength{\intextsep}{-15pt}
-  %\begin{figure*}[!htbp]
-  %  \begin{minipage}{.48\textwidth}
+  \addtolength{\intextsep}{-15pt}
+  \begin{figure*}[!htbp]
+    \begin{minipage}{.48\textwidth}
 %
   % acmart
-  \begin{figure}[!htbp]
+  %\begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
     \caption{$A$--$E$ virtual channel: $A$'s initiator transaction. Spends the
@@ -271,14 +270,14 @@
     a virtual transaction.}
     \label{figure:virtual-layer-endpoint-simple}
   % acmart
-  \end{figure}
+  %\end{figure}
 %
-    % splncs
-    %\end{minipage}\hspace{10pt}%
-    %\begin{minipage}{.49\textwidth}
+  % splncs
+    \end{minipage}\hspace{10pt}%
+    \begin{minipage}{.49\textwidth}
 %
   % acmart
-  \begin{figure}
+  %\begin{figure}
 %
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge intervals
@@ -287,12 +286,12 @@
     their initiator or extend-interval transactions.}
     \label{figure:virtual-layer-merge-intervals-simple}
   % acmart
-  \end{figure}
+  %\end{figure}
 %
   % splncs
-  %  \end{minipage}
-  %\end{figure*}
-  %\addtolength{\intextsep}{15pt}
+    \end{minipage}
+  \end{figure*}
+  \addtolength{\intextsep}{15pt}
 
   Some considerations remain to ascertain the scheme's security.
   Firstly, if all virtual outputs
@@ -313,7 +312,9 @@
   we have to carefully select the values of timelocks to ensure that
   each party has enough time to act. Timelocks increase linearly
   with the recursion depth. The exact values are shown in
-  Sec.~\ref{sec:pseudocode} and Appx.~\ref{sec:protocol}.
+  % acmart
+  %Sec.~\ref{sec:pseudocode} and
+  Appx.~\ref{sec:protocol}.
 
   We now return to the opening procedure. After the $5$ parties set up the virtual txs, they revoke their previous
   commitment
