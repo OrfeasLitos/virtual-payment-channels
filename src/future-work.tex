@@ -2,21 +2,19 @@
 \label{sec:future-work}
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
-  {\paragraph{Domino attack}}%
-  {\paragraph{Domino attack.}}%
+  {\paragraph{Domino}}%
+  {\paragraph{Domino.}}%
 \makeatother%
-In~\cite{donner} the Domino attack is presented. Briefly, it claims that a
-malicious virtual channel party can force other channels to close. To
-illustrate this, suppose $A$ and $E$ of
-Fig.~\ref{figure:example-start-end-simple} open
-channels
-$(A, B)$, $(D, E)$ and $(A, E)$ with the intent of forcing channels $(B,
-C)$ and $(C, D)$ to close. Contrary to the attack goal, honest
-base parties are only
-forced to publish a single virtual tx each, which places their funding
-outputs on-chain but does not cause the base channels to close. There is still a
-small downside:
-the channel capacity is reduced by the collateral, which
+In~\cite{donner} a process called ``Domino attack'' is presented, which
+erroneously claims that a malicious virtual channel member can force others'
+channels to close. According to Domino, if $A$ and $E$ of
+Fig.~\ref{figure:example-start-end-simple} unilaterally close virtual channel
+$(A, E)$, they then force base channels $(B, C)$ and $(C, D)$ to close. This is
+not the case. Contrary to Domino's goal, honest parties $B, C, D$ are only
+forced to publish a single virtual tx each, which simply places their
+funding outputs on-chain; channels $(B, C)$ and $(C, D)$ remain open. Contrary
+to the authors' claims, Domino is not an attack against Elmo. There is still a
+small downside: the channel capacity is reduced by the collateral, which
 is paid directly to one of the two base channel parties. Since no coins are
 stolen, the only cost to $B$, $C$ and $D$ is the on-chain fees
 of one tx. This is an inherent but small risk of
