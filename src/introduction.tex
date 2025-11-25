@@ -185,12 +185,14 @@ start closing the channel, while subsequent respondents, following the activatio
   (Lemma~\ref{lemma:real-balance-security-informal}).
 %
   Elmo requires the \texttt{ANYPREVOUT} signature type, a candidate for
-  inclusion in the next Bitcoin update~\cite{anyprevout}. Contrary to existing
-  Bitcoin signature types, an \texttt{ANYPREVOUT} signature does not reference
-  the exact transaction it spends. In Bitcoin terms, the spent \emph{outpoint}
-  is not signed. This enables a transaction signed with an \texttt{ANYPREVOUT}
-  signature to spend any output as long as it has a suitable script, even an
-  output that was unknown at the time of signing.
+  inclusion in the next Bitcoin update~\cite{anyprevout}. Today, every signature
+  of a Bitcoin transaction $T$ must sign the hash of all transactions spent by
+  $T$ (more precisely, the spent \emph{outpoints}), thus we currently cannot
+  store a signed transaction $T$ off-chain and decide only later which on-chain
+  transaction(s) it will spend. An \texttt{ANYPREVOUT} signature fixes this by
+  not including this hash in the signed message. This enables a transaction
+  signed with an \texttt{ANYPREVOUT} signature to spend any output as long as it
+  has a suitable script, even an output that was unknown at the time of signing.
 
   We conjecture that without
   \texttt{ANYPREVOUT} no efficient virtual channel
