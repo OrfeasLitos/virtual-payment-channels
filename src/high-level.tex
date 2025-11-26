@@ -308,7 +308,7 @@
   another virtual
   tx. This ensures that the endpoints will eventually obtain a funding
   output, but needs intermediaries to store
-  $O(n^3)$ virtual txs for a virtual channel over $n$ parties. Secondly,
+  $O(n^2)$ virtual txs for a virtual channel over $n$ parties. Secondly,
   we have to carefully select the values of timelocks to ensure that
   each party has enough time to act. Timelocks increase linearly
   with the recursion depth. The exact values are shown in
