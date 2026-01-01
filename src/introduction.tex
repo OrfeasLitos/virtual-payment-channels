@@ -15,7 +15,7 @@
 The key primitive of PCN protocols is a payment channel. Two parties (the
 \emph{endpoints}) initiate
 the channel by locking some funds on-chain and subsequently exchange direct
-messages to update the state of the channel. The key feature is that state
+messages to update the state of the channel. Crucially, state
 updates are not posted on-chain and hence they remain unencumbered by the
 performance limitations of the underlying blockchain protocol, making them a
 natural choice for parties that interact often. Multiple overlapping payment
@@ -75,7 +75,7 @@ virtual channels on top of pre-existing virtual channels, allowing the channel
 structure to evolve dynamically.
 \item Variadic. A variadic virtual channel constructor can virtualize any number
 of input payment channels directly, i.e., without leveraging recursion, contrary to a \emph{binary} constructor. This is
-important in the context of PCNs since it enables applying the operator to build
+important for PCNs since it enables applying the operator to build
 virtual channels of arbitrary length, without the undue overhead of opening,
 managing and closing multiple virtual channels only to use the one at the
 ``top'' of the recursion.
@@ -103,15 +103,14 @@ binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}
 
 The primary motivation for recursive channels is adding flexibility in
 moving off-chain coins quickly, with minimal interaction, and at a low cost, even
-under consistently
-congested ledger conditions. Without recursiveness and when facing
+when the ledger is consistently congested. Without recursiveness and when facing
 unresponsive channel parties, one has to first
 close its channel on-chain in order to then use some of its coins with
 another party, which is as slow as any on-chain transaction and in case of high
 congestion prohibitively expensive. To move only part the channel coins to a
 new channel, a party still has to close the
 entire original channel, even if the channel parties are collaborative.
-On the other hand, a recursive
+In contrast, a recursive
 virtual channel permits using some of its coins with other parties by
 opening off-chain a new virtual channel on top, keeping the remaining coins in
 the original channel and without involving the parties of
@@ -120,24 +119,23 @@ long after having established their underlying one. This flexibility can inspire
 channels, prompting users to transfer more coins off-chain and
 reduce on-chain congestion.
 
-A scenario only possible with both the recursive and the variadic
+A scenario that needs both the recursive and the variadic
 properties is as follows (Fig.~\ref{figure:graph}): Initially Alice has a channel with
 Bob, Bob one with Charlie and Charlie one with Dave. Alice opens a virtual
 channel with Dave over the $3$ channels -- this needs the variadic property.
-After a while she realises she has to pay Eve a few
+She later realises she has to pay Eve a few
 times, who happens to have a channel with Dave. Alice interacts just with
-Dave and Eve to move half of her coins from her virtual channel with Dave to a
+Dave and Eve to move half her coins from her virtual channel with Dave to a
 new one with Eve -- this needs the recursive property.
 
 \begin{figure}[!htbp]
   \centering
   \subimport{./figures/manual-tikz/}{graph.tex}
-  \caption{An example Elmo network with $5$ nodes, $4$ black \emph{simple}
+  \caption{An Elmo network with $5$ nodes, $4$ black \emph{simple}
   (i.e., on-chain) channels, $1$ blue virtual channel built only on simple ones,
   and $1$ green virtual channel built on the blue virtual and a simple one. Each
   virtual channel is connected with its \emph{base} channels with dashed lines
-  of the same colour. The variadic and recursive properties of Elmo are
-  showcased.}
+  of the same colour. The variadic and recursive properties are showcased.}
   \label{figure:graph}
 \end{figure}
 
