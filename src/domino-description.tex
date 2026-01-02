@@ -1,0 +1,26 @@
+In~\cite{donner} a process called ``Domino attack'' is presented, which
+erroneously claims that a malicious virtual channel member can force others'
+channels to close. According to Domino, if $A$ and $E$ of
+Fig.~\ref{figure:example-start-end-simple} unilaterally close virtual channel
+$(A, E)$, they then force base channels $(B, C)$ and $(C, D)$ to close. This is
+not the case. Contrary to Domino's goal, honest parties $B, C, D$ are only
+forced to publish a single virtual tx each, which simply places their
+funding outputs on-chain; channels $(B, C)$ and $(C, D)$ remain open. Contrary
+to the authors' claims, Domino is not an attack against Elmo. There is still a
+small downside: the channel capacity is reduced by the collateral, which
+is paid directly to one of the two base channel parties. Since no coins are
+stolen, the only cost to $B$, $C$ and $D$ is the on-chain fees
+of one tx. This is an inherent but small risk of
+recursive channels, which must be taken into account when making one's
+channel the base of another. This risk can be eliminated by making an attacker
+pay the fees for the others' on-chain txs. This fee need not apply in
+case of cooperative closing nor
+during normal operation and can be reduced for reputable parties.
+Suitable reputation systems, as well as mechanisms for assigning inactivity
+blame (i.e., proving which parties tried collaborative closing before
+closing unilaterally), which are needed to determine who must pay the fees,
+can be designed but are beyond the scope of this work.
+% splncs, short
+%A possible solution to
+%the recuded channel capacity is discussed in Appx.~\ref{sec:domino-prevention}.
+
