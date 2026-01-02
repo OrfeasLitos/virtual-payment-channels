@@ -92,10 +92,10 @@
   \begin{figure}[!htbp]
     \centering
     \subimport{./figures/manual-tikz/}{payment-layer-simple.tex}
-    \caption{Funding ($F$), $A$'s commitment ($C_A$) and $B$'s
-    revocation ($R_B$) txs.
+    \caption{$A$--$B$ simple channel: Funding ($F$), $A$'s commitment ($C_A$) and $B$'s
+    revocation ($R_B$) txs. $A_F \wedge B_F$ is the funding output.
     The (symmetric) $B$'s commitment and
-    $A$'s revocation txs are not shown.
+    $A$'s revocation txs are omitted.
     $A_F$ is $A$'s funding key, $A_R$ her revocation key, $A \wedge B$ needs
     a signature by both $A$ and $B$. $A+t$ needs a signature
     by $A$ after relative timelock $t$. The top $C_A$ output is
@@ -171,7 +171,7 @@
   \begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{intermediary-initiator-simple.tex}
-    \caption{$A$--$E$ virtual channel: $D$'s initiator tx. Spends the
+    \caption{$A$--$E$ virtual channel: $D$'s initiator virtual tx. Spends the
     funding outputs of the $C$--$D$ and $D$--$E$ channels. $D$ can use it if neither
     $C$ nor $E$ have published a virtual tx yet. $c_D^1/c_D^2$: $D$'s coins
     in $C$--$D$/$D$--$E$ channel. $A_V$: $A$'s
@@ -188,7 +188,7 @@
   \begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
-    \caption{$A$--$E$ virtual channel: One of $C$'s extend-interval
+    \caption{$A$--$E$ virtual channel: One of $C$'s virtual extend-interval
     txs. Spends the virtual output of $D$'s
     initiator tx and the funding output of the $B$--$C$ channel. $C$ can
     use it if $D$ has already published its initiator tx and $B$ has
@@ -268,9 +268,9 @@
   \begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
-    \caption{$A$--$E$ virtual channel: $A$'s initiator transaction. Spends the
+    \caption{$A$--$E$ virtual channel: $A$'s virtual initiator tx. Spends the
     funding output of the $A$--$B$ channel. $A$ can use it if $B$ has not published
-    a virtual transaction.}
+    a virtual tx.}
     \label{figure:virtual-layer-endpoint-simple}
   % acmart, IEEEtran
   \end{figure}
@@ -284,9 +284,9 @@
 %
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge-intervals
-    transactions. Spends the virtual outputs of $A$'s and $C$'s virtual
-    transactions. $B$ can use it if both $A$ and $C$ have already published
-    their initiator or extend-interval transactions.}
+    txs. Spends the virtual outputs of $A$'s and $C$'s virtual
+    txs. $B$ can use it if both $A$ and $C$ have already published
+    their initiator or extend-interval tx.}
     \label{figure:virtual-layer-merge-intervals-simple}
   % acmart
   \end{figure}
@@ -332,14 +332,20 @@
   \begin{figure*}
     \centering
     \subimport{./figures/manual-tikz/}{example-start-end-simple.tex}
-    \caption{$4$ simple channels supporting a virtual one. $A$ and $D$ start
-    closing by publishing their initiator virtual txs, then $C$ publishes its
-    suitable extend-interval virtual tx, after which $B$ publishes its suitable
-    merge-intervals virtual tx. No party stays inactive. The virtual
+    \caption{Example of on-chain (unilateral) closing of virtual channel $(A,
+    E)$, built on top of simple channels $(A, B), \dots, (D, E)$. $A$ and $D$
+    start closing by publishing their initiator virtual txs
+    (Fig.~\ref{figure:virtual-layer-endpoint-simple}
+    and~\ref{figure:virtual-layer-initiator-simple} respectively), then $C$
+    publishes its suitable extend-interval virtual tx
+    (Fig.~\ref{figure:virtual-layer-extend-interval-simple}), after which $B$
+    publishes its suitable merge-intervals virtual tx
+    (Fig.~\ref{figure:virtual-layer-merge-intervals-simple}). No party stays
+    inactive. The virtual
     transactions $A$--$D$ form the virtual layer. Virtual outputs are marked
     with the set (interval) of parties that have already published a tx.
-    \emph{Bridge} txs like $b$ are used by $A$ and $E$ to convert the various
-    virtual outputs into the same funding output, as \texttt{ANYPREVOUT} only
+    \emph{Bridge} txs such as $b$ are used by $A$ and $E$ to convert the various
+    virtual outputs into the same funding output $A'_F \wedge E'_F$, as \texttt{ANYPREVOUT} only
     works across identical outputs.}
     \label{figure:example-start-end-simple}
   \end{figure*}
