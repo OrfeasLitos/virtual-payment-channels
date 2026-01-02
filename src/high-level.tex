@@ -24,13 +24,22 @@
   the (off-chain) funding output. LN demands that the funding
   output is on-chain, but we lift this requirement. We instead guarantee that
   either endpoint can put the funding output on-chain unilaterally.
-  A payment over an established channel (described later for simple channels) follows a procedure inspired by
+
+  In more detail, the channel opening protocol steps (Appx.~\ref{sec:protocol},
+  Fig.~\ref{code:ln:open}) are as follows: the two counterparties (i) create new signing keypairs and
+  exchange the resulting public keys, then (ii) if the channel is
+  virtual, they prepare the underlying base channels, next (iii) they exchange
+  signatures for their initial \emph{commitment} txs (see Simple channel below)
+  and lastly, (iv) if the channel is simple, the \emph{funder} (who is the only
+  party that provides coins for a new channel, like in LN) signs and publishes
+  the \emph{funding} tx to the ledger.
+  A \textbf{payment} over an established channel (see Simple channel below) follows a procedure inspired by
   LN.
 
   Parties $P_1, \dots, P_n$ can \textbf{optimistically close} a virtual channel
   fully off-chain. At a high
   level, parties controlling base channels \emph{revoke} their \emph{virtual}
-  txs and the related \emph{commitment} txs, i.e., they cannot use them
+  txs and the commitment txs, i.e., they cannot use them
   anymore. This effectively ``peels'' one \emph{virtualisation layer}.
   In the process, they redistribute coins so that intermediaries ``break even'',
   while $P_1$
@@ -53,15 +62,6 @@
   recursion depth and making off-chain payments efficient. We assume that
   parties already have established secure communication channels.
   In practice, peer discovery can be done as in LN.
-
-  \textbf{In more detail,} during channel opening (Appx.~\ref{sec:protocol},
-  Fig.~\ref{code:ln:open}) the two counterparties (i) create new signing keypairs and
-  exchange the resulting public keys, then (ii) if the channel is
-  virtual, prepare the underlying base channels, next (iii) they exchange
-  signatures for their initial commitment txs
-  and lastly, (iv) if the channel is simple, the \emph{funder} (who is the only
-  party that provides coins for a new channel, like in LN) signs and publishes
-  the \emph{funding} tx to the ledger.
 
   In order to build intuition, let us present examples of the
   lifecycles of a simple and a virtual channel. Consider $5$ parties, $A, B,
