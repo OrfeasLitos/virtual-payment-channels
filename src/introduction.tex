@@ -194,12 +194,12 @@ start closing the channel, while subsequent respondents, following the activatio
 
   We conjecture that without
   \texttt{ANYPREVOUT} no efficient virtual channel
-  over Bitcoin can be built. In particular, if any such protocol
-  (i) has an efficient closing operation (i.e., with $O(1)$ on-chain
-  transactions), (ii) has parties locally store the channel state as transactions and
-  signatures and (iii) does not need locking on-chain
-  coins (as~\cite{donner} does), then each party needs space exponential
-  in the number of intermediaries. The second protocol
+  over Bitcoin can be built. In particular, if any protocol
+  (i) has an efficient closing operation with $O(1)$ on-chain
+  transactions, (ii) has parties locally store the channel state as transactions and
+  signatures and (iii) does not need locking up
+  coins as collateral (as~\cite{donner} does), then each party needs space exponential
+  in the number of intermediaries. The second
   requirement is natural, since, to our knowledge, all trustless layer $2$
   protocols over Bitcoin require all implicated protocol parties to actively
   sign off every state transition and locally store their counterparties' relevant
