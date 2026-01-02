@@ -56,9 +56,9 @@ description in prose.
         revocation keys and reducing by $c$ the balance of the party ``closer''
         to the funder.
         \State Exchange signatures with counterparty/ies and verify them.
-        \State Generate and sign all $O(n^3)$ virtual and bridge txs ($b$ of
-        Fig.~\ref{figure:example-start-end-simple}) with the virtual ($P_V$) and
-        bridge ($P_B$) keys.
+        \State Generate and sign virtual and bridge txs ($b$ of
+        Fig.~\ref{figure:example-start-end-simple}) for all parties ($O(n^3)$
+        txs) with the virtual ($P_V$) and bridge ($P_B$) keys.
         \State Exchange signatures among all base channel parties and verify
         that all our virtual txs have signed virtual inputs.
         \State Exchange with counterparty/ies and verify signatures for the
