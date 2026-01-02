@@ -1,7 +1,7 @@
-\section{Preventing the Domino attack}
+\section{Preventing Domino}
 \label{sec:domino-prevention}
 A simple modification to Elmo eliminates the channel capacity
-reduction under a Domino attack, while also reducing the on-chain
+reduction under a Domino scenario, while also reducing the on-chain
 cost of unilateral closing: from each virtual tx, we
 eliminate the output that directly
 pays a party (e.g., $1$st output of
@@ -12,7 +12,7 @@ ensure at the protocol level that the base party that owns these coins never
 allows its channel balance to fall below the collateral, until the supported
 virtual channel closes. This change ensures that the collateral
 automatically becomes available to use in the base channel after the virtual one
-closes, keeping more funds off-chain after a Domino attack. This approach
+closes, keeping more funds off-chain after a Domino scenario. This approach
 however has the drawback that, depending on which of the two parties first
 spends the funding output (with a virtual tx), the funds allocation in the
 channel differs. Base parties thus would have to maintain two sets of commitment
