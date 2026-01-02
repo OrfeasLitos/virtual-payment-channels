@@ -1,5 +1,179 @@
 \section{Efficiency Evaluation \& Simulations}
   \label{section:comparison}
+
+  % TODO: understand why number of payments k plays a role in Donner
+  % splncs
+  %\addtolength{\intextsep}{-21pt}
+  %
+  \begin{table*}[h!]
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \multicolumn{12}{|c|}{Open} \\
+    \hline
+    \multirow{3}{*}{}
+              & \multicolumn{3}{|c|}{Funder} & \multicolumn{3}{|c|}{Fundee}
+              & \multicolumn{3}{|c|}{Intermediary}
+              & \multicolumn{2}{|c|}{Total} \\
+    \cline{2-12}
+              & \multirow{2}{*}{\shortstack{party \\ rounds}}
+              & \multicolumn{2}{|c|}{size} & \multirow{2}{*}{\shortstack{party
+              \\ rounds}} & \multicolumn{2}{|c|}{size}
+              & \multirow{2}{*}{\shortstack{party \\ rounds}}
+              & \multicolumn{2}{|c|}{size} & \multicolumn{2}{|c|}{size} \\
+    \cline{3-4} \cline{6-7} \cline{9-12}
+              & & sent & stored & & sent & stored & & sent & stored & sent &
+              stored \\
+    \hline
+    LVPC      & $8(n-2)$ & $1381(n-2)$ & $3005(n-2)$ & $7$ & $1254$ & $2936$
+              & $16$ & $2989$ & $6385$ & $4370n-8740$ & $9390n-18780$ \\
+    \hline
+    % my count
+    %Donner     & $2$ & $164n + 1934$ & $108n + 2150$ & $1$ & $44n+128$
+    %           & $176n+496$ & $1$ & $76n + 2010$ & $132n+2370$
+    %           & $132n^2+2390n-2094$ & $76n^2+2066n-1858$ \\
+    %\hline
+    \multirow{2}{*}{Donner}
+              & \multirow{2}{*}{$2$} & \multirow{2}{*}{$184n + 829$}
+              & \multirow{2}{*}{\shortstack{$1332.5k+$ \\ $43n+125.5$}}
+              & \multirow{2}{*}{$1$} & \multirow{2}{*}{$43n+192.5$}
+              & \multirow{2}{*}{\shortstack{$1332.5k+$ \\ $43n+125.5$}}
+              & \multirow{2}{*}{$1$} & \multirow{2}{*}{$547$}
+              & \multirow{2}{*}{\shortstack{$1332.5k+$ \\ $43n+125.5$}}
+              & \multirow{2}{*}{$774n-71$}
+              & \multirow{2}{*}{\shortstack{$1332.5kn +$ \\ $43n^2 + 125.5n$}}
+              \\
+              & & & & & & & & & & & \\
+              % For Donner, I drew the storage numbers from
+              % https://eprint.iacr.org/2021/855.pdf, p. 22. I'm not sure what
+              % pid is, so these numbers may have to be revised.
+    \hline
+    \multirow{3}{*}{Elmo}
+              & \multirow{3}{*}{$6$} &
+              \multirow{3}{*}{\shortstack{$32n^3-128n^2$ \\
+              $+544n-276$}} &
+              \multirow{3}{*}{\shortstack{$\frac{128}{3}n^3-128n^2$ \\
+              $+\frac{1276}{3}n+220$}} &
+              \multirow{3}{*}{$6$}
+              & \multirow{3}{*}{\shortstack{$32n^3-128n^2$ \\
+              $+544n-340$}} &
+              \multirow{3}{*}{\shortstack{$\frac{128}{3}n^3-128n^2$ \\
+              $+\frac{1276}{3}n+220$}} &
+              \multirow{3}{*}{$12$}
+              & \multirow{3}{*}{\shortstack{$96n^3-256n^2$ \\
+              $+404n-40$}}
+              & \multirow{3}{*}{\shortstack{$96n^3-256n^2$ \\
+              $+468n+88$}}
+              & \multirow{3}{*}{\shortstack{$96n^4-384n^3+$ \\
+              $724n^2+240n-792$}} &
+              \multirow{3}{*}{\shortstack{$96n^4-\frac{1088}{3}n^3+$ \\
+              $660n^2+\frac{8}{3}n+520$}}\\
+              & & & & & & & & & & & \\
+              & & & & & & & & & & & \\
+    \hline
+    \end{tabular}}
+    \caption{Open efficiency comparison of virtual channel protocols with $n$
+    parties and $k$ payments.}
+    \label{table:comparison:overhead:n-parties:open}
+  \end{table*}
+  % splncs
+  %\addtolength{\intextsep}{21pt}
+
+  % splncs
+  %\addtolength{\intextsep}{-25pt}
+  %
+  \begin{table*}[h!]
+    \begin{minipage}{\textwidth}
+    \centering
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+    \hline
+    \multicolumn{9}{|c|}{Unilateral Close} \\
+    \hline
+              & \multicolumn{2}{|c|}{Intermediary}
+              & \multicolumn{2}{|c|}{Funder} & \multicolumn{2}{|c|}{Fundee}
+              & \multicolumn{2}{|c|}{Total} \\
+    \hline
+              & \#txs & size & \#txs & size & \#txs & size & \#txs & size \\
+    \hline
+    LVPC      & $3$ & $627$ & $2$ & $383$ & $2$ & $359$ & $2n-2$ & $435n -
+              510.5$ \\
+    \hline
+    Donner    & $1$ & $204.5$ & $4$ & $704 + 43n$ & $1$ & $136.5$ & $2n$ & $458n
+              - 26$ \\
+    \hline
+    Elmo      & $1$ & $297.5$ & $3$ & $376$ & $3$ & $376$
+              & $n+1$ & $254.5n-133$ \\
+    \hline
+    \end{tabular}
+    \end{minipage}
+    \caption{On-chain worst-case closing efficiency comparison of virtual
+    channel protocols with $n$ parties.}
+    \label{table:comparison:overhead:n-parties:close}
+  \end{table*}
+  % splncs
+  %\addtolength{\intextsep}{25pt}
+
+  % splncs
+  %\addotlength{\intextsep}{-25pt}
+  \begin{table*}[h!]
+    \begin{minipage}{\textwidth}
+    \centering
+    \begin{tabular}{|l|c|c|c|c|c|c|}
+    \hline
+    \multicolumn{7}{|c|}{Delays and Relative Fees} \\
+    \hline
+        & \multicolumn{2}{|c|}{Power Law}
+        & \multicolumn{2}{|c|}{Preferred Receiver}
+        & \multicolumn{2}{|c|}{Uniform} \\
+    \hline
+        & Delay & Fees & Delay & Fees & Delay & Fees \\
+    \hline
+    LVPC & TODO & TODO & TODO & TODO & TODO & TODO \\
+    \hline
+    Donner & TODO & TODO & TODO & TODO & TODO & TODO \\
+    \hline
+    Elmo & TODO & TODO & TODO & TODO & TODO & TODO \\
+    \hline
+    \end{tabular}
+    \end{minipage}
+      \caption{Average per-payment delay (both on- and off-chain) in
+      sec and relative fee. Less is better.}
+      \label{table:performance}
+  \end{table*}
+  % splncs
+  %\addtolength{\intextsep}{25pt}
+
+  % splncs
+  %\addtolength{\intextsep}{-15pt}
+  %
+  %\begin{figure*}
+  %\begin{subfigure}{.3293\textwidth}
+  %\includegraphics[width=\textwidth]{../simulation/Delays_power_law.png}
+  %\end{subfigure}
+  %\begin{subfigure}{.3293\textwidth}
+  %\includegraphics[width=\textwidth]{../simulation/Delays_preferred_receiver.png}
+  %\end{subfigure}
+  %\begin{subfigure}{.3293\textwidth}
+  %\includegraphics[width=\textwidth]{../simulation/Delays_uniform.png}
+  %\end{subfigure}
+  %\label{graph:delays}
+  %\end{figure*}
+  %\begin{figure*}
+  %\begin{subfigure}{.3293\textwidth}
+  %\includegraphics[width=\textwidth]{../simulation/Fees_power_law.png}
+  %\end{subfigure}
+  %\begin{subfigure}{.3293\textwidth}
+  %\includegraphics[width=\textwidth]{../simulation/Fees_preferred_receiver.png}
+  %\end{subfigure}
+  %\begin{subfigure}{.3293\textwidth}
+  %\includegraphics[width=\textwidth]{../simulation/Fees_uniform.png}
+  %\end{subfigure}
+  %\caption{Average per-payment relative fee. Less is better.}
+  %\label{graph:fees}
+  %\end{figure*}
+  % splncs
+  %\addtolength{\intextsep}{15pt}
+
   We offer here a cost and efficiency comparison of this work with
   LVPC~\cite{10.1007/978-3-030-65411-5_18} and Donner~\cite{donner}. We focus on
   these due to their exclusive support of
@@ -114,118 +288,6 @@
   possible load an instantiation of each protocol could add to the blockchain
   when closing.
 
-  % TODO: understand why number of payments k plays a role in Donner
-  % splncs
-  %\addtolength{\intextsep}{-21pt}
-  %
-  \begin{table*}[h!]
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|c|}
-    \hline
-    \multicolumn{12}{|c|}{Open} \\
-    \hline
-    \multirow{3}{*}{}
-              & \multicolumn{3}{|c|}{Funder} & \multicolumn{3}{|c|}{Fundee}
-              & \multicolumn{3}{|c|}{Intermediary}
-              & \multicolumn{2}{|c|}{Total} \\
-    \cline{2-12}
-              & \multirow{2}{*}{\shortstack{party \\ rounds}}
-              & \multicolumn{2}{|c|}{size} & \multirow{2}{*}{\shortstack{party
-              \\ rounds}} & \multicolumn{2}{|c|}{size}
-              & \multirow{2}{*}{\shortstack{party \\ rounds}}
-              & \multicolumn{2}{|c|}{size} & \multicolumn{2}{|c|}{size} \\
-    \cline{3-4} \cline{6-7} \cline{9-12}
-              & & sent & stored & & sent & stored & & sent & stored & sent &
-              stored \\
-    \hline
-    LVPC      & $8(n-2)$ & $1381(n-2)$ & $3005(n-2)$ & $7$ & $1254$ & $2936$
-              & $16$ & $2989$ & $6385$ & $4370n-8740$ & $9390n-18780$ \\
-    \hline
-    % my count
-    %Donner     & $2$ & $164n + 1934$ & $108n + 2150$ & $1$ & $44n+128$
-    %           & $176n+496$ & $1$ & $76n + 2010$ & $132n+2370$
-    %           & $132n^2+2390n-2094$ & $76n^2+2066n-1858$ \\
-    %\hline
-    \multirow{2}{*}{Donner}
-              & \multirow{2}{*}{$2$} & \multirow{2}{*}{$184n + 829$}
-              & \multirow{2}{*}{\shortstack{$1332.5k+$ \\ $43n+125.5$}}
-              & \multirow{2}{*}{$1$} & \multirow{2}{*}{$43n+192.5$}
-              & \multirow{2}{*}{\shortstack{$1332.5k+$ \\ $43n+125.5$}}
-              & \multirow{2}{*}{$1$} & \multirow{2}{*}{$547$}
-              & \multirow{2}{*}{\shortstack{$1332.5k+$ \\ $43n+125.5$}}
-              & \multirow{2}{*}{$774n-71$}
-              & \multirow{2}{*}{\shortstack{$1332.5kn +$ \\ $43n^2 + 125.5n$}}
-              \\
-              & & & & & & & & & & & \\
-              % For Donner, I drew the storage numbers from
-              % https://eprint.iacr.org/2021/855.pdf, p. 22. I'm not sure what
-              % pid is, so these numbers may have to be revised.
-    \hline
-    \multirow{3}{*}{Elmo}
-              & \multirow{3}{*}{$6$} &
-              \multirow{3}{*}{\shortstack{$32n^3-128n^2$ \\
-              $+544n-276$}} &
-              \multirow{3}{*}{\shortstack{$\frac{128}{3}n^3-128n^2$ \\
-              $+\frac{1276}{3}n+220$}} &
-              \multirow{3}{*}{$6$}
-              & \multirow{3}{*}{\shortstack{$32n^3-128n^2$ \\
-              $+544n-340$}} &
-              \multirow{3}{*}{\shortstack{$\frac{128}{3}n^3-128n^2$ \\
-              $+\frac{1276}{3}n+220$}} &
-              \multirow{3}{*}{$12$}
-              & \multirow{3}{*}{\shortstack{$96n^3-256n^2$ \\
-              $+404n-40$}}
-              & \multirow{3}{*}{\shortstack{$96n^3-256n^2$ \\
-              $+468n+88$}}
-              & \multirow{3}{*}{\shortstack{$96n^4-384n^3+$ \\
-              $724n^2+240n-792$}} &
-              \multirow{3}{*}{\shortstack{$96n^4-\frac{1088}{3}n^3+$ \\
-              $660n^2+\frac{8}{3}n+520$}}\\
-              & & & & & & & & & & & \\
-              & & & & & & & & & & & \\
-    \hline
-    \end{tabular}}
-    \caption{Open efficiency comparison of virtual channel protocols with $n$
-    parties and $k$ payments.}
-    \label{table:comparison:overhead:n-parties:open}
-  \end{table*}
-  % splncs
-  %\addtolength{\intextsep}{21pt}
-
-  % splncs
-  %\addtolength{\intextsep}{-25pt}
-  %
-  \begin{table*}[h!]
-    \begin{minipage}{\textwidth}
-    \centering
-    \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
-    \hline
-    \multicolumn{9}{|c|}{Unilateral Close} \\
-    \hline
-              & \multicolumn{2}{|c|}{Intermediary}
-              & \multicolumn{2}{|c|}{Funder} & \multicolumn{2}{|c|}{Fundee}
-              & \multicolumn{2}{|c|}{Total} \\
-    \hline
-              & \#txs & size & \#txs & size & \#txs & size & \#txs & size \\
-    \hline
-    LVPC      & $3$ & $627$ & $2$ & $383$ & $2$ & $359$ & $2n-2$ & $435n -
-              510.5$ \\
-    \hline
-    Donner    & $1$ & $204.5$ & $4$ & $704 + 43n$ & $1$ & $136.5$ & $2n$ & $458n
-              - 26$ \\
-    \hline
-    Elmo      & $1$ & $297.5$ & $3$ & $376$ & $3$ & $376$
-              & $n+1$ & $254.5n-133$ \\
-    \hline
-    \end{tabular}
-    \end{minipage}
-    \caption{On-chain worst-case closing efficiency comparison of virtual
-    channel protocols with $n$ parties.}
-    \label{table:comparison:overhead:n-parties:close}
-  \end{table*}
-  % splncs
-  %\addtolength{\intextsep}{25pt}
-
   We note that Elmo exploits
   MuSig2~\cite{DBLP:journals/dcc/MaxwellPSW19,DBLP:conf/crypto/NickRS21} to
   reduce both its
@@ -295,8 +357,8 @@
 
   We here
   show the performance of the $3$ protocols with respect to the metrics payment
-  channels aim to improve, namely payment latency (Fig.~\ref{graph:delays}) and
-  fees (Fig.~\ref{graph:fees}). We have designed 3 workloads: ``power law'', in
+  channels aim to improve, namely payment latency and
+  fees (Table~\ref{table:performance}). We have designed 3 workloads: ``power law'', in
   which incoming payments follow a zipf~\cite{powers-1998-applications}
   distribution, ``preferred receiver'', in which each party has a preferred
   payee which receives half of the payments, and ``uniform'', where payments are
@@ -355,8 +417,7 @@
   %In order to avoid bias, we simulate each
   %protocol with the same payments. We simulate each scenario with $20$
   %distinct sets of payments and keep the average.
-  %In Figs.~\ref{graph:delays} and~\ref{graph:fees}, scale does not begin at zero
-  %for better visibility. Payment
+  %Payment
   %delays are calculated based on which protocol is used and how the payment is
   %performed. Average
   %latency is high as it describes the whole run, including slow on-chain
@@ -364,10 +425,10 @@
   %of each ``basic'' event (e.g., paying an intermediary for its service). None
   %of the $3$ protocols provide fee recommendations, so we use the same baseline
   %fees for the same events in all $3$ to avoid bias. These
-  %fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
+  %fees are not systematically chosen, therefore Table~\ref{table:performance} provides
   %relative, not absolute, fees.
 %
-  %As Fig.~\ref{graph:delays} shows, delays are primarily influenced by the
+  %As Table~\ref{table:performance} shows, delays are primarily influenced by the
   %payment distribution and only secondarily by the protocol: Preferred
   %receiver is the fastest and uniform is the slowest. This is reasonable:
   %In the preferred receiver scenario at least half of each party's payments can
@@ -381,37 +442,3 @@
   In particular, Donner is consistently the most fee-heavy protocol and LVPC the
   slowest. Elmo experiences similar delays to Donner and slightly higher fees
   than LVPC.
-
-  % TODO: consider converting figures into tables
-  % splncs
-  %\addtolength{\intextsep}{-15pt}
-  %
-  \begin{figure*}
-  \begin{subfigure}{.3293\textwidth}
-  \includegraphics[width=\textwidth]{../simulation/Delays_power_law.png}
-  \end{subfigure}
-  \begin{subfigure}{.3293\textwidth}
-  \includegraphics[width=\textwidth]{../simulation/Delays_preferred_receiver.png}
-  \end{subfigure}
-  \begin{subfigure}{.3293\textwidth}
-  \includegraphics[width=\textwidth]{../simulation/Delays_uniform.png}
-  \end{subfigure}
-  \caption{Average per-payment delay (both on- and off-chain) in
-  sec. Less is better.}
-  \label{graph:delays}
-  \end{figure*}
-  \begin{figure*}
-  \begin{subfigure}{.3293\textwidth}
-  \includegraphics[width=\textwidth]{../simulation/Fees_power_law.png}
-  \end{subfigure}
-  \begin{subfigure}{.3293\textwidth}
-  \includegraphics[width=\textwidth]{../simulation/Fees_preferred_receiver.png}
-  \end{subfigure}
-  \begin{subfigure}{.3293\textwidth}
-  \includegraphics[width=\textwidth]{../simulation/Fees_uniform.png}
-  \end{subfigure}
-  \caption{Average per-payment relative fee. Less is better.}
-  \label{graph:fees}
-  \end{figure*}
-  % splncs
-  %\addtolength{\intextsep}{15pt}

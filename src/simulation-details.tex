@@ -67,8 +67,7 @@
   In order to avoid bias, we simulate each
   protocol with the same payments. We simulate each scenario with $20$
   distinct sets of payments and keep the average.
-  In Figs.~\ref{graph:delays} and~\ref{graph:fees}, scale does not begin at zero
-  for better visibility. Payment
+  Payment
   delays are calculated based on which protocol is used and how the payment is
   performed. Average
   latency is high as it describes the whole run, including slow on-chain
@@ -76,10 +75,10 @@
   of each ``basic'' event (e.g., paying an intermediary for its service). None
   of the $3$ protocols provide fee recommendations, so we use the same baseline
   fees for the same events in all $3$ to avoid bias. These
-  fees are not systematically chosen, therefore Fig.~\ref{graph:fees} provides
+  fees are not systematically chosen, therefore Table.~\ref{table:performance} provides
   relative, not absolute, fees.
 
-  As Fig.~\ref{graph:delays} shows, delays are primarily influenced by the
+  As Table~\ref{table:performance} shows, delays are primarily influenced by the
   payment distribution and only secondarily by the protocol: The preferred
   receiver is the fastest and the uniform is the slowest. This is reasonable:
   In the preferred receiver scenario at least half of each party's payments can
