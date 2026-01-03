@@ -120,24 +120,25 @@
     \centering
     \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline
-    \multicolumn{7}{|c|}{Delays and Relative Fees} \\
+    \multicolumn{7}{|c|}{Delays (sec) and Relative Fees} \\
     \hline
         & \multicolumn{2}{|c|}{Power Law}
         & \multicolumn{2}{|c|}{Preferred Receiver}
         & \multicolumn{2}{|c|}{Uniform} \\
     \hline
-        & Delay & Fees & Delay & Fees & Delay & Fees \\
+        & Delay (sec) & Fees & Delay (sec) & Fees & Delay (sec) & Fees \\
     \hline
-    LVPC & TODO & TODO & TODO & TODO & TODO & TODO \\
+    LVPC & {\color{red}$2873$} & {\color{blue}$0.81$} & {\color{red}$2440$} & {\color{blue}$0.80$} & {\color{blue}$3589$} & {\color{blue}$0.99$} \\
     \hline
-    Donner & TODO & TODO & TODO & TODO & TODO & TODO \\
+    Donner & {\color{blue}$2842$} & {\color{red}$1$} & $2361$ & {\color{red}$1$} & {\color{blue}$3589$} & {\color{red}$1$} \\
     \hline
-    Elmo & TODO & TODO & TODO & TODO & TODO & TODO \\
+    Elmo & $2864$ & $0.83$ & {\color{blue}$2344$} & $.87$ & {\color{blue}$3589$} & {\color{blue}$0.99$} \\
     \hline
     \end{tabular}
     \end{minipage}
-      \caption{Average per-payment delay (both on- and off-chain) in
-      sec and relative fee. Less is better.}
+      \caption{Average per-payment delay (both on- and off-chain) and relative
+      fee. Less is better. {\color{blue}Blue} is best, {\color{red}red} is
+      worst.}
       \label{table:performance}
   \end{table*}
   % splncs
