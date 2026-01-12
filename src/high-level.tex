@@ -25,8 +25,11 @@
   output is on-chain, but we lift this requirement. We instead guarantee that
   either endpoint can put the funding output on-chain unilaterally.
 
-  In more detail, the channel opening protocol steps (Appx.~\ref{sec:protocol},
-  Fig.~\ref{code:ln:open}) are as follows: the two counterparties (i) create new signing keypairs and
+  In more detail, the channel opening protocol steps
+  % not IEEEtrans
+  %(Appx.~\ref{sec:protocol}, Fig.~\ref{code:ln:open})
+  %
+  are as follows: the two counterparties (i) create new signing keypairs and
   exchange the resulting public keys, then (ii) if the channel is
   virtual, they prepare the underlying base channels, next (iii) they exchange
   signatures for their initial \emph{commitment} txs (see Simple channel below)
@@ -68,8 +71,11 @@
   \dots, E$ and $4$ channels, $(A, B)$, $\dots,(D, E)$, that will act as
   the base of the virtual channel $(A, E)$. We first follow the operations of
   the simple channel $(A, B)$ and then those of $(A, E)$. We simplify some parts
-  of the protocol to aid comprehension --- see Appx.~\ref{sec:description} for
-  more details.
+  of the protocol to aid comprehension ---
+  % not IEEEtrans
+  %see Appx.~\ref{sec:description} for more details.
+  % IEEEtrans
+  more details are in~\cite{full-version}.
 
   \makeatletter%
   \@ifclassloaded{IEEEtran}%
@@ -314,10 +320,13 @@
   $O(n^2)$ virtual txs for a virtual channel over $n$ parties. Secondly,
   we have to carefully select the values of timelocks to ensure that
   each party has enough time to act. Timelocks increase linearly
-  with the recursion depth. The exact values are shown in
-  % acmart
-  %Sec.~\ref{sec:pseudocode} and
-  Appx.~\ref{sec:protocol}.
+  with the recursion depth. The exact values are shown
+  % acmart, long
+  %in Sec.~\ref{sec:pseudocode} and
+  % IEEE, short
+  %in Appx.~\ref{sec:protocol}.
+  % IEEEtrans
+  in~\cite{full-version}.
 
   We now return to the opening procedure. After the $5$ parties set up the virtual txs, they revoke their previous
   commitment
@@ -398,6 +407,8 @@
   ultimately represented by a funding output that either already is or can be put
   on-chain, therefore new virtual channels can be built on either.
   Both simple and virtual channels avoid key reuse on-chain, thus ensuring party
-  privacy from on-chain observers. See Appx.~\ref{sec:pseudocode} for the
-  protocol pseudocode and Appx.~\ref{sec:construction} for more
-  details.
+  privacy from on-chain observers.
+  % acmart, short
+  %See Appx.~\ref{sec:pseudocode} for the protocol pseudocode and Appx.~\ref{sec:construction} for more details.
+  % IEEEtrans
+  More details are in~\cite{full-version}

@@ -6,9 +6,16 @@
   security guarantees Elmo provides by proving
   Lemma~\ref{lemma:real-balance-security-informal} which discusses the
   conservation of funds. The formal statements
-  (\ref{lemma:real-balance-security} and~\ref{lemma:ideal-balance}) along with
-  all proofs are deferred
-  to Appx.~\ref{sec:proofs}. Informally, it
+  % not IEEEtrans
+  %(\ref{lemma:real-balance-security} and~\ref{lemma:ideal-balance})
+  %
+  along with all proofs are deferred
+  % not IEEEtrans
+  %to Appx.~\ref{sec:proofs}.
+  % IEEEtrans
+  to~\cite{full-version}.
+  %
+  Informally, it
   establishes that if an
   % splncs, short
   honest
@@ -45,7 +52,11 @@
   virtuals + funds returned from funded virtuals - outbound payments + inbound
   payments]. A
   similar property-based guarantee is provided for the ideal-world functionality
-  \fchan in Lemma~\ref{lemma:ideal-balance}.
+  \fchan in
+  % not IEEEtrans
+  %in Lemma~\ref{lemma:ideal-balance}.
+  % IEEEtrans
+  in~\cite{full-version}.
 
 \begin{proofsketch}[Lemma~\ref{lemma:real-balance-security-informal}]
   All execution paths are followed, keeping track of the
@@ -59,7 +70,10 @@
   %Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
   %therefore concluding the proof.
 \end{proofsketch}
-    It is important to note that in fact our protocol \pchan (Appx.~\ref{sec:protocol}) provides a stronger guarantee:
+    It is important to note that in fact our protocol \pchan
+    % not IEEEtrans
+    %(Appx.~\ref{sec:protocol})
+    provides a stronger guarantee:
   a party can always successfully unilaterally close its channel
   and obtain the expected funds on-chain within a known number of blocks.
   This stronger guarantee is sufficient to make Elmo reliable
@@ -69,9 +83,18 @@
   as the protocol, thus violating the spirit of the simulation-based security
   paradigm.
 
-  \fchan (Appx.~\ref{sec:functionalities}) halts on security breaches (e.g., lower
+  % not IEEEtrans
+  %\fchan (Appx.~\ref{sec:functionalities})
+  % IEEEtrans
+  \fchan~\cite{full-version}
+  %
+  halts on security breaches (e.g., lower
   than expected balance).
-  We prove the ``no-halt'' Lemma (\ref{lemma:no-halt}), which informally states
+  We prove the ``no-halt'' Lemma
+  % not IEEEtrans
+  %(\ref{lemma:no-halt}),
+  %
+  which informally states
   that if an ideal party is honest, \fchan does not halt with overwhelming
   probability.
 
