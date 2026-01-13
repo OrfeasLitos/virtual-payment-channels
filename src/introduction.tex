@@ -1,123 +1,114 @@
 \section{Introduction}
-  The popularity of blockchain protocols in recent years has stretched their
-  performance exposing a number of scalability considerations. In particular,
-  Bitcoin and related blockchain protocols exhibit very high latency (e.g.,
-  Bitcoin has a latency of $\sim$$1$h~\cite{bitcoin}) and a very low throughput (e.g.,
-  Bitcoin can handle at most 7 transactions per second~\cite{scaling}), both
-  significant shortcomings that jeopardize wider use and adoption and are to a
-  certain extent inherent~\cite{scaling}. To address these considerations a
-  prominent approach is to optimistically handle payments via a \emph{Payment
-  Channel Network} (PCN) (see, e.g.,~\cite{DBLP:conf/fc/GudgeonMRMG20} for a
-  survey). Payments over a PCN happen \emph{off-chain}, i.e., without adding any
-  transactions to the underlying blockchain. They only use the blockchain as an
-  arbiter in case of disputes.
+The popularity of blockchain systems has exposed their inherent scalability
+limitations. In particular, Bitcoin transactions incur high latency
+(approximately $1$h~\cite{bitcoin}) and low throughput (at most 7 transactions
+per second~\cite{scaling}), properties that are inherent~\cite{scaling} and
+fundamentally constrain their suitability for frequent or time-sensitive
+payments.
 
-The key primitive of PCN protocols is a payment channel. Two parties (the
-\emph{endpoints}) initiate
-the channel by locking some funds on-chain and subsequently exchange direct
-messages to update the state of the channel. Crucially, state
-updates are not posted on-chain and hence they remain unencumbered by the
-performance limitations of the underlying blockchain protocol, making them a
-natural choice for parties that interact often. Multiple overlapping payment
-channels can be combined and form a PCN.
+To address these limitations, pairs of parties (the \emph{endpoints}) can lock
+funds with a single on-chain transaction, thus establishing a \emph{payment channel},
+and subsequently exchange any number of payments \emph{off-chain}, i.e., by simply exchanging
+direct messages and without adding any transactions to the underlying
+blockchain. The endpoints resort to the blockchain only to resolve disputes over
+their payment channel. When it is no longer needed, closing a payment channel
+involves posting $O(1)$ transactions on-chain. Typically, if the endpoints
+collaborate closing is cheaper, but either party can unilaterally close in case
+its \emph{counterparty} misbehaves.
 
-Before the advent of virtual channels, closing a payment channel involved posting the channel state
-on-chain. Closing should be efficient, i.e., needing $O(1)$ on-chain
-transactions, independent of how many payments have occured off-chain.
-It is also essential that any party can unilaterally close a channel as
-otherwise a malicious \emph{counterparty} (i.e., the other channel participant) could
-stop an honest party from accessing their funds. This functionality however
-raises an crucial design consideration: how to prevent malicious parties from
-posting old states of the channel.
-%
-This issue can be addressed with a suitable use of
-\emph{timelocks}, a native Bitcoin Script instruction that prevents a transaction or a specific script from
-being processed on-chain prior to a specific time (measured in block height).
-%
-For instance, diminishing transaction timelocks facilitated the Duplex
-Micropayment Channels (DMC)~\cite{decker} at the cost of bounding the overall
-lifetime of a channel. Using timelocks, the Lightning Network
-(LN)~\cite{lightning} provided a better solution that enabled channels to stay
-open for an arbitrary duration: the key idea was to duplicate the state of the
-channel between the two counterparties, say Alice and Bob, and facilitate a
-punishment mechanism that can be triggered by Bob whenever Alice posts an old
-state update and vice-versa. The script timelocking is essential to allow an
-honest counterparty some time to act.
+Multiple overlapping payment channels can be combined to
+form a payment channel network (PCN). See,
+e.g.,~\cite{DBLP:conf/fc/GudgeonMRMG20} for a survey of PCNs. The prime PCN on
+Bitcoin is the Lightning Network (LN)~\cite{lightning}.
 
-Interconnecting channels in LN enables endpoints to send funds
-to each other as long as there is a route of payment channels that connects
-them. This mechanism has the downside of requiring all parties along the path to
-be actively involved for each payment. Instead, \emph{virtual payment
-channels} suggest the more attractive approach of an one-time off-chain
-initialization to set up a virtual payment channel over the preexisting
-channels, which can then
-be used for direct payments with complexity ---in the optimistic case---
-independent of the path length. When the virtual channel outlives
-its usefulness, it can be closed off-chain if the involved parties cooperate.
-Initial constructions for virtual channels capitalized on the extended
-functionality of Ethereum~\cite{perun,DBLP:conf/ccs/DziembowskiFH18}, while
-later work~\cite{9519487} brought them closer to
-Bitcoin compatibility by leveraging adaptor
-signatures~\cite{DBLP:journals/iacr/AumayrEEFHMMR20}. We note that Bitcoin
-imposes very strict design limitations, as it does not support Turing-complete
-smart contracts nor covenants~\cite{10.1007/978-3-319-70278-0_12}.
+% TODO: timelocks, DMC
 
-We call the parties of the underlying channels \emph{intermediaries}.
-A virtual channel constructor can be thought of as an \emph{operator} over the
-underlying payment channel primitive. We identify three natural
-desiderata for it.
+A fundamental limitation of existing PCNs is that off-chain payments between
+non-adjacent parties (i.e., parties that do not share a payment channel, a.k.a.
+multi-hop payments) require the active participation of all
+\emph{intermediaries} along
+a path of channels. This design introduces latency, creates availability
+dependencies, and leaks information about the payment path.
+
+\emph{Virtual payment channels} have been proposed as a remedy to this problem.
+By performing an one-time off-chain setup over a sequence of preexisting
+channels, the two endpoints establish a virtual channel which can then
+be used for direct payments between them with complexity -- in the optimistic case --
+independent of the path length. Once the virtual channel is no longer needed, it
+can be closed off-chain if the involved parties cooperate, or unilaterally
+on-chain in case of disputes. Intermediaries only need to interact during setup
+and cooperative closing, both of which can be done fully off-chain. Payments
+only involve messages between the two endpoints, just like those over adjacent
+parties in a PCN (cf.\ Table~\ref{table:pcn-vs-virtual}).
+
+\begin{table}[h!]
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{|c|c|c|}
+  \hline
+  & PCN & Virtual channel \\
+  \hline
+  Open/Close & {\color{red}On-chain} & {\color{blue}Off-chain} \\
+  \hline
+  Payment & {\color{red}Needs Intermediaries} &{\color{blue}No Intermediaries} \\
+  \hline
+  \end{tabular}}
+  \caption{PCNs vs Virtual Payment Channels}
+  \label{table:pcn-vs-virtual}
+\end{table}
+
+While conceptually appealing, constructing virtual channels over Bitcoin is
+challenging. Bitcoin does not support Turing-complete smart contracts or
+covenants~\cite{10.1007/978-3-319-70278-0_12} and thus severely restricts the
+design space of off-chain protocols. Existing constructions either rely on
+expressive smart contract platforms~\cite{perun,DBLP:conf/ccs/DziembowskiFH18},
+impose fixed channel lifetimes~\cite{10.1007/978-3-030-65411-5_18}, require
+excessive collateral~\cite{donner}, cannot be stacked in a recursive
+manner~\cite{donner}, or can only combine two underlying
+channels (i.e., is \emph{binary})~\cite{9519487}. See
+Sec.~\ref{sec:short-related-work} for related work.
+
+A virtual channel constructor can be thought of as an \emph{operator} over a
+collection of \emph{base} payment channels that produces a new virtual channel.
+We identify three natural desiderata for it.
 
 \begin{itemize}
-\item Recursive. A recursive virtual channel constructor can operate over
-channels that themselves could be the result of previous applications of the
+\item \emph{Recursive}. A recursive virtual channel constructor can operate over
+base channels that themselves could be the result of previous applications of the
 operator. This allows building
-virtual channels on top of pre-existing virtual channels, allowing the channel
+new virtual channels on top of pre-existing virtual channels, allowing the channel
 structure to evolve dynamically.
-\item Variadic. A variadic virtual channel constructor can virtualize any number
-of input payment channels directly, i.e., without leveraging recursion, contrary to a \emph{binary} constructor. This is
-important for PCNs since it enables applying the operator to build
-virtual channels of arbitrary length, without the undue overhead of opening,
-managing and closing multiple virtual channels only to use the one at the
-``top'' of the recursion.
-\item Symmetric. A symmetric virtual channel constructor offers setup and
+\item \emph{Variadic}. A variadic virtual channel constructor can be built on
+top of any number of base payment channels directly. This allows building a
+virtual channel between endpoints with multiple intermediaries with a single
+setup, contrary to a \emph{binary} constructor.
+\item \emph{Symmetric}. A symmetric virtual channel constructor offers setup and
 closing operations that are symmetric in terms of computation, network and storage cost between the two
-endpoints or the intermediaries (but not necessarily a mix of both) for the
-optimistic and pessimistic execution paths. Furthermore, payments by the two
+endpoints or the intermediaries (but not necessarily a mix of both). Also, payments by the two
 endpoints incur the same delay. Importantly, this ensures that no
 party is worse-off or better-off after an application of the operator in terms
-of accessing the basic channel functionality.
+of accessing the basic channel functionality, providing simple incentives.
 \end{itemize}
 
-We note that recursiveness, while identified already as an important design
-property~\cite{DBLP:conf/ccs/DziembowskiFH18}, has been achieved for only for
-DMC-like fixed lifetime channels~\cite{10.1007/978-3-030-65411-5_18}, but was
-left as an open question for indefinite lifetime
-channels on Bitcoin~\cite{9519487}.
-This is because of the severe limitations imposed by the scripting language of Bitcoin-compatible systems.
-With respect to the other two properties, observe that successive applications
-of a recursive binary virtual channel operator to connect distant endpoints will
-break symmetry, since the sequence of operator applications will impact the
-participants' functions with respect to the resulting channel. This is of
+Binary channels are also problematic as successive applications
+of a recursive binary virtual channel operator to connect distant endpoints
+breaks symmetry. This is of
 particular concern since most previous virtual channel constructors proposed are
 binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}.
+Therefore having variadic channels is even more important.
 
-The primary motivation for recursive channels is adding flexibility in
-moving off-chain coins quickly, with minimal interaction, and at a low cost, even
-when the ledger is consistently congested. Without recursiveness and when facing
-unresponsive channel parties, one has to first
-close its channel on-chain in order to then use some of its coins with
-another party, which is as slow as any on-chain transaction and in case of high
-congestion prohibitively expensive. To move only part the channel coins to a
-new channel, a party still has to close the
-entire original channel, even if the channel parties are collaborative.
-In contrast, a recursive
-virtual channel permits using some of its coins with other parties by
-opening off-chain a new virtual channel on top, keeping the remaining coins in
-the original channel and without involving the parties of
-the latter. Importantly, users can decide to open a recursive virtual channel
-long after having established their underlying one. This flexibility can inspire confidence in virtual
-channels, prompting users to transfer more coins off-chain and
-reduce on-chain congestion.
+As already identified~\cite{DBLP:conf/ccs/DziembowskiFH18}, recursiveness is an
+important design property, but has been achieved for only for fixed lifetime
+channels~\cite{10.1007/978-3-030-65411-5_18} and has been left as an open
+question for indefinite lifetime channels on Bitcoin~\cite{9519487}. Recursive
+channels allow moving off-chain coins flexibly, quickly, with minimal
+interaction, and at a low cost, even when the ledger is consistently congested.
+Parties can open new recursive virtual channels on an as-needed basis.
+Recursiveness allows the off-chain moving of coins to a new channel even if the
+base channel parties are unresponsive. It also enables moving only part of the
+channel coins to a new channel. In contrast, coins in a non-recursive virtual
+channel~\cite{donner} must be first moved on-chain, which is slow and expensive.
+The flexibility of recursiveness can inspire confidence in virtual channels,
+prompting users to transfer more coins off-chain and reduce on-chain congestion.
 
 A scenario that needs both the recursive and the variadic
 properties is as follows (Fig.~\ref{figure:graph}): Initially Alice has a channel with
@@ -139,38 +130,43 @@ new one with Eve -- this needs the recursive property.
   \label{figure:graph}
 \end{figure}
 
+Prior work falls short of achieving all three properties simultaneously in the
+Bitcoin setting. Existing approaches support only binary
+composition~\cite{9519487}, are not recursive~\cite{donner}, or impose
+substantial collateral overheads~\cite{donner}. As a result, recursive,
+variadic, symmetric virtual channels with indefinite lifetime over Bitcoin have
+remained an open problem.
+
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
   {\paragraph{Our Contributions}}%
   {\paragraph{Our Contributions.}}%
 \makeatother%
- Elmo (named after St.
-Elmo's fire) is the first Bitcoin-suitable
-recursive virtual channel constructor that supports channels
-of indefinite lifetime. In addition, our constructor is variadic and symmetric. Both optimistic and
-pessimistic execution paths are optimal in terms of round complexity: issuing
-payments between two endpoints requires just three messages of size
-independent of the channel length, closing a channel cooperatively
-needs at most three messages from each party while
-closing a channel unilaterally demands up to two on-chain transactions for
-any involved party (endpoint or intermediary) that can be submitted
-simultaneously, also independent of the channel length. We build Elmo on top
-of Bitcoin, as this means it can be adapted for any blockchain that
-supports Turing-complete smart contracts such as
-Ethereum~\cite{wood2014ethereum}. The latter provides additional tools to
-increase Elmo efficiency. Furthermore, Elmo can inspire future
-blockchain designs that maintain minimal scripting capabilities while
-providing robust off-chain functionality.
+In this work, we resolve this open problem by introducing Elmo (named after St.
+Elmo's fire), the first Bitcoin-compatible virtual payment channel construction
+that is recursive, variadic, and symmetric, while supporting channels of
+indefinite lifetime. We build on Bitcoin as it is the first and most established
+blockchain, with formal security guarantees~\cite{DBLP:conf/crypto/GarayKL17}.
 
-We achieve the above by leveraging a sophisticated virtual channel setup
-protocol which, on the one hand, enables endpoints to use an interface that is
-invariant between on-chain and off-chain (i.e., virtual) channels,
-while on the other, parties can securely close the channel cooperatively
-off-chain, or instead close unilaterally on-chain, following an arbitrary
-activation sequence. The latter is achieved by enabling anyone to
-start closing the channel, while subsequent respondents, following the activation sequence, can choose the right action to complete the closure process by posting a single transaction each.
+At a high level, Elmo enables two endpoints to establish a virtual channel over
+an arbitrary sequence of base channels -- each of which may itself be virtual --
+using a one-time off-chain setup protocol. Thereafter, payments proceed exactly
+as in a simple payment channel, with constant round complexity and without
+involving intermediaries. Virtual channels can be closed cooperatively entirely
+off-chain, or unilaterally on-chain by any participant, with at most two
+on-chain transactions per party and without dependence on the number of
+intermediaries.
 
-  We formally prove the security of our protocol in the Universal
+A key technical challenge is avoiding the need to store an exponential number of
+transactions and signatures as channels are composed
+recursively. Elmo addresses this by leveraging the \texttt{ANYPREVOUT} signature
+type~\cite{anyprevout}, a candidate for inclusion in the next Bitcoin update,
+which allows commitment transactions to be reused across different funding
+outputs. We conjecture that without such a mechanism, efficient recursive virtual
+channels over Bitcoin are impossible. For more details on \texttt{ANYPREVOUT},
+see Sec.~\ref{sec:high-level}.
+
+  We formalise and prove the security of our protocol in the Universal
   Composition (UC)~\cite{uc} setting
   % not IEEEtrans
   %(Appx.~\ref{sec:uc});
@@ -181,37 +177,34 @@ start closing the channel, while subsequent respondents, following the activatio
   % not IEEEtrans
   %(Appx.~\ref{sec:globality})
   %
-  functionality \fchan
+  functionality
   % not IEEEtrans
   %(Appx.~\ref{subsec:fchan})
-  represents
-  a single channel (on globality, see~\cite{DBLP:conf/tcc/BadertscherCHTZ20} and
+  captures
+  both simple and virtual channels and introduces a novel induction-based
+  argument to handle recursive composition of functionalities of independent
+  interest. On globality,
+  see~\cite{DBLP:conf/tcc/BadertscherCHTZ20} and
   % splncs, short
   %Appx.~\ref{sec:globality}).
-  Sec.~\ref{section:security}). We also guarantee that the real-world protocol
-  \pchan has \emph{balance security}~\cite{why3ln}, i.e., that honest parties can close
+  Sec.~\ref{section:security}. We also guarantee that the real-world protocol
+  has \emph{balance security}~\cite{why3ln}, i.e., that honest parties can close
   the channel and get the expected coins on-chain
   (Lemma~\ref{lemma:real-balance-security-informal}).
-%
-  Elmo requires the \texttt{ANYPREVOUT} signature type, a candidate for
-  inclusion in the next Bitcoin update~\cite{anyprevout}. Today, every signature
-  of a Bitcoin transaction $T$ must sign the hash of all transactions spent by
-  $T$ (more precisely, the spent \emph{outpoints}), thus we currently cannot
-  store a signed transaction $T$ off-chain and decide only later which on-chain
-  transaction(s) it will spend. An \texttt{ANYPREVOUT} signature fixes this by
-  not including this hash in the signed message. This enables a transaction
-  signed with an \texttt{ANYPREVOUT} signature to spend any output as long as it
-  has a suitable script, even an output that was unknown at the time of signing.
 
-  We conjecture that without
-  \texttt{ANYPREVOUT} no efficient virtual channel
-  over Bitcoin can be built. In particular, if any protocol
-  (i) has an efficient closing operation with $O(1)$ on-chain
-  transactions, (ii) has parties locally store the channel state as transactions and
-  signatures and (iii) does not need locking up
-  coins as collateral (as~\cite{donner} does), then each party needs space exponential
-  in the number of intermediaries. The second
-  requirement is natural, since, to our knowledge, all trustless layer $2$
-  protocols over Bitcoin require all implicated protocol parties to actively
-  sign off every state transition and locally store their counterparties' relevant
-  signatures to ensure they can unilaterally exit later.
+  Finally, we evaluate Elmo using a novel simulation framework for
+  off-chain payment networks. Our results show that Elmo achieves latency and
+  fee performance comparable to or better than existing Bitcoin-compatible
+  virtual channel protocols, while offering strictly greater flexibility.
+
+In summary, we make the following contributions:
+\begin{itemize}
+\item We present Elmo,
+the first Bitcoin-compatible virtual payment channel construction that supports
+recursive and variadic composition with indefinite lifetime and symmetric costs.
+\item We provide a formal proof of security in the Universal Composition
+framework and establish real-world balance security guarantees.
+\item We implement a simulation framework and demonstrate that Elmo performs in
+par with or better than prior work while enabling strictly more expressive
+off-chain interactions.
+\end{itemize}

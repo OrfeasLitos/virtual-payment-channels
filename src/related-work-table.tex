@@ -1,0 +1,37 @@
+  % splncs
+  %\addtolength{\intextsep}{-23pt}
+  %
+  \begin{table*}[t]
+    \caption{Features \& requirements comparison of virtual channel protocols}
+    \label{table:comparison-features}
+    \begin{minipage}{\textwidth}
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|c|c|}
+    \hline
+              & Unlimited lifetime & Recursive & Variadic & Symmetric & Script requirements \\
+    \hline
+    LVPC~\cite{10.1007/978-3-030-65411-5_18}
+              & ✗                  & \LEFTcircle\footnote{lacks security analysis}
+                                               & ✗         & ✓         & Bitcoin \\
+    \hline
+    BCVC~\cite{9519487}
+              & ✓                  & ✗         & ✗         & ✓         & Bitcoin \\
+    \hline
+    Perun~\cite{perun}
+              & ✓                  & ✗         & ✗         & ✓         & Ethereum \\
+    \hline
+    GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18}
+              & ✓                  & ✓         & ✗         & ✓        & Ethereum \\
+    \hline
+    Donner~\cite{donner}
+              & ✗                  & ✗         & ✓         & ✗         & Bitcoin \\
+    \hline
+    this work & ✓                  & ✓         & ✓         & ✓         & Bitcoin + \texttt{ANYPREVOUT} \\
+    \hline
+    \end{tabular}
+    \end{center}
+    \end{minipage}
+  \end{table*}
+  % splncs
+  %\addtolength{\intextsep}{23pt}
+

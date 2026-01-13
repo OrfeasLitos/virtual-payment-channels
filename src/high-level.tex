@@ -1,4 +1,5 @@
 \section{Protocol Description}
+\label{sec:high-level}
   \textbf{Conceptually,} Elmo is split into four actions: channel opening,
   payments, cooperative closing and unilateral closing. Parties $P_1$ and $P_n$
   may \textbf{open} a channel $(P_1, P_n)$ between them directly on-chain, in which case
@@ -372,7 +373,16 @@
   they would over a simple channel; we refer the reader to the relevant
   description above.
 
-  Note that funding outputs use the \texttt{ANYPREVOUT} flag, thus ensuring
+Today, every signature
+of a Bitcoin tx $T$ must sign the hash of all txs spent by
+$T$ (more precisely, the spent \emph{outpoints}), thus we currently cannot
+store a signed tx $T$ off-chain and decide only later which on-chain
+tx(s) it will spend. An \texttt{ANYPREVOUT} signature fixes this by
+not including this hash in the signed message. This enables a tx
+signed with an \texttt{ANYPREVOUT} signature to spend any output as long as it
+has a suitable script, even an output that was unknown at the time of signing.
+
+  Funding outputs use the \texttt{ANYPREVOUT} flag, thus ensuring
   that a single pair of commitment txs can spend any of the funding outputs. If
   \texttt{ANYPREVOUT} were not used, each virtual layer would need a copy of the
   entire set of discussed txs for each possible funding output of its base
@@ -405,10 +415,28 @@
 
   Our protocol is recursive because both simple and virtual channels are
   ultimately represented by a funding output that either already is or can be put
-  on-chain, therefore new virtual channels can be built on either.
-  Both simple and virtual channels avoid key reuse on-chain, thus ensuring party
+  on-chain, thus new virtual channels can be built on either.
+  Our channels avoid key reuse on-chain, thus ensuring party
   privacy from on-chain observers.
   % acmart, short
   %See Appx.~\ref{sec:pseudocode} for the protocol pseudocode and Appx.~\ref{sec:construction} for more details.
   % IEEEtrans
   More details are in~\cite{full-version}.
+
+  \makeatletter%
+  \@ifclassloaded{IEEEtran}%
+    {\paragraph{Remark}}%
+    {\paragraph{Remark.}}%
+  \makeatother%
+We conjecture that without
+  \texttt{ANYPREVOUT} no efficient virtual channel
+  over Bitcoin can be built. In particular, if any protocol
+  (i) has an efficient closing operation with $O(1)$ on-chain
+  transactions, (ii) has parties locally store the channel state as transactions and
+  signatures and (iii) does not need locking up
+  coins as collateral (as~\cite{donner} does), then each party needs space exponential
+  in the number of intermediaries. The second
+  requirement is natural, since, to our knowledge, all trustless layer $2$
+  protocols over Bitcoin require all implicated protocol parties to actively
+  sign off every state transition and locally store their counterparties' relevant
+  signatures to ensure they can unilaterally exit later.
