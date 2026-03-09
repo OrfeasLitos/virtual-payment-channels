@@ -195,8 +195,8 @@
   \begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{intermediary-extend-interval-simple.tex}
-    \caption{$A$--$E$ virtual channel: One of $C$'s virtual extend-interval
-    txs. Spends the virtual output of $D$'s
+    \caption{$A$--$E$ virtual channel: One of $C$'s extend-interval
+    virtual txs. Spends the virtual output of $D$'s
     initiator tx and the funding output of the $B$--$C$ channel. $C$ can
     use it if $D$ has already published its initiator tx and $B$ has
     not published a virtual tx yet.}
@@ -281,7 +281,7 @@
   \begin{figure}[!htbp]
 %
     \subimport{./figures/manual-tikz/}{virtual-layer-endpoint-simple.tex}
-    \caption{$A$--$E$ virtual channel: $A$'s virtual initiator tx. Spends the
+    \caption{$A$--$E$ virtual channel: $A$'s initiator virtual tx. Spends the
     funding output of the $A$--$B$ channel. $A$ can use it if $B$ has not published
     a virtual tx.}
     \label{figure:virtual-layer-endpoint-simple}
@@ -297,7 +297,7 @@
 %
     \subimport{./figures/manual-tikz/}{intermediary-merge-intervals-simple.tex}
     \caption{$A$--$E$ virtual channel: One of $B$'s merge-intervals
-    txs. Spends the virtual outputs of $A$'s and $C$'s virtual
+    virtual txs. Spends the virtual outputs of $A$'s and $C$'s virtual
     txs. $B$ can use it if both $A$ and $C$ have already published
     their initiator or extend-interval tx.}
     \label{figure:virtual-layer-merge-intervals-simple}
