@@ -209,7 +209,10 @@
   %\end{figure*}
   %\addtolength{\intextsep}{15pt}
 
-  Next, parties generate and sign these virtual txs and exchange the signatures.
+  Next, each party generates these virtual txs, signs each one with all of its
+  keys that appear in the tx's inputs (e.g., $B$ signs the tx of
+  Fig.~\ref{figure:virtual-layer-extend-interval-simple} with $B_V$ and $B_F$),
+  and exchange the signatures.
   These txs form
   Elmo's core. Intuitively, they force each intermediary to interact with both of its
   base channels instead of one at a time, so that virtual channel information
