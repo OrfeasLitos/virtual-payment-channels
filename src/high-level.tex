@@ -232,11 +232,14 @@
   tx also spends the other $C$'s funding output, namely that of $(B,C)$ (bottom
   input). It has $3$ outputs: one refunding the collateral to $C$
   (top), another virtual output (middle), and a funding output that replaces the
-  one just spent (bottom). In our example, $A$ also uses its initiator tx
-  (Fig.~\ref{figure:virtual-layer-endpoint-simple}). The format of $A$'s
+  one just spent (bottom). Each intermediary stores $n-3$ extend-interval txs,
+  one for each possible interval of parties that have already published their
+  virtual txs\footnote{The intermediaries that neighbour endpoints store one
+  $n-2$ extend-interval txs each.}. In our example, $A$ also uses its initiator tx
+  (Fig.~\ref{figure:virtual-layer-endpoint-simple}). The format of $A$'s single
   initiator tx is different. It spends only the funding output of
   $(A, B)$ and produces $2$ outputs: a new funding output for $(A, B)$ (top) and
-  a virtual output (bottom) -- $E$'s initiator tx is symmetric, spending the
+  a virtual output (bottom) -- $E$'s single initiator tx is symmetric, spending the
   funding output of $(D, E)$ and producing a new funding output for $(D, E)$ and
   a virtual output. The two endpoints $A$,
   $E$ have only one type of virtual txs, namely the initiator tx.
@@ -247,7 +250,10 @@
   (Fig.~\ref{figure:virtual-layer-merge-intervals-simple}), the last virtual tx
   type, which also needs signatures from $A_V \dots E_V$. It has $2$ outputs: one refunds $B$ and
   the other produces a new virtual
-  output. Now
+  output. The $i$-th intermediary stores $(i-2)(n-1-i)$ merge-intervals txs, one for
+  each possible pair of intervals of parties that have already published their
+  virtual txs on the party's left and right\footnote{The intermediaries that neighbour
+  endpoints store $n-3$ merge-intervals txs each.}. Now
   all base funding outputs are spent, all intermediaries are refunded and the
   virtual layer has ``collapsed''. Additionally, the
   virtual output of $B$'s tx plays the role of the funding output of the virtual
