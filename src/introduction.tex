@@ -28,7 +28,7 @@ non-adjacent parties (i.e., parties that do not share a payment channel, a.k.a.
 multi-hop payments) require the active participation of all
 \emph{intermediaries} along
 a path of channels. This design introduces latency, creates availability
-dependencies, and leaks information about the payment path.
+dependencies, and leaks the size and timing of every payment.
 
 \emph{Virtual payment channels} have been proposed as a remedy to this problem.
 By performing an one-time off-chain setup over a sequence of preexisting
@@ -191,7 +191,8 @@ see Sec.~\ref{sec:high-level}.
   Sec.~\ref{section:security}. We also guarantee that the real-world protocol
   has \emph{balance security}~\cite{why3ln}, i.e., that honest parties can close
   the channel and get the expected coins on-chain
-  (Lemma~\ref{lemma:real-balance-security-informal}).
+  (Lemma~\ref{lemma:real-balance-security-informal}). We note that privacy is
+  not an explicit goal of Elmo.
 
   Finally, we evaluate Elmo using a novel simulation framework for
   off-chain payment networks. Our results show that Elmo achieves latency and
