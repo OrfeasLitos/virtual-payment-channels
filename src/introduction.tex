@@ -1,7 +1,7 @@
 \section{Introduction}
 The popularity of blockchain systems has exposed their inherent scalability
 limitations. In particular, Bitcoin transactions incur high latency
-(approximately $1$h~\cite{bitcoin}) and low throughput (at most 7 transactions
+(approximately $1$h~\cite{bitcoin}) and low throughput (on average 7 transactions
 per second~\cite{scaling}), properties that are inherent~\cite{scaling} and
 fundamentally constrain their suitability for frequent or time-sensitive
 payments.
@@ -68,8 +68,9 @@ channels (i.e., is \emph{binary})~\cite{9519487}. See
 Sec.~\ref{sec:short-related-work} for related work.
 
 A virtual channel constructor can be thought of as an \emph{operator} over a
-collection of \emph{base} payment channels that produces a new virtual channel.
-We identify three natural desiderata for it.
+collection of payment channels that produces a new virtual channel. The
+preexisting channels are called \emph{base} channels.
+We identify three natural desiderata for the virtual channel.
 
 \begin{itemize}
 \item \emph{Recursive}. A recursive virtual channel constructor can operate over
@@ -97,11 +98,11 @@ binary~\cite{DBLP:conf/ccs/DziembowskiFH18,9519487,10.1007/978-3-030-65411-5_18}
 Therefore having variadic channels is even more important.
 
 As already identified~\cite{DBLP:conf/ccs/DziembowskiFH18}, recursiveness is an
-important design property, but has been achieved for only for fixed lifetime
+important design property, but has been achieved only for fixed lifetime
 channels~\cite{10.1007/978-3-030-65411-5_18} and has been left as an open
 question for indefinite lifetime channels on Bitcoin~\cite{9519487}. Recursive
 channels allow moving off-chain coins flexibly, quickly, with minimal
-interaction, and at a low cost, even when the ledger is consistently congested.
+interaction, and at a low cost, even when the blockchain is consistently congested.
 Parties can open new recursive virtual channels on an as-needed basis.
 Recursiveness allows the off-chain moving of coins to a new channel even if the
 base channel parties are unresponsive. It also enables moving only part of the
@@ -123,8 +124,8 @@ new one with Eve -- this needs the recursive property.
   \centering
   \subimport{./figures/manual-tikz/}{graph.tex}
   \caption{An Elmo network with $5$ nodes, $4$ black \emph{simple}
-  (i.e., on-chain) channels, $1$ blue virtual channel built only on simple ones,
-  and $1$ green virtual channel built on the blue virtual and a simple one. Each
+  (i.e., on-chain) channels, $1$ {\color{blue}blue} virtual channel built only on simple ones,
+  and $1$ {\color{black!40!red}red} virtual channel built on the blue virtual and a simple one. Each
   virtual channel is connected with its \emph{base} channels with dashed lines
   of the same colour. The variadic and recursive properties are showcased.}
   \label{figure:graph}
@@ -204,7 +205,7 @@ the first Bitcoin-compatible virtual payment channel construction that supports
 recursive and variadic composition with indefinite lifetime and symmetric costs.
 \item We provide a formal proof of security in the Universal Composition
 framework and establish real-world balance security guarantees.
-\item We implement a simulation framework and demonstrate that Elmo performs in
+\item We implement a simulation framework and demonstrate that Elmo performs on
 par with or better than prior work while enabling strictly more expressive
 off-chain interactions.
 \end{itemize}

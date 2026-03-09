@@ -36,7 +36,7 @@
   signatures for their initial \emph{commitment} txs (see Simple channel below)
   and lastly, (iv) if the channel is simple, the \emph{funder} (who is the only
   party that provides coins for a new channel, like in LN) signs and publishes
-  the \emph{funding} tx to the ledger.
+  the \emph{funding} tx to the blockchain.
   A \textbf{payment} over an established channel (see Simple channel below) follows a procedure inspired by
   LN.
 
@@ -52,7 +52,7 @@
 
   Finally, to \textbf{unilaterally close} a virtual channel $(P_1, P_n)$
   in case cooperation fails,
-  either $P_1$ or $P_n$ sign and publish some
+  either $P_1$ or $P_n$ signs and publishes some
   txs on-chain. In the simplest case, $P_1$ publishes her virtual tx. This
   prompts $P_2$ to publish her relevant
   virtual tx and so on up to $P_{n-1}$. The
@@ -166,8 +166,8 @@
   each base pair removes $c$ coins from the ``left'' party in
   their base channel. The updated commitment txs use some of the new
   keys for the multisig in their input, since, as we will see, so-called \emph{virtual}
-  txs will stand between the funding and the commitment txs from now on. These
-  virtual txs will form the \emph{virtual layer} (Fig.~\ref{figure:example-start-end-simple}).
+  txs will form a layer, the \emph{virtual layer}, between the funding and the
+  commitment txs from now on (Fig.~\ref{figure:example-start-end-simple}).
 
   % splncs
   %\addtolength{\intextsep}{-15pt}
@@ -215,8 +215,9 @@
   base channels instead of one at a time, so that virtual channel information
   flows along the base channels. There are $3$ virtual
   tx types -- looking ahead, we explain them based on how they help
-  close the channel on-chain. The \emph{initiator} virtual tx spends the two funding outputs of an
-  intermediary (say $D$) and needs to be signed by $C_F$, $D_F$, and $E_F$.
+  close the channel on-chain. Each
+  intermediary (say $D$) has a single \emph{initiator} virtual tx, which spends
+  $D$'s two funding outputs and needs to be signed by $C_F$, $D_F$, and $E_F$.
   It has $4$ outputs: one new funding
   output for each of $(C, D)$ and $(D, E)$
   (Fig.~\ref{figure:virtual-layer-initiator-simple}, top \& bottom outputs), one
@@ -229,10 +230,15 @@
   input). It has $3$ outputs: one refunding the collateral to $C$
   (top), another virtual output (middle), and a funding output that replaces the
   one just spent (bottom). In our example, $A$ also uses its initiator tx
-  (Fig.~\ref{figure:virtual-layer-endpoint-simple}). The format of an endpoint's
+  (Fig.~\ref{figure:virtual-layer-endpoint-simple}). The format of $A$'s
   initiator tx is different. It spends only the funding output of
   $(A, B)$ and produces $2$ outputs: a new funding output for $(A, B)$ (top) and
-  a virtual output (bottom) -- this is the only virtual tx $A$ stores. $B$ can in
+  a virtual output (bottom) -- $E$'s initiator tx is symmetric, spending the
+  funding output of $(D, E)$ and producing a new funding output for $(D, E)$ and
+  a virtual output. The two endpoints $A$,
+  $E$ have only one type of virtual txs, namely the initiator tx.
+
+  $B$ can in
   turn spend $A$'s and $C$'s virtual outputs with a
   \emph{merge-intervals} tx
   (Fig.~\ref{figure:virtual-layer-merge-intervals-simple}), the last virtual tx
