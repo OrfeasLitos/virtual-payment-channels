@@ -19,10 +19,8 @@ due to its lower expressiveness.
 
   Closer to Elmo, several works propose virtual channel constructions
   for Bitcoin. LVPC~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
-  opened on top of two preexisting channels using a technique similar to DMC,
-  unfortunately inheriting the fixed lifetime limitation.
-  Let \emph{simple channels} be those built directly on-chain, i.e., channels that are not
-  virtual, e.g., LN.
+  opened on top of two preexisting channels,
+  but only provides fixed duration channel lifetime.
   Bitcoin-Compatible Virtual Channels~\cite{9519487} enables
   virtual channels on top of two preexisting simple channels
   and offers two protocols, the first of which guarantees that the channel will
@@ -39,13 +37,10 @@ due to its lower expressiveness.
   virtual channels. It is
   more efficient than Elmo in terms of storage, computation and communication,
   and boasts a simpler design.
-%  is the first work 
-%  to 
   On the downside, this is
   achieved by having the funder lock as
   collateral twice the amount of the useful channel funds: once on-chain with
-  funds that are external to the \emph{base channels} (i.e., the channels that the
-  virtual channel is based on) and once off-chain within its base channel. Thus
+  funds that are external to the base channels and once off-chain within its base channel. Thus
   Donner requires the funder to keep locked and unusable an amount of coins
   equal to those in the virtual channel, creating a considerable opportunity
   cost. As this is not needed in other
