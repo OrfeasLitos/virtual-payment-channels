@@ -219,7 +219,7 @@
   flows along the base channels. There are $3$ virtual
   tx types -- looking ahead, we explain them based on how they help
   close the channel on-chain. Each
-  intermediary (say $D$) has a single \emph{initiator} virtual tx, which spends
+  intermediary (say $D$) stores a single \emph{initiator} virtual tx, which spends
   $D$'s two funding outputs and needs to be signed by $C_F$, $D_F$, and $E_F$.
   It has $4$ outputs: one new funding
   output for each of $(C, D)$ and $(D, E)$
@@ -274,7 +274,7 @@
   Keys $A_b \dots E_b$
   (Figs.~\ref{figure:virtual-layer-initiator-simple}--\ref{figure:virtual-layer-merge-intervals-simple}) can be
   spent by \emph{bridge} txs, the output of which funds $(A, E)$.
-  Bridge txs allows endpoints to only store a single commitment tx instead of $O(n^3)$.
+  Bridge txs allow endpoints to only store a single commitment tx instead of $O(n^3)$.
   Any virtual output may end up funding the virtual channel, but each
   virtual output has a different script, thus no single
   commitment tx is able to spend all of them. Bridge txs fix this by having the
