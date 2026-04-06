@@ -281,10 +281,12 @@
   in order to unilaterally close its channel. The cost is
   measured both in the number of transactions and in their total size.
 
-  For the two endpoints (funder and fundee), we show the cost of unilaterally
-  closing the virtual channel, whereas for each intermediary we
-  report the cost of closing a base channel. We also present the worst-case
-  total on-chain cost,
+  For each endpoint (funder and fundee), we show the worst-case cost of unilaterally
+  closing the virtual channel (i.e., one initiator virtual tx, one bridge tx,
+  and one commitment tx), whereas for each intermediary we
+  report the worst-case cost of closing a base channel (i.e., one merge-interval
+  virtual tx). We also present the worst-case
+  total on-chain cost
   aggregated over all parties. Note that the latter cost is not simply the sum
   of the worst-case costs of all parties, as one party's worst case is not
   necessarily the worst case of another. This cost rather represents the maximum
