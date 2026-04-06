@@ -119,6 +119,9 @@ She later realises she has to pay Eve a few
 times, who happens to have a channel with Dave. Alice interacts just with
 Dave and Eve to move half her coins from her virtual channel with Dave to a
 new one with Eve -- this needs the recursive property.
+Recursive,
+variadic, symmetric virtual channels with indefinite lifetime over Bitcoin have
+remained an open problem until now.
 
 \begin{figure}[!htbp]
   \centering
@@ -130,13 +133,6 @@ new one with Eve -- this needs the recursive property.
   virtual channel is connected with its \emph{base} channels with dashed lines. The variadic and recursive properties are showcased.}
   \label{figure:graph}
 \end{figure}
-
-Prior work falls short of achieving all three properties simultaneously in the
-Bitcoin setting. Existing approaches support only binary
-composition~\cite{9519487}, are not recursive~\cite{donner}, or impose
-substantial collateral overheads~\cite{donner}. As a result, recursive,
-variadic, symmetric virtual channels with indefinite lifetime over Bitcoin have
-remained an open problem.
 
 \makeatletter%
 \@ifclassloaded{IEEEtran}%
