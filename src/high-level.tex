@@ -15,7 +15,7 @@
   path set aside funds in their channels as
   collateral; to do this
   they create $O(n^3)$ so-called \emph{virtual} and \emph{bridge} transactions (txs) in total
-  ($O(n^2)$ stored per party) that essentially
+  ($O(n^2)$ stored per party, see Sec.~\ref{section:comparison} for why this is acceptable) that essentially
   tie the spending of two adjacent base channels into a single atomic action.
   These txs are kept off-chain. The bridge txs
   have a \emph{funding}
