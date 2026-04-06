@@ -74,6 +74,7 @@
 \usepackage{xspace}
 \usepackage[utf8]{inputenc}
 \usepackage{notation}
+\usepackage{fancyhdr}
 \usepackage{macros}
 
 % PG: Margin comments were placed oddly for me, and this saved the day (taken from
@@ -259,3 +260,10 @@
 \makeatother%
 
 \hyphenation{block-cha-in}
+
+\fancypagestyle{firstpagestyle}{
+    \fancyhf{} % clear all
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    \fancyfoot[C]{\footnotesize Research partly supported by PRIVILEDGE: EU Project No. 780477, the University of Edinburgh Blockchain Technology Laboratory, Innovate UK grant No. 10029351, the German Federal Ministry of Education and Research, and the Hessen State Ministry for Higher Education, Research and the Arts within their joint support of the National Research Center for Applied Cybersecurity ATHENE.}
+}
