@@ -27,9 +27,7 @@
   either endpoint can put the funding output on-chain unilaterally.
 
   In more detail, the channel opening protocol steps
-  % not IEEEtrans
-  %(Appx.~\ref{sec:protocol}, Fig.~\ref{code:ln:open})
-  %
+  (Appx.~\ref{sec:protocol}, Fig.~\ref{code:ln:open})
   are as follows: the two counterparties (i) create new signing keypairs and
   exchange the resulting public keys, then (ii) if the channel is
   virtual, they prepare the underlying base channels, next (iii) they exchange
@@ -73,10 +71,7 @@
   the base of the virtual channel $(A, E)$. We first follow the operations of
   the simple channel $(A, B)$ and then those of $(A, E)$. We simplify some parts
   of the protocol to aid comprehension ---
-  % not IEEEtrans
-  %see Appx.~\ref{sec:description} for more details.
-  % IEEEtrans
-  more details are in~\cite{full-version}.
+  see Appx.~\ref{sec:description} for more details.
 
   \makeatletter%
   \@ifclassloaded{IEEEtran}%
@@ -340,9 +335,9 @@
   % acmart, long
   %in Sec.~\ref{sec:pseudocode} and
   % IEEE, short
-  %in Appx.~\ref{sec:protocol}.
+  in Appx.~\ref{sec:protocol}.
   % IEEEtrans
-  in~\cite{full-version}.
+  %in~\cite{full-version}.
 
   We now return to the opening procedure. After the $5$ parties set up the virtual txs, they revoke their previous
   commitment
@@ -432,10 +427,7 @@ has a suitable script, even an output that was unknown at the time of signing.
   on-chain, thus new virtual channels can be built on either.
   Our channels avoid key reuse on-chain, thus ensuring party
   privacy from on-chain observers.
-  % acmart, short
-  %See Appx.~\ref{sec:pseudocode} for the protocol pseudocode and Appx.~\ref{sec:construction} for more details.
-  % IEEEtrans
-  More details are in~\cite{full-version}.
+  See Appx.~\ref{sec:pseudocode} for the protocol pseudocode and Appx.~\ref{sec:construction} for more details.
 
   \makeatletter%
   \@ifclassloaded{IEEEtran}%
