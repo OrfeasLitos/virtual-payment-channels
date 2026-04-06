@@ -69,15 +69,15 @@
   %Lemma~\ref{lemma:ideal-balance} do not hold, \fchan may never halt as well,
   %therefore concluding the proof.
 \end{proofsketch}
-    It is important to note that in fact our protocol \pchan
+    Importantly, our protocol \pchan in fact
     % not IEEEtrans
     %(Appx.~\ref{sec:protocol})
     provides a stronger guarantee:
   a party can always successfully unilaterally close its channel
   and obtain the expected funds on-chain within a known number of blocks.
-  This stronger guarantee is sufficient to make Elmo reliable
+  This guarantee is sufficient to make Elmo reliable
   enough for real-world applications. However an ideal world
-  functionality with such guarantees would have to be aware of specific
+  functionality with such guarantees would have to track specific
   txs and signatures, making it as complicated
   as the protocol, thus violating the spirit of the simulation-based security
   paradigm.

@@ -10,8 +10,8 @@ To address these limitations, pairs of parties (the \emph{endpoints}) can lock
 funds with a single on-chain transaction, thus establishing a \emph{payment channel},
 and subsequently exchange any number of payments \emph{off-chain}, i.e., by simply exchanging
 direct messages and without adding any transactions to the underlying
-blockchain. The endpoints resort to the blockchain only to resolve disputes over
-their payment channel. When it is no longer needed, closing a payment channel
+blockchain. The endpoints use the blockchain only to resolve disputes over
+their payment channel. When no longer needed, closing a payment channel
 involves posting $O(1)$ transactions on-chain. Typically, if the endpoints
 collaborate closing is cheaper, but either party can unilaterally close in case
 its \emph{counterparty} misbehaves.

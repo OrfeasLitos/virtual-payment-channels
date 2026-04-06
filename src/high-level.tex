@@ -42,7 +42,7 @@
 
   Parties $P_1, \dots, P_n$ can \textbf{optimistically close} a virtual channel
   fully off-chain. At a high
-  level, parties controlling base channels \emph{revoke} their \emph{virtual}
+  level, parties \emph{revoke} their \emph{virtual}
   txs and the commitment txs, i.e., they cannot use them
   anymore. This effectively ``peels'' one \emph{virtualisation layer}.
   In the process, they redistribute coins so that intermediaries ``break even'',
@@ -209,7 +209,7 @@
   %\end{figure*}
   %\addtolength{\intextsep}{15pt}
 
-  Next, each party generates these virtual txs, signs each one with all of its
+  Next, each party builds the virtual txs, signs each one with all its
   keys that appear in the tx's inputs (e.g., $B$ signs the tx of
   Fig.~\ref{figure:virtual-layer-extend-interval-simple} with $B_V$ and $B_F$),
   and exchange the signatures.
@@ -223,9 +223,9 @@
   $D$'s two funding outputs and needs to be signed by $C_F$, $D_F$, and $E_F$.
   It has $4$ outputs: one new funding
   output for each of $(C, D)$ and $(D, E)$
-  (Fig.~\ref{figure:virtual-layer-initiator-simple}, top \& bottom outputs), one
-  output that refunds the collateral to $D$ ($2$nd from top) and,
-  crucially, a so-called \emph{virtual} output ($3$rd from top). The latter
+  (Fig.~\ref{figure:virtual-layer-initiator-simple}, $1$st \& $4$th output), one
+  output that refunds the collateral to $D$ ($2$nd) and,
+  crucially, a so-called \emph{virtual} output ($3$rd). The latter
   can be spent by $C$ by the top input of an \emph{extend-interval} tx, the second type of virtual
   tx (Fig.~\ref{figure:virtual-layer-extend-interval-simple}). It needs
   signatures from the \emph{virtual keys} $A_V \dots E_V$ of all parties. This
@@ -423,9 +423,9 @@ has a suitable script, even an output that was unknown at the time of signing.
   (Figs.~\ref{figure:virtual-layer-initiator-simple}--\ref{figure:virtual-layer-merge-intervals-simple})
   have a spending method with $A_R \dots E_R$ keys.
 
-  What if one party does not cooperate? Then one or more of the other parties must close
+  What if one party does not cooperate? Then one or more of the others must close
   unilaterally on-chain. Fig.~\ref{figure:example-start-end-simple} shows how
-  this would play out if $A$ and $D$ initiated this procedure.
+  this would play out if $A$ and $D$ initiate this procedure.
 
   Our protocol is recursive because both simple and virtual channels are
   ultimately represented by a funding output that either already is or can be put

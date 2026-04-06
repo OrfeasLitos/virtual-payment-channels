@@ -5,19 +5,11 @@ Thunderdome~\cite{avarikioti2025thunderdometimelockfreerationallysecurevirtual},
 and GSCN~\cite{DBLP:conf/ccs/DziembowskiFH18} build virtual state channels on
 the Turing-complete language of Ethereum, which cannot be translated to Bitcoin
 due to its lower expressiveness.
-  GSCN uses a per-channel functionality and a recursive argument similar
-  to that of our UC-security analysis. However, their security argument is
-  flawed, as they incorrectly argue that every level is subroutine respecting
-  w.r.t.\ the same environment and subroutines
-  (see~\cite{DBLP:conf/tcc/BadertscherCHTZ20} for a definition of subroutine
-  respecting).
-  We believe that, given the versatile Ethereum scripting, GSCN could be
-  straightforwardly extended to support variadic channels.
   Similar features are provided by Celer~\cite{dong2018celer}.
   Hydra~\cite{cryptoeprint:2020:299} provides state channels for
   Cardano~\cite{cardano}.
 
-  Closer to Elmo, several works propose virtual channel constructions
+  Several works propose virtual channel constructions
   for Bitcoin. LVPC~\cite{10.1007/978-3-030-65411-5_18} enables a virtual channel to be
   opened on top of two preexisting channels,
   but only provides fixed duration channel lifetime.
@@ -37,14 +29,11 @@ due to its lower expressiveness.
   virtual channels. It is
   more efficient than Elmo in terms of storage, computation and communication,
   and boasts a simpler design.
-  On the downside, this is
-  achieved by having the funder lock as
+  On the downside, Donner has the funder lock as
   collateral twice the amount of the useful channel funds: once on-chain with
-  funds that are external to the base channels and once off-chain within its base channel. Thus
-  Donner requires the funder to keep locked and unusable an amount of coins
-  equal to those in the virtual channel, creating a considerable opportunity
-  cost. As this is not needed in other
-  constructions, the funder's collateral in Donner is double that of LVPC or Elmo. The
+  funds external to the base channels and once off-chain within its
+  base channel. The on-chain coins are unusable, creating opportunity
+  cost. The funder's collateral in Donner is thus double that of LVPC or Elmo. The
   collateral for all other parties is the same
   across LVPC, Donner, and Elmo.
   Additionally, contrary to Elmo, a Donner channel needs active periodic
@@ -56,10 +45,9 @@ due to its lower expressiveness.
   placeholder outputs which, due to the minimum coins they need to
   exceed Bitcoin's \emph{dust limit}, may skew the incentives of rational players
   and add to the channel
-  cost. Its lack of recursiveness means that if a party with coins in a
-  Donner channel decides to use them with another party, it first has to close
-  its channel either off-chain, which needs cooperation of all intermediaries, or
-  else on-chain, with all the delays and fees this entails.
+  cost. Its lack of recursiveness means coins in a
+  Donner channel can be paid to someone beyond the counterparty only if all base
+  parties collaborate or by going on-chain.
   Further, its design complicates
   future iterations that lift its current restriction that only one of the two
   channel parties can fund the virtual channel.
